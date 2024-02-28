@@ -136,7 +136,7 @@ const Shop = ({ params }: { params: { id: string } }) => {
       <div className="h-[calc(100vh-100px)]">
         <DataGridPremium
           initialState={{ pagination: { paginationModel: { pageSize: 30 } } }}
-          rows={products}
+          rows={products as ProductTableRow[]}
           disableColumnMenu
           columns={columns}
         />
