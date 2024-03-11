@@ -1,16 +1,15 @@
 "use client";
-
-import { Button, Card, Typography } from "antd";
+import Shops from "@/components/Shops";
 import {
-  StarIcon,
   ListBulletIcon,
   Squares2X2Icon,
+  StarIcon,
 } from "@heroicons/react/16/solid";
 import { StarIcon as StarIconOutline } from "@heroicons/react/24/outline";
+import { Button, Card } from "antd";
 import Link from "next/link";
-import { useState } from "react";
-import { DataGridPremium, GridColDef } from "@mui/x-data-grid-premium";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 const shops = [
   {
@@ -56,23 +55,6 @@ export default function Dashboard() {
   const router = useRouter();
 
   const handleChangeView = (view: "tile" | "list") => setView(view);
-
-  const columns: GridColDef[] = [
-    { field: "title", headerName: "ShopName", flex: 0.2 },
-    { field: "availableProducts", headerName: "Available Products", flex: 0.2 },
-    {
-      field: "profitableProducts",
-      headerName: "Profitable Products Ebay",
-      flex: 0.2,
-      valueGetter: (params) => params.row?.profitableProducts.ebay,
-    },
-    {
-      field: "profitableProducts",
-      headerName: "Profitable Products Amazon",
-      flex: 0.2,
-      valueGetter: (params) => params.row?.profitableProducts.amazon,
-    },
-  ];
 
   return (
     <main>
@@ -129,18 +111,7 @@ export default function Dashboard() {
           </div>
         ) : (
           <div>
-            <DataGridPremium
-              initialState={{
-                sorting: {
-                  sortModel: [{ field: "title", sort: "asc" }],
-                },
-              }}
-              disableColumnMenu
-              rows={shops}
-              onRowClick={(row) => router.push(`/dashboard/shop/${row.id}`)}
-              getRowId={(row) => row._id}
-              columns={columns}
-            />
+            <Shops />
           </div>
         )}
       </section>

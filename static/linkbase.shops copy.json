@@ -1,0 +1,157 @@
+[
+  {
+    "_id": {
+      "$oid": "6166d0a9527a406dbd7884af"
+    },
+    "n": "h1.text-lg > span:nth-child(1)",
+    "a": "span.flex",
+    "p": [
+      ".price-details > span:nth-child(1) > span:nth-child(1)"
+    ],
+    "d": "idealo.de",
+    "ne": "Idealo",
+    "l": "https://a.storyblok.com/f/183125/194x65/1786490175/apoblitz.png",
+    "ps": ".table > tbody:nth-child(1) > tr:nth-child(3) > td:nth-child(2)",
+    "m": "",
+    "pzn": "div.text-white:nth-child(2) > div:nth-child(1)",
+    "fetch": false,
+    "s": {
+      "gp": "3.9",
+      "fs": "30",
+      "wr": "0"
+    },
+    "ean": "script[type='application/ld+json'];gtin",
+    "active": true,
+    "lastCrawlAt": "2023-04-15T01:48:45.349Z",
+    "lastSelectorTestAt": "2023-03-27T07:52:15.259Z",
+    "ece": [],
+    "ap": [],
+    "kws": [],
+    "purlschema": "",
+    "updatedAt": {
+      "$date": "2023-04-15T01:48:45.349Z"
+    },
+    "afflPrefix": "",
+    "img": "div.image-gallery"
+  },
+  {
+    "_id": {
+      "$oid": "6166d0a9527a406dbd7884b0"
+    },
+    "n": ".boxProductDetail_middle > h1:nth-child(1)",
+    "a": "dl.productAvailability:nth-child(3) > dd:nth-child(2) > span:nth-child(2)",
+    "p": [
+      "dl.productPrice:nth-child(2) > dd:nth-child(2)"
+    ],
+    "d": "alternate.de",
+    "ne": "Alternate",
+    "l": "https://placehold.co/600x400",
+    "ps": "",
+    "m": "",
+    "de": "",
+    "pzn": "dd.pzn",
+    "fetch": false,
+    "s": {
+      "gp": {
+        "$numberDecimal": "0"
+      },
+      "fs": {
+        "$numberDecimal": "0"
+      },
+      "wr": {
+        "$numberDecimal": "0"
+      }
+    },
+    "ean": "",
+    "active": false,
+    "lastCrawlAt": "2023-03-31T17:14:31.239Z",
+    "lastSelectorTestAt": {
+      "$date": "2023-03-27T07:52:15.259Z"
+    },
+    "ece": [],
+    "ap": [],
+    "kws": [],
+    "updatedAt": {
+      "$date": "2023-03-31T17:14:31.239Z"
+    },
+    "purlschema": "",
+    "afflPrefix": ""
+  },
+  {
+    "_id": {
+      "$oid": "6166d0a9527a406dbd7884b2"
+    },
+    "n": "h1.name",
+    "a": "dl.productAvailability",
+    "p": [
+      ".productPrice > dd:nth-child(5)",
+      ".productPrice > dd:nth-child(2)"
+    ],
+    "d": "mindfactory.de",
+    "ne": "Mindfactory",
+    "l": "https://a.storyblok.com/f/183125/330x87/31d115ff7e/medikamente-per-klick.png",
+    "ps": "div.productInformations dd.packageSize",
+    "m": "",
+    "pzn": "div.productInformations dd[itemprop='productID']",
+    "fetch": false,
+    "s": {
+      "gp": "2.99",
+      "fs": "10",
+      "wr": "0"
+    },
+    "ean": "",
+    "active": true,
+    "lastCrawlAt": "2023-04-14T23:29:11.808Z",
+    "lastSelectorTestAt": {
+      "$date": "2023-03-27T07:52:15.259Z"
+    },
+    "ece": [],
+    "ap": [],
+    "kws": [],
+    "purlschema": "",
+    "updatedAt": {
+      "$date": "2023-04-14T23:29:11.809Z"
+    },
+    "afflPrefix": ""
+  },
+  {
+    "_id": {
+      "$oid": "6166d0a9527a406dbd7884b3"
+    },
+    "n": ".product-name > h1:nth-child(1)",
+    "a": "dl.productAvailability:nth-child(1) > dd:nth-child(2) > span:nth-child(2)",
+    "p": [
+      "div.buttons:nth-child(1) > dd:nth-child(2)"
+    ],
+    "d": "cyberport.de",
+    "ne": "Cyberport",
+    "l": "https://a.storyblok.com/f/183125/663x291/f4420426a8/ipill.jpg",
+    "ps": "div.informations dl.productInfos dd[itemprop='model']",
+    "m": "",
+    "pzn": "meta[itemprop='sku']",
+    "fetch": false,
+    "s": {
+      "gp": "3.95",
+      "fs": "60",
+      "wr": "0"
+    },
+    "ean": "meta[itemprop='gtin14']",
+    "active": true,
+    "lastCrawlAt": "2023-04-18T06:26:07.966Z",
+    "lastSelectorTestAt": {
+      "$date": "2023-03-27T07:52:15.259Z"
+    },
+    "ece": [],
+    "ap": [
+      "&filterBy="
+    ],
+    "kws": [
+      "/product/"
+    ],
+    "purlschema": "",
+    "updatedAt": {
+      "$date": "2023-04-18T06:26:07.968Z"
+    },
+    "afflPrefix": ""
+  }
+]

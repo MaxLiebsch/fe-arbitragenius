@@ -1,4 +1,5 @@
 "use client";
+
 import { Fragment, useState } from "react";
 import { Dialog, Menu, Transition } from "@headlessui/react";
 import {
@@ -21,10 +22,29 @@ const navigation = [
   //   { name: "Documents", href: "#", icon: DocumentDuplicateIcon, current: false },
   //   { name: "Reports", href: "#", icon: ChartPieIcon, current: false },
 ];
+
 const favorites = [
-  { id: 1, name: "shop.de", href: "/dashboard/shop/1", initial: "AE", current: false },
-  { id: 2, name: "shop2.de", href: "/dashboard/shop/2", initial: "AE", current: false },
-  { id: 3, name: "shop3.de", href: "/dashboard/shop/3", initial: "AE", current: false },
+  {
+    id: 1,
+    name: "shop.de",
+    href: "/dashboard/shop/1",
+    initial: "AE",
+    current: false,
+  },
+  {
+    id: 2,
+    name: "shop2.de",
+    href: "/dashboard/shop/2",
+    initial: "AE",
+    current: false,
+  },
+  {
+    id: 3,
+    name: "shop3.de",
+    href: "/dashboard/shop/3",
+    initial: "AE",
+    current: false,
+  },
 ];
 
 const userNavigation = [
