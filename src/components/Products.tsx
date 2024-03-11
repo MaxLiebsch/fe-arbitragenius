@@ -104,6 +104,11 @@ export default function Products(props: { domain: string }) {
     pageSize: 10,
   });
 
+  const shopQuery = useQuery({
+    queryKey: ["shop", domain],
+    queryFn: () => fetch(`/api/shop/${domain}`).then((resp) => resp.json()),
+  });
+
   const productCountQuery = useQuery({
     queryKey: ["shop", domain, "product", "count"],
     queryFn: () =>
@@ -167,7 +172,7 @@ export default function Products(props: { domain: string }) {
       experimentalFeatures={{ columnGrouping: true }}
       columnGroupingModel={[
         {
-          groupId: `shop`,
+          groupId: shopQuery.data?.ne ?? "Loading ...",
           children: [{ field: "nm" }, { field: "mnfctr" }],
         },
         {
