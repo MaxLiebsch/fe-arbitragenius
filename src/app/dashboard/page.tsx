@@ -1,13 +1,8 @@
 "use server";
 import ShopsGrid from "@/components/ShopsGrid";
 import ShopsTable from "@/components/ShopsTable";
-import {
-  ListBulletIcon,
-  Squares2X2Icon,
-  StarIcon,
-} from "@heroicons/react/16/solid";
+import { StarIcon } from "@heroicons/react/16/solid";
 import { Button } from "antd";
-import { redirect } from "next/navigation";
 import { mongoPromise } from "@/server/mongo";
 import DashboardViewButton from "@/components/DashboardViewButton";
 

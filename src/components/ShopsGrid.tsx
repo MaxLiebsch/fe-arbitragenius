@@ -1,9 +1,11 @@
 "use client";
 import Link from "next/link";
 import { Button, Card, Spin } from "antd";
+import { StarIcon } from "@heroicons/react/16/solid";
 import { StarIcon as StarIconOutline } from "@heroicons/react/24/outline";
 import { useState } from "react";
 import useShops, { ShopPagination } from "@/hooks/use-shops";
+import useFavorites from "@/hooks/use-favorites";
 
 export default function ShopsGrid() {
   const [paginationModel, setPaginationModel] = useState<ShopPagination>({
@@ -12,6 +14,7 @@ export default function ShopsGrid() {
   });
 
   const shopQuery = useShops(paginationModel);
+  const favorites = useFavorites();
 
   if (shopQuery.isLoading)
     return (
@@ -45,7 +48,13 @@ export default function ShopsGrid() {
             </Link>
             <Button
               className="ml-auto"
-              icon={<StarIconOutline className="h-6 w-6" />}
+              icon={
+                favorites.data?.includes(shop.d) ? (
+                  <StarIcon className="h-6 w-6" />
+                ) : (
+                  <StarIconOutline className="h-6 w-6" />
+                )
+              }
             />
           </div>
         </Card>

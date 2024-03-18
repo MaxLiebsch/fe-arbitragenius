@@ -1,10 +1,7 @@
-import { getLoggedInUser } from "@/server/appwrite";
 import { mongoPromise } from "@/server/mongo";
 import { NextRequest } from "next/server";
 
 export async function GET(request: NextRequest) {
-  const user = await getLoggedInUser();
-
   const searchParams = request.nextUrl.searchParams;
   const params = {
     page: Number(searchParams.get("page")) || 0,
@@ -19,11 +16,6 @@ export async function GET(request: NextRequest) {
   if (params.size < 1)
     return new Response("size must be at least 1", {
       status: 400,
-    });
-
-  if (!user)
-    return new Response(undefined, {
-      status: 401,
     });
 
   const mongo = await mongoPromise;

@@ -1,4 +1,3 @@
-import { getLoggedInUser } from "@/server/appwrite";
 import { mongoPromise } from "@/server/mongo";
 import { SortDirection } from "mongodb";
 import { NextRequest } from "next/server";
@@ -7,8 +6,6 @@ export async function GET(
   request: NextRequest,
   { params }: { params: { domain: string } }
 ) {
-  const user = await getLoggedInUser();
-
   const searchParams = request.nextUrl.searchParams;
   const query = {
     page: Number(searchParams.get("page")) || 0,
@@ -25,11 +22,6 @@ export async function GET(
   if (query.size < 1)
     return new Response("size must be at least 1", {
       status: 400,
-    });
-
-  if (!user)
-    return new Response(undefined, {
-      status: 401,
     });
 
   const mongo = await mongoPromise;
