@@ -24,7 +24,7 @@ export async function signinAction(formData: FormData) {
   try {
     const session = await account.createEmailPasswordSession(email, password);
 
-    cookies().set("arbispotter-session", session.secret, {
+    cookies().set(`a_session_${process.env.NEXT_PUBLIC_APPWRITE_PROJECT}_legacy`, session.secret, {
       path: "/",
       httpOnly: true,
       sameSite: "strict",

@@ -15,7 +15,9 @@ export async function GET(request: NextRequest) {
   const res = await mongo
     .db(process.env.NEXT_MONGO_DB)
     .collection(process.env.NEXT_MONGO_SHOPS ?? "shops")
-    .countDocuments();
+    .countDocuments({
+      active: { $eq: true },
+    });
 
   return Response.json(res);
 }

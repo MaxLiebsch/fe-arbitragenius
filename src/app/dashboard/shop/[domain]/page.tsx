@@ -1,6 +1,6 @@
 "use server";
 
-import Products from "@/components/Products";
+import ProductsTable from "@/components/ProductsTable";
 import { mongoPromise } from "@/server/mongo";
 import Title from "antd/es/typography/Title";
 import { redirect } from "next/navigation";
@@ -12,15 +12,15 @@ export default async function Shop({ params }: { params: { domain: string } }) {
   const res = await mongo
     .db(process.env.NEXT_MONGO_DB)
     .collection(process.env.NEXT_MONGO_SHOPS ?? "shops")
-    .findOne({ d: { $eq: params.domain } });
+    .findOne({ d: { $eq: params.domain }, active: { $eq: true } });
 
   if (!res) redirect("/dashboard");
 
   return (
-    <div>
+    <div className="h-full flex flex-col">
       <Title>{res.ne}</Title>
-      <div>
-        <Products domain={params.domain} />
+      <div className="grow">
+        <ProductsTable className="h-full" domain={params.domain} />
       </div>
     </div>
   );

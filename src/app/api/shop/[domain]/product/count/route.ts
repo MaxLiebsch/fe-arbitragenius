@@ -17,8 +17,8 @@ export async function GET(
 
   const res = await mongo
     .db(process.env.NEXT_MONGO_DB)
-    .collection(process.env.NEXT_MONGO_PRODUCTS ?? "shops")
-    .countDocuments({ s: { $eq: params.domain } });
+    .collection(params.domain)
+    .countDocuments();
 
   return Response.json(res);
 }

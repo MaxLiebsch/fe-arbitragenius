@@ -27,12 +27,16 @@ export async function signupAction(formData: FormData) {
   await account.create(ID.unique(), email, password, name);
   const session = await account.createEmailPasswordSession(email, password);
 
-  cookies().set("arbispotter-session", session.secret, {
-    path: "/",
-    httpOnly: true,
-    sameSite: "strict",
-    secure: true,
-  });
+  cookies().set(
+    `a_session_${process.env.NEXT_PUBLIC_APPWRITE_PROJECT}_legacy`,
+    session.secret,
+    {
+      path: "/",
+      httpOnly: true,
+      sameSite: "strict",
+      secure: true,
+    }
+  );
 
   redirect("/dashboard");
 }

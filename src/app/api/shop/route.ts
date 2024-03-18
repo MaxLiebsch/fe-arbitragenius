@@ -32,6 +32,9 @@ export async function GET(request: NextRequest) {
     .db(process.env.NEXT_MONGO_DB)
     .collection(process.env.NEXT_MONGO_SHOPS ?? "shops")
     .find()
+    .filter({
+      active: { $eq: true },
+    })
     .skip(params.page * params.size)
     .limit(params.size)
     .toArray();

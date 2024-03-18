@@ -10,8 +10,8 @@ export default function Page() {
             <span className="inline-block -mb-2">
               <img
                 className="mx-auto h-10 w-auto"
-                src="/Arbitrage/Archiv/arbispotter_left-black.png"
-                alt="Your Company"
+                src="/static/arbispotter_left-black.png"
+                alt="Arbispotter"
               />
             </span>{" "}
             account

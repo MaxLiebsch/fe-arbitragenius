@@ -1,5 +1,6 @@
 import { getLoggedInUser } from "@/server/appwrite";
 import { mongoPromise } from "@/server/mongo";
+import { SortDirection } from "mongodb";
 import { NextRequest } from "next/server";
 
 export async function GET(
@@ -12,6 +13,8 @@ export async function GET(
   const query = {
     page: Number(searchParams.get("page")) || 0,
     size: Number(searchParams.get("size")) || 10,
+    field: searchParams.get("sortby"),
+    order: searchParams.get("sortorder"),
   };
 
   if (query.page < 0)
@@ -31,10 +34,15 @@ export async function GET(
 
   const mongo = await mongoPromise;
 
+  const sort: {
+    [key: string]: SortDirection;
+  } = query.field ? { [query.field]: query.order === "asc" ? 1 : -1 } : {};
+
   const res = await mongo
     .db(process.env.NEXT_MONGO_DB)
-    .collection(process.env.NEXT_MONGO_PRODUCTS ?? "shops")
-    .find({ s: { $eq: params.domain } })
+    .collection(params.domain)
+    .find()
+    .sort(sort)
     .skip(query.page * query.size)
     .limit(query.size)
     .toArray();

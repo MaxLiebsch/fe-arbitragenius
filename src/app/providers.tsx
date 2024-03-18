@@ -1,4 +1,3 @@
-// In Next.js, this file would be called: app/providers.jsx
 "use client";
 
 // We can not useState or useRef in a server component, which is why we are
@@ -45,7 +44,7 @@ export default function Providers({ children }: { children: ReactNode }) {
   return (
     <QueryClientProvider client={queryClient}>
       {children}
-      {/* <ReactQueryDevtools initialIsOpen={false} /> */}
+      <ReactQueryDevtools initialIsOpen={false} buttonPosition="bottom-left" />
     </QueryClientProvider>
   );
 }

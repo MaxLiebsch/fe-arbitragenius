@@ -1,11 +1,20 @@
 "use client";
-
-import { DataGridPremium, GridColDef } from "@mui/x-data-grid-premium";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import {
+  DataGridPremium,
+  GridColDef,
+  GridSortModel,
+} from "@mui/x-data-grid-premium";
+import { useState } from "react";
 import ImageRenderer from "./ImageRenderer";
 import { appendPercentage, formatCurrency } from "@/util/formatter";
 import Link from "next/link";
+import { Spin } from "antd";
+import useShop from "@/hooks/use-shop";
+import useProductCount from "@/hooks/use-product-count";
+import useProducts, {
+  ProductPagination,
+  ProductSort,
+} from "@/hooks/use-products";
 
 const LinkWrapper = (link: string | undefined) => {
   if (link) {
@@ -96,67 +105,35 @@ const columns: GridColDef[] = [
   },
 ];
 
-export default function Products(props: { domain: string }) {
-  const { domain } = props;
-  const queryClient = useQueryClient();
-  const [paginationModel, setPaginationModel] = useState({
+export default function ProductsTable(props: {
+  className?: string;
+  domain: string;
+}) {
+  const { className, domain } = props;
+  const [paginationModel, setPaginationModel] = useState<ProductPagination>({
     page: 0,
     pageSize: 10,
   });
+  const [sortModel, setSortModel] = useState<ProductSort>();
 
-  const shopQuery = useQuery({
-    queryKey: ["shop", domain],
-    queryFn: () => fetch(`/api/shop/${domain}`).then((resp) => resp.json()),
-  });
+  const shopQuery = useShop(domain);
+  const productCountQuery = useProductCount(domain);
+  const productQuery = useProducts(domain, paginationModel, sortModel);
 
-  const productCountQuery = useQuery({
-    queryKey: ["shop", domain, "product", "count"],
-    queryFn: () =>
-      fetch(`/api/shop/${domain}/product/count`).then((resp) => resp.json()),
-  });
-
-  const productQuery = useQuery({
-    queryKey: [
-      "shop",
-      domain,
-      "product",
-      paginationModel.page,
-      paginationModel.pageSize,
-    ],
-    queryFn: () =>
-      fetch(
-        `/api/shop/${domain}/product?page=${paginationModel.page}&size=${paginationModel.pageSize}`
-      ).then((resp) => resp.json()),
-  });
-
-  useEffect(() => {
-    if (paginationModel.page < 10) {
-      queryClient.prefetchQuery({
-        queryKey: [
-          "shop",
-          domain,
-          "product",
-          paginationModel.page + 1,
-          paginationModel.pageSize,
-        ],
-        queryFn: () =>
-          fetch(
-            `/api/shop/${domain}/product?page=${
-              paginationModel.page + 1
-            }&size=${paginationModel.pageSize}`
-          ).then((resp) => resp.json()),
+  const handleSortModelChange = (model: GridSortModel) => {
+    if (model.length) {
+      setSortModel({
+        field: model[0].field,
+        direction: model[0].sort ?? "asc",
       });
+    } else {
+      setSortModel(undefined);
     }
-  }, [
-    productQuery.data,
-    domain,
-    paginationModel.page,
-    paginationModel.pageSize,
-    queryClient,
-  ]);
+  };
 
   return (
     <DataGridPremium
+      className={className}
       initialState={{ pinnedColumns: { left: ["mnfctr", "nm"] } }}
       getRowId={(row) => row._id}
       disableColumnMenu
@@ -164,11 +141,14 @@ export default function Products(props: { domain: string }) {
       rows={productQuery.data ?? []}
       rowCount={productCountQuery.data}
       loading={productQuery.isFetching}
+      autoPageSize
       pageSizeOptions={[5, 10, 20]}
       paginationModel={paginationModel}
       onPaginationModelChange={setPaginationModel}
       paginationMode="server"
       pagination={true}
+      sortingMode="server"
+      onSortModelChange={handleSortModelChange}
       experimentalFeatures={{ columnGrouping: true }}
       columnGroupingModel={[
         {
@@ -200,6 +180,13 @@ export default function Products(props: { domain: string }) {
           ],
         },
       ]}
+      slots={{
+        loadingOverlay: () => (
+          <div className="h-full w-full flex items-center justify-center">
+            <Spin />
+          </div>
+        ),
+      }}
     />
   );
 }

@@ -7,7 +7,7 @@ export async function createSessionClient() {
     .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT ?? "")
     .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT ?? "");
 
-  const session = cookies().get("arbispotter-session");
+  const session = cookies().get(`a_session_${process.env.NEXT_PUBLIC_APPWRITE_PROJECT}_legacy`);
   if (!session || !session.value) {
     throw new Error("No session");
   }
