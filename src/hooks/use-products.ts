@@ -84,7 +84,9 @@ export default function useProducts(
           if (sort)
             sortQuery = `&sortby=${sort.field}&sortorder=${sort.direction}`;
           return fetch(
-            `/api/shop/${domain}/product?page=${pagination.page + 1}&size=${pagination.pageSize}${sortQuery}`
+            `/api/shop/${domain}/product?page=${pagination.page + 1}&size=${
+              pagination.pageSize
+            }${sortQuery}`
           ).then((resp) => resp.json());
         },
       });
