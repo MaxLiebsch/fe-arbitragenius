@@ -36,6 +36,7 @@ export default function ShopsTable(props: { className?: string }) {
       onPaginationModelChange={setPaginationModel}
       paginationMode="server"
       pagination={true}
+      autoHeight
       slots={{
         loadingOverlay: () => (
           <div className="h-full w-full flex items-center justify-center">

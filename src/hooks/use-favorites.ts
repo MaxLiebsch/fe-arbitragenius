@@ -4,8 +4,6 @@ export default function useFavorites() {
   return useQuery<string[]>({
     queryKey: ["preferences", "favorites"],
     queryFn: () =>
-      fetch(`/api/user/preferences`)
-        .then((resp) => resp.json())
-        .then((preferences) => preferences.favorites?.split(",") ?? []),
+      fetch(`/api/user/preferences/favorites`).then((resp) => resp.json()),
   });
 }

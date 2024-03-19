@@ -13,38 +13,12 @@ import {
 } from "@heroicons/react/24/outline";
 import Image from "next/image";
 import Link from "next/link";
+import useFavoriteShops from "@/hooks/use-favorite-shops";
+import { Spin } from "antd";
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: HomeIcon, current: true },
   { name: "Printed advertising", href: "/", icon: UsersIcon, current: false },
-  //   { name: "Projects", href: "#", icon: FolderIcon, current: false },
-  //   { name: "Calendar", href: "#", icon: CalendarIcon, current: false },
-  //   { name: "Documents", href: "#", icon: DocumentDuplicateIcon, current: false },
-  //   { name: "Reports", href: "#", icon: ChartPieIcon, current: false },
-];
-
-const favorites = [
-  {
-    id: 1,
-    name: "shop.de",
-    href: "/dashboard/shop/1",
-    initial: "AE",
-    current: false,
-  },
-  {
-    id: 2,
-    name: "shop2.de",
-    href: "/dashboard/shop/2",
-    initial: "AE",
-    current: false,
-  },
-  {
-    id: 3,
-    name: "shop3.de",
-    href: "/dashboard/shop/3",
-    initial: "AE",
-    current: false,
-  },
 ];
 
 const userNavigation = [
@@ -62,6 +36,7 @@ export const DashboardLayout = ({
   children: React.ReactNode;
 }>) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const favoriteShopsQuery = useFavoriteShops();
   return (
     <>
       <div className="h-full">
@@ -122,7 +97,7 @@ export const DashboardLayout = ({
                     <div className="flex h-16 shrink-0 items-center">
                       <img
                         className="h-8 w-auto"
-                        src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
+                        src="/static/arbispotter_left-black.png"
                         alt="Your Company"
                       />
                     </div>
@@ -132,7 +107,7 @@ export const DashboardLayout = ({
                           <ul role="list" className="-mx-2 space-y-1">
                             {navigation.map((item) => (
                               <li key={item.name}>
-                                <a
+                                <Link
                                   href={item.href}
                                   className={classNames(
                                     item.current
@@ -151,39 +126,42 @@ export const DashboardLayout = ({
                                     aria-hidden="true"
                                   />
                                   {item.name}
-                                </a>
+                                </Link>
                               </li>
                             ))}
                           </ul>
                         </li>
                         <li>
                           <div className="text-xs font-semibold leading-6 text-gray-400">
-                            Your favorites
+                            Your Favorites{" "}
+                            {favoriteShopsQuery.isLoading && (
+                              <Spin size="small" />
+                            )}
                           </div>
                           <ul role="list" className="-mx-2 mt-2 space-y-1">
-                            {favorites.map((team) => (
-                              <li key={team.name}>
-                                <a
-                                  href={team.href}
+                            {favoriteShopsQuery.data?.map((shop) => (
+                              <li key={shop.ne}>
+                                <Link
+                                  href={`/dashboard/shop/${shop.d}`}
                                   className={classNames(
-                                    team.current
-                                      ? "bg-gray-50 text-indigo-600"
-                                      : "text-gray-700 hover:text-indigo-600 hover:bg-gray-50",
+                                    // team.current
+                                    //   ? "bg-gray-50 text-indigo-600" :
+                                    "text-gray-700 hover:text-indigo-600 hover:bg-gray-50",
                                     "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
                                   )}
                                 >
                                   <span
                                     className={classNames(
-                                      team.current
-                                        ? "text-indigo-600 border-indigo-600"
-                                        : "text-gray-400 border-gray-200 group-hover:border-indigo-600 group-hover:text-indigo-600",
+                                      // team.current
+                                      //   ? "text-indigo-600 border-indigo-600" :
+                                      "text-gray-400 border-gray-200 group-hover:border-indigo-600 group-hover:text-indigo-600",
                                       "flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border text-[0.625rem] font-medium bg-white"
                                     )}
                                   >
-                                    {team.initial}
+                                    {shop.d.substring(0, 2).toLocaleUpperCase()}
                                   </span>
-                                  <span className="truncate">{team.name}</span>
-                                </a>
+                                  <span className="truncate">{shop.ne}</span>
+                                </Link>
                               </li>
                             ))}
                           </ul>
@@ -202,11 +180,11 @@ export const DashboardLayout = ({
           {/* Sidebar component, swap this element with another sidebar if you like */}
           <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6">
             <Link href="/">
-              <div className="flex h-16 w-16 mt-4 shrink-0 items-center relative">
+              <div className="flex h-16 w-56 mt-4 shrink-0 items-center relative">
                 <Image
                   fill={true}
                   className="h-8 w-auto"
-                  src="/logo_white.png"
+                  src="/static/arbispotter_left-black.png"
                   alt="Arbitrage Genius"
                 />
               </div>
@@ -217,7 +195,7 @@ export const DashboardLayout = ({
                   <ul role="list" className="-mx-2 space-y-1">
                     {navigation.map((item) => (
                       <li key={item.name}>
-                        <a
+                        <Link
                           href={item.href}
                           className={classNames(
                             item.current
@@ -236,45 +214,46 @@ export const DashboardLayout = ({
                             aria-hidden="true"
                           />
                           {item.name}
-                        </a>
+                        </Link>
                       </li>
                     ))}
                   </ul>
                 </li>
                 <li>
                   <div className="text-xs font-semibold leading-6 text-gray-400">
-                    Your Favorites
+                    Your Favorites{" "}
+                    {favoriteShopsQuery.isLoading && <Spin size="small" />}
                   </div>
                   <ul role="list" className="-mx-2 mt-2 space-y-1">
-                    {favorites.map((team) => (
-                      <li key={team.name}>
-                        <a
-                          href={team.href}
+                    {favoriteShopsQuery.data?.map((shop) => (
+                      <li key={shop.ne}>
+                        <Link
+                          href={`/dashboard/shop/${shop.d}`}
                           className={classNames(
-                            team.current
-                              ? "bg-gray-50 text-indigo-600"
-                              : "text-gray-700 hover:text-indigo-600 hover:bg-gray-50",
+                            // team.current
+                            //   ? "bg-gray-50 text-indigo-600" :
+                            "text-gray-700 hover:text-indigo-600 hover:bg-gray-50",
                             "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
                           )}
                         >
                           <span
                             className={classNames(
-                              team.current
-                                ? "text-indigo-600 border-indigo-600"
-                                : "text-gray-400 border-gray-200 group-hover:border-indigo-600 group-hover:text-indigo-600",
+                              // team.current
+                              //   ? "text-indigo-600 border-indigo-600" :
+                              "text-gray-400 border-gray-200 group-hover:border-indigo-600 group-hover:text-indigo-600",
                               "flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border text-[0.625rem] font-medium bg-white"
                             )}
                           >
-                            {team.initial}
+                            {shop.d.substring(0, 2).toLocaleUpperCase()}
                           </span>
-                          <span className="truncate">{team.name}</span>
-                        </a>
+                          <span className="truncate">{shop.ne}</span>
+                        </Link>
                       </li>
                     ))}
                   </ul>
                 </li>
                 <li className="-mx-6 mt-auto">
-                  <a
+                  <Link
                     href="#"
                     className="flex items-center gap-x-4 px-6 py-3 text-sm font-semibold leading-6 text-gray-900 hover:bg-gray-50"
                   >
@@ -285,7 +264,7 @@ export const DashboardLayout = ({
                     />
                     <span className="sr-only">Your profile</span>
                     <span aria-hidden="true">Tom Cook</span>
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </nav>
@@ -304,14 +283,14 @@ export const DashboardLayout = ({
           <div className="flex-1 text-sm font-semibold leading-6 text-gray-900">
             Dashboard
           </div>
-          <a href="#">
+          <Link href="#">
             <span className="sr-only">Your profile</span>
             <img
               className="h-8 w-8 rounded-full bg-gray-50"
               src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
               alt=""
             />
-          </a>
+          </Link>
         </div>
 
         <main className="h-full">
@@ -399,7 +378,7 @@ export const DashboardLayout = ({
                         {userNavigation.map((item) => (
                           <Menu.Item key={item.name}>
                             {({ active }) => (
-                              <a
+                              <Link
                                 href={item.href}
                                 className={classNames(
                                   active ? "bg-gray-50" : "",
@@ -407,7 +386,7 @@ export const DashboardLayout = ({
                                 )}
                               >
                                 {item.name}
-                              </a>
+                              </Link>
                             )}
                           </Menu.Item>
                         ))}
@@ -418,7 +397,9 @@ export const DashboardLayout = ({
               </div>
             </div>
           </div>
-          <div className="lg:pl-80 pt-20 pb-4 px-4 sm:px-6 lg:px-8 h-full">{children}</div>
+          <div className="lg:pl-80 pt-20 pb-4 px-4 sm:px-6 lg:px-8 h-full">
+            {children}
+          </div>
         </main>
       </div>
     </>

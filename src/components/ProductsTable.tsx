@@ -73,7 +73,7 @@ const columns: GridColDef[] = [
   {
     field: "a_mrgn_pct",
     headerName: "Margin %",
-    valueFormatter: (params) => formatCurrency(params.value),
+    valueFormatter: (params) => appendPercentage(params.value),
   },
   {
     field: "e_lnk",
@@ -141,7 +141,6 @@ export default function ProductsTable(props: {
       rows={productQuery.data ?? []}
       rowCount={productCountQuery.data}
       loading={productQuery.isFetching}
-      autoPageSize
       pageSizeOptions={[5, 10, 20]}
       paginationModel={paginationModel}
       onPaginationModelChange={setPaginationModel}

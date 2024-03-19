@@ -76,13 +76,15 @@ export default function useProducts(
           "product",
           pagination.page + 1,
           pagination.pageSize,
+          sort?.field,
+          sort?.direction,
         ],
         queryFn: async () => {
           let sortQuery = "";
           if (sort)
             sortQuery = `&sortby=${sort.field}&sortorder=${sort.direction}`;
           return fetch(
-            `/api/shop/${domain}/product?page=${pagination.page}&size=${pagination.pageSize}${sortQuery}`
+            `/api/shop/${domain}/product?page=${pagination.page + 1}&size=${pagination.pageSize}${sortQuery}`
           ).then((resp) => resp.json());
         },
       });

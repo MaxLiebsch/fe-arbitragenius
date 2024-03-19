@@ -6,6 +6,8 @@ import { StarIcon as StarIconOutline } from "@heroicons/react/24/outline";
 import { useState } from "react";
 import useShops, { ShopPagination } from "@/hooks/use-shops";
 import useFavorites from "@/hooks/use-favorites";
+import useFavoriteAdd from "@/hooks/use-favorite-add";
+import useFavoriteRemove from "@/hooks/use-favorite-remove";
 
 export default function ShopsGrid() {
   const [paginationModel, setPaginationModel] = useState<ShopPagination>({
@@ -15,6 +17,8 @@ export default function ShopsGrid() {
 
   const shopQuery = useShops(paginationModel);
   const favorites = useFavorites();
+  const favoriteAddMutation = useFavoriteAdd();
+  const favoriteRemoveMutation = useFavoriteRemove();
 
   if (shopQuery.isLoading)
     return (
@@ -29,6 +33,11 @@ export default function ShopsGrid() {
         Oops ...
       </div>
     );
+
+  function handleToggleFavorite(domain: string) {
+    if (favorites.data?.includes(domain)) favoriteRemoveMutation.mutate(domain);
+    else favoriteAddMutation.mutate(domain);
+  }
 
   return (
     <div className="grid grid-cols-3 gap-2 gap-y-3">
@@ -55,6 +64,7 @@ export default function ShopsGrid() {
                   <StarIconOutline className="h-6 w-6" />
                 )
               }
+              onClick={() => handleToggleFavorite(shop.d)}
             />
           </div>
         </Card>

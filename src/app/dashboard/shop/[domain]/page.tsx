@@ -20,7 +20,7 @@ export default async function Shop({ params }: { params: { domain: string } }) {
     <div className="h-full flex flex-col">
       <Title>{res.ne}</Title>
       <div className="grow">
-        <ProductsTable className="h-full" domain={params.domain} />
+        <ProductsTable domain={params.domain} />
       </div>
     </div>
   );
