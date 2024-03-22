@@ -1,8 +1,4 @@
-import {
-  createAdminClient,
-  createSessionClient,
-  getLoggedInUser,
-} from "@/server/appwrite";
+import { createSessionClient, getLoggedInUser } from "@/server/appwrite";
 import { NextRequest } from "next/server";
 import { z } from "zod";
 
@@ -10,6 +6,7 @@ const serializers: {
   [key: string]: {
     serialize: (input?: any) => string;
     deserialize: (input?: any) => any;
+    fallback?: string;
   };
 } = {
   favorites: {
@@ -23,6 +20,7 @@ const serializers: {
     deserialize(input?: any) {
       return typeof input === "string" ? input.split(",") : [];
     },
+    fallback: JSON.stringify([]),
   },
 };
 
@@ -39,7 +37,9 @@ export async function GET(
     const value = serializers[params.key].deserialize(preferences[params.key]);
     return new Response(JSON.stringify(value));
   } else {
-    return new Response(preferences[params.key] ?? "");
+    return new Response(
+      serializers[params.key]?.fallback ?? preferences[params.key] ?? ""
+    );
   }
 }
 

@@ -2,7 +2,7 @@
 import { ID } from "node-appwrite";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { createAdminClient } from "../appwrite";
+import { createAdminClient, createSessionClient } from "../appwrite";
 import { z } from "zod";
 
 const SignupRequestSchema = z.object({
@@ -25,7 +25,14 @@ export async function signupAction(formData: FormData) {
   const { account } = await createAdminClient();
 
   await account.create(ID.unique(), email, password, name);
+
   const session = await account.createEmailPasswordSession(email, password);
+
+  const { account: acc } = await createSessionClient(session.secret);
+
+  acc.createVerification(
+    `${process.env.NEXT_PUBLIC_DOMAIN}/auth/verify/callback/${email}`
+  );
 
   cookies().set(
     `a_session_${process.env.NEXT_PUBLIC_APPWRITE_PROJECT}_legacy`,
@@ -38,5 +45,5 @@ export async function signupAction(formData: FormData) {
     }
   );
 
-  redirect("/dashboard");
+  redirect("/payment");
 }

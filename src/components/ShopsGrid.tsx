@@ -1,4 +1,5 @@
 "use client";
+
 import Link from "next/link";
 import { Button, Card, Spin } from "antd";
 import { StarIcon } from "@heroicons/react/16/solid";
@@ -35,8 +36,11 @@ export default function ShopsGrid() {
     );
 
   function handleToggleFavorite(domain: string) {
-    if (favorites.data?.includes(domain)) favoriteRemoveMutation.mutate(domain);
-    else favoriteAddMutation.mutate(domain);
+    if (favorites.data?.includes(domain)) {
+      favoriteRemoveMutation.mutate(domain);
+    } else {
+      favoriteAddMutation.mutate(domain);
+    }
   }
 
   return (
