@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { authMiddleware, getSubscriptions } from "./server/appwrite/middleware";
 import { stripe } from "./server/stripe";
+import { getStripeSubscriptions } from "./server/stripe/middleware";
 
 export const middleware = authMiddleware(async (request) => {
   if (!request.user) {
@@ -19,15 +20,17 @@ export const middleware = authMiddleware(async (request) => {
     else return NextResponse.next();
   }
 
-  const stripeSubscription = await stripe.subscriptions.list({
-    customer: subscriptions.documents[0].customer,
-  });
+  const stripeSubscription = await getStripeSubscriptions(
+    subscriptions.documents[0].customer
+  );
 
   if (
     !stripeSubscription.data.length ||
     stripeSubscription.data[0].status !== "active"
   )
-    return NextResponse.redirect(new URL("/payment", request.url));
+    if (!request.nextUrl.pathname.startsWith("/payment"))
+      return NextResponse.redirect(new URL("/payment", request.url));
+    else return NextResponse.next();
 
   return NextResponse.next();
 });

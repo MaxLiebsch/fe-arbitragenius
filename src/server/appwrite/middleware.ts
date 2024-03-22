@@ -132,6 +132,7 @@ export async function getSubscriptions(
       "x-appwrite-project": process.env.NEXT_PUBLIC_APPWRITE_PROJECT,
       "x-appwrite-key": process.env.NEXT_APPWRITE_KEY,
     },
+    cache: "no-store",
   });
 
   if (response.ok) return response.json();
