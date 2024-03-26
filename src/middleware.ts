@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { authMiddleware, getSubscriptions } from "./server/appwrite/middleware";
-import { stripe } from "./server/stripe";
 import { getStripeSubscriptions } from "./server/stripe/middleware";
 
 export const middleware = authMiddleware(async (request) => {
