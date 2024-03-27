@@ -101,7 +101,11 @@ export default function Page() {
               >
                 Register
               </button>
-              <div className="text-red-500 text-sm">{state.message}</div>
+              {Boolean(state.message) && (
+                <div className="text-sm text-red-500 text-right">
+                  ✗ {state.message}
+                </div>
+              )}
             </div>
           </form>
         </div>

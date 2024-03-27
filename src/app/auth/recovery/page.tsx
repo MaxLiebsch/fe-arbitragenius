@@ -1,11 +1,21 @@
+"use client";
+
 import { recoveryAction } from "@/server/actions/recovery";
 import Link from "next/link";
+import { use } from "react";
+import { useFormState } from "react-dom";
 
 export default function Page({
   searchParams,
 }: {
-  searchParams: { email?: string; status?: "ok" | "retry"; error?: string };
+  searchParams: { email?: string; status?: "ok" | "retry" };
 }) {
+  const [state, formAction] = useFormState(recoveryAction, {
+    message: "",
+    formErrors: [],
+    fieldErrors: {},
+  });
+
   return (
     <>
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
@@ -23,7 +33,7 @@ export default function Page({
           </h2>
         </div>
         <div className="mt-5 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form className="space-y-6" action={recoveryAction}>
+          <form className="space-y-6" action={formAction}>
             <div>
               <label
                 htmlFor="email"
@@ -64,7 +74,12 @@ export default function Page({
               <button
                 type="submit"
                 disabled={searchParams.status === "ok"}
-                className="flex w-full justify-center rounded-md bg-chartreuse-yellow-700 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-chartreuse-yellow-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-chartreuse-yellow-700"
+                className={
+                  "flex w-full justify-center rounded-md bg-chartreuse-yellow-700 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-chartreuse-yellow-700" +
+                  (searchParams.status !== "ok"
+                    ? " hover:bg-chartreuse-yellow-600"
+                    : "")
+                }
               >
                 {searchParams.status === "retry"
                   ? "Erneut anfragen"
@@ -82,9 +97,9 @@ export default function Page({
                   </Link>
                 </div>
               )}
-              {Boolean(searchParams.error) && (
+              {Boolean(state?.message) && (
                 <div className="text-sm text-red-600 text-right">
-                  ✗ Da ist etwas schief gelaufen
+                  ✗ {state.message}
                 </div>
               )}
             </div>

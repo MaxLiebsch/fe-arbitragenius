@@ -1,36 +1,48 @@
 "use server";
+
 import { redirect } from "next/navigation";
 import { createAdminClient } from "../appwrite";
 import { z } from "zod";
-import { AppwriteException } from "node-appwrite";
 
-const SigninRequestSchema = z.object({
-  email: z.string().email(),
+const RecoveryRequestSchema = z.object({
+  email: z.string().email({ message: "Keine valide Email" }),
 });
 
-export async function recoveryAction(formData: FormData) {
-  const form = SigninRequestSchema.safeParse({
+export type RecoveryFormState = {
+  message: string;
+} & z.typeToFlattenedError<z.infer<typeof RecoveryRequestSchema>>;
+
+export async function recoveryAction(
+  prevState: RecoveryFormState | null,
+  formData: FormData
+): Promise<RecoveryFormState> {
+  const form = RecoveryRequestSchema.safeParse({
     email: formData.get("email"),
   });
 
-  if (!form.success) return null;
+  if (!form.success) {
+    const errors = form.error.flatten();
+    return {
+      message: "",
+      ...errors,
+    };
+  }
 
   const { email } = form.data;
-  const { account } = await createAdminClient();
 
   try {
+    const { account } = await createAdminClient();
     await account.createRecovery(
       email,
       `${process.env.NEXT_PUBLIC_DOMAIN}/auth/recovery/callback/${email}`
     );
-
-    redirect("/auth/recovery?status=ok");
   } catch (error) {
-    if (error instanceof AppwriteException) {
-      console.log(error);
-      redirect("/auth/recovery?error=appwrite_exception");
-    } else {
-      throw error;
-    }
+    console.log(error);
+    return {
+      message: "Etwas ist schief gelaufen ...",
+      formErrors: [],
+      fieldErrors: {},
+    };
   }
+  redirect("/auth/recovery?status=ok");
 }
