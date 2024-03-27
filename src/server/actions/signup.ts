@@ -1,49 +1,80 @@
 "use server";
-import { ID } from "node-appwrite";
+
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { createAdminClient, createSessionClient } from "../appwrite";
+import { AppwriteException, ID } from "node-appwrite";
 import { z } from "zod";
+import { createAdminClient, createSessionClient } from "../appwrite";
 
 const SignupRequestSchema = z.object({
-  email: z.string().email(),
+  email: z.string().email({ message: "Keine valide Email" }),
   name: z.string().optional(),
-  password: z.string().min(12),
+  password: z
+    .string()
+    .min(12, { message: "Das Passwort muss mindestens 12 Zeichen lang sein" }),
 });
 
-export async function signupAction(formData: FormData) {
+export type SignupFormState = {
+  message: string;
+} & z.typeToFlattenedError<z.infer<typeof SignupRequestSchema>>;
+
+export async function signupAction(
+  prevState: SignupFormState | null,
+  formData: FormData
+): Promise<SignupFormState> {
   const form = SignupRequestSchema.safeParse({
     email: formData.get("email"),
     name: formData.get("name"),
     password: formData.get("password"),
   });
 
-  if (!form.success) return null;
+  if (!form.success) {
+    const errors = form.error.flatten();
+    errors.fieldErrors;
+    return { message: "", ...errors };
+  }
 
   const { email, name, password } = form.data;
 
-  const { account } = await createAdminClient();
+  try {
+    const { account } = await createAdminClient();
+    await account.create(ID.unique(), email, password, name);
+    const session = await account.createEmailPasswordSession(email, password);
+    const { account: acc } = await createSessionClient(session.secret);
 
-  await account.create(ID.unique(), email, password, name);
+    acc.createVerification(
+      `${process.env.NEXT_PUBLIC_DOMAIN}/auth/verify/callback/${email}`
+    );
 
-  const session = await account.createEmailPasswordSession(email, password);
+    cookies().set(
+      `a_session_${process.env.NEXT_PUBLIC_APPWRITE_PROJECT}_legacy`,
+      session.secret,
+      {
+        path: "/",
+        httpOnly: true,
+        sameSite: "strict",
+        secure: true,
+      }
+    );
+  } catch (error) {
+    console.error(error);
 
-  const { account: acc } = await createSessionClient(session.secret);
-
-  acc.createVerification(
-    `${process.env.NEXT_PUBLIC_DOMAIN}/auth/verify/callback/${email}`
-  );
-
-  cookies().set(
-    `a_session_${process.env.NEXT_PUBLIC_APPWRITE_PROJECT}_legacy`,
-    session.secret,
-    {
-      path: "/",
-      httpOnly: true,
-      sameSite: "strict",
-      secure: true,
+    if (error instanceof AppwriteException) {
+      if ((error as any).type === "user_already_exists")
+        return {
+          message: "",
+          formErrors: [],
+          fieldErrors: {
+            email: ["Ein Benutzer mit dieser Email existiert bereits"],
+          },
+        };
     }
-  );
 
+    return {
+      message: "Etwas ist schief gelaufen ...",
+      formErrors: [],
+      fieldErrors: {},
+    };
+  }
   redirect("/payment");
 }

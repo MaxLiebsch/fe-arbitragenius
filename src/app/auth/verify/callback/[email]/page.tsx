@@ -3,7 +3,6 @@
 import { createSessionClient } from "@/server/appwrite";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { AppwriteException } from "node-appwrite";
 
 export default async function Page({
   params,

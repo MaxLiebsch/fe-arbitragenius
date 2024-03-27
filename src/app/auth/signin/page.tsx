@@ -1,6 +1,11 @@
+"use client";
+
 import { signinAction } from "@/server/actions/signin";
+import { useFormState } from "react-dom";
 
 export default function Page() {
+  const [state, formAction] = useFormState(signinAction, { message: "" });
+
   return (
     <>
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
@@ -17,7 +22,7 @@ export default function Page() {
           </h2>
         </div>
         <div className="mt-5 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form className="space-y-6" action={signinAction}>
+          <form className="space-y-6" action={formAction}>
             <div>
               <label
                 htmlFor="email"
@@ -79,6 +84,7 @@ export default function Page() {
               >
                 Login
               </button>
+              <div className="text-sm text-red-500">{state.message}</div>
             </div>
           </form>
         </div>

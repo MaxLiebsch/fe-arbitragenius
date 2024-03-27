@@ -1,6 +1,15 @@
+"use client";
+
 import { signupAction } from "@/server/actions/signup";
+import { useFormState } from "react-dom";
 
 export default function Page() {
+  const [state, formAction] = useFormState(signupAction, {
+    message: "",
+    formErrors: [],
+    fieldErrors: {},
+  });
+
   return (
     <>
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
@@ -18,7 +27,7 @@ export default function Page() {
           </h2>
         </div>
         <div className="mt-5 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form className="space-y-6" action={signupAction}>
+          <form className="space-y-6" action={formAction}>
             <div>
               <label
                 htmlFor="email"
@@ -35,6 +44,9 @@ export default function Page() {
                   required
                   className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-chartreuse-yellow-700 sm:text-sm sm:leading-6"
                 />
+              </div>
+              <div className="text-sm text-red-500 mt-1">
+                {state.fieldErrors.email}
               </div>
             </div>
 
@@ -74,6 +86,9 @@ export default function Page() {
                   className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-chartreuse-yellow-700 sm:text-sm sm:leading-6"
                 />
               </div>
+              <div className="text-sm text-red-500 mt-1">
+                {state.fieldErrors.password}
+              </div>
             </div>
 
             <div className="space-y-1">
@@ -86,6 +101,7 @@ export default function Page() {
               >
                 Register
               </button>
+              <div className="text-red-500 text-sm">{state.message}</div>
             </div>
           </form>
         </div>

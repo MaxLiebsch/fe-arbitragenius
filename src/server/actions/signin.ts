@@ -1,42 +1,56 @@
 "use server";
+
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { createAdminClient } from "../appwrite";
-import { z } from "zod";
 import { AppwriteException } from "node-appwrite";
+import { z } from "zod";
+import { createAdminClient } from "../appwrite";
 
 const SigninRequestSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(12),
+  email: z.string(),
+  password: z.string(),
 });
 
-export async function signinAction(formData: FormData) {
+export type SigninFormState = {
+  message: string;
+};
+
+export async function signinAction(
+  prevState: SigninFormState | null,
+  formData: FormData
+): Promise<SigninFormState> {
   const form = SigninRequestSchema.safeParse({
     email: formData.get("email"),
     password: formData.get("password"),
   });
 
-  if (!form.success) return null;
+  if (!form.success) return { message: "Ungültige Anmeldedaten" };
 
   const { email, password } = form.data;
-  const { account } = await createAdminClient();
 
   try {
+    const { account } = await createAdminClient();
     const session = await account.createEmailPasswordSession(email, password);
 
-    cookies().set(`a_session_${process.env.NEXT_PUBLIC_APPWRITE_PROJECT}_legacy`, session.secret, {
-      path: "/",
-      httpOnly: true,
-      sameSite: "strict",
-      secure: true,
-    });
-
-    redirect("/");
+    cookies().set(
+      `a_session_${process.env.NEXT_PUBLIC_APPWRITE_PROJECT}_legacy`,
+      session.secret,
+      {
+        path: "/",
+        httpOnly: true,
+        sameSite: "strict",
+        secure: true,
+      }
+    );
   } catch (error) {
-    if (error instanceof AppwriteException && error.code === 401) {
-      redirect("/auth/signin?error=user_invalid_credentials");
-    } else {
-      throw error;
+    console.error(error);
+
+    if (error instanceof AppwriteException) {
+      return { message: "Ungültige Anmeldedaten" };
     }
+
+    return { message: "Etwas ist schief gelaufen ..." };
   }
+
+  redirect("/");
 }
