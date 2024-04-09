@@ -10,13 +10,10 @@ const secondaryNavigation = [
   { name: "Einstellungen", href: "#", current: false },
   { name: "Rechungen", href: "#", current: false },
   { name: "Benachrichtigungen", href: "#", current: false },
-  // { name: "Teams", href: "#", current: false },
-  // { name: "Integrations", href: "#", current: false },
 ];
 
 const Page = () => {
   const account = useAccount();
-  console.log("account:", account);
 
   useEffect(() => {}, [account.data]);
 
