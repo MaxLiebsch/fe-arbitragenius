@@ -24,7 +24,7 @@
     "clsx": "^2.1.0",
     "heroicons": "^2.1.1",
     "mongodb": "^6.4.0",
-    "next": "14.1.0",
+    "next": "14.2.0-canary.63",
     "node-appwrite": "^12.0.0",
     "notistack": "^3.0.1",
     "react": "^18",
