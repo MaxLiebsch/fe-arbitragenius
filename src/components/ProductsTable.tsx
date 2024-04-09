@@ -8,7 +8,6 @@ import { useState } from "react";
 import ImageRenderer from "./ImageRenderer";
 import { appendPercentage, formatCurrency } from "@/util/formatter";
 import Link from "next/link";
-import { Spin } from "antd";
 import useShop from "@/hooks/use-shop";
 import useProductCount from "@/hooks/use-product-count";
 import useProducts, {
@@ -16,6 +15,8 @@ import useProducts, {
   ProductSort,
 } from "@/hooks/use-products";
 import Spinner from "./Spinner";
+import ComingSoon from "@/images/coming_soon.jpg";
+import Image from "next/image";
 
 const LinkWrapper = (link: string | undefined) => {
   if (link) {
@@ -32,6 +33,17 @@ const LinkWrapper = (link: string | undefined) => {
 const columns: GridColDef[] = [
   { field: "mnfctr", headerName: "Hersteller", width: 120 },
   { field: "nm", headerName: "Name", width: 250 },
+  {
+    field: "ctgry",
+    headerName: "Kategorie",
+    renderCell: (params) => {
+      if (typeof params.row.ctrgy === "string") {
+        return <>{params.row.ctrgry}</>;
+      } else if (Array.isArray(params.row.ctrgry)) {
+        return <>{params.row.ctrgry.join(",")}</>;
+      }
+    },
+  },
   {
     field: "img",
     headerName: "Produktbild",
@@ -53,7 +65,7 @@ const columns: GridColDef[] = [
     field: "a_img",
     headerName: "Produktbild",
     cellClassName: "hover:!overflow-visible",
-    renderCell: (params) => ImageRenderer(params.row.amazon_image),
+    renderCell: (params) => ImageRenderer(params.row.a_img),
   },
   {
     field: "a_mrgn_pct",
@@ -71,6 +83,13 @@ const columns: GridColDef[] = [
     renderCell: (params) => LinkWrapper(params.row.a_lnk),
   },
   {
+    field: "a_bsr",
+    headerName: "BSR",
+    renderCell: (params) => (
+      <Image src={ComingSoon} alt="coming-soon" width={120} height={70} />
+    ),
+  },
+  {
     field: "a_prc",
     headerName: "Preis",
     valueFormatter: (params) => formatCurrency(params.value),
@@ -81,7 +100,7 @@ const columns: GridColDef[] = [
     field: "e_img",
     headerName: "Produktbild",
     cellClassName: "hover:!overflow-visible",
-    renderCell: (params) => ImageRenderer(params.row.amazon_image),
+    renderCell: (params) => ImageRenderer(params.row.e_img),
   },
   {
     field: "e_mrgn",
@@ -153,7 +172,7 @@ export default function ProductsTable(props: {
       columnGroupingModel={[
         {
           groupId: shopQuery.data?.ne ?? "Loading ...",
-          children: [{ field: "nm" }, { field: "mnfctr" }],
+          children: [{ field: "nm" }, { field: "mnfctr" }, { field: "ctrgy" }],
         },
         {
           groupId: "Ebay",
@@ -171,6 +190,7 @@ export default function ProductsTable(props: {
           groupId: "Amazon",
           children: [
             { field: "a_lnk" },
+            { field: "a_bsr" },
             { field: "a_img" },
             { field: "a_nm" },
             { field: "a_prc" },
