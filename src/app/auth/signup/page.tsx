@@ -1,5 +1,7 @@
 "use client";
 
+import { Button } from "@/components/Button";
+import { Logo } from "@/components/Logo";
 import { signupAction } from "@/server/actions/signup";
 import { useFormState } from "react-dom";
 
@@ -14,16 +16,11 @@ export default function Page() {
     <>
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-          <h2 className="text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-            Create your{" "}
+          <h2 className="text-center text-2xl font-bold leading-9 tracking-tight text-gray-900 flex items-center space-x-2">
             <span className="inline-block -mb-2">
-              <img
-                className="mx-auto h-10 w-auto"
-                src="/static/arbispotter_left-black.png"
-                alt="Arbispotter"
-              />
+              <Logo />
             </span>{" "}
-            account
+            <span>Account erstellen</span>
           </h2>
         </div>
         <div className="mt-5 sm:mx-auto sm:w-full sm:max-w-sm">
@@ -33,7 +30,7 @@ export default function Page() {
                 htmlFor="email"
                 className="block text-sm font-medium leading-6 text-gray-900"
               >
-                Email address *
+                Email Addresse *
               </label>
               <div className="mt-2">
                 <input
@@ -73,7 +70,7 @@ export default function Page() {
                   htmlFor="password"
                   className="block text-sm font-medium leading-6 text-gray-900"
                 >
-                  Password *
+                  Passwort *
                 </label>
               </div>
               <div className="mt-2">
@@ -92,15 +89,17 @@ export default function Page() {
             </div>
 
             <div className="space-y-1">
-              <a className="text-blue-500 underline" href="/auth/signin">
-                Already have an account?
+              <a className="text-secondary-950 underline" href="/auth/signin">
+                Du hast bereits ein Account?
               </a>
-              <button
+              <Button
+                className="w-full"
                 type="submit"
-                className="flex w-full justify-center rounded-md bg-chartreuse-yellow-700 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-chartreuse-yellow-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-chartreuse-yellow-700"
+                variant="solid"
+                color="slate"
               >
-                Register
-              </button>
+                Registrieren
+              </Button>
               {Boolean(state.message) && (
                 <div className="text-sm text-red-500 text-right">
                   ✗ {state.message}

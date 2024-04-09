@@ -1,3 +1,5 @@
+import { Button } from "@/components/Button";
+import { Logo } from "@/components/Logo";
 import { changePasswordAction } from "@/server/actions/change-password";
 
 export default function Page({
@@ -18,11 +20,8 @@ export default function Page({
           <h2 className="text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
             Stelle deinen{" "}
             <span className="inline-block -mb-2">
-              <img
-                className="mx-auto h-10 w-auto"
-                src="/static/arbispotter_left-black.png"
-                alt="Arbispotter"
-              />
+              <Logo/>
+            
             </span>{" "}
             Account wieder her
           </h2>
@@ -96,24 +95,19 @@ export default function Page({
             <div className="space-y-2">
               <div className="flex flex-row justify-between">
                 <a
-                  className="text-blue-500 underline text-sm"
+                  className="text-secondary-950 underline text-sm"
                   href="/auth/signup"
                 >
                   Du hast keinen Account?
                 </a>
                 <a
-                  className="text-blue-500 underline text-sm"
+                  className="text-secondary-950 underline text-sm"
                   href="/auth/signin"
                 >
                   Zum Login
                 </a>
               </div>
-              <button
-                type="submit"
-                className="flex w-full justify-center rounded-md bg-chartreuse-yellow-700 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-chartreuse-yellow-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-chartreuse-yellow-700"
-              >
-                Passwort aktualisieren
-              </button>
+              <Button type="submit" variant='solid' color='slate'>Passwort aktualisieren</Button>
             </div>
           </form>
         </div>

@@ -9,6 +9,7 @@ import useShops, { ShopPagination } from "@/hooks/use-shops";
 import useFavorites from "@/hooks/use-favorites";
 import useFavoriteAdd from "@/hooks/use-favorite-add";
 import useFavoriteRemove from "@/hooks/use-favorite-remove";
+import Spinner from "./Spinner";
 
 export default function ShopsGrid() {
   const [paginationModel, setPaginationModel] = useState<ShopPagination>({
@@ -24,7 +25,7 @@ export default function ShopsGrid() {
   if (shopQuery.isLoading)
     return (
       <div className="h-full flex items-center justify-center w-full">
-        <Spin />
+        <Spinner />
       </div>
     );
 

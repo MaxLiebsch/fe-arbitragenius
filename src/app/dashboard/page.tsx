@@ -5,6 +5,7 @@ import { StarIcon } from "@heroicons/react/16/solid";
 import { Button } from "antd";
 import { mongoPromise } from "@/server/mongo";
 import DashboardViewButton from "@/components/DashboardViewButton";
+import Spinner from "@/components/Spinner";
 
 export default async function Dashboard({
   searchParams,

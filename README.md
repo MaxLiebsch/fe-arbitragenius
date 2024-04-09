@@ -3,8 +3,8 @@
 ## TODO - Overall
 
 - [ ] initial sort margin amazon desc
-- [ ] table picture z-index
-- [ ] color scheme
+- [x] table picture z-index
+- [x] color scheme
 - [ ] search bar - product search, in shop page search products in all shops?
 
 ## TODO - User
@@ -13,6 +13,7 @@
 - [x] appwrite preferences favorites mutate
 - [x] verify
 - [x] change password
-- [ ] sign out
-- [ ] tom cook (placeholder image?)
-- [ ] settings / profile page
+- [x] sign out
+- [x] tom cook (placeholder image?)
+- [x] settings / profile page dummy
+- [] settings / profile page rechnungen, einstellungen

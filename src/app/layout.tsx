@@ -8,8 +8,11 @@ import Providers from "./providers";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Arbitrage Genius",
-  description: "Find the latest prices",
+  title: {
+    template: "%s - Arbispotter",
+    default: "Arbispotter - Move Fast, Earn Easy",
+  },
+  description: "Wir machen Product Sourcing schnell, einfach und intelligent.",
 };
 
 export default function RootLayout({
@@ -18,7 +21,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="de">
       <body className={`${inter.className} h-screen`}>
         <AntdRegistry>
           <Providers>{children}</Providers>

@@ -15,6 +15,7 @@ import useProducts, {
   ProductPagination,
   ProductSort,
 } from "@/hooks/use-products";
+import Spinner from "./Spinner";
 
 const LinkWrapper = (link: string | undefined) => {
   if (link) {
@@ -29,17 +30,17 @@ const LinkWrapper = (link: string | undefined) => {
 };
 
 const columns: GridColDef[] = [
-  { field: "mnfctr", headerName: "Manufacturer", width: 120 },
+  { field: "mnfctr", headerName: "Hersteller", width: 120 },
   { field: "nm", headerName: "Name", width: 250 },
   {
     field: "img",
-    headerName: "Image",
+    headerName: "Produktbild",
     cellClassName: "hover:!overflow-visible",
     renderCell: (params) => ImageRenderer(params.row.img),
   },
   {
     field: "prc",
-    headerName: `Price`,
+    headerName: `Preis`,
     valueFormatter: (params) => formatCurrency(params.value),
   },
   {
@@ -47,32 +48,49 @@ const columns: GridColDef[] = [
     headerName: `Link`,
     renderCell: (params) => LinkWrapper(params.row.lnk),
   },
+  { field: "a_nm", headerName: "Name", width: 250 },
+  {
+    field: "a_img",
+    headerName: "Produktbild",
+    cellClassName: "hover:!overflow-visible",
+    renderCell: (params) => ImageRenderer(params.row.amazon_image),
+  },
+  {
+    field: "a_mrgn_pct",
+    headerName: "Marge %",
+    valueFormatter: (params) => appendPercentage(params.value),
+  },
+  {
+    field: "a_mrgn",
+    headerName: "Marge",
+    valueFormatter: (params) => formatCurrency(params.value),
+  },
   {
     field: "a_lnk",
     headerName: "Link",
     renderCell: (params) => LinkWrapper(params.row.a_lnk),
   },
   {
-    field: "a_img",
-    headerName: "Image",
-    cellClassName: "hover:!overflow-visible",
-    renderCell: (params) => ImageRenderer(params.row.amazon_image),
-  },
-  { field: "a_nm", headerName: "Name", width: 250 },
-  {
     field: "a_prc",
-    headerName: "Price",
-    valueFormatter: (params) => formatCurrency(params.value),
-  },
-  {
-    field: "a_mrgn",
-    headerName: "Margin",
+    headerName: "Preis",
     valueFormatter: (params) => formatCurrency(params.value),
   },
   { field: "a_fat", headerName: "Profitable" },
+  { field: "e_nm", headerName: "Name", width: 250 },
   {
-    field: "a_mrgn_pct",
-    headerName: "Margin %",
+    field: "e_img",
+    headerName: "Produktbild",
+    cellClassName: "hover:!overflow-visible",
+    renderCell: (params) => ImageRenderer(params.row.amazon_image),
+  },
+  {
+    field: "e_mrgn",
+    headerName: "Marge",
+    valueFormatter: (params) => formatCurrency(params.value),
+  },
+  {
+    field: "e_mrgn_pct",
+    headerName: "Marge %",
     valueFormatter: (params) => appendPercentage(params.value),
   },
   {
@@ -81,28 +99,11 @@ const columns: GridColDef[] = [
     renderCell: (params) => LinkWrapper(params.row.e_lnk),
   },
   {
-    field: "e_img",
-    headerName: "Image",
-    cellClassName: "hover:!overflow-visible",
-    renderCell: (params) => ImageRenderer(params.row.amazon_image),
-  },
-  { field: "e_nm", headerName: "Name", width: 250 },
-  {
     field: "e_prc",
-    headerName: "Price",
-    valueFormatter: (params) => formatCurrency(params.value),
-  },
-  {
-    field: "e_mrgn",
-    headerName: "Margin",
+    headerName: "Preis",
     valueFormatter: (params) => formatCurrency(params.value),
   },
   { field: "e_fat", headerName: "Profitable" },
-  {
-    field: "e_mrgn_pct",
-    headerName: "Margin %",
-    valueFormatter: (params) => appendPercentage(params.value),
-  },
 ];
 
 export default function ProductsTable(props: {
@@ -182,7 +183,7 @@ export default function ProductsTable(props: {
       slots={{
         loadingOverlay: () => (
           <div className="h-full w-full flex items-center justify-center">
-            <Spin />
+            <Spinner />
           </div>
         ),
       }}

@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { Dialog, Menu, Transition } from "@headlessui/react";
 import {
   Bars3Icon,
@@ -8,22 +8,30 @@ import {
   HomeIcon,
   MagnifyingGlassIcon,
   UserCircleIcon,
+  UsersIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
-import Image from "next/image";
 import Link from "next/link";
 import useFavoriteShops from "@/hooks/use-favorite-shops";
 import { Spin } from "antd";
 import useAccount from "@/hooks/use-account";
 import { logoutAction } from "@/server/actions/logout";
+import { Logo } from "../Logo";
+import { usePathname, useRouter } from "next/navigation";
+import Spinner from "../Spinner";
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: HomeIcon, current: true },
-  // { name: "Printed advertising", href: "/", icon: UsersIcon, current: false },
+  {
+    name: "Profile",
+    href: "/dashboard/profile",
+    icon: UsersIcon,
+    current: false,
+  },
 ];
 
 const userNavigation = [
-  { name: "Dein Profil", href: "/profile" },
+  { name: "Dein Profil", href: "/dashboard/profile" },
   { name: "Abmelden", action: logoutAction },
 ];
 
@@ -39,6 +47,10 @@ export const DashboardLayout = ({
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const accountQuery = useAccount();
   const favoriteShopsQuery = useFavoriteShops();
+
+  const pathname = usePathname();
+  console.log("pathname:", pathname);
+
   return (
     <>
       <div className="h-full">
@@ -97,11 +109,7 @@ export const DashboardLayout = ({
                   {/* Sidebar component, swap this element with another sidebar if you like */}
                   <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-white px-6 pb-2 pt-5">
                     <div className="flex h-16 shrink-0 items-center">
-                      <img
-                        className="h-16 w-auto"
-                        src="/static/arbispotter_left-black.png"
-                        alt="Your Company"
-                      />
+                      <Logo />
                     </div>
                     <nav className="flex flex-1 flex-col">
                       <ul role="list" className="flex flex-1 flex-col gap-y-7">
@@ -112,17 +120,17 @@ export const DashboardLayout = ({
                                 <Link
                                   href={item.href}
                                   className={classNames(
-                                    item.current
-                                      ? "bg-gray-50 text-indigo-600"
-                                      : "text-gray-700 hover:text-indigo-600 hover:bg-gray-50",
+                                    pathname === item.href
+                                      ? "bg-gray-50 text-secondary-900"
+                                      : "text-gray-700 hover:text-secondary-900 hover:bg-gray-50",
                                     "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
                                   )}
                                 >
                                   <item.icon
                                     className={classNames(
-                                      item.current
-                                        ? "text-indigo-600"
-                                        : "text-gray-400 group-hover:text-indigo-600",
+                                      pathname === item.href
+                                        ? "text-secondary-900"
+                                        : "text-gray-400 group-hover:text-secondary-900",
                                       "h-6 w-6 shrink-0"
                                     )}
                                     aria-hidden="true"
@@ -137,7 +145,9 @@ export const DashboardLayout = ({
                           <div className="text-xs font-semibold leading-6 text-gray-400">
                             Your Favorites{" "}
                             {favoriteShopsQuery.isLoading && (
-                              <Spin size="small" />
+                              <div className="w-full flex justify-center">
+                                <Spinner />
+                              </div>
                             )}
                           </div>
                           <ul role="list" className="-mx-2 mt-2 space-y-1">
@@ -146,17 +156,17 @@ export const DashboardLayout = ({
                                 <Link
                                   href={`/dashboard/shop/${shop.d}`}
                                   className={classNames(
-                                    // team.current
-                                    //   ? "bg-gray-50 text-indigo-600" :
-                                    "text-gray-700 hover:text-indigo-600 hover:bg-gray-50",
+                                    pathname.includes(shop.d)
+                                      ? "bg-gray-50 text-secondary-900"
+                                      : "text-gray-700 hover:text-secondary-900 hover:bg-gray-50",
                                     "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
                                   )}
                                 >
                                   <span
                                     className={classNames(
                                       // team.current
-                                      //   ? "text-indigo-600 border-indigo-600" :
-                                      "text-gray-400 border-gray-200 group-hover:border-indigo-600 group-hover:text-indigo-600",
+                                      //   ? "text-secondary-900 border-secondary-900" :
+                                      "text-gray-400 border-gray-200 group-hover:border-secondary-900 group-hover:text-secondary-900",
                                       "flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border text-[0.625rem] font-medium bg-white"
                                     )}
                                   >
@@ -181,15 +191,8 @@ export const DashboardLayout = ({
         <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
           {/* Sidebar component, swap this element with another sidebar if you like */}
           <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6">
-            <Link href="/">
-              <div className="flex h-16 w-56 mt-4 shrink-0 items-center relative">
-                <Image
-                  fill={true}
-                  className="h-8 w-auto"
-                  src="/static/arbispotter_left-black.png"
-                  alt="Arbitrage Genius"
-                />
-              </div>
+            <Link href="/" className="mt-5">
+              <Logo />
             </Link>
             <nav className="flex flex-1 flex-col">
               <ul role="list" className="flex flex-1 flex-col gap-y-7">
@@ -200,17 +203,17 @@ export const DashboardLayout = ({
                         <Link
                           href={item.href}
                           className={classNames(
-                            item.current
-                              ? "bg-gray-50 text-indigo-600"
-                              : "text-gray-700 hover:text-indigo-600 hover:bg-gray-50",
+                            item.href === pathname
+                              ? "bg-gray-50 text-secondary-900"
+                              : "text-gray-700 hover:text-secondary-900 hover:bg-gray-50",
                             "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
                           )}
                         >
                           <item.icon
                             className={classNames(
-                              item.current
-                                ? "text-indigo-600"
-                                : "text-gray-400 group-hover:text-indigo-600",
+                              item.href === pathname
+                                ? "text-secondary-900"
+                                : "text-gray-400 group-hover:text-secondary-900",
                               "h-6 w-6 shrink-0"
                             )}
                             aria-hidden="true"
@@ -224,7 +227,11 @@ export const DashboardLayout = ({
                 <li>
                   <div className="text-xs font-semibold leading-6 text-gray-400">
                     Your Favorites{" "}
-                    {favoriteShopsQuery.isLoading && <Spin size="small" />}
+                    {favoriteShopsQuery.isLoading && (
+                      <div className="w-full flex justify-center">
+                        <Spinner />
+                      </div>
+                    )}
                   </div>
                   <ul role="list" className="-mx-2 mt-2 space-y-1">
                     {favoriteShopsQuery.data?.map((shop) => (
@@ -232,17 +239,17 @@ export const DashboardLayout = ({
                         <Link
                           href={`/dashboard/shop/${shop.d}`}
                           className={classNames(
-                            // team.current
-                            //   ? "bg-gray-50 text-indigo-600" :
-                            "text-gray-700 hover:text-indigo-600 hover:bg-gray-50",
+                            pathname.includes(shop.d)
+                              ? "bg-gray-50 text-secondary-900"
+                              : "text-gray-700 hover:text-secondary-900 hover:bg-gray-50",
                             "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
                           )}
                         >
                           <span
                             className={classNames(
-                              // team.current
-                              //   ? "text-indigo-600 border-indigo-600" :
-                              "text-gray-400 border-gray-200 group-hover:border-indigo-600 group-hover:text-indigo-600",
+                              pathname.includes(shop.d)
+                                ? "text-secondary-900 border-secondary-900"
+                                : "text-gray-400 border-gray-200 group-hover:border-secondary-900 group-hover:text-secondary-900",
                               "flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border text-[0.625rem] font-medium bg-white"
                             )}
                           >
@@ -350,7 +357,7 @@ export const DashboardLayout = ({
                                 </form>
                               ) : (
                                 <Link
-                                  href={item.href}
+                                  href={item.href ? item.href : ""}
                                   className={classNames(
                                     active ? "bg-gray-50" : "",
                                     "block px-3 py-1 text-sm leading-6 text-gray-900"

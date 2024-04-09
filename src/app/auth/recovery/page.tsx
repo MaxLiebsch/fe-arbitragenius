@@ -1,8 +1,9 @@
 "use client";
 
+import { Button } from "@/components/Button";
+import { Logo } from "@/components/Logo";
 import { recoveryAction } from "@/server/actions/recovery";
 import Link from "next/link";
-import { use } from "react";
 import { useFormState } from "react-dom";
 
 export default function Page({
@@ -23,11 +24,7 @@ export default function Page({
           <h2 className="text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
             Stelle deinen{" "}
             <span className="inline-block -mb-2">
-              <img
-                className="mx-auto h-10 w-auto"
-                src="/static/arbispotter_left-black.png"
-                alt="Arbispotter"
-              />
+              <Logo />
             </span>{" "}
             Account wieder her
           </h2>
@@ -59,39 +56,36 @@ export default function Page({
             <div className="space-y-2">
               <div className="flex flex-row justify-between">
                 <Link
-                  className="text-blue-500 underline text-sm"
+                  className="text-secondary-950 underline text-sm"
                   href="/auth/signup"
                 >
                   Ich habe keinen Account?
                 </Link>
                 <Link
-                  className="text-blue-500 underline text-sm"
+                  className="text-secondary-950 underline text-sm"
                   href="/auth/signin"
                 >
                   Zum Login
                 </Link>
               </div>
-              <button
+              <Button
                 type="submit"
                 disabled={searchParams.status === "ok"}
-                className={
-                  "flex w-full justify-center rounded-md bg-chartreuse-yellow-700 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-chartreuse-yellow-700" +
-                  (searchParams.status !== "ok"
-                    ? " hover:bg-chartreuse-yellow-600"
-                    : "")
-                }
+                variant="solid"
+                className="w-full"
+                color="slate"
               >
                 {searchParams.status === "retry"
                   ? "Erneut anfragen"
                   : searchParams.status === "ok"
                   ? "✓ Email versendet"
                   : "Wiederherstellung anfragen"}
-              </button>
+              </Button>
               {searchParams.status === "ok" && (
                 <div className="flex flex-row w-full justify-end">
                   <Link
                     href="/auth/recovery?status=retry"
-                    className="text-blue-500 underline text-sm"
+                    className="text-secondary-950 underline text-sm"
                   >
                     Keine Email erhalten?
                   </Link>

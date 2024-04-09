@@ -4,6 +4,7 @@ import { stripe } from "@/server/stripe";
 import Link from "next/link";
 import { createDatabaseClient } from "@/server/appwrite";
 import { ID, Query } from "node-appwrite";
+import { Logo } from "@/components/Logo";
 
 export default async function ResultPage({
   searchParams,
@@ -46,11 +47,7 @@ export default async function ResultPage({
     <>
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm space-y-3">
-          <img
-            className="mx-auto h-10 w-auto"
-            src="/static/arbispotter_left-black.png"
-            alt="Arbispotter"
-          />
+          <Logo />
           <h2 className="text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
             Subscription erfolgreich!
           </h2>

@@ -5,6 +5,7 @@ import { DataGridPremium, GridColDef } from "@mui/x-data-grid-premium";
 import { Spin } from "antd";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import Spinner from "./Spinner";
 
 const columns: GridColDef[] = [
   { field: "ne", headerName: "ShopName", flex: 0.5 },
@@ -40,7 +41,7 @@ export default function ShopsTable(props: { className?: string }) {
       slots={{
         loadingOverlay: () => (
           <div className="h-full w-full flex items-center justify-center">
-            <Spin />
+            <Spinner />
           </div>
         ),
       }}
