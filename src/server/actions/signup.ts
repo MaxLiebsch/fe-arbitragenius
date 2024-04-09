@@ -76,5 +76,6 @@ export async function signupAction(
       fieldErrors: {},
     };
   }
-  redirect("/payment");
+
+  redirect(process.env.NEXT_PUBLIC_DOMAIN + "/payment");
 }
