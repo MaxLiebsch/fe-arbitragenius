@@ -49,7 +49,6 @@ export const DashboardLayout = ({
   const favoriteShopsQuery = useFavoriteShops();
 
   const pathname = usePathname();
-  console.log("pathname:", pathname);
 
   return (
     <>
