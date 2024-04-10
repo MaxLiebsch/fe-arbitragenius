@@ -16,7 +16,7 @@ export default function ShopsTable(props: { className?: string }) {
   const router = useRouter();
   const [paginationModel, setPaginationModel] = useState<ShopPagination>({
     page: 0,
-    pageSize: 5,
+    pageSize: 20,
   });
 
   const shopCountQuery = useShopCount();

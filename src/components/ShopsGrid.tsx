@@ -14,7 +14,7 @@ import Spinner from "./Spinner";
 export default function ShopsGrid() {
   const [paginationModel, setPaginationModel] = useState<ShopPagination>({
     page: 0,
-    pageSize: 5,
+    pageSize: 50,
   });
 
   const shopQuery = useShops(paginationModel);
