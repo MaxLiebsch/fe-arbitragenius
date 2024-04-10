@@ -77,5 +77,5 @@ export async function signupAction(
     };
   }
 
-  redirect("/");
+  redirect("/payment");
 }
