@@ -51,12 +51,14 @@ export default function ShopsGrid() {
           <div className="flex flex-row gap-2 items-center">
             <Link href={`/dashboard/shop/${shop.d}`}>
               <>
-                <p className="text-gray-500 font-bold">Total products - 123</p>
                 <p className="text-gray-500 font-bold">
-                  Profitiable ebay - 456
+                  Produkte Gesamt - {shop.total ?? 0}
                 </p>
                 <p className="text-gray-500 font-bold">
-                  Profitiable amazon - 789
+                  Profitabel Amazon - {shop.a_fat_total ?? 0}
+                </p>
+                <p className="text-gray-500 font-bold">
+                  Profitabel Ebay - {shop.e_fat_total ?? 0}
                 </p>
               </>
             </Link>

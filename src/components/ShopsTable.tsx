@@ -8,8 +8,11 @@ import { useState } from "react";
 import Spinner from "./Spinner";
 
 const columns: GridColDef[] = [
-  { field: "ne", headerName: "ShopName", flex: 0.5 },
-  { field: "d", headerName: "Domain", flex: 0.5 },
+  { field: "ne", headerName: "ShopName", flex: 0.2 },
+  { field: "d", headerName: "Domain", flex: 0.2 },
+  { field: "total", headerName: "Gesamt", flex: 0.2 },
+  { field: "a_fat_total", headerName: "Amazon", flex: 0.2 },
+  { field: "e_fat_total", headerName: "Ebay", flex: 0.2 },
 ];
 
 export default function ShopsTable(props: { className?: string }) {
@@ -24,9 +27,26 @@ export default function ShopsTable(props: { className?: string }) {
 
   return (
     <DataGridPremium
+      sx={{
+        // disable cell selection style
+        ".MuiDataGrid-cell:focus": {
+          outline: "none",
+        },
+        // pointer cursor on ALL rows
+        "& .MuiDataGrid-row:hover": {
+          cursor: "pointer",
+        },
+      }}
       className={props.className}
       onRowClick={(row) => router.push(`/dashboard/shop/${row.row.d}`)}
       getRowId={(row) => row._id}
+      experimentalFeatures={{ columnGrouping: true }}
+      columnGroupingModel={[
+        {
+          groupId: "Profitabel",
+          children: [{ field: "a_fat_total" }, { field: "e_fat_total" }],
+        },
+      ]}
       disableColumnMenu
       columns={columns}
       rows={shopQuery.data ?? []}

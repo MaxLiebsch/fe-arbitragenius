@@ -11,7 +11,7 @@ export default async function Dashboard({
 }: {
   searchParams: any;
 }) {
-  const view = searchParams.view ?? "table";
+  const view = searchParams.view ?? "grid";
 
   const mongo = await mongoPromise;
 

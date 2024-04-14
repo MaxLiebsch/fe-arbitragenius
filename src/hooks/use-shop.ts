@@ -3,6 +3,9 @@ import { useQuery } from "@tanstack/react-query";
 export type Shop = {
   active: boolean;
   d: string;
+  total?: number;
+  a_fat_total?: number;
+  e_fat_total?: number;
   ne: string;
 };
 

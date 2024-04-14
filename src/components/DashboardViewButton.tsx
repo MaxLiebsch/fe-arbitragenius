@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 export default function DashboardViewButton() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const view = searchParams.get("view") ?? "table";
+  const view = searchParams.get("view") ?? "grid";
 
   return (
     <Button
@@ -20,7 +20,7 @@ export default function DashboardViewButton() {
         )
       }
       onClick={() =>
-        router.push("/dashboard?view=" + (view === "table" ? "grid" : "table"))
+        router.push("/dashboard?view=" + (view === "grid" ? "table" : "grid"))
       }
     />
   );
