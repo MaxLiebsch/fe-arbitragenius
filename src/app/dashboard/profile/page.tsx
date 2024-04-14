@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/Button";
+import { SubmitButton } from "@/components/FormSubmitBn";
 import useAccount from "@/hooks/use-account";
 import { Tab } from "@headlessui/react";
 import React, { useEffect } from "react";
@@ -159,9 +160,7 @@ const Page = () => {
                   </div>
 
                   <div className="mt-8 flex">
-                    <Button variant="solid" color="slate" type="submit">
-                      Speichern
-                    </Button>
+                    <SubmitButton text='Speichern'/>
                   </div>
                 </form>
               </div>
@@ -235,9 +234,7 @@ const Page = () => {
                   </div>
 
                   <div className="mt-8 flex">
-                    <Button variant="solid" color="slate" type="submit">
-                      Speichern
-                    </Button>
+                    <SubmitButton text="Speichern"/>
                   </div>
                 </form>
               </div>
@@ -276,9 +273,7 @@ const Page = () => {
                   </div>
 
                   <div className="mt-8 flex">
-                    <Button variant="solid" color="slate" type="submit">
-                      Abmelden
-                    </Button>
+                    <SubmitButton text="Abmelden"/>
                   </div>
                 </form>
               </div>
@@ -297,9 +292,7 @@ const Page = () => {
                 </div>
 
                 <form className="flex items-start md:col-span-2">
-                  <Button variant="solid" color="slate" type="submit">
-                    Ja, Account löschen
-                  </Button>
+                  <SubmitButton text="Ja, Account löschen"/>
                 </form>
               </div>
             </div>
