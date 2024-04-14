@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/Button";
+import { SubmitButton } from "@/components/FormSubmitBn";
 import { Logo } from "@/components/Logo";
 import { signupAction } from "@/server/actions/signup";
 import { useFormState } from "react-dom";
@@ -92,14 +93,7 @@ export default function Page() {
               <a className="text-secondary-950 underline" href="/auth/signin">
                 Du hast bereits ein Account?
               </a>
-              <Button
-                className="w-full"
-                type="submit"
-                variant="solid"
-                color="slate"
-              >
-                Registrieren
-              </Button>
+              <SubmitButton text="Registrieren"/>
               {Boolean(state.message) && (
                 <div className="text-sm text-red-500 text-right">
                   ✗ {state.message}

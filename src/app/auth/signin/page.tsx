@@ -1,9 +1,9 @@
 "use client";
-
-import { Button } from "@/components/Button";
+import { SubmitButton } from "@/components/FormSubmitBn";
 import { Logo } from "@/components/Logo";
 import { signinAction } from "@/server/actions/signin";
 import { useFormState } from "react-dom";
+
 
 export default function Page() {
   const [state, formAction] = useFormState(signinAction, { message: "" });
@@ -76,14 +76,7 @@ export default function Page() {
                   Passwort vergessen?
                 </a>
               </div>
-              <Button
-                className="w-full"
-                type="submit"
-                variant="solid"
-                color="slate"
-              >
-                Login
-              </Button>
+              <SubmitButton text="Login"/>
               {Boolean(state.message) && (
                 <div className="text-sm text-red-500 text-right">
                   ✗ {state.message}

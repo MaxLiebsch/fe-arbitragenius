@@ -1,4 +1,5 @@
 import { Button } from "@/components/Button";
+import { SubmitButton } from "@/components/FormSubmitBn";
 import { Logo } from "@/components/Logo";
 import { changePasswordAction } from "@/server/actions/change-password";
 
@@ -107,7 +108,7 @@ export default function Page({
                   Zum Login
                 </a>
               </div>
-              <Button type="submit" variant='solid' color='slate'>Passwort aktualisieren</Button>
+              <SubmitButton text="Passwort aktualisieren"/>
             </div>
           </form>
         </div>
