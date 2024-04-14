@@ -33,7 +33,24 @@ export async function GET(
   const res = await mongo
     .db(process.env.NEXT_MONGO_DB)
     .collection(params.domain)
-    .find()
+    .find({
+      $and: [
+        {
+          $or: [
+            { e_prc: { $gte: 0 } },
+            { a_prc: { $gte: 0 } },
+            { e_prc: { $gte: 0 }, a_prc: { $gte: 0 } },
+          ],
+        },
+        {
+          $or: [
+            { e_mrgn_pct: { $gte: 0 } },
+            { a_mrgn_pct: { $gte: 0 } },
+            { e_mrgn_pct: { $gte: 0 }, a_mrgn_pct: { $gte: 0 } },
+          ],
+        },
+      ],
+    })
     .sort(sort)
     .skip(query.page * query.size)
     .limit(query.size)
