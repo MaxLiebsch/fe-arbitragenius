@@ -167,6 +167,16 @@ export default function ProductsTable(props: {
       paginationMode="server"
       pagination={true}
       sortingMode="server"
+      sx={{
+        // disable cell selection style
+        ".MuiDataGrid-cell:focus": {
+          outline: "none",
+        },
+        // pointer cursor on ALL rows
+        "& .MuiDataGrid-row:hover": {
+          cursor: "pointer",
+        },
+      }}
       onSortModelChange={handleSortModelChange}
       experimentalFeatures={{ columnGrouping: true }}
       columnGroupingModel={[
