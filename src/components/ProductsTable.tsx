@@ -207,24 +207,24 @@ export default function ProductsTable(props: {
       rows={
         productQuery.data
           ? productQuery.data.map((product) => {
-              if (product?.a_mrgn_pct >= 150 || product?.a_mrgn_pct <= 0) {
-                product.a_mrgn_pct = 0;
-                product.a_mrgn = 0;
-                product.a_prc = 0;
-                product.a_fat = false;
-                product.a_img = "";
-                product.a_nm = "";
-                product.a_lnk = "";
-              }
-              if (product?.e_mrgn_pct >= 150 || product?.e_mrgn_pct <= 0) {
-                product.e_mrgn_pct = 0;
-                product.e_mrgn = 0;
-                product.e_prc = 0;
-                product.e_fat = false
-                product.e_img = "";
-                product.e_nm = "";
-                product.e_lnk = "";
-              }
+              // if (product?.a_mrgn_pct >= 150 || product?.a_mrgn_pct <= 0) {
+              //   product.a_mrgn_pct = 0;
+              //   product.a_mrgn = 0;
+              //   product.a_prc = 0;
+              //   product.a_fat = false;
+              //   product.a_img = "";
+              //   product.a_nm = "";
+              //   product.a_lnk = "";
+              // }
+              // if (product?.e_mrgn_pct >= 150 || product?.e_mrgn_pct <= 0) {
+              //   product.e_mrgn_pct = 0;
+              //   product.e_mrgn = 0;
+              //   product.e_prc = 0;
+              //   product.e_fat = false
+              //   product.e_img = "";
+              //   product.e_nm = "";
+              //   product.e_lnk = "";
+              // }
               return product
             })
           : []
