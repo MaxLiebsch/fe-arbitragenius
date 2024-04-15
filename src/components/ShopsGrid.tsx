@@ -45,7 +45,7 @@ export default function ShopsGrid() {
   }
 
   return (
-    <div className="grid grid-cols-3 gap-2 gap-y-3">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 gap-y-3">
       {shopQuery.data?.map((shop) => (
         <Card key={shop.d} title={shop.ne} bordered={false}>
           <div className="flex flex-row gap-2 items-center">
