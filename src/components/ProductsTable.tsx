@@ -1,10 +1,13 @@
 "use client";
 import {
   DataGridPremium,
+  GridCellParams,
   GridColDef,
+  GridColumnVisibilityModel,
   GridSortModel,
+  useGridApiRef,
 } from "@mui/x-data-grid-premium";
-import { useState } from "react";
+import { MutableRefObject, useState } from "react";
 import ImageRenderer from "./ImageRenderer";
 import { appendPercentage, formatCurrency } from "@/util/formatter";
 import Link from "next/link";
@@ -17,12 +20,15 @@ import useProducts, {
 import Spinner from "./Spinner";
 import ComingSoon from "@/images/coming_soon.jpg";
 import Image from "next/image";
+import { Button } from "@mui/material";
+import { GridApiPremium } from "@mui/x-data-grid-premium/models/gridApiPremium";
+import { ChevronRightIcon, ChevronLeftIcon } from "@heroicons/react/16/solid";
 
-const LinkWrapper = (link: string | undefined) => {
+const LinkWrapper = (link: string | undefined, name?: string) => {
   if (link) {
     return (
       <Link href={link} target="_blank">
-        Visit
+        {name ? name : "Visit"}
       </Link>
     );
   } else {
@@ -32,7 +38,12 @@ const LinkWrapper = (link: string | undefined) => {
 
 const columns: GridColDef[] = [
   { field: "mnfctr", headerName: "Hersteller", width: 120 },
-  { field: "nm", headerName: "Name", width: 250 },
+  {
+    field: "nm",
+    headerName: "Name",
+    width: 250,
+    renderCell: (params) => LinkWrapper(params.row.lnk, params.row.nm),
+  },
   {
     field: "ctgry",
     headerName: "Kategorie",
@@ -56,34 +67,44 @@ const columns: GridColDef[] = [
     valueFormatter: (params) => formatCurrency(params.value),
   },
   {
-    field: "lnk",
-    headerName: `Link`,
-    renderCell: (params) => LinkWrapper(params.row.lnk),
+    field: "a_nm",
+    headerClassName: `bg-amazon`,
+    headerName: "Name",
+    width: 250,
+    renderCell: (params) => LinkWrapper(params.row.a_lnk, params.row.a_nm),
   },
-  { field: "a_nm", headerName: "Name", width: 250 },
+  {
+    field: "a_shadow",
+    headerClassName: `bg-amazon`,
+    headerName: "",
+    disableColumnMenu: true,
+
+    sortable: false,
+    resizable: false,
+    width: 120,
+  },
   {
     field: "a_img",
+    headerClassName: `bg-amazon`,
     headerName: "Produktbild",
     cellClassName: "hover:!overflow-visible",
     renderCell: (params) => ImageRenderer(params.row.a_img),
   },
   {
     field: "a_mrgn_pct",
+    headerClassName: `bg-amazon`,
     headerName: "Marge %",
     valueFormatter: (params) => appendPercentage(params.value),
   },
   {
     field: "a_mrgn",
+    headerClassName: `bg-amazon`,
     headerName: "Marge",
     valueFormatter: (params) => formatCurrency(params.value),
   },
   {
-    field: "a_lnk",
-    headerName: "Link",
-    renderCell: (params) => LinkWrapper(params.row.a_lnk),
-  },
-  {
     field: "a_bsr",
+    headerClassName: `bg-amazon`,
     headerName: "BSR",
     renderCell: (params) => (
       <Image src={ComingSoon} alt="coming-soon" width={120} height={70} />
@@ -91,38 +112,53 @@ const columns: GridColDef[] = [
   },
   {
     field: "a_prc",
+    headerClassName: `bg-amazon`,
     headerName: "Preis",
     valueFormatter: (params) => formatCurrency(params.value),
   },
-  { field: "a_fat", headerName: "Profitable" },
-  { field: "e_nm", headerName: "Name", width: 250 },
+  { field: "a_fat", headerClassName: `bg-amazon`, headerName: "Profitable" },
+  {
+    field: "e_nm",
+    headerClassName: "bg-ebay",
+    headerName: "Name",
+    width: 250,
+    renderCell: (params) => LinkWrapper(params.row.e_lnk, params.row.e_nm),
+  },
+  {
+    field: "e_shadow",
+    headerClassName: "bg-ebay",
+    headerName: "",
+    disableColumnMenu: true,
+    resizable: false,
+    sortable: false,
+    width: 120,
+  },
   {
     field: "e_img",
+    headerClassName: "bg-ebay",
     headerName: "Produktbild",
     cellClassName: "hover:!overflow-visible",
     renderCell: (params) => ImageRenderer(params.row.e_img),
   },
   {
     field: "e_mrgn",
+    headerClassName: "bg-ebay",
     headerName: "Marge",
     valueFormatter: (params) => formatCurrency(params.value),
   },
   {
     field: "e_mrgn_pct",
+    headerClassName: "bg-ebay",
     headerName: "Marge %",
     valueFormatter: (params) => appendPercentage(params.value),
   },
   {
-    field: "e_lnk",
-    headerName: "Link",
-    renderCell: (params) => LinkWrapper(params.row.e_lnk),
-  },
-  {
     field: "e_prc",
+    headerClassName: "bg-ebay",
     headerName: "Preis",
     valueFormatter: (params) => formatCurrency(params.value),
   },
-  { field: "e_fat", headerName: "Profitable" },
+  { field: "e_fat", headerClassName: "bg-ebay", headerName: "Profitable" },
 ];
 
 export default function ProductsTable(props: {
@@ -134,7 +170,9 @@ export default function ProductsTable(props: {
     page: 0,
     pageSize: 10,
   });
-  const [sortModel, setSortModel] = useState<ProductSort>();
+  const [sortModel, setSortModel] = useState<ProductSort>({field: "a_mrgn_pct", direction: 'desc'});
+
+  const apiRef = useGridApiRef();
 
   const shopQuery = useShop(domain);
   const productCountQuery = useProductCount(domain);
@@ -153,12 +191,44 @@ export default function ProductsTable(props: {
 
   return (
     <DataGridPremium
+      apiRef={apiRef}
       className={className}
-      initialState={{ pinnedColumns: { left: ["mnfctr", "nm"] } }}
+      initialState={{
+        pinnedColumns: { left: ["mnfctr", "nm"] },
+        columns: {
+          columnVisibilityModel: {
+            a_shadow: false,
+            e_shadow: false,
+          },
+        },
+      }}
       getRowId={(row) => row._id}
-      disableColumnMenu
       columns={columns}
-      rows={productQuery.data ?? []}
+      rows={
+        productQuery.data
+          ? productQuery.data.map((product) => {
+              if (product?.a_mrgn_pct >= 150 || product?.a_mrgn_pct <= 0) {
+                product.a_mrgn_pct = 0;
+                product.a_mrgn = 0;
+                product.a_prc = 0;
+                product.a_fat = false;
+                product.a_img = "";
+                product.a_nm = "";
+                product.a_lnk = "";
+              }
+              if (product?.e_mrgn_pct >= 150 || product?.e_mrgn_pct <= 0) {
+                product.e_mrgn_pct = 0;
+                product.e_mrgn = 0;
+                product.e_prc = 0;
+                product.e_fat = false
+                product.e_img = "";
+                product.e_nm = "";
+                product.e_lnk = "";
+              }
+              return product
+            })
+          : []
+      }
       rowCount={productCountQuery.data}
       loading={productQuery.isFetching}
       pageSizeOptions={[5, 10, 20]}
@@ -166,6 +236,15 @@ export default function ProductsTable(props: {
       onPaginationModelChange={setPaginationModel}
       paginationMode="server"
       pagination={true}
+      getCellClassName={(params: GridCellParams<any, any, number>) => {
+        if (params.field.startsWith("a_")) {
+          return `bg-amazon`;
+        }
+        if (params.field.startsWith("e_")) {
+          return "bg-ebay";
+        }
+        return "";
+      }}
       sortingMode="server"
       sx={{
         // disable cell selection style
@@ -177,7 +256,7 @@ export default function ProductsTable(props: {
           cursor: "pointer",
         },
       }}
-      onSortModelChange={handleSortModelChange}
+      onSortModelChange={ handleSortModelChange}
       experimentalFeatures={{ columnGrouping: true }}
       columnGroupingModel={[
         {
@@ -185,28 +264,34 @@ export default function ProductsTable(props: {
           children: [{ field: "nm" }, { field: "mnfctr" }, { field: "ctrgy" }],
         },
         {
-          groupId: "Ebay",
-          children: [
-            { field: "e_lnk" },
-            { field: "e_img" },
-            { field: "e_nm" },
-            { field: "e_prc" },
-            { field: "e_mrgn" },
-            { field: "e_fat" },
-            { field: "e_mrgn_pct" },
-          ],
-        },
-        {
           groupId: "Amazon",
+          freeReordering: true,
+          renderHeaderGroup: () => (
+            <GroupHeader name="Amazon" apiRef={apiRef} />
+          ),
           children: [
-            { field: "a_lnk" },
             { field: "a_bsr" },
+            { field: "a_shadow" },
             { field: "a_img" },
             { field: "a_nm" },
             { field: "a_prc" },
             { field: "a_mrgn" },
             { field: "a_fat" },
             { field: "a_mrgn_pct" },
+          ],
+        },
+        {
+          groupId: "Ebay",
+          freeReordering: true,
+          renderHeaderGroup: () => <GroupHeader apiRef={apiRef} name="Ebay" />,
+          children: [
+            { field: "e_img" },
+            { field: "e_shadow" },
+            { field: "e_nm" },
+            { field: "e_prc" },
+            { field: "e_mrgn" },
+            { field: "e_fat" },
+            { field: "e_mrgn_pct" },
           ],
         },
       ]}
@@ -220,3 +305,70 @@ export default function ProductsTable(props: {
     />
   );
 }
+
+const GroupHeader = ({
+  name,
+  apiRef,
+}: {
+  name: string;
+  apiRef: MutableRefObject<GridApiPremium>;
+}) => {
+  const [hidden, setHidden] = useState(false);
+  const prefix = name.toLowerCase().slice(0, 1);
+  return (
+    <div className={`flex flex-row gap-1 items-center`}>
+      <div>{name}</div>
+
+      <Button
+        variant="text"
+        onClick={() => {
+          if (!hidden) {
+            apiRef.current.setColumnVisibility(`${prefix}_shadow`, true);
+          } else {
+            apiRef.current.setColumnVisibility(`${prefix}_shadow`, false);
+          }
+          const gridColModel = [
+            "_bsr",
+            "_img",
+            "_nm",
+            "_prc",
+            "_rgn",
+            "_mrgn_pct",
+            "_mrgn",
+            "_fat",
+            "_pct",
+          ].reduce<GridColumnVisibilityModel>((gridColModel, col) => {
+            gridColModel[`${prefix}${col}`] = hidden;
+            return gridColModel;
+          }, {});
+          const allColumns = apiRef.current.getAllColumns();
+          const visibleColumns = apiRef.current.getVisibleColumns();
+          const hiddenColumns = [
+            ...allColumns.map((col) => {
+              if (
+                visibleColumns.find(
+                  (visibleCol) => visibleCol.field === col.field
+                ) === undefined
+              ) {
+                return col.field;
+              }
+            }, []),
+          ]
+            .filter((col) => col !== undefined)
+            .reduce<GridColumnVisibilityModel>((gridColModel, col) => {
+              gridColModel[`${col}`] = false;
+              return gridColModel;
+            }, {});
+
+          apiRef.current.setColumnVisibilityModel({
+            ...hiddenColumns,
+            ...gridColModel,
+          });
+          setHidden(!hidden);
+        }}
+      >
+        {hidden ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+      </Button>
+    </div>
+  );
+};

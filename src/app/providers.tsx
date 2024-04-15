@@ -6,6 +6,7 @@ import { ReactNode } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { SnackbarProvider } from "notistack";
+import MuiProvider from "@/components/provider/MuiProvider";
 
 function makeQueryClient() {
   return new QueryClient({
@@ -45,7 +46,7 @@ export default function Providers({ children }: { children: ReactNode }) {
   return (
     <QueryClientProvider client={queryClient}>
       <SnackbarProvider />
-      {children}
+      <MuiProvider>{children}</MuiProvider>
       <ReactQueryDevtools initialIsOpen={false} buttonPosition="bottom-left" />
     </QueryClientProvider>
   );

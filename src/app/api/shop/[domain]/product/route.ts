@@ -36,17 +36,12 @@ export async function GET(
     .find({
       $and: [
         {
-          $or: [
-            { e_prc: { $gte: 0 } },
-            { a_prc: { $gte: 0 } },
-            { e_prc: { $gte: 0 }, a_prc: { $gte: 0 } },
-          ],
+          $or: [{ e_prc: { $gt: 0 } }, { a_prc: { $gt: 0 } }],
         },
         {
           $or: [
-            { e_mrgn_pct: { $gte: 0 } },
-            { a_mrgn_pct: { $gte: 0 } },
-            { e_mrgn_pct: { $gte: 0 }, a_mrgn_pct: { $gte: 0 } },
+            { e_mrgn_pct: { $gt: 0, $lte: 150 } },
+            { a_mrgn_pct: { $gt: 0, $lte: 150 } },
           ],
         },
       ],

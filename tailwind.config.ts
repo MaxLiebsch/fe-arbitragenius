@@ -74,6 +74,8 @@ const config: Config = {
           "900": "#185761",
           "950": "#0b4650",
         },
+        amazon: "#FAE3C0",
+        ebay: "#D6EEFC"
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
