@@ -28,7 +28,7 @@ const ProductTableTabs = ({ domain }: { domain: string }) => {
         <Tab.Panel className="w-full max-h-[89%]">
           <ProductsTable domain={domain} target="a" />
         </Tab.Panel>
-        <Tab.Panel className="w-full">
+        <Tab.Panel className="w-full max-h-[89%]">
           <ProductsTable domain={domain} target="e" />
         </Tab.Panel>
       </Tab.Panels>
