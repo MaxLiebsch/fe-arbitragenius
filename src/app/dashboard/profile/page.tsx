@@ -19,7 +19,7 @@ const Page = () => {
   useEffect(() => {}, [account.data]);
 
   return (
-    <> 
+    <>
       <Tab.Group>
         <header className="border-b border-white/5">
           {/* Secondary navigation */}
@@ -43,7 +43,7 @@ const Page = () => {
         <Tab.Panels>
           <Tab.Panel>
             <div className="divide-y divide-white/5">
-            <h1 className="sr-only">Account Einstellungen</h1>
+              <h1 className="sr-only">Account Einstellungen</h1>
               <div className="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 px-4 py-16 sm:px-6 md:grid-cols-3 lg:px-8">
                 <div>
                   <h2 className="text-base font-semibold leading-7 text-secondary-950">
@@ -160,7 +160,7 @@ const Page = () => {
                   </div>
 
                   <div className="mt-8 flex">
-                    <SubmitButton text='Speichern'/>
+                    <SubmitButton text="Speichern" />
                   </div>
                 </form>
               </div>
@@ -234,7 +234,7 @@ const Page = () => {
                   </div>
 
                   <div className="mt-8 flex">
-                    <SubmitButton text="Speichern"/>
+                    <SubmitButton text="Speichern" />
                   </div>
                 </form>
               </div>
@@ -273,7 +273,7 @@ const Page = () => {
                   </div>
 
                   <div className="mt-8 flex">
-                    <SubmitButton text="Abmelden"/>
+                    <SubmitButton text="Abmelden" />
                   </div>
                 </form>
               </div>
@@ -292,14 +292,26 @@ const Page = () => {
                 </div>
 
                 <form className="flex items-start md:col-span-2">
-                  <SubmitButton text="Ja, Account löschen"/>
+                  <SubmitButton text="Ja, Account löschen" />
                 </form>
               </div>
             </div>
           </Tab.Panel>
           <Tab.Panel>
             <div className="divide-y divide-white/5">
-            <h1 className="sr-only">Rechnungen</h1>
+              <h1 className="sr-only">Einstellungen</h1>
+              <div className="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 px-4 py-16 sm:px-6 md:grid-cols-3 lg:px-8">
+                <div>
+                  <h2 className="text-base font-semibold leading-7 text-secondary-950">
+                    Einstellungen
+                  </h2>
+                </div>
+              </div>
+            </div>
+          </Tab.Panel>
+          <Tab.Panel>
+            <div className="divide-y divide-white/5">
+              <h1 className="sr-only">Rechnungen</h1>
               <div className="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 px-4 py-16 sm:px-6 md:grid-cols-3 lg:px-8">
                 <div>
                   <h2 className="text-base font-semibold leading-7 text-secondary-950">
@@ -311,23 +323,11 @@ const Page = () => {
           </Tab.Panel>
           <Tab.Panel>
             <div className="divide-y divide-white/5">
-            <h1 className="sr-only">Benachrichtigungen</h1>
+              <h1 className="sr-only">Benachrichtigungen</h1>
               <div className="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 px-4 py-16 sm:px-6 md:grid-cols-3 lg:px-8">
                 <div>
                   <h2 className="text-base font-semibold leading-7 text-secondary-950">
                     Benachrichtigungen
-                  </h2>
-                </div>
-              </div>
-            </div>
-          </Tab.Panel>
-          <Tab.Panel>
-            <div className="divide-y divide-white/5">
-            <h1 className="sr-only">Einstellungen</h1>
-              <div className="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 px-4 py-16 sm:px-6 md:grid-cols-3 lg:px-8">
-                <div>
-                  <h2 className="text-base font-semibold leading-7 text-secondary-950">
-                    Einstellungen
                   </h2>
                 </div>
               </div>
