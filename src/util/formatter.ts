@@ -5,7 +5,7 @@ export const formatter = new Intl.NumberFormat("de-DE", {
 
 export function formatCurrency(price?: string) {
   if (price) {
-    return formatter.format(parseInt(price));
+    return formatter.format(parseFloat(price));
   } else {
     return "";
   }
