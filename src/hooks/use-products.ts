@@ -44,7 +44,8 @@ export type Product = {
 export default function useProducts(
   domain: string,
   pagination: ProductPagination,
-  sort: ProductSort
+  sort: ProductSort,
+  target: string,
 ) {
   const queryClient = useQueryClient();
 
@@ -62,7 +63,7 @@ export default function useProducts(
       let sortQuery = "";
       if (sort) sortQuery = `&sortby=${sort.field}&sortorder=${sort.direction}`;
       return fetch(
-        `/api/shop/${domain}/product?page=${pagination.page}&size=${pagination.pageSize}${sortQuery}`
+        `/api/shop/${domain}/${target}/product?page=${pagination.page}&size=${pagination.pageSize}${sortQuery}`
       ).then((resp) => resp.json());
     },
   });
@@ -84,7 +85,7 @@ export default function useProducts(
           if (sort)
             sortQuery = `&sortby=${sort.field}&sortorder=${sort.direction}`;
           return fetch(
-            `/api/shop/${domain}/product?page=${pagination.page + 1}&size=${
+            `/api/shop/${domain}/${target}/product?page=${pagination.page + 1}&size=${
               pagination.pageSize
             }${sortQuery}`
           ).then((resp) => resp.json());
@@ -94,6 +95,7 @@ export default function useProducts(
   }, [
     productQuery.data,
     domain,
+    target,
     pagination.page,
     pagination.pageSize,
     sort,

@@ -4,9 +4,10 @@ import { NextRequest } from "next/server";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { domain: string } }
+  { params }: { params: { domain: string; target: string } }
 ) {
   const searchParams = request.nextUrl.searchParams;
+  const { domain, target } = params;
   const query = {
     page: Number(searchParams.get("page")) || 0,
     size: Number(searchParams.get("size")) || 10,
@@ -32,18 +33,11 @@ export async function GET(
 
   const res = await mongo
     .db(process.env.NEXT_MONGO_DB)
-    .collection(params.domain)
+    .collection(domain)
     .find({
       $and: [
-        {
-          $or: [{ e_prc: { $gt: 0 } }, { a_prc: { $gt: 0 } }],
-        },
-        {
-          $or: [
-            { e_mrgn_pct: { $gt: 0, $lte: 150 } },
-            { a_mrgn_pct: { $gt: 0, $lte: 150 } },
-          ],
-        },
+        { [`${target}_prc`]: { $gt: 0 } },
+        { [`${target}_mrgn_pct`]: { $gt: 0, $lte: 150 } },
       ],
     })
     .sort(sort)

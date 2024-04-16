@@ -28,7 +28,7 @@ const LinkWrapper = (link: string | undefined, name?: string) => {
   if (link) {
     return (
       <Link href={link} target="_blank">
-        {name ? name : "Visit"}
+        <div className="leading-2">{name ? name : "Visit"}</div>
       </Link>
     );
   } else {
@@ -36,16 +36,17 @@ const LinkWrapper = (link: string | undefined, name?: string) => {
   }
 };
 
-const columns: GridColDef[] = [
-  { field: "mnfctr", headerName: "Hersteller", width: 120 },
+const columns: (target: string) => GridColDef[] = (target) => [
+  { field: "mnfctr", headerName: "Hersteller", width: 100 },
   {
     field: "nm",
     headerName: "Name",
-    width: 250,
+    width: 300,
     renderCell: (params) => LinkWrapper(params.row.lnk, params.row.nm),
   },
   {
     field: "ctgry",
+    width: 150,
     headerName: "Kategorie",
     renderCell: (params) => {
       if (typeof params.row.ctrgy === "string") {
@@ -64,119 +65,75 @@ const columns: GridColDef[] = [
   {
     field: "prc",
     headerName: `Preis`,
+    width: 80,
     valueFormatter: (params) => formatCurrency(params.value),
   },
   {
-    field: "a_nm",
-    headerClassName: `bg-amazon`,
-    headerName: "Name",
-    width: 250,
-    renderCell: (params) => LinkWrapper(params.row.a_lnk, params.row.a_nm),
-  },
-  {
-    field: "a_shadow",
-    headerClassName: `bg-amazon`,
-    headerName: "",
-    disableColumnMenu: true,
+    field: `${target}_mrgn_pct`,
 
-    sortable: false,
-    resizable: false,
-    width: 120,
+    headerName: "Marge %",
+    valueFormatter: (params) => appendPercentage(params.value),
   },
   {
-    field: "a_img",
-    headerClassName: `bg-amazon`,
+    field: `${target}_mrgn`,
+
+    headerName: "Marge",
+    valueFormatter: (params) => formatCurrency(params.value),
+  },
+  {
+    field: `${target}_prc`,
+
+    headerName: "Preis",
+    valueFormatter: (params) => formatCurrency(params.value),
+  },
+  {
+    field: `${target}_img`,
+
     headerName: "Produktbild",
     cellClassName: "hover:!overflow-visible",
     renderCell: (params) => ImageRenderer(params.row.a_img),
   },
   {
-    field: "a_mrgn_pct",
-    headerClassName: `bg-amazon`,
-    headerName: "Marge %",
-    valueFormatter: (params) => appendPercentage(params.value),
+    field: `${target}_nm`,
+
+    headerName: "Name",
+    flex: 0.5,
+    renderCell: (params) =>
+      LinkWrapper(params.row[`${target}_lnk`], params.row[`${target}_nm`]),
   },
   {
-    field: "a_mrgn",
-    headerClassName: `bg-amazon`,
-    headerName: "Marge",
-    valueFormatter: (params) => formatCurrency(params.value),
-  },
-  {
-    field: "a_bsr",
-    headerClassName: `bg-amazon`,
+    field: `a_bsr`,
     headerName: "BSR",
     renderCell: (params) => (
       <Image src={ComingSoon} alt="coming-soon" width={120} height={70} />
     ),
   },
-  {
-    field: "a_prc",
-    headerClassName: `bg-amazon`,
-    headerName: "Preis",
-    valueFormatter: (params) => formatCurrency(params.value),
-  },
-  { field: "a_fat", headerClassName: `bg-amazon`, headerName: "Profitable" },
-  {
-    field: "e_nm",
-    headerClassName: "bg-ebay",
-    headerName: "Name",
-    width: 250,
-    renderCell: (params) => LinkWrapper(params.row.e_lnk, params.row.e_nm),
-  },
-  {
-    field: "e_shadow",
-    headerClassName: "bg-ebay",
-    headerName: "",
-    disableColumnMenu: true,
-    resizable: false,
-    sortable: false,
-    width: 120,
-  },
-  {
-    field: "e_img",
-    headerClassName: "bg-ebay",
-    headerName: "Produktbild",
-    cellClassName: "hover:!overflow-visible",
-    renderCell: (params) => ImageRenderer(params.row.e_img),
-  },
-  {
-    field: "e_mrgn",
-    headerClassName: "bg-ebay",
-    headerName: "Marge",
-    valueFormatter: (params) => formatCurrency(params.value),
-  },
-  {
-    field: "e_mrgn_pct",
-    headerClassName: "bg-ebay",
-    headerName: "Marge %",
-    valueFormatter: (params) => appendPercentage(params.value),
-  },
-  {
-    field: "e_prc",
-    headerClassName: "bg-ebay",
-    headerName: "Preis",
-    valueFormatter: (params) => formatCurrency(params.value),
-  },
-  { field: "e_fat", headerClassName: "bg-ebay", headerName: "Profitable" },
+  // { field: `${target}_fat`, headerName: "Profitable" },
 ];
 
 export default function ProductsTable(props: {
   className?: string;
   domain: string;
+  target: string;
 }) {
-  const { className, domain } = props;
+  const { className, domain, target } = props;
+  const prefix = target === "a" ? "a_" : "e_";
+  const name = target === "a" ? "Amazon" : "Ebay";
+
   const [paginationModel, setPaginationModel] = useState<ProductPagination>({
     page: 0,
-    pageSize: 10,
+    pageSize: 20,
   });
-  const [sortModel, setSortModel] = useState<ProductSort>({field: "a_mrgn_pct", direction: 'desc'});
+  const [sortModel, setSortModel] = useState<ProductSort>({
+    field: `${target}_mrgn_pct`,
+    direction: "desc",
+  });
 
   const apiRef = useGridApiRef();
 
   const shopQuery = useShop(domain);
-  const productCountQuery = useProductCount(domain);
-  const productQuery = useProducts(domain, paginationModel, sortModel);
+  const productCountQuery = useProductCount(domain, target);
+  const productQuery = useProducts(domain, paginationModel, sortModel, target);
 
   const handleSortModelChange = (model: GridSortModel) => {
     if (model.length) {
@@ -194,41 +151,15 @@ export default function ProductsTable(props: {
       apiRef={apiRef}
       className={className}
       initialState={{
-        pinnedColumns: { left: ["mnfctr", "nm"] },
         columns: {
           columnVisibilityModel: {
-            a_shadow: false,
-            e_shadow: false,
+            a_bsr: target === "a" ? true : false,
           },
         },
       }}
       getRowId={(row) => row._id}
-      columns={columns}
-      rows={
-        productQuery.data
-          ? productQuery.data.map((product) => {
-              // if (product?.a_mrgn_pct >= 150 || product?.a_mrgn_pct <= 0) {
-              //   product.a_mrgn_pct = 0;
-              //   product.a_mrgn = 0;
-              //   product.a_prc = 0;
-              //   product.a_fat = false;
-              //   product.a_img = "";
-              //   product.a_nm = "";
-              //   product.a_lnk = "";
-              // }
-              // if (product?.e_mrgn_pct >= 150 || product?.e_mrgn_pct <= 0) {
-              //   product.e_mrgn_pct = 0;
-              //   product.e_mrgn = 0;
-              //   product.e_prc = 0;
-              //   product.e_fat = false
-              //   product.e_img = "";
-              //   product.e_nm = "";
-              //   product.e_lnk = "";
-              // }
-              return product
-            })
-          : []
-      }
+      columns={columns(target)}
+      rows={productQuery.data ?? []}
       rowCount={productCountQuery.data}
       loading={productQuery.isFetching}
       pageSizeOptions={[5, 10, 20]}
@@ -236,15 +167,6 @@ export default function ProductsTable(props: {
       onPaginationModelChange={setPaginationModel}
       paginationMode="server"
       pagination={true}
-      getCellClassName={(params: GridCellParams<any, any, number>) => {
-        if (params.field.startsWith("a_")) {
-          return `bg-amazon`;
-        }
-        if (params.field.startsWith("e_")) {
-          return "bg-ebay";
-        }
-        return "";
-      }}
       sortingMode="server"
       sx={{
         // disable cell selection style
@@ -256,45 +178,8 @@ export default function ProductsTable(props: {
           cursor: "pointer",
         },
       }}
-      onSortModelChange={ handleSortModelChange}
+      onSortModelChange={handleSortModelChange}
       experimentalFeatures={{ columnGrouping: true }}
-      columnGroupingModel={[
-        {
-          groupId: shopQuery.data?.ne ?? "Loading ...",
-          children: [{ field: "nm" }, { field: "mnfctr" }, { field: "ctrgy" }],
-        },
-        {
-          groupId: "Amazon",
-          freeReordering: true,
-          renderHeaderGroup: () => (
-            <GroupHeader name="Amazon" apiRef={apiRef} />
-          ),
-          children: [
-            { field: "a_bsr" },
-            { field: "a_shadow" },
-            { field: "a_img" },
-            { field: "a_nm" },
-            { field: "a_prc" },
-            { field: "a_mrgn" },
-            { field: "a_fat" },
-            { field: "a_mrgn_pct" },
-          ],
-        },
-        {
-          groupId: "Ebay",
-          freeReordering: true,
-          renderHeaderGroup: () => <GroupHeader apiRef={apiRef} name="Ebay" />,
-          children: [
-            { field: "e_img" },
-            { field: "e_shadow" },
-            { field: "e_nm" },
-            { field: "e_prc" },
-            { field: "e_mrgn" },
-            { field: "e_fat" },
-            { field: "e_mrgn_pct" },
-          ],
-        },
-      ]}
       slots={{
         loadingOverlay: () => (
           <div className="h-full w-full flex items-center justify-center">
