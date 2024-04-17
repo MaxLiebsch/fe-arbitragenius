@@ -1,7 +1,6 @@
 "use client";
 import {
   DataGridPremium,
-  GridCellParams,
   GridColDef,
   GridColumnVisibilityModel,
   GridSortModel,
@@ -25,9 +24,13 @@ import { GridApiPremium } from "@mui/x-data-grid-premium/models/gridApiPremium";
 import { ChevronRightIcon, ChevronLeftIcon } from "@heroicons/react/16/solid";
 
 const LinkWrapper = (link: string | undefined, name?: string) => {
+  const regexp = /^https?:\/\/[^?#\n]+/;
   if (link) {
+    const match = link.match(regexp);
+    if (!match) return <></>;
+
     return (
-      <Link href={link} target="_blank">
+      <Link href={match[0]} target="_blank">
         <div className="leading-2">{name ? name : "Visit"}</div>
       </Link>
     );
