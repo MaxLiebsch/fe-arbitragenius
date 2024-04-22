@@ -44,7 +44,7 @@ export default function Page() {
                 />
               </div>
               <div className="text-sm text-red-500 mt-1">
-                {state.fieldErrors.email}
+                {state?.fieldErrors.email}
               </div>
             </div>
 
@@ -85,7 +85,7 @@ export default function Page() {
                 />
               </div>
               <div className="text-sm text-red-500 mt-1">
-                {state.fieldErrors.password}
+                {state?.fieldErrors.password}
               </div>
             </div>
 
@@ -94,9 +94,9 @@ export default function Page() {
                 Du hast bereits ein Account?
               </a>
               <SubmitButton text="Registrieren"/>
-              {Boolean(state.message) && (
+              {Boolean(state?.message) && (
                 <div className="text-sm text-red-500 text-right">
-                  ✗ {state.message}
+                  ✗ {state?.message}
                 </div>
               )}
             </div>

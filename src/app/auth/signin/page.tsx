@@ -8,7 +8,6 @@ import { useFormState } from "react-dom";
 export default function Page() {
   const [state, formAction] = useFormState(signinAction, { message: "" });
   
-
   return (
     <>
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
@@ -78,9 +77,9 @@ export default function Page() {
                 </a>
               </div>
               <SubmitButton text="Login"/>
-              {Boolean(state.message) && (
+              {Boolean(state?.message) && (
                 <div className="text-sm text-red-500 text-right">
-                  ✗ {state.message}
+                  ✗ {state?.message}
                 </div>
               )}
             </div>
