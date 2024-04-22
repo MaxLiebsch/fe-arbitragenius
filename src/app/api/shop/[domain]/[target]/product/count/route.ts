@@ -6,6 +6,7 @@ export async function GET(
   { params }: { params: { domain: string; target: string } }
 ) {
   const mongo = await mongoPromise;
+  
 
   const { target, domain } = params;
   const res = await mongo
