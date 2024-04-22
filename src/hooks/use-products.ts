@@ -15,6 +15,7 @@ export type ProductSort =
 
 export type Product = {
   ean: string;
+_id: string;
   pblsh: boolean;
   vrfd: boolean;
   ctgry: string;

@@ -134,7 +134,6 @@ export default function ProductsTable(props: {
 
   const apiRef = useGridApiRef();
 
-  const shopQuery = useShop(domain);
   const productCountQuery = useProductCount(domain, target);
   const productQuery = useProducts(domain, paginationModel, sortModel, target);
 

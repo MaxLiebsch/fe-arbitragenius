@@ -8,9 +8,11 @@ export async function GET(
   const mongo = await mongoPromise;
 
   const res = await mongo
-    .db(process.env.NEXT_MONGO_DB)
+    .db(process.env.NEXT_MONGO_DB??"")
     .collection(process.env.NEXT_MONGO_SHOPS ?? "shops")
     .findOne({ d: { $eq: params.domain }, active: { $eq: true } });
 
   return Response.json(res);
 }
+
+
