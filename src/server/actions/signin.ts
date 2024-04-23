@@ -19,6 +19,8 @@ export async function signinAction(
   prevState: SigninFormState | null,
   formData: FormData
 ): Promise<SigninFormState> {
+  const cookieStore = cookies();
+  console.log('cookieStore:', cookieStore)
   const form = SigninRequestSchema.safeParse({
     email: formData.get("email"),
     password: formData.get("password"),
@@ -32,7 +34,7 @@ export async function signinAction(
     const { account } = await createAdminClient();
     const session = await account.createEmailPasswordSession(email, password);
 
-    cookies()?.set && cookies().set(
+    cookieStore.set(
       `a_session_${process.env.NEXT_PUBLIC_APPWRITE_PROJECT}_legacy`,
       session.secret,
       {

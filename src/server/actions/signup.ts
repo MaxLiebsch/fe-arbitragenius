@@ -22,6 +22,8 @@ export async function signupAction(
   prevState: SignupFormState | null,
   formData: FormData
 ): Promise<SignupFormState> {
+  const cookieStore = cookies()
+  console.log('cookieStore:', cookieStore)
   const form = SignupRequestSchema.safeParse({
     email: formData.get("email"),
     name: formData.get("name"),
@@ -46,7 +48,7 @@ export async function signupAction(
       `${process.env.NEXT_PUBLIC_DOMAIN}/auth/verify/callback/${email}`
     );
 
-    cookies()?.set && cookies().set(
+    cookieStore.set(
       `a_session_${process.env.NEXT_PUBLIC_APPWRITE_PROJECT}_legacy`,
       session.secret,
       {

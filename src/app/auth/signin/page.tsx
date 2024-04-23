@@ -1,3 +1,5 @@
+'use client'
+
 import { SubmitButton } from "@/components/FormSubmitBn";
 import { Logo } from "@/components/Logo";
 import { signinAction } from "@/server/actions/signin";
