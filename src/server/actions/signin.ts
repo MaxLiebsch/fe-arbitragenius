@@ -34,16 +34,16 @@ export async function signinAction(
     const { account } = await createAdminClient();
     const session = await account.createEmailPasswordSession(email, password);
 
-    // cookieStore.set(
-    //   `a_session_${process.env.NEXT_PUBLIC_APPWRITE_PROJECT}_legacy`,
-    //   session.secret,
-    //   {
-    //     path: "/",
-    //     httpOnly: true,
-    //     sameSite: "strict",
-    //     secure: true,
-    //   }
-    // );
+    cookieStore.set(
+      `a_session_${process.env.NEXT_PUBLIC_APPWRITE_PROJECT}_legacy`,
+      session.secret,
+      {
+        path: "/",
+        httpOnly: true,
+        sameSite: "strict",
+        secure: true,
+      }
+    );
   } catch (error) {
     console.error(error);
 

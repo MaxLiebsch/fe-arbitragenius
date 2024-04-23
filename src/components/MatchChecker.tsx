@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Button } from "./Button";
 import useProductCount from "@/hooks/use-product-count";
 import useProducts, {
@@ -44,25 +44,40 @@ const MatchChecker = ({ shops }: { shops: any[] }) => {
     ? productQuery.data[currentProductIdx]
     : null;
 
-  const handleMatch = (isMatch: boolean = false) => {
-    setCurrentProductIdx(currentProductIdx + 1);
-    if (productToCheck && !productToCheck[`${targetShop}_vrfd` as keyof Product]) {
-      productMutation.mutate({
-        domain: collectionName,
-        productId: productToCheck._id.toString(),
-        update: {
-          [`${targetShop}_vrfd`]: isMatch,
-        },
-      });
-      if (currentProductIdx > productsCnt - 2) {
-        setPaginationModel({
-          page: paginationModel.page + 1,
-          pageSize: batchSize,
+  const handleMatch = useCallback(
+    (isMatch: boolean = false) => {
+      setCurrentProductIdx(currentProductIdx + 1);
+      if (
+        productToCheck &&
+        !productToCheck[`${targetShop}_vrfd` as keyof Product]
+      ) {
+        productMutation.mutate({
+          domain: collectionName,
+          productId: productToCheck._id.toString(),
+          update: {
+            [`${targetShop}_vrfd`]: isMatch,
+          },
         });
-        setCurrentProductIdx(0);
+        if (currentProductIdx > productsCnt - 2) {
+          setPaginationModel({
+            page: paginationModel.page + 1,
+            pageSize: batchSize,
+          });
+          setCurrentProductIdx(0);
+        }
       }
-    }
-  };
+    },
+    [
+      productToCheck,
+      productsCnt,
+      targetShop,
+      collectionName,
+      currentProductIdx,
+      paginationModel.page,
+      productMutation,
+    ]
+  );
+
   useEffect(() => {
     setCurrentProductIdx(0);
     setPaginationModel({ page: 0, pageSize: batchSize });
@@ -86,7 +101,7 @@ const MatchChecker = ({ shops }: { shops: any[] }) => {
         checkKey(e as KeyboardEvent)
       );
     };
-  }, []);
+  }, [handleMatch]);
 
   if (productQuery.isLoading || productCountQuery.isLoading) {
     return <>...isLoading</>;
@@ -229,8 +244,18 @@ const MatchChecker = ({ shops }: { shops: any[] }) => {
           <>...isLoading</>
         ) : (
           <>
-            <Button onClick={() => handleMatch(true)}>{productToCheck && productToCheck[`${targetShop}_vrfd` as keyof Product]?"Continue":"Match"}</Button>
-            <Button onClick={() => handleMatch(false)}>{productToCheck && productToCheck[`${targetShop}_vrfd` as keyof Product]?"Continue":"No match"}</Button>
+            <Button onClick={() => handleMatch(true)}>
+              {productToCheck &&
+              productToCheck[`${targetShop}_vrfd` as keyof Product]
+                ? "Continue"
+                : "Match"}
+            </Button>
+            <Button onClick={() => handleMatch(false)}>
+              {productToCheck &&
+              productToCheck[`${targetShop}_vrfd` as keyof Product]
+                ? "Continue"
+                : "No match"}
+            </Button>
           </>
         )}
       </div>
