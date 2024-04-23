@@ -34,7 +34,7 @@ const SignUp = () => {
         </h2>
       </div>
       <div className="mt-5 sm:mx-auto sm:w-full sm:max-w-sm">
-        <form ref={formRef} className="space-y-6" action={formAction}>
+        {/* <form ref={formRef} className="space-y-6" action={formAction}>
           <div>
             <label
               htmlFor="email"
@@ -109,7 +109,7 @@ const SignUp = () => {
               </div>
             )}
           </div>
-        </form>
+        </form> */}
       </div>
     </div>
   );
