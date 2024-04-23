@@ -5,11 +5,11 @@ import { signupAction } from "@/server/actions/signup";
 import { useFormState } from "react-dom";
 
 const SignUp = () => {
-  // const [state, formAction] = useFormState(signupAction, {
-  //   message: "",
-  //   formErrors: [],
-  //   fieldErrors: {},
-  // });
+  const [state, formAction] = useFormState(signupAction, {
+    message: "",
+    formErrors: [],
+    fieldErrors: {},
+  });
 
   return (
     <>Test</>
