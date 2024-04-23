@@ -22,55 +22,55 @@ export async function signupAction(
   prevState: SignupFormState | null,
   formData: FormData
 ): Promise<SignupFormState> {
-  const cookieStore = cookies()
-  console.log('cookieStore:', cookieStore)
-  const form = SignupRequestSchema.safeParse({
-    email: formData.get("email"),
-    name: formData.get("name"),
-    password: formData.get("password"),
-  });
+  // const cookieStore = cookies()
+  // console.log('cookieStore:', cookieStore)
+  // const form = SignupRequestSchema.safeParse({
+  //   email: formData.get("email"),
+  //   name: formData.get("name"),
+  //   password: formData.get("password"),
+  // });
 
-  if (!form.success) {
-    const errors = form.error.flatten();
-    errors.fieldErrors;
-    return { message: "", ...errors };
-  }
+  // if (!form.success) {
+  //   const errors = form.error.flatten();
+  //   errors.fieldErrors;
+  //   return { message: "", ...errors };
+  // }
 
-  const { email, name, password } = form.data;
+  // const { email, name, password } = form.data;
 
-  try {
-    const { account } = await createAdminClient();
-    await account.create(ID.unique(), email, password, name);
-    const session = await account.createEmailPasswordSession(email, password);
-    const { account: acc } = await createSessionClient(session.secret);
+  // try {
+  //   const { account } = await createAdminClient();
+  //   await account.create(ID.unique(), email, password, name);
+  //   const session = await account.createEmailPasswordSession(email, password);
+  //   const { account: acc } = await createSessionClient(session.secret);
 
-    acc.createVerification(
-      `${process.env.NEXT_PUBLIC_DOMAIN}/auth/verify/callback/${email}`
-    );
+  //   acc.createVerification(
+  //     `${process.env.NEXT_PUBLIC_DOMAIN}/auth/verify/callback/${email}`
+  //   );
 
-    cookieStore.set(
-      `a_session_${process.env.NEXT_PUBLIC_APPWRITE_PROJECT}_legacy`,
-      session.secret,
-      {
-        path: "/",
-        httpOnly: true,
-        sameSite: "strict",
-        secure: true,
-      }
-    );
-  } catch (error) {
-    console.error(error);
+  //   cookieStore.set(
+  //     `a_session_${process.env.NEXT_PUBLIC_APPWRITE_PROJECT}_legacy`,
+  //     session.secret,
+  //     {
+  //       path: "/",
+  //       httpOnly: true,
+  //       sameSite: "strict",
+  //       secure: true,
+  //     }
+  //   );
+  // } catch (error) {
+  //   console.error(error);
 
-    if (error instanceof AppwriteException) {
-      if ((error as any).type === "user_already_exists")
-        return {
-          message: "",
-          formErrors: [],
-          fieldErrors: {
-            email: ["Ein Benutzer mit dieser Email existiert bereits"],
-          },
-        };
-    }
+  //   if (error instanceof AppwriteException) {
+  //     if ((error as any).type === "user_already_exists")
+  //       return {
+  //         message: "",
+  //         formErrors: [],
+  //         fieldErrors: {
+  //           email: ["Ein Benutzer mit dieser Email existiert bereits"],
+  //         },
+  //       };
+  //   }
 
     return {
       message: "Etwas ist schief gelaufen ...",

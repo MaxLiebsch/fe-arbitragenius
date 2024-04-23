@@ -19,37 +19,37 @@ export async function signinAction(
   prevState: SigninFormState | null,
   formData: FormData
 ): Promise<SigninFormState> {
-  const cookieStore = cookies();
-  console.log('cookieStore:', cookieStore)
-  const form = SigninRequestSchema.safeParse({
-    email: formData.get("email"),
-    password: formData.get("password"),
-  });
+  // const cookieStore = cookies();
+  // console.log('cookieStore:', cookieStore)
+  // const form = SigninRequestSchema.safeParse({
+  //   email: formData.get("email"),
+  //   password: formData.get("password"),
+  // });
 
-  if (!form.success) return { message: "Ungültige Anmeldedaten" };
+  // if (!form.success) return { message: "Ungültige Anmeldedaten" };
 
-  const { email, password } = form.data;
+  // const { email, password } = form.data;
 
-  try {
-    const { account } = await createAdminClient();
-    const session = await account.createEmailPasswordSession(email, password);
+  // try {
+  //   const { account } = await createAdminClient();
+  //   const session = await account.createEmailPasswordSession(email, password);
 
-    cookieStore.set(
-      `a_session_${process.env.NEXT_PUBLIC_APPWRITE_PROJECT}_legacy`,
-      session.secret,
-      {
-        path: "/",
-        httpOnly: true,
-        sameSite: "strict",
-        secure: true,
-      }
-    );
-  } catch (error) {
-    console.error(error);
+  //   cookieStore.set(
+  //     `a_session_${process.env.NEXT_PUBLIC_APPWRITE_PROJECT}_legacy`,
+  //     session.secret,
+  //     {
+  //       path: "/",
+  //       httpOnly: true,
+  //       sameSite: "strict",
+  //       secure: true,
+  //     }
+  //   );
+  // } catch (error) {
+  //   console.error(error);
 
-    if (error instanceof AppwriteException) {
-      return { message: "Ungültige Anmeldedaten" };
-    }
+  //   if (error instanceof AppwriteException) {
+  //     return { message: "Ungültige Anmeldedaten" };
+  //   }
 
     return { message: "Etwas ist schief gelaufen ..." };
   }

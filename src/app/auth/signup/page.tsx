@@ -14,17 +14,17 @@ const SignUp = () => {
   return (
 
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
-      {/* <div className="sm:mx-auto sm:w-full sm:max-w-sm">
+      <div className="sm:mx-auto sm:w-full sm:max-w-sm">
         <h2 className="text-center text-2xl font-bold leading-9 tracking-tight text-gray-900 flex items-center space-x-2">
           <span className="inline-block -mb-2">
             <Logo />
           </span>{" "}
           <span>Account erstellen</span>
         </h2>
-      </div> */}
+      </div>
       <div className="mt-5 sm:mx-auto sm:w-full sm:max-w-sm">
         <form className="space-y-6" action={formAction}>
-          {/* <div>
+          <div>
             <label
               htmlFor="email"
               className="block text-sm font-medium leading-6 text-gray-900"
@@ -97,7 +97,7 @@ const SignUp = () => {
                 ✗ {state?.message}
               </div>
             )}
-          </div> */}
+          </div>
         </form>
       </div>
     </div>
