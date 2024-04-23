@@ -46,7 +46,7 @@ export async function signupAction(
       `${process.env.NEXT_PUBLIC_DOMAIN}/auth/verify/callback/${email}`
     );
 
-    cookies().set(
+    cookies && cookies().set(
       `a_session_${process.env.NEXT_PUBLIC_APPWRITE_PROJECT}_legacy`,
       session.secret,
       {
