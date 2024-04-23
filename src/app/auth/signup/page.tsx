@@ -1,12 +1,11 @@
 "use client";
 
-import { Button } from "@/components/Button";
 import { SubmitButton } from "@/components/FormSubmitBn";
 import { Logo } from "@/components/Logo";
 import { signupAction } from "@/server/actions/signup";
 import { useFormState } from "react-dom";
 
-export default function Page() {
+function Page() {
   const [state, formAction] = useFormState(signupAction, {
     message: "",
     formErrors: [],
@@ -104,3 +103,6 @@ export default function Page() {
     </div>
   );
 }
+
+
+export default Page

@@ -4,7 +4,7 @@ import { Logo } from "@/components/Logo";
 import { signinAction } from "@/server/actions/signin";
 import { useFormState } from "react-dom";
 
-export default function Page() {
+function Page() {
   const [state, formAction] = useFormState(signinAction, { message: "" });
 
   return (
@@ -86,3 +86,5 @@ export default function Page() {
     </div>
   );
 }
+
+export default Page
