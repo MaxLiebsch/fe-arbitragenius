@@ -52,7 +52,7 @@ export async function signinAction(
   //   }
 
     return { message: "Etwas ist schief gelaufen ..." };
-  }
+  // }
 
   redirect("/");
 }

@@ -77,7 +77,7 @@ export async function signupAction(
       formErrors: [],
       fieldErrors: {},
     };
-  }
+  // }
 
   redirect("/payment");
 }
