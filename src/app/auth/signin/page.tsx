@@ -3,10 +3,21 @@
 import { SubmitButton } from "@/components/FormSubmitBn";
 import { Logo } from "@/components/Logo";
 import { signinAction } from "@/server/actions/signin";
+import { redirect } from "next/navigation";
+import { useEffect, useRef } from "react";
 import { useFormState } from "react-dom";
 
 const SignIn =()=> {
   const [state, formAction] = useFormState(signinAction, { message: "" });
+
+  const formRef = useRef<HTMLFormElement>(null)
+
+  useEffect(()=>{
+    if(state?.message === 'success'){
+      formRef.current && formRef.current.reset()
+      redirect('/')
+    }
+  },[state])
 
   return (
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
@@ -19,7 +30,7 @@ const SignIn =()=> {
         </h2>
       </div>
       <div className="mt-5 sm:mx-auto sm:w-full sm:max-w-sm">
-        <form className="space-y-6" >
+        <form className="space-y-6" action={formAction}>
           <div>
             <label
               htmlFor="email"

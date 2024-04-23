@@ -20,7 +20,6 @@ export async function signinAction(
   formData: FormData
 ): Promise<SigninFormState> {
   const cookieStore = cookies();
-  console.log('cookieStore:', cookieStore)
   const form = SigninRequestSchema.safeParse({
     email: formData.get("email"),
     password: formData.get("password"),
@@ -44,15 +43,17 @@ export async function signinAction(
         secure: true,
       }
     );
+   return { message: 'success'}
   } catch (error) {
     console.error(error);
-
+    
     if (error instanceof AppwriteException) {
       return { message: "Ungültige Anmeldedaten" };
     }
-
+    
     return { message: "Etwas ist schief gelaufen ..." };
   }
-
-  redirect("/");
+  // return redirect("/");
+  
+  
 }

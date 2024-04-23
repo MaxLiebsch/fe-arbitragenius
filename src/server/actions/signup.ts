@@ -23,7 +23,6 @@ export async function signupAction(
   formData: FormData
 ): Promise<SignupFormState> {
   const cookieStore = cookies()
-  console.log('cookieStore:', cookieStore)
   const form = SignupRequestSchema.safeParse({
     email: formData.get("email"),
     name: formData.get("name"),
@@ -58,6 +57,11 @@ export async function signupAction(
         secure: true,
       }
     );
+    return {
+      message: "success",
+      formErrors: [],
+      fieldErrors: {},
+    };
   } catch (error) {
     console.error(error);
 
@@ -79,5 +83,4 @@ export async function signupAction(
     };
   }
 
-  redirect("/payment");
 }
