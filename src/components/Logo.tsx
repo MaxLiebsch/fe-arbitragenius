@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import logoPrimary from '@/images/logos/logo_secondary.svg'
-export function Logo(props: React.ComponentPropsWithoutRef<'svg'>) {
+export function Logo() {
   return (
     <Image src={logoPrimary} alt="Arbispotter" height={70} width={150} />
     // <svg aria-hidden="true" viewBox="0 0 109 40" {...props}>
