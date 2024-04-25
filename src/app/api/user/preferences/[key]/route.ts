@@ -22,6 +22,22 @@ const serializers: {
     },
     fallback: JSON.stringify([]),
   },
+  address: {
+    serialize(input?: any) {
+      return JSON.stringify(input);
+    },
+    deserialize(input?: any) {
+      return typeof input === "object" ? JSON.parse(input) : {};
+    },
+    fallback: JSON.stringify({
+      business: "",
+      vatin: "",
+      street: "",
+      houseNumber: "",
+      code: "",
+      city: "",
+    }),
+  },
 };
 
 export async function GET(
