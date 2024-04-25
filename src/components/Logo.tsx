@@ -1,8 +1,11 @@
-import Image from 'next/image'
-import logoPrimary from '@/images/logos/logo_secondary.svg'
+import Image from "next/image";
+import logoPrimary from "@/images/logos/logo_secondary.svg";
+import Link from "next/link";
 export function Logo() {
   return (
-    <Image src={logoPrimary} alt="Arbispotter" height={70} width={150} />
+    <Link href="https://www.arbispotter.com">
+      <Image src={logoPrimary} alt="Arbispotter" height={70} width={150} />
+    </Link>
     // <svg aria-hidden="true" viewBox="0 0 109 40" {...props}>
     //   <path
     //     fillRule="evenodd"
@@ -31,5 +34,5 @@ export function Logo() {
     //     fill="#0F172A"
     //   />
     // </svg>
-  )
+  );
 }

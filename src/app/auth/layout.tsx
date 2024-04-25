@@ -1,3 +1,4 @@
+import { Footer } from "@/components/Footer";
 import { getLoggedInUser } from "@/server/appwrite";
 import { redirect } from "next/navigation";
 
@@ -10,5 +11,10 @@ export default async function RootLayout({
 
   if (user) redirect("/dashboard");
 
-  return <>{children}</>;
+  return (
+    <>
+      {children}
+      <Footer/>
+    </>
+  );
 }
