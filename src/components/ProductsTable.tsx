@@ -22,6 +22,7 @@ import Image from "next/image";
 import { Button } from "@mui/material";
 import { GridApiPremium } from "@mui/x-data-grid-premium/models/gridApiPremium";
 import { ChevronRightIcon, ChevronLeftIcon } from "@heroicons/react/16/solid";
+import { prefixLink } from "@/util/prefixLink";
 
 const LinkWrapper = (link: string | undefined, name?: string) => {
   const regexp = /^https?:\/\/[^?#\n]+/;
@@ -63,7 +64,7 @@ const columns: (target: string) => GridColDef[] = (target) => [
     field: "img",
     headerName: "Produktbild",
     cellClassName: "hover:!overflow-visible",
-    renderCell: (params) => ImageRenderer(params.row.img),
+    renderCell: (params) => ImageRenderer(prefixLink(params.row.img, params.row.s)),
   },
   {
     field: "prc",
@@ -94,7 +95,7 @@ const columns: (target: string) => GridColDef[] = (target) => [
 
     headerName: "Produktbild",
     cellClassName: "hover:!overflow-visible",
-    renderCell: (params) => ImageRenderer(params.row.a_img),
+    renderCell: (params) => ImageRenderer(prefixLink(params.row.a_img,params.row.s)),
   },
   {
     field: `${target}_nm`,
