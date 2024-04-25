@@ -43,7 +43,7 @@ export async function signinAction(
         secure: true,
       }
     );
-   return { message: 'success'}
+
   } catch (error) {
     console.error(error);
     
@@ -53,7 +53,8 @@ export async function signinAction(
     
     return { message: "Etwas ist schief gelaufen ..." };
   }
-  // return redirect("/");
+
+  return redirect("/");
   
   
 }

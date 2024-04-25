@@ -9,6 +9,7 @@ import { createAdminClient, createSessionClient } from "../appwrite";
 const SignupRequestSchema = z.object({
   email: z.string().email({ message: "Keine valide Email" }),
   name: z.string().optional(),
+  terms: z.string({ message: "Bitte den AGB's und dem Datenschutz zustimmen" }),
   password: z
     .string()
     .min(12, { message: "Das Passwort muss mindestens 12 Zeichen lang sein" }),
@@ -22,16 +23,16 @@ export async function signupAction(
   prevState: SignupFormState | null,
   formData: FormData
 ): Promise<SignupFormState> {
-  const cookieStore = cookies()
+  const cookieStore = cookies();
   const form = SignupRequestSchema.safeParse({
     email: formData.get("email"),
+    terms: formData.get("terms"),
     name: formData.get("name"),
     password: formData.get("password"),
   });
 
   if (!form.success) {
     const errors = form.error.flatten();
-    errors.fieldErrors;
     return { message: "", ...errors };
   }
 
@@ -58,7 +59,7 @@ export async function signupAction(
       }
     );
     return {
-      message: "success",
+      message: "Etwas ist schief gelaufen ...",
       formErrors: [],
       fieldErrors: {},
     };
@@ -83,4 +84,5 @@ export async function signupAction(
     };
   }
 
+  redirect("/payment");
 }
