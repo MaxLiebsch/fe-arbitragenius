@@ -1,0 +1,100 @@
+"use client";
+
+import Plan from "@/components/Plan";
+import { createCheckoutSession } from "@/server/actions/stripe";
+import { getLoggedInUser } from "@/server/appwrite";
+import Image from "next/image";
+import { redirect } from "next/navigation";
+import backgroundImage from "@/images/background-pricing.svg";
+
+export default function Page() {
+  const formActionMonthly = async (): Promise<void> => {
+    const user = await getLoggedInUser();
+    if (!user) redirect("/auth/signin");
+    const { client_secret, url } = await createCheckoutSession(
+      user.$id,
+      "month"
+    );
+    window.location.assign(url as string);
+  };
+
+  const formActionYearly = async (): Promise<void> => {
+    const user = await getLoggedInUser();
+    if (!user) redirect("/auth/signin");
+    const { client_secret, url } = await createCheckoutSession(
+      user.$id,
+      "year"
+    );
+    window.location.assign(url as string);
+  };
+
+  return (
+    <>
+      <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
+        <div className="absolute bg-no-repeat -left-[7rem] -top-4 lg:-left-[69rem] lg:-top-4 h-[180%] w-[180%] bg-secondary-950">
+          <Image
+            className="bg-no-repeat"
+            src={backgroundImage}
+            alt=""
+            fill
+            style={{ objectFit: "contain" }}
+            unoptimized
+          />
+        </div>
+        <div className="md:text-center">
+          <h2 className="font-display text-3xl tracking-tight text-white sm:text-4xl">
+            <span className="relative whitespace-nowrap">
+              {/* <SwirlyDoodle className="absolute left-0 top-1/2 h-[1em] w-full fill-secondary-700" /> */}
+              <span className="whitespace-break-spaces md:whitespace-normal">
+                Transparente Preise ohne versteckte Kosten!
+              </span>
+            </span>{" "}
+          </h2>
+          <div className="relative flex justify-center">
+            <p className="mt-4 max-w-2xl text-lg text-white">
+              Wir ermöglichen mit unseren einfachen Preismodellen volle
+              Flexibilität. Starte jetzt und sicher dir für kurze Zeit exklusive
+              Rabatte.
+            </p>
+          </div>
+        </div>
+        <div className="mt-20 sm:mx-auto sm:w-full sm:max-w-md flex flex-row items-center justify-center space-x-20">
+          <form action={formActionMonthly} className="space-y-2">
+            <Plan
+              name={
+                <div className="text-silver-chalice-400 text-3xl line-through">
+                  298€
+                </div>
+              }
+              price={
+                <div>
+                  149€/<span className="text-3xl">Monat</span>
+                </div>
+              }
+              description="monatlich kündbar"
+              features={[]}
+            />
+          </form>
+
+          <form action={formActionYearly} className="space-y-2">
+            <Plan
+              featured
+              name={
+                <div className="text-silver-chalice-300 text-3xl line-through">
+                  199€
+                </div>
+              }
+              price={
+                <div>
+                  99€/<span className="text-3xl">Monat</span>
+                </div>
+              }
+              description="im Abo"
+              features={[]}
+            />
+          </form>
+        </div>
+      </div>
+    </>
+  );
+}
