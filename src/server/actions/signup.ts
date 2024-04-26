@@ -58,11 +58,7 @@ export async function signupAction(
         secure: true,
       }
     );
-    return {
-      message: "Etwas ist schief gelaufen ...",
-      formErrors: [],
-      fieldErrors: {},
-    };
+   
   } catch (error) {
     console.error(error);
 
