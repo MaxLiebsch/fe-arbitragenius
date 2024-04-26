@@ -23,6 +23,8 @@ FROM node:20-slim as prod
 
 ENV PATH $PATH:/app/node_modules/.bin
 
+EXPOSE 3000/tcp
+
 WORKDIR /app
 
 COPY --from=build /app/node_modules node_modules
