@@ -58,6 +58,12 @@ export async function signupAction(
         secure: true,
       }
     );
+
+    return {
+      message: "success",
+      formErrors: [],
+      fieldErrors: {},
+    };
    
   } catch (error) {
     console.error(error);
