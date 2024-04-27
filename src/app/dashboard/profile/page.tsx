@@ -96,7 +96,6 @@ const Page = () => {
   }, [updatePasswordState]);
 
   return (
-    <>
       <Tab.Group>
         <header className="border-b border-white/5">
           {/* Secondary navigation */}
@@ -680,7 +679,6 @@ const Page = () => {
           </Tab.Panel>
         </Tab.Panels>
       </Tab.Group>
-    </>
   );
 };
 
