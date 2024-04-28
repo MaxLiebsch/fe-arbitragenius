@@ -11,6 +11,7 @@ COPY package.json ./
 
 
 RUN yarn install
+RUN yarn add sharp --ignore-engines
 
 
 RUN echo `node -v`
@@ -32,5 +33,6 @@ COPY --from=build /app/next.config.mjs ./
 COPY --from=build /app/.next .next
 COPY --from=build /app/pm2.config.js ./
 COPY --from=build /app/public public
+COPY --from=build /app ./
 
-ENTRYPOINT ["next", "start"]
+ENTRYPOINT ["next", "dev"]
