@@ -12,6 +12,7 @@ COPY package.json ./
 
 RUN yarn install
 RUN yarn add sharp --ignore-engines
+RUN yarn next telemetry disable
 
 
 RUN echo `node -v`
@@ -27,6 +28,8 @@ ENV PATH $PATH:/app/node_modules/.bin
 EXPOSE 3000/tcp
 
 WORKDIR /app
+
+RUN yarn next telemetry disable
 
 COPY --from=build /app/node_modules node_modules
 COPY --from=build /app/next.config.mjs ./
