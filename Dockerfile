@@ -32,6 +32,5 @@ COPY --from=build /app/next.config.mjs ./
 COPY --from=build /app/.next .next
 COPY --from=build /app/pm2.config.js ./
 COPY --from=build /app/public public
-COPY --from=build /app/package.json ./
 
 ENTRYPOINT ["next", "start"]

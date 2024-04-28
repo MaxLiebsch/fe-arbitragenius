@@ -43,7 +43,7 @@ export async function signinAction(
         secure: true,
       }
     );
-    return { message: 'success'}
+
   } catch (error) {
     console.error(error);
     

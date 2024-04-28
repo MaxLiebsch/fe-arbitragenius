@@ -17,13 +17,6 @@ const SignUp = () => {
 
   const formRef = useRef<HTMLFormElement>(null);
 
-  useEffect(() => {
-    if (state?.message === "success") {
-      formRef.current && formRef.current.reset();
-      redirect("/payment");
-    }
-  }, [state]);
-
   return (
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
