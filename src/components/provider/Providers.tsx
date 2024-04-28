@@ -44,10 +44,15 @@ export default function Providers({ children }: { children: ReactNode }) {
   const queryClient = getQueryClient();
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <SnackbarProvider />
-      <MuiProvider>{children}</MuiProvider>
-      <ReactQueryDevtools initialIsOpen={false} buttonPosition="bottom-left" />
-    </QueryClientProvider>
+    <>
+      <QueryClientProvider client={queryClient}>
+        <SnackbarProvider />
+        <MuiProvider>{children}</MuiProvider>
+        <ReactQueryDevtools
+          initialIsOpen={false}
+          buttonPosition="bottom-left"
+        />
+      </QueryClientProvider>
+    </>
   );
 }
