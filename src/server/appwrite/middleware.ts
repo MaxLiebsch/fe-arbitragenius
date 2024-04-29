@@ -32,7 +32,7 @@ export function authMiddleware<Preferences extends Models.Preferences>(
   handler: AppwriteNextMiddlewareHandler<Preferences>
 ): AppwriteNextMiddlewareHandler<Preferences> {
   return async (request) => {
-    const cookieName = `a_session_${process.env.NEXT_PUBLIC_APPWRITE_PROJECT}_legacy`;
+    const cookieName = `a_session_${process.env.NEXT_PUBLIC_APPWRITE_PROJECT}`;
     const token = request.cookies.get(cookieName)?.value;
 
     if (!token) {
@@ -57,7 +57,7 @@ async function getUser<Preferences extends Models.Preferences>(
   cookies: RequestCookies | ReadonlyRequestCookies
 ) {
   try {
-    const cookieName = `a_session_${process.env.NEXT_PUBLIC_APPWRITE_PROJECT}_legacy`;
+    const cookieName = `a_session_${process.env.NEXT_PUBLIC_APPWRITE_PROJECT}`;
     const token = cookies.get(cookieName)?.value ?? "";
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT}/account`,
@@ -66,7 +66,7 @@ async function getUser<Preferences extends Models.Preferences>(
         credentials: "include",
         // @ts-ignore
         headers: {
-          Cookie: `a_session_${process.env.NEXT_PUBLIC_APPWRITE_PROJECT}_legacy=${token}`,
+          Cookie: `a_session_${process.env.NEXT_PUBLIC_APPWRITE_PROJECT}=${token}`,
           "x-appwrite-project": process.env.NEXT_PUBLIC_APPWRITE_PROJECT,
         },
         cache: "no-store",

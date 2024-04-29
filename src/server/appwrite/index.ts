@@ -10,7 +10,7 @@ export async function createSessionClient(token?: string) {
 
   if (!token) {
     const session = cookies().get(
-      `a_session_${process.env.NEXT_PUBLIC_APPWRITE_PROJECT}_legacy`
+      `a_session_${process.env.NEXT_PUBLIC_APPWRITE_PROJECT}`
     );
     if (!session || !session.value) {
       throw new Error("No session");
