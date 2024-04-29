@@ -48,17 +48,24 @@ export async function signupAction(
       `${process.env.NEXT_PUBLIC_DOMAIN}/auth/verify/callback/${email}`
     );
 
-    cookieStore.set(
-      `a_session_${process.env.NEXT_PUBLIC_APPWRITE_PROJECT}_legacy`,
-      session.secret,
-      {
-        path: "/",
-        httpOnly: true,
-        sameSite: "strict",
-        secure: true,
-      }
-    );
-   
+    if (session?.secret) {
+      cookieStore.set(
+        `a_session_${process.env.NEXT_PUBLIC_APPWRITE_PROJECT}_legacy`,
+        session.secret,
+        {
+          path: "/",
+          httpOnly: true,
+          sameSite: "strict",
+          secure: true,
+        }
+      );
+    } else {
+      return {
+        message: "Etwas ist schief gelaufen ...",
+        formErrors: [],
+        fieldErrors: {},
+      };
+    }
   } catch (error) {
     console.error(error);
 

@@ -33,28 +33,29 @@ export async function signinAction(
     const { account } = await createAdminClient();
     const session = await account.createEmailPasswordSession(email, password);
 
-    cookieStore.set(
-      `a_session_${process.env.NEXT_PUBLIC_APPWRITE_PROJECT}_legacy`,
-      session.secret,
-      {
-        path: "/",
-        httpOnly: true,
-        sameSite: "strict",
-        secure: true,
-      }
-    );
-
+    if (session?.secret) {
+      cookieStore.set(
+        `a_session_${process.env.NEXT_PUBLIC_APPWRITE_PROJECT}_legacy`,
+        session.secret,
+        {
+          path: "/",
+          httpOnly: true,
+          sameSite: "strict",
+          secure: true,
+        }
+      );
+    } else {
+      return { message: "Etwas ist schief gelaufen ..." };
+    }
   } catch (error) {
     console.error(error);
-    
+
     if (error instanceof AppwriteException) {
       return { message: "Ungültige Anmeldedaten" };
     }
-    
+
     return { message: "Etwas ist schief gelaufen ..." };
   }
 
   return redirect("/");
-  
-  
 }
