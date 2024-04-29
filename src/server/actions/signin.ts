@@ -1,12 +1,10 @@
-"use server";
 
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { AppwriteException } from "node-appwrite";
+import { AppwriteException } from "appwrite";
 import { z } from "zod";
-import { createAdminClient } from "../appwrite";
+import { createWebClient } from "@/web/appwrite";
 
-const SigninRequestSchema = z.object({
+export const SigninRequestSchema = z.object({
   email: z.string(),
   password: z.string(),
 });
@@ -19,7 +17,6 @@ export async function signinAction(
   prevState: SigninFormState | null,
   formData: FormData
 ): Promise<SigninFormState> {
-  const cookieStore = cookies();
   const form = SigninRequestSchema.safeParse({
     email: formData.get("email"),
     password: formData.get("password"),
@@ -30,25 +27,10 @@ export async function signinAction(
   const { email, password } = form.data;
 
   try {
-    const { account } = await createAdminClient();
-    const session = await account.createEmailPasswordSession(email, password);
+    const { account } = await createWebClient();
+    await account.createEmailPasswordSession(email, password);
 
-    if (session?.secret) {
-      cookieStore.set(
-        `a_session_${process.env.NEXT_PUBLIC_APPWRITE_PROJECT}_legacy`,
-        session.secret,
-        {
-          path: "/",
-          httpOnly: true,
-          sameSite: "strict",
-          secure: true,
-        }
-      );
-    } else {
-      return { message: "Etwas ist schief gelaufen ..." };
-    }
   } catch (error) {
-    console.error(error);
 
     if (error instanceof AppwriteException) {
       return { message: "Ungültige Anmeldedaten" };

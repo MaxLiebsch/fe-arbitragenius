@@ -1,12 +1,10 @@
 "use server";
-
-import { Client, Account } from "appwrite";
 import { Button } from "@/components/Button";
 import { Logo } from "@/components/Logo";
 import { createSessionClient } from "@/server/appwrite";
+import { createWebClient } from "@/web/appwrite";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { createClient } from "@/web/appwrite";
 
 export default async function Page({
   params,
@@ -49,9 +47,7 @@ export default async function Page({
   } catch (error) {
     console.log(error);
     try {
-      const client = createClient();
-      const account = new Account(client);
-
+      const {account} = await createWebClient() 
       await account.updateVerification(
         searchParams.userId,
         searchParams.secret

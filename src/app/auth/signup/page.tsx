@@ -4,8 +4,7 @@ import { SubmitButton } from "@/components/FormSubmitBn";
 import { Logo } from "@/components/Logo";
 import { NavLink } from "@/components/NavLink";
 import { signupAction } from "@/server/actions/signup";
-import { redirect } from "next/navigation";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import { useFormState } from "react-dom";
 
 const SignUp = () => {
@@ -18,6 +17,7 @@ const SignUp = () => {
   const formRef = useRef<HTMLFormElement>(null);
 
   return (
+    <>
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <h2 className="text-center text-2xl font-bold leading-9 tracking-tight text-gray-900 flex items-center space-x-2">
@@ -149,6 +149,7 @@ const SignUp = () => {
           </form>
         </div>
       </div>
+    </>
   );
 };
 

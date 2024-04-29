@@ -1,5 +1,6 @@
 "use server";
 import { Client, Account, Databases, Users } from "node-appwrite";
+import { Client as WebClient, Account as WebAccount } from "appwrite";
 import { cookies } from "next/headers";
 
 export async function createSessionClient(token?: string) {
