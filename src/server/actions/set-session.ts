@@ -1,10 +1,10 @@
 "use server";
 
 import { cookies } from "next/headers";
-
+import { sessionCookieName } from "../constant";
 export const setSession = async (secret: string) => {
   cookies().set(
-    `a_session_${process.env.NEXT_PUBLIC_APPWRITE_PROJECT}`,
+    sessionCookieName,
     secret,
     {
       path: "/",

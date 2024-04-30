@@ -3,6 +3,9 @@ import { Models } from "appwrite";
 import { ReadonlyRequestCookies } from "next/dist/server/web/spec-extension/adapters/request-cookies";
 import { RequestCookies } from "next/dist/server/web/spec-extension/cookies";
 import type { NextRequest, NextResponse } from "next/server";
+import { sessionCookieName } from "../constant";
+
+const legacy = process.env.NODE_ENV === 'development' ? "_legacy": ""
 
 export type AppwriteServerConfiguration = {
   url: string;
@@ -32,8 +35,7 @@ export function authMiddleware<Preferences extends Models.Preferences>(
   handler: AppwriteNextMiddlewareHandler<Preferences>
 ): AppwriteNextMiddlewareHandler<Preferences> {
   return async (request) => {
-    const cookieName = `a_session_${process.env.NEXT_PUBLIC_APPWRITE_PROJECT}`;
-    const token = request.cookies.get(cookieName)?.value;
+    const token = request.cookies.get(sessionCookieName)?.value;
 
     if (!token) {
       return handler(request);
@@ -41,6 +43,7 @@ export function authMiddleware<Preferences extends Models.Preferences>(
 
     try {
       const account = await getUser<Preferences>(request.cookies);
+
 
       request.user = account || undefined;
 
@@ -57,8 +60,7 @@ async function getUser<Preferences extends Models.Preferences>(
   cookies: RequestCookies | ReadonlyRequestCookies
 ) {
   try {
-    const cookieName = `a_session_${process.env.NEXT_PUBLIC_APPWRITE_PROJECT}`;
-    const token = cookies.get(cookieName)?.value ?? "";
+    const token = cookies.get(sessionCookieName)?.value ?? "";
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT}/account`,
       {
@@ -66,7 +68,7 @@ async function getUser<Preferences extends Models.Preferences>(
         credentials: "include",
         // @ts-ignore
         headers: {
-          Cookie: `a_session_${process.env.NEXT_PUBLIC_APPWRITE_PROJECT}=${token}`,
+          Cookie: `a_session_${process.env.NEXT_PUBLIC_APPWRITE_PROJECT}${legacy}=${token}`,
           "x-appwrite-project": process.env.NEXT_PUBLIC_APPWRITE_PROJECT,
         },
         cache: "no-store",
