@@ -8,7 +8,7 @@ import { redirect } from "next/navigation";
 import backgroundImage from "@/images/background-pricing.svg";
 
 export default function Page() {
-  const formActionMonthly = async (): Promise<void> => {
+  const formActionMonthly = async (formData: FormData): Promise<void> => {
     const user = await getLoggedInUser();
     if (!user) redirect("/auth/signin");
     const { client_secret, url } = await createCheckoutSession(
@@ -18,7 +18,7 @@ export default function Page() {
     window.location.assign(url as string);
   };
 
-  const formActionYearly = async (): Promise<void> => {
+  const formActionYearly = async (formData: FormData): Promise<null> => {
     const user = await getLoggedInUser();
     if (!user) redirect("/auth/signin");
     const { client_secret, url } = await createCheckoutSession(
@@ -26,6 +26,7 @@ export default function Page() {
       "year"
     );
     window.location.assign(url as string);
+    return null;
   };
 
   return (
@@ -39,7 +40,7 @@ export default function Page() {
             fill
             style={{ objectFit: "contain" }}
             unoptimized
-          />
+            />
         </div>
         <div className="md:text-center">
           <h2 className="font-display text-3xl tracking-tight text-white sm:text-4xl">
@@ -60,6 +61,7 @@ export default function Page() {
         </div>
         <div className="mt-20 sm:mx-auto sm:w-full sm:max-w-md flex flex-row items-center justify-center space-x-20">
           <form action={formActionMonthly} className="space-y-2">
+            <input hidden name="monthly-plan"></input>
             <Plan
               name={
                 <div className="text-silver-chalice-400 text-3xl line-through">
@@ -77,6 +79,7 @@ export default function Page() {
           </form>
 
           <form action={formActionYearly} className="space-y-2">
+            <input hidden name="yearly-plan"></input>
             <Plan
               featured
               name={
