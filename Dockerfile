@@ -6,6 +6,7 @@ WORKDIR /app
 
 COPY . .
 COPY [".env.production", "/app"]
+COPY [".env", "/app"]
 
 COPY package.json ./
 
@@ -29,6 +30,8 @@ WORKDIR /app
 
 COPY --from=build /app/node_modules node_modules
 COPY --from=build /app/next.config.mjs ./
+COPY --from=build /app/.env.production ./
+COPY --from=build /app/.env ./
 COPY --from=build /app/.next .next
 COPY --from=build /app/pm2.config.js ./
 COPY --from=build /app/public public
