@@ -1,9 +1,7 @@
 "use server";
 
-import ProductsTable from "@/components/ProductsTable";
 import ProductsTableTabs from "@/components/ProductsTableTabs";
 import { mongoPromise } from "@/server/mongo";
-import { Tab } from "@headlessui/react";
 import Title from "antd/es/typography/Title";
 import { redirect } from "next/navigation";
 import React from "react";
