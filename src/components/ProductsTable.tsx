@@ -25,7 +25,7 @@ import { ChevronRightIcon, ChevronLeftIcon } from "@heroicons/react/16/solid";
 import { prefixLink } from "@/util/prefixLink";
 
 const LinkWrapper = (link: string | undefined, name?: string) => {
-  const regexp = /^https?:\/\/[^?#\n]+/;
+  const regexp = /https?:\/\/[^?#\n?]+(?:\?[^#\n?]+)?(?:#[^#\n?]+)?/;
   if (link) {
     const match = link.match(regexp);
     if (!match) return <></>;
