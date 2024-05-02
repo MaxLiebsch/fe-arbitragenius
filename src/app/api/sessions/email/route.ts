@@ -44,7 +44,6 @@ export async function POST(request: NextRequest) {
   const data = response.data;
 
   let headers = response.headers;
-  console.log('headers:', headers)
   delete headers["content-length"];
 
   return Response.json(
