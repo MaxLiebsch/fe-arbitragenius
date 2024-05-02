@@ -7,5 +7,5 @@ export async function logoutAction() {
   const { account } = await createWebClient();
   await account.deleteSession("current");
 
-  redirect("/auth/signin");
+  redirect("/app/auth/signin");
 }

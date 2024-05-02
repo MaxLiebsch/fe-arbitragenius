@@ -135,7 +135,7 @@ const SignUp = () => {
                 </div>
               </div>
               <div className="space-y-1">
-                <a className="text-secondary-950 underline" href="/auth/signin">
+                <a className="text-secondary-950 underline" href="/app/auth/signin">
                   Du hast bereits ein Account?
                 </a>
                 <SubmitButton text="Registrieren" />

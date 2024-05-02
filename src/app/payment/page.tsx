@@ -10,7 +10,7 @@ import backgroundImage from "@/images/background-pricing.svg";
 export default function Page() {
   const formActionMonthly = async (formData: FormData): Promise<void> => {
     const user = await getLoggedInUser();
-    if (!user) redirect("/auth/signin");
+    if (!user) redirect("/app/auth/signin");
     const { client_secret, url } = await createCheckoutSession(
       user.$id,
       "month"
@@ -20,7 +20,7 @@ export default function Page() {
 
   const formActionYearly = async (formData: FormData): Promise<null> => {
     const user = await getLoggedInUser();
-    if (!user) redirect("/auth/signin");
+    if (!user) redirect("/app/auth/signin");
     const { client_secret, url } = await createCheckoutSession(
       user.$id,
       "year"

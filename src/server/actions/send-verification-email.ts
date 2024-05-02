@@ -5,7 +5,7 @@ import { createSessionClient, getLoggedInUser } from "../appwrite";
 export async function sendVerificationEmailAction() {
   const user = await getLoggedInUser();
 
-  if (!user) redirect("/auth/signin");
+  if (!user) redirect("/app/auth/signin");
 
   if (user.emailVerification) redirect("/");
 

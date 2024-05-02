@@ -69,7 +69,7 @@ const SignIn = () => {
                 <div className="flex flex-row justify-between mb-3">
                   <a
                     className="text-secondary-950 underline text-sm"
-                    href="/auth/signup"
+                    href="/app/auth/signup"
                   >
                     Keinen Account?
                   </a>

@@ -7,7 +7,7 @@ export const middleware = authMiddleware(async (request) => {
     if (request.nextUrl.pathname.startsWith("/app/api")) {
       return new NextResponse("unauthorized", { status: 401 });
     } else {
-      return NextResponse.redirect(new URL("/auth/signin", request.url));
+      return NextResponse.redirect(new URL("/app/auth/signin", request.url));
     }
   }
 
