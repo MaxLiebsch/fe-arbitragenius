@@ -4,8 +4,7 @@ import { SubmitButton } from "@/components/FormSubmitBn";
 import { Logo } from "@/components/Logo";
 import { NavLink } from "@/components/NavLink";
 import { signupAction } from "@/server/actions/signup";
-import { redirect } from "next/navigation";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import { useFormState } from "react-dom";
 
 const SignUp = () => {
@@ -136,7 +135,7 @@ const SignUp = () => {
                 </div>
               </div>
               <div className="space-y-1">
-                <a className="text-secondary-950 underline" href="/auth/signin">
+                <a className="text-secondary-950 underline" href="/app/auth/signin">
                   Du hast bereits ein Account?
                 </a>
                 <SubmitButton text="Registrieren" />

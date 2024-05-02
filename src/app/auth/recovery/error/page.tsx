@@ -20,13 +20,13 @@ export default function Page({
           <div className="flex flex-row justify-between">
             <a
               className="text-secondary-950 underline text-sm"
-              href="/auth/signup"
+              href="/app/auth/signup"
             >
               Du hast keinen Account?
             </a>
             <a
               className="text-secondary-950 underline text-sm"
-              href="/auth/signin"
+              href="/app/auth/signin"
             >
               Zum Login
             </a>

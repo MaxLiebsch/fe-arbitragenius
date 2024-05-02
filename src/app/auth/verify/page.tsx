@@ -30,13 +30,13 @@ export default async function Page({
           <div className="flex flex-row justify-between">
             <Link
               className="text-secondary-950 underline text-sm"
-              href="/auth/signup"
+              href="/app/auth/signup"
             >
               Ich habe keinen Account?
             </Link>
             <Link
               className="text-secondary-950 underline text-sm"
-              href="/auth/signin"
+              href="/app/auth/signin"
             >
               Zum Login
             </Link>

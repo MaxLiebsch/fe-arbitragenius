@@ -1,17 +1,11 @@
-"use server";
+"use client";
 
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { createSessionClient } from "../appwrite";
 
 export async function logoutAction() {
-  if (
-    cookies().has(
-      `a_session_${process.env.NEXT_PUBLIC_APPWRITE_PROJECT}_legacy`
-    )
-  )
-    cookies().delete(
-      `a_session_${process.env.NEXT_PUBLIC_APPWRITE_PROJECT}_legacy`
-    );
+  const { account } = await createSessionClient();
+  await account.deleteSession("current");
 
   redirect("/auth/signin");
 }

@@ -33,8 +33,8 @@ export async function createCheckoutSession(
         },
       ],
       subscription_data: {},
-      success_url: `${origin}/payment/result?userId=${userId}&session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${origin}/payment`,
+      success_url: `${origin}/app/payment/result?userId=${userId}&session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${origin}/app/payment`,
       ui_mode: "hosted",
     });
 

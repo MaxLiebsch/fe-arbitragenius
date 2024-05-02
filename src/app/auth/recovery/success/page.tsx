@@ -13,7 +13,7 @@ export default function Page() {
           </h2>
         </div>
         <div className="mt-5 sm:mx-auto sm:w-full sm:max-w-sm space-y-6">
-          <Link href="/auth/signin">
+          <Link href="/app/auth/signin">
             <Button className="w-full" variant="solid" color="slate">
               Zurück zum Login
             </Button>

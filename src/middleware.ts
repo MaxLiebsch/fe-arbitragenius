@@ -4,10 +4,13 @@ import { getStripeSubscriptions } from "./server/stripe/middleware";
 
 export const middleware = authMiddleware(async (request) => {
   if (!request.user) {
-    if (request.nextUrl.pathname.startsWith("/api")) {
+    if (request.nextUrl.pathname.startsWith("/app/api")) {
       return new NextResponse("unauthorized", { status: 401 });
     } else {
-      return NextResponse.redirect(new URL("/auth/signin", request.url));
+      if(request.nextUrl.pathname === "/api/sessions/email"){
+        return NextResponse.next()
+      }
+      return NextResponse.redirect(new URL("/app/auth/signin", request.url));
     }
   }
 
@@ -15,7 +18,7 @@ export const middleware = authMiddleware(async (request) => {
 
   if (!subscriptions.total) {
     if (!request.nextUrl.pathname.startsWith("/payment"))
-      return NextResponse.redirect(new URL("/payment", request.url));
+      return NextResponse.redirect(new URL("/app/payment", request.url));
     else return NextResponse.next();
   }
 
@@ -28,7 +31,7 @@ export const middleware = authMiddleware(async (request) => {
     stripeSubscription.data[0].status !== "active"
   )
     if (!request.nextUrl.pathname.startsWith("/payment"))
-      return NextResponse.redirect(new URL("/payment", request.url));
+      return NextResponse.redirect(new URL("/app/payment", request.url));
     else return NextResponse.next();
 
   return NextResponse.next();
@@ -36,6 +39,7 @@ export const middleware = authMiddleware(async (request) => {
 
 export const config = {
   matcher:
+
     "/((?!auth|payment/result|static|_next/static|_next/image|favicon.ico).*)",
   missing: [
     { type: "header", key: "next-router-prefetch" },

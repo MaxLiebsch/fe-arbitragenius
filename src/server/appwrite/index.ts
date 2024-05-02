@@ -1,6 +1,9 @@
 "use server";
+
 import { Client, Account, Databases, Users } from "node-appwrite";
 import { cookies } from "next/headers";
+import { sessionCookieName } from "../constant";
+
 
 export async function createSessionClient(token?: string) {
   const client = new Client()
@@ -8,9 +11,7 @@ export async function createSessionClient(token?: string) {
     .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT ?? "");
 
   if (!token) {
-    const session = cookies().get(
-      `a_session_${process.env.NEXT_PUBLIC_APPWRITE_PROJECT}_legacy`
-    );
+    const session = cookies().get(sessionCookieName);
     if (!session || !session.value) {
       throw new Error("No session");
     }

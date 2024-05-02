@@ -3,7 +3,8 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
 import MuiXLicense from "../components/MuiXLicense";
-import Providers from "./providers";
+import Providers from "../components/provider/Providers";
+const sharp = require('sharp')
 
 const inter = Inter({ subsets: ["latin"] });
 

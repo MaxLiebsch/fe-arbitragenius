@@ -1,10 +1,7 @@
-"use server";
-
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { AppwriteException, ID } from "node-appwrite";
 import { z } from "zod";
-import { createAdminClient, createSessionClient } from "../appwrite";
+import { createWebClient } from "@/web/appwrite";
+import { AppwriteException, ID } from "appwrite";
 
 const SignupRequestSchema = z.object({
   email: z.string().email({ message: "Keine valide Email" }),
@@ -23,7 +20,6 @@ export async function signupAction(
   prevState: SignupFormState | null,
   formData: FormData
 ): Promise<SignupFormState> {
-  const cookieStore = cookies();
   const form = SignupRequestSchema.safeParse({
     email: formData.get("email"),
     terms: formData.get("terms"),
@@ -39,33 +35,14 @@ export async function signupAction(
   const { email, name, password } = form.data;
 
   try {
-    const { account } = await createAdminClient();
+    const { account } = await createWebClient();
     await account.create(ID.unique(), email, password, name);
-    const session = await account.createEmailPasswordSession(email, password);
-    const { account: acc } = await createSessionClient(session.secret);
-
-    acc.createVerification(
+    await account.createEmailPasswordSession(email, password);
+    await account.createVerification(
       `${process.env.NEXT_PUBLIC_DOMAIN}/auth/verify/callback/${email}`
     );
 
-    cookieStore.set(
-      `a_session_${process.env.NEXT_PUBLIC_APPWRITE_PROJECT}_legacy`,
-      session.secret,
-      {
-        path: "/",
-        httpOnly: true,
-        sameSite: "strict",
-        secure: true,
-      }
-    );
-    return {
-      message: "Etwas ist schief gelaufen ...",
-      formErrors: [],
-      fieldErrors: {},
-    };
   } catch (error) {
-    console.error(error);
-
     if (error instanceof AppwriteException) {
       if ((error as any).type === "user_already_exists")
         return {
