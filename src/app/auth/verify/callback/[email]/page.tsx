@@ -35,7 +35,7 @@ export default async function Page({
             </h2>
           </div>
           <div className="mt-5 sm:mx-auto sm:w-full sm:max-w-sm space-y-6">
-            <Link href="/">
+            <Link href="/app">
               <Button className="w-full" variant="solid" color="slate">
                 Zum Dashboard
               </Button>

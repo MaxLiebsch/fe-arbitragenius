@@ -7,7 +7,7 @@ export const setSession = async (secret: string) => {
     sessionCookieName,
     secret,
     {
-      path: "/",
+      path: "/app",
       httpOnly: true,
       sameSite: "strict",
       secure: true,

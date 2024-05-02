@@ -9,7 +9,7 @@ import React from "react";
 const Page = async () => {
   const user = await getLoggedInUser();
 
-  if (!user?.labels.includes("admin")) redirect("/");
+  if (!user?.labels.includes("admin")) redirect("/app");
 
   const mongo = await mongoPromise;
 

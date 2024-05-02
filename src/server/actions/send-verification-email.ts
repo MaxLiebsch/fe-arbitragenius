@@ -7,7 +7,7 @@ export async function sendVerificationEmailAction() {
 
   if (!user) redirect("/app/auth/signin");
 
-  if (user.emailVerification) redirect("/");
+  if (user.emailVerification) redirect("/app");
 
   const { account } = await createSessionClient();
 

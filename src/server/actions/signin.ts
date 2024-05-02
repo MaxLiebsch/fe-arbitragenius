@@ -1,8 +1,6 @@
-
-import { redirect } from "next/navigation";
 import { AppwriteException } from "appwrite";
+import { redirect } from "next/navigation";
 import { z } from "zod";
-import { createWebClient } from "@/web/appwrite";
 
 export const SigninRequestSchema = z.object({
   email: z.string(),
@@ -26,18 +24,18 @@ export async function signinAction(
 
   const { email, password } = form.data;
 
-  try {
-    const { account } = await createWebClient();
-    await account.createEmailPasswordSession(email, password);
-
-  } catch (error) {
-
-    if (error instanceof AppwriteException) {
+  const res = await fetch("/app/api/sessions/email", {
+    method: "POST",
+    body: JSON.stringify({ email, password }),
+  });
+  const data = await res.json();
+  if (res.status !== 201) {
+    if (data.type === "AppwriteException") {
       return { message: "Ungültige Anmeldedaten" };
     }
-
     return { message: "Etwas ist schief gelaufen ..." };
+  }else{
+    return redirect("/");
   }
 
-  return redirect("/");
 }

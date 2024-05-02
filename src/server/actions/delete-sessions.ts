@@ -36,5 +36,5 @@ export async function deleteSessionsAction(
       throw error;
     }
   }
-  redirect("/");
+  redirect("/app");
 }
