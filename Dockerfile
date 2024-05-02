@@ -33,6 +33,7 @@ WORKDIR /app
 
 COPY --from=build /app/node_modules node_modules
 COPY --from=build /app/next.config.mjs ./
+COPY --from=build /app/form-data-mock.js ./
 COPY --from=build /app/.env.production ./
 COPY --from=build /app/.env ./
 COPY --from=build /app/.next .next
