@@ -1,8 +1,6 @@
-import { Button } from "@/components/Button";
 import MatchChecker from "@/components/MatchChecker";
 import { getLoggedInUser } from "@/server/appwrite";
 import { mongoPromise } from "@/server/mongo";
-import Image from "next/image";
 import { redirect } from "next/navigation";
 import React from "react";
 
