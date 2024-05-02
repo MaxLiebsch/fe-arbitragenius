@@ -14,7 +14,7 @@ export default function useShops(pagination: ShopPagination) {
     queryKey: ["shop", pagination.page, pagination.pageSize],
     queryFn: () =>
       fetch(
-        `/api/shop?page=${pagination.page}&size=${pagination.pageSize}`
+        `/app/api/shop?page=${pagination.page}&size=${pagination.pageSize}`
       ).then((resp) => resp.json()),
   });
 
@@ -24,7 +24,7 @@ export default function useShops(pagination: ShopPagination) {
         queryKey: ["shop", pagination.page + 1, pagination.pageSize],
         queryFn: () =>
           fetch(
-            `/api/shop?page=${pagination.page + 1}&size=${pagination.pageSize}`
+            `/app/api/shop?page=${pagination.page + 1}&size=${pagination.pageSize}`
           ).then((resp) => resp.json()),
       });
     }

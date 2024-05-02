@@ -13,7 +13,7 @@ export default function useProductUpdate() {
       console.log('productId:', productId)
       console.log('update:', update)
       console.log('domain:', domain)
-      const response = await fetch(`/api/shop/${domain}/product/${productId}`, {
+      const response = await fetch(`/app/api/shop/${domain}/product/${productId}`, {
         method: "POST",
         body: JSON.stringify(update),
       });

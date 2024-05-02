@@ -64,7 +64,7 @@ export default function useProducts(
       let sortQuery = "";
       if (sort) sortQuery = `&sortby=${sort.field}&sortorder=${sort.direction}`;
       return fetch(
-        `/api/shop/${domain}/${target}/product?page=${pagination.page}&size=${pagination.pageSize}${sortQuery}`
+        `/app/api/shop/${domain}/${target}/product?page=${pagination.page}&size=${pagination.pageSize}${sortQuery}`
       ).then((resp) => resp.json());
     },
   });
@@ -86,7 +86,7 @@ export default function useProducts(
           if (sort)
             sortQuery = `&sortby=${sort.field}&sortorder=${sort.direction}`;
           return fetch(
-            `/api/shop/${domain}/${target}/product?page=${pagination.page + 1}&size=${
+            `/app/api/shop/${domain}/${target}/product?page=${pagination.page + 1}&size=${
               pagination.pageSize
             }${sortQuery}`
           ).then((resp) => resp.json());

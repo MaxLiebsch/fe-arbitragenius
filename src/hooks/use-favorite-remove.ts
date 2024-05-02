@@ -11,7 +11,7 @@ export default function useFavoriteRemove() {
       if (!favoritesQuery.isSuccess || !favoritesQuery.data.includes(domain))
         throw new Error();
 
-      const response = await fetch(`/api/user/preferences/favorites`, {
+      const response = await fetch(`/app/api/user/preferences/favorites`, {
         method: "POST",
         body: JSON.stringify(
           favoritesQuery.data.filter((elem) => elem !== domain)

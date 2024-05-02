@@ -4,7 +4,7 @@ import { getStripeSubscriptions } from "./server/stripe/middleware";
 
 export const middleware = authMiddleware(async (request) => {
   if (!request.user) {
-    if (request.nextUrl.pathname.startsWith("/api")) {
+    if (request.nextUrl.pathname.startsWith("/app/api")) {
       return new NextResponse("unauthorized", { status: 401 });
     } else {
       return NextResponse.redirect(new URL("/auth/signin", request.url));

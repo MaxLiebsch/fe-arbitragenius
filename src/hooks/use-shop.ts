@@ -12,6 +12,6 @@ export type Shop = {
 export default function useShop(domain: string) {
   return useQuery<Shop>({
     queryKey: ["shop", domain],
-    queryFn: () => fetch(`/api/shop/${domain}`).then((resp) => resp.json()),
+    queryFn: () => fetch(`/app/api/shop/${domain}`).then((resp) => resp.json()),
   });
 }
