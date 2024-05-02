@@ -1,11 +1,11 @@
 "use client";
 
 import { redirect } from "next/navigation";
-import { createWebClient } from "@/web/appwrite";
+import { createSessionClient } from "../appwrite";
 
 export async function logoutAction() {
-  const { account } = await createWebClient();
+  const { account } = await createSessionClient();
   await account.deleteSession("current");
 
-  redirect("/app/auth/signin");
+  redirect("/auth/signin");
 }
