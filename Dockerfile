@@ -24,7 +24,10 @@ FROM node:20-slim as prod
 
 ENV PATH $PATH:/app/node_modules/.bin
 
-EXPOSE 3000/tcp
+ARG PORT=3000
+RUN echo $PORT
+
+EXPOSE $PORT/tcp
 
 WORKDIR /app
 
