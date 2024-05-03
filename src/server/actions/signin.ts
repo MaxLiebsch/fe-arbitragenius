@@ -1,3 +1,4 @@
+import { createEmailPasswordSession } from "@/util/newSession";
 import { AppwriteException } from "appwrite";
 import { redirect } from "next/navigation";
 import { z } from "zod";
@@ -6,6 +7,8 @@ export const SigninRequestSchema = z.object({
   email: z.string(),
   password: z.string(),
 });
+
+export type SigninRequest = z.infer<typeof SigninRequestSchema>;
 
 export type SigninFormState = {
   message: string;
@@ -21,21 +24,12 @@ export async function signinAction(
   });
 
   if (!form.success) return { message: "Ungültige Anmeldedaten" };
-
-  const { email, password } = form.data;
-
-  const res = await fetch("/app/api/sessions/email", {
-    method: "POST",
-    body: JSON.stringify({ email, password }),
-  });
-  const data = await res.json();
-  if (res.status !== 201) {
-    if (data.type === "AppwriteException") {
-      return { message: "Ungültige Anmeldedaten" };
-    }
-    return { message: "Etwas ist schief gelaufen ..." };
-  }else{
+  
+  const response = await createEmailPasswordSession(form.data);
+  const { message } = response;
+  if (message === "success") {
     return redirect("/");
+  } else {
+    return { message };
   }
-
 }

@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { createWebClient } from "@/web/appwrite";
 import { AppwriteException, ID } from "appwrite";
+import { createEmailPasswordSession } from "@/util/newSession";
 
 const SignupRequestSchema = z.object({
   email: z.string().email({ message: "Keine valide Email" }),
@@ -37,12 +38,18 @@ export async function signupAction(
   try {
     const { account } = await createWebClient();
     await account.create(ID.unique(), email, password, name);
-    await account.createEmailPasswordSession(email, password);
+
+    const response = await createEmailPasswordSession({ email, password });
+
     await account.createVerification(
       `${process.env.NEXT_PUBLIC_DOMAIN}/auth/verify/callback/${email}`
     );
-
+    const { message } = response;
+    if (message !== "success") {
+      return { message, formErrors: [], fieldErrors: {} };
+    }
   } catch (error) {
+    console.log("error:", error);
     if (error instanceof AppwriteException) {
       if ((error as any).type === "user_already_exists")
         return {
@@ -60,6 +67,5 @@ export async function signupAction(
       fieldErrors: {},
     };
   }
-
   redirect("/payment");
 }
