@@ -19,6 +19,7 @@ import { logoutAction } from "@/server/actions/logout";
 import { Logo } from "../Logo";
 import { usePathname, useRouter } from "next/navigation";
 import Spinner from "../Spinner";
+import { useFormState } from "react-dom";
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: HomeIcon, current: true },
@@ -30,10 +31,7 @@ const navigation = [
   },
 ];
 
-const userNavigation = [
-  { name: "Dein Profil", href: "/dashboard/profile" },
-  { name: "Abmelden", action: logoutAction },
-];
+const userNavigation = [{ name: "Dein Profil", href: "/dashboard/profile" }];
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -46,9 +44,20 @@ export const DashboardLayout = ({
 }>) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const accountQuery = useAccount();
+  const router = useRouter();
   const favoriteShopsQuery = useFavoriteShops();
 
   const pathname = usePathname();
+
+  const [state, formAction] = useFormState(logoutAction, {
+    message: "",
+  });
+
+  useEffect(() => {
+    if (state.message === "success") {
+      router.push("/auth/signin");
+    }
+  }, [state, router]);
 
   return (
     <>
@@ -341,33 +350,33 @@ export const DashboardLayout = ({
                       <Menu.Items className="absolute right-0 z-10 mt-2.5 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none">
                         {userNavigation.map((item) => (
                           <Menu.Item key={item.name}>
-                            {({ active }) =>
-                              Boolean(item.action) ? (
-                                <form action={item.action}>
-                                  <button
-                                    type="submit"
-                                    className={classNames(
-                                      active ? "bg-gray-50" : "",
-                                      "block px-3 py-1 text-sm leading-6 text-gray-900"
-                                    )}
-                                  >
-                                    {item.name}
-                                  </button>
-                                </form>
-                              ) : (
-                                <Link
-                                  href={item.href ? item.href : ""}
-                                  className={classNames(
-                                    active ? "bg-gray-50" : "",
-                                    "block px-3 py-1 text-sm leading-6 text-gray-900"
-                                  )}
-                                >
-                                  {item.name}
-                                </Link>
-                              )
-                            }
+                            {({ active }) => (
+                              <Link
+                                href={item.href ? item.href : ""}
+                                className={classNames(
+                                  active ? "bg-gray-50" : "",
+                                  "block px-3 py-1 text-sm leading-6 text-gray-900"
+                                )}
+                              >
+                                {item.name}
+                              </Link>
+                            )}
                           </Menu.Item>
                         ))}
+                        <Menu.Item key={"logout"}>
+                          <form action={formAction}>
+                            <input hidden></input>
+                            <button
+                              type="submit"
+                              className={classNames(
+                                "focus:bg-gray-50",
+                                "block px-3 py-1 text-sm leading-6 text-gray-900"
+                              )}
+                            >
+                              Logout
+                            </button>
+                          </form>
+                        </Menu.Item>
                       </Menu.Items>
                     </Transition>
                   </Menu>

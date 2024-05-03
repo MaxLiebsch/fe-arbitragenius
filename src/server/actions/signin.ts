@@ -1,5 +1,4 @@
-import { createEmailPasswordSession } from "@/util/newSession";
-import { AppwriteException } from "appwrite";
+import { createEmailPasswordSession } from "@/server/actions/new-session";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
@@ -24,7 +23,7 @@ export async function signinAction(
   });
 
   if (!form.success) return { message: "Ungültige Anmeldedaten" };
-  
+
   const response = await createEmailPasswordSession(form.data);
   const { message } = response;
   if (message === "success") {

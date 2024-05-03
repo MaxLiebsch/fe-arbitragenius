@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { createWebClient } from "@/web/appwrite";
 import { AppwriteException, ID } from "appwrite";
-import { createEmailPasswordSession } from "@/util/newSession";
+import { createEmailPasswordSession } from "@/server/actions/new-session";
 
 const SignupRequestSchema = z.object({
   email: z.string().email({ message: "Keine valide Email" }),
