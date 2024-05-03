@@ -5,7 +5,7 @@ import axios from "axios";
 import { z } from "zod";
 
 
-export const VerificationSchema = z.object({
+const VerificationSchema = z.object({
     url: z.string()
   });
 
@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
   const body = await request.json();
 
   const form = VerificationSchema.safeParse({
-    url: body.url,
+    url: body.url as string,
   });
 
   if (!form.success)
