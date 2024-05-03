@@ -3,6 +3,7 @@ import { z } from "zod";
 import { createWebClient } from "@/web/appwrite";
 import { AppwriteException, ID } from "appwrite";
 import { createEmailPasswordSession } from "@/server/actions/new-session";
+import { createVerification } from "./send-verification";
 
 const SignupRequestSchema = z.object({
   email: z.string().email({ message: "Keine valide Email" }),
@@ -40,10 +41,10 @@ export async function signupAction(
     await account.create(ID.unique(), email, password, name);
 
     const response = await createEmailPasswordSession({ email, password });
-
-    await account.createVerification(
+    await createVerification(
       `${process.env.NEXT_PUBLIC_DOMAIN}/auth/verify/callback/${email}`
     );
+
     const { message } = response;
     if (message !== "success") {
       return { message, formErrors: [], fieldErrors: {} };
