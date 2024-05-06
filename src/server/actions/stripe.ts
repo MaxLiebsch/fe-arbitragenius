@@ -16,6 +16,7 @@ export async function createCheckoutSession(
   const checkoutSession: Stripe.Checkout.Session =
     await stripe.checkout.sessions.create({
       mode: "subscription",
+      payment_method_types:['card', 'paypal'],
       line_items: [
         {
           quantity: 1,
