@@ -6,11 +6,10 @@ import {
   GridSortModel,
   useGridApiRef,
 } from "@mui/x-data-grid-premium";
-import { MutableRefObject, useState } from "react";
+import React, { MutableRefObject, ReactNode, useState } from "react";
 import ImageRenderer from "./ImageRenderer";
 import { appendPercentage, formatCurrency } from "@/util/formatter";
 import Link from "next/link";
-import useShop from "@/hooks/use-shop";
 import useProductCount from "@/hooks/use-product-count";
 import useProducts, {
   ProductPagination,
@@ -24,7 +23,11 @@ import { GridApiPremium } from "@mui/x-data-grid-premium/models/gridApiPremium";
 import { ChevronRightIcon, ChevronLeftIcon } from "@heroicons/react/16/solid";
 import { prefixLink } from "@/util/prefixLink";
 
-const LinkWrapper = (link: string | undefined, name?: string) => {
+const LinkWrapper = (
+  link: string | undefined,
+  name?: string,
+  mnfctr?: string
+): ReactNode => {
   const regexp = /https?:\/\/[^?#\n?]+(?:\?[^#\n?]+)?(?:#[^#\n?]+)?/;
   if (link) {
     const match = link.match(regexp);
@@ -32,7 +35,10 @@ const LinkWrapper = (link: string | undefined, name?: string) => {
 
     return (
       <Link href={match[0]} target="_blank">
-        <div className="leading-2">{name ? name : "Visit"}</div>
+        <div className="leading-2 underline">
+          {mnfctr ? `${mnfctr} ` : ""}
+          {name ? name : "Visit"}
+        </div>
       </Link>
     );
   } else {
@@ -41,35 +47,74 @@ const LinkWrapper = (link: string | undefined, name?: string) => {
 };
 
 const columns: (target: string) => GridColDef[] = (target) => [
-  { field: "mnfctr", headerName: "Hersteller", width: 100 },
-  {
-    field: "nm",
-    headerName: "Name",
-    width: 300,
-    renderCell: (params) => LinkWrapper(params.row.lnk, params.row.nm),
-  },
   {
     field: "ctgry",
-    width: 150,
+    flex: 0.24,
     headerName: "Kategorie",
     renderCell: (params) => {
       if (typeof params.row.ctrgy === "string") {
         return <>{params.row.ctrgry}</>;
-      } else if (Array.isArray(params.row.ctrgry)) {
-        return <>{params.row.ctrgry.join(",")}</>;
+      } else if (Array.isArray(params.row.ctgry)) {
+        return (
+          <div className="flex flex-col">
+            {params.row.ctgry.map((ctrgy: string, i: number) => (
+              <div key={ctrgy + i}>{ctrgy}</div>
+            ))}
+          </div>
+        );
       }
+    },
+  },
+  {
+    field: "asin",
+    headerName: `ASIN`,
+    renderCell:(params)=>{ return <>{params.value}</>}
+  },
+  {
+    field: "nm",
+    headerName: "Name",
+    flex: 0.8,
+    renderCell: (params) => {
+      return (
+        <div className="flex flex-col">
+          <div>
+            {LinkWrapper(params.row.lnk, params.row.nm, params.row.mnfctr)}
+          </div>
+          <div>
+            {LinkWrapper(
+              params.row[`${target}_lnk`],
+              params.row[`${target}_nm`]
+            )}
+          </div>
+        </div>
+      );
     },
   },
   {
     field: "img",
     headerName: "Produktbild",
     cellClassName: "hover:!overflow-visible",
-    renderCell: (params) => ImageRenderer(prefixLink(params.row.img, params.row.s)),
+    renderCell: (params) =>
+      ImageRenderer(prefixLink(params.row.img, params.row.s)),
+  },
+  {
+    field: `${target}_img`,
+
+    headerName: "Zielshopbild",
+    cellClassName: "hover:!overflow-visible",
+    renderCell: (params) =>
+      ImageRenderer(prefixLink(params.row.a_img, params.row.s)),
   },
   {
     field: "prc",
     headerName: `Preis`,
     width: 80,
+    valueFormatter: (params) => formatCurrency(params.value),
+  },
+  {
+    field: `${target}_prc`,
+
+    headerName: "Zielshoppreis",
     valueFormatter: (params) => formatCurrency(params.value),
   },
   {
@@ -80,39 +125,39 @@ const columns: (target: string) => GridColDef[] = (target) => [
   },
   {
     field: `${target}_mrgn`,
-
     headerName: "Marge",
-    valueFormatter: (params) => formatCurrency(params.value),
+    renderCell: (params) => <div className='text-green-600 font-semibold'>{formatCurrency(params.value)}</div>,
   },
-  {
-    field: `${target}_prc`,
+  // {
+  //   field: `${target}_nm`,
 
-    headerName: "Preis",
-    valueFormatter: (params) => formatCurrency(params.value),
-  },
+  //   headerName: "Name",
+  //   flex: 0.5,
+  //   renderCell: (params) =>
+  //     LinkWrapper(params.row[`${target}_lnk`], params.row[`${target}_nm`]),
+  // },
   {
-    field: `${target}_img`,
-
-    headerName: "Produktbild",
-    cellClassName: "hover:!overflow-visible",
-    renderCell: (params) => ImageRenderer(prefixLink(params.row.a_img,params.row.s)),
-  },
-  {
-    field: `${target}_nm`,
-
-    headerName: "Name",
-    flex: 0.5,
-    renderCell: (params) =>
-      LinkWrapper(params.row[`${target}_lnk`], params.row[`${target}_nm`]),
-  },
-  {
-    field: `a_bsr`,
+    field: `bsr`,
     headerName: "BSR",
-    renderCell: (params) => (
-      <Image src={ComingSoon} alt="coming-soon" width={120} height={70} />
-    ),
+    renderCell: (params) => {
+      if (params.row["bsr"]) {
+        return (
+          <div className="flex flex-col">
+            {params.row["bsr"].map((bsr: any) => {
+              return (
+                <div key={bsr.number + bsr.category}>
+                  Nr.{bsr.number.toLocaleString("de-DE")} in {bsr.category}
+                </div>
+              );
+            })}
+          </div>
+        );
+      }
+      return (
+        <Image src={ComingSoon} alt="coming-soon" width={120} height={70} />
+      );
+    },
   },
-  // { field: `${target}_fat`, headerName: "Profitable" },
 ];
 
 export default function ProductsTable(props: {
@@ -156,7 +201,8 @@ export default function ProductsTable(props: {
       initialState={{
         columns: {
           columnVisibilityModel: {
-            a_bsr: target === "a" ? true : false,
+            bsr: target === "a" ? true : false,
+            asin: target === "a"? true: false,
           },
         },
       }}
