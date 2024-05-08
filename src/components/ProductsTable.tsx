@@ -34,8 +34,8 @@ const LinkWrapper = (
     if (!match) return <></>;
 
     return (
-      <Link href={match[0]} target="_blank">
-        <div className="leading-2 underline">
+      <Link href={match[0]} target="_blank" className="font-light hover:font-semibold">
+        <div className="leading-2">
           {mnfctr ? `${mnfctr} ` : ""}
           {name ? name : "Visit"}
         </div>
@@ -65,27 +65,45 @@ const columns: (target: string) => GridColDef[] = (target) => [
       }
     },
   },
-  {
-    field: "asin",
-    headerName: `ASIN`,
-    renderCell:(params)=>{ return <>{params.value}</>}
-  },
+  // {
+  //   field: "asin",
+  //   headerName: `ASIN`,
+  //   renderCell: (params) => {
+  //     return <>{params.value}</>;
+  //   },
+  // },
   {
     field: "nm",
-    headerName: "Name",
+    headerName: "Info",
     flex: 0.8,
     renderCell: (params) => {
       return (
-        <div className="flex flex-col">
+        <div className="flex flex-col divide-y p-1">
           <div>
             {LinkWrapper(params.row.lnk, params.row.nm, params.row.mnfctr)}
           </div>
           <div>
+            Zielshop:
             {LinkWrapper(
               params.row[`${target}_lnk`],
               params.row[`${target}_nm`]
             )}
           </div>
+          {params.row["bsr"] && params.row['bsr'].length ? (
+            <div className="">
+              <span className="font-semibold">BSR:</span>
+              <span className="">
+                {params.row["bsr"].map((bsr: any) => {
+                  return (
+                    <span className='mx-1' key={bsr.number + bsr.category}>
+                      Nr.{bsr.number.toLocaleString("de-DE")} in {bsr.category}
+                    </span>
+                  );
+                })}
+              </span>
+            </div>
+          ):<></>}
+          {params.row["asin"] && params.row["asin"] !== '' && <div><span className="font-semibold">ASIN: </span>{params.row["asin"]}</div>}
         </div>
       );
     },
@@ -126,7 +144,11 @@ const columns: (target: string) => GridColDef[] = (target) => [
   {
     field: `${target}_mrgn`,
     headerName: "Marge",
-    renderCell: (params) => <div className='text-green-600 font-semibold'>{formatCurrency(params.value)}</div>,
+    renderCell: (params) => (
+      <div className="text-green-600 font-semibold">
+        {formatCurrency(params.value)}
+      </div>
+    ),
   },
   // {
   //   field: `${target}_nm`,
@@ -136,28 +158,28 @@ const columns: (target: string) => GridColDef[] = (target) => [
   //   renderCell: (params) =>
   //     LinkWrapper(params.row[`${target}_lnk`], params.row[`${target}_nm`]),
   // },
-  {
-    field: `bsr`,
-    headerName: "BSR",
-    renderCell: (params) => {
-      if (params.row["bsr"]) {
-        return (
-          <div className="flex flex-col">
-            {params.row["bsr"].map((bsr: any) => {
-              return (
-                <div key={bsr.number + bsr.category}>
-                  Nr.{bsr.number.toLocaleString("de-DE")} in {bsr.category}
-                </div>
-              );
-            })}
-          </div>
-        );
-      }
-      return (
-        <Image src={ComingSoon} alt="coming-soon" width={120} height={70} />
-      );
-    },
-  },
+  // {
+  //   field: `bsr`,
+  //   headerName: "BSR",
+  //   renderCell: (params) => {
+  //     if (params.row["bsr"]) {
+  //       return (
+  //         <div className="flex flex-col">
+  //           {params.row["bsr"].map((bsr: any) => {
+  //             return (
+  //               <div key={bsr.number + bsr.category}>
+  //                 Nr.{bsr.number.toLocaleString("de-DE")} in {bsr.category}
+  //               </div>
+  //             );
+  //           })}
+  //         </div>
+  //       );
+  //     }
+  //     return (
+  //       <Image src={ComingSoon} alt="coming-soon" width={120} height={70} />
+  //     );
+  //   },
+  // },
 ];
 
 export default function ProductsTable(props: {
@@ -202,7 +224,7 @@ export default function ProductsTable(props: {
         columns: {
           columnVisibilityModel: {
             bsr: target === "a" ? true : false,
-            asin: target === "a"? true: false,
+            asin: target === "a" ? true : false,
           },
         },
       }}
@@ -216,6 +238,7 @@ export default function ProductsTable(props: {
       onPaginationModelChange={setPaginationModel}
       paginationMode="server"
       pagination={true}
+      getRowHeight={() => "auto"}
       sortingMode="server"
       sx={{
         // disable cell selection style
