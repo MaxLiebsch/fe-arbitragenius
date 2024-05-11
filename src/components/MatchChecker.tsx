@@ -29,14 +29,23 @@ const MatchChecker = ({ shops }: { shops: any[] }) => {
     direction: "desc",
   });
   const collectionName = `test.${selectedShop}`;
-  const productCountQuery = useProductCount(collectionName, targetShop);
+  const productCountQuery = useProductCount(collectionName, targetShop, {
+    minMargin: 0,
+    minPercentageMargin: 0,
+    netto: true,
+  });
   const productCnt = productCountQuery.data ? productCountQuery.data : 0;
 
   const productQuery = useProducts(
     collectionName,
     paginationModel,
     sortModel,
-    targetShop
+    targetShop,
+    {
+      minMargin: 0,
+      minPercentageMargin: 0,
+      netto: true,
+    }
   );
   const productsCnt = productQuery.data ? productQuery.data.length : 0;
   const productMutation = useProductUpdate();
@@ -188,7 +197,7 @@ const MatchChecker = ({ shops }: { shops: any[] }) => {
                   {productToCheck.mnfctr} {productToCheck.nm}
                 </h1>
                 <h2 className="text-lg font-medium text-gray-600">
-                  Preis: {formatCurrency(productToCheck.prc.toString())}
+                  Preis: {productToCheck.prc.toString()}
                 </h2>
                 <div className="h-[60%] w-full relative">
                   <Image
@@ -214,12 +223,7 @@ const MatchChecker = ({ shops }: { shops: any[] }) => {
                   {productToCheck[`${targetShop}_nm` as keyof Product]}
                 </h1>
                 <h2 className="text-lg font-medium text-gray-600">
-                  Preis:{" "}
-                  {formatCurrency(
-                    productToCheck[
-                      `${targetShop}_prc` as keyof Product
-                    ].toString()
-                  )}
+                  Preis: {`${targetShop}_prc` as keyof Product}
                 </h2>
                 <div className="h-[60%] w-full relative">
                   <Image

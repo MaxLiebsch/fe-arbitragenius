@@ -1,5 +1,5 @@
 import MatchChecker from "@/components/MatchChecker";
-import { getLoggedInUser } from "@/server/appwrite";
+import { createSessionClient, getLoggedInUser } from "@/server/appwrite";
 import { mongoPromise } from "@/server/mongo";
 import { redirect } from "next/navigation";
 import React from "react";
@@ -19,9 +19,10 @@ const Page = async () => {
     })
     .toArray();
 
+
   return (
     <div>
-      <MatchChecker shops={shops}/>
+      <MatchChecker shops={shops} />
     </div>
   );
 };
