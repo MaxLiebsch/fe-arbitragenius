@@ -9,6 +9,8 @@ import { Tab } from "@headlessui/react";
 import React, { useEffect, useRef } from "react";
 import { useFormState } from "react-dom";
 import { deleteAccountAction } from "@/server/actions/delete-account";
+import ProfileSettings from "@/components/ProfileSettings";
+import { useQueryClient } from "@tanstack/react-query";
 
 const secondaryNavigation = [
   { name: "Account", href: "#", current: true },
@@ -95,6 +97,18 @@ const Page = () => {
     }
   }, [updatePasswordState]);
 
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    (async () => {
+      if(updateNameState?.message) {
+        await queryClient.invalidateQueries({
+          queryKey: ["user"],
+        });
+      }
+  
+    })();
+    }, [updateNameState, queryClient])
   return (
     <Tab.Group>
       <header className="border-b border-white/5">
@@ -126,8 +140,7 @@ const Page = () => {
                   Persönliche Informationen
                 </h2>
                 <p className="mt-1 text-sm leading-6 text-gray-400">
-                  Verwenden Sie eine ständige Adresse, an der Sie Post empfangen
-                  können.
+                  Hier kannst du deinen Namen anpassen.
                 </p>
               </div>
 
@@ -137,25 +150,6 @@ const Page = () => {
                 action={updateNameFormAction}
               >
                 <div className="grid grid-cols-1 gap-x-6 gap-y-8 sm:max-w-7xl sm:grid-cols-6">
-                  {/* <div className="col-span-full flex items-center gap-x-8">
-                <img
-                  src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                  alt=""
-                  className="h-24 w-24 flex-none rounded-lg bg-gray-800 object-cover"
-                />
-                <div>
-                  <button
-                    type="button"
-                    className="rounded-md bg-white/10 px-3 py-2 text-sm font-semibold text-secondary-950 shadow-sm hover:bg-white/20"
-                  >
-                    Change avatar
-                  </button>
-                  <p className="mt-2 text-xs leading-5 text-gray-400">
-                    JPG, GIF or PNG. 1MB max.
-                  </p>
-                </div>
-              </div> */}
-
                   <div className="sm:col-span-3">
                     <label
                       htmlFor="name"
@@ -204,50 +198,6 @@ const Page = () => {
                       />
                     </div>
                   </div>
-
-                  {/* <div className="col-span-full">
-              <label
-                htmlFor="username"
-                className="block text-sm font-medium leading-6 text-secondary-950"
-              >
-                Username
-              </label>
-              <div className="mt-2">
-                <div className="flex rounded-md bg-white/5 ring-1 ring-inset ring-white/10 focus-within:ring-2 focus-within:ring-inset focus-within:ring-primary-600">
-                  <span className="flex select-none items-center pl-3 text-gray-400 sm:text-sm">
-                    example.com/
-                  </span>
-                  <input
-                    type="text"
-                    name="username"
-                    id="username"
-                    autoComplete="username"
-                    className="flex-1 border-0 bg-transparent py-1.5 pl-1 text-secondary-950 focus:ring-0 sm:text-sm sm:leading-6"
-                    placeholder="janesmith"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="col-span-full">
-              <label
-                htmlFor="timezone"
-                className="block text-sm font-medium leading-6 text-secondary-950"
-              >
-                Timezone
-              </label>
-              <div className="mt-2">
-                <select
-                  id="timezone"
-                  name="timezone"
-                  className="block w-full rounded-md border-0 bg-white/5 py-1.5 pl-1 text-secondary-950 shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6 [&_*]:text-black"
-                >
-                  <option>Pacific Standard Time</option>
-                  <option>Eastern Standard Time</option>
-                  <option>Greenwich Mean Time</option>
-                </select>
-              </div>
-            </div> */}
                 </div>
 
                 <div className="mt-8 flex">
@@ -259,11 +209,10 @@ const Page = () => {
             <div className="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 px-4 py-16 sm:px-6 md:grid-cols-3 lg:px-8">
               <div>
                 <h2 className="text-base font-semibold leading-7 text-secondary-950">
-                  Persönliche Informationen
+                  Geschäftsinformation
                 </h2>
                 <p className="mt-1 text-sm leading-6 text-gray-400">
-                  Verwenden Sie eine ständige Adresse, an der Sie Post empfangen
-                  können.
+                  Hier kannst Du deine Geschäftsinformation eintragen.
                 </p>
               </div>
 
@@ -464,7 +413,7 @@ const Page = () => {
                   Passwort ändern
                 </h2>
                 <p className="mt-1 text-sm leading-6 text-gray-400">
-                  Aktualisieren Sie Ihr Passwort, das mit Ihrem Konto verknüpft
+                  Aktualisiere dein Passwort, das mit deinem Konto verknüpft
                   ist.
                 </p>
               </div>
@@ -520,24 +469,6 @@ const Page = () => {
                       </div>
                     )}
                   </div>
-
-                  {/* <div className="col-span-full">
-                      <label
-                        htmlFor="confirm-password"
-                        className="block text-sm font-medium leading-6 text-secondary-950"
-                      >
-                        Bestätigen Sie das Passwort
-                      </label>
-                      <div className="mt-2">
-                        <input
-                          id="confirm-password"
-                          name="confirm_password"
-                          type="password"
-                          autoComplete="new-password"
-                          className="block w-full rounded-md border-0 bg-white/5 py-1.5 pl-1 text-secondary-950 shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
-                        />
-                      </div>
-                    </div> */}
                 </div>
 
                 <div className="mt-8 flex">
@@ -552,9 +483,9 @@ const Page = () => {
                   Andere Sitzungen abmelden
                 </h2>
                 <p className="mt-1 text-sm leading-6 text-gray-400">
-                  Bitte geben Sie Ihr Passwort ein, um zu bestätigen, dass Sie
-                  sich von von Ihren anderen Sitzungen auf allen Ihren Geräten
-                  abmelden möchten.
+                  Bitte gebe dein Passwort ein, um zu bestätigen, dass Du
+                  dich von deinen anderen Sitzungen auf all deinen Geräten
+                  abmelden möchtest.
                 </p>
               </div>
 
@@ -637,13 +568,7 @@ const Page = () => {
         <Tab.Panel>
           <div className="divide-y divide-white/5">
             <h1 className="sr-only">Einstellungen</h1>
-            <div className="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 px-4 py-16 sm:px-6 md:grid-cols-3 lg:px-8">
-              <div>
-                <h2 className="text-base font-semibold leading-7 text-secondary-950">
-                  Einstellungen - coming soon
-                </h2>
-              </div>
-            </div>
+            <ProfileSettings prefs={prefs} />
           </div>
         </Tab.Panel>
         <Tab.Panel>
@@ -654,9 +579,7 @@ const Page = () => {
                 <h2 className="text-base font-semibold leading-7 text-secondary-950">
                   Rechnungen
                 </h2>
-                <p>
-                  Wir schicken dir die deine Rechnung zum Monatsanfang zu.
-                </p>
+                <p>Wir schicken Dir die deine Rechnung zum Monatsanfang zu.</p>
               </div>
             </div>
           </div>

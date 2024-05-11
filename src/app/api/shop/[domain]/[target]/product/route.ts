@@ -8,6 +8,23 @@ export async function GET(
 ) {
   const searchParams = request.nextUrl.searchParams;
   const { domain, target } = params;
+
+  const customerSettings = {
+    minMargin: Number(searchParams.get("minMargin")) || 0,
+    minPercentageMargin: Number(searchParams.get("minPercentageMargin")) || 0,
+  };
+  
+  const { minMargin, minPercentageMargin } = customerSettings;
+  
+  const findQuery = [
+    { [`${target}_prc`]: { $gt: 0 } },
+    { [`${target}_mrgn_pct`]: { $gt: minPercentageMargin, $lte: 150 } },
+  ];
+  
+  if (minMargin > 0) {
+    findQuery.push({ [`${target}_mrgn`]: { $gt: minMargin } });
+  }
+  
   const query = {
     page: Number(searchParams.get("page")) || 0,
     size: Number(searchParams.get("size")) || 10,
@@ -35,10 +52,7 @@ export async function GET(
     .db(process.env.NEXT_MONGO_DB)
     .collection(domain)
     .find({
-      $and: [
-        { [`${target}_prc`]: { $gt: 0 } },
-        { [`${target}_mrgn_pct`]: { $gt: 0, $lte: 150 } },
-      ],
+      $and: findQuery,
     })
     .sort(sort)
     .skip(query.page * query.size)

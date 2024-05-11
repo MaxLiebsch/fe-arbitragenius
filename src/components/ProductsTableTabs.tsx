@@ -3,8 +3,10 @@
 import { Tab } from "@headlessui/react";
 import React from "react";
 import ProductsTable from "./ProductsTable";
+import usePreferences from "@/hooks/use-preferences";
 
 const ProductTableTabs = ({ domain }: { domain: string }) => {
+  const {data} = usePreferences('settings')
   return (
     <Tab.Group>
       <Tab.List className="flex min-w-full flex-none gap-x-6 text-lg font-semibold leading-2 text-gray-400 pb-2">
@@ -26,10 +28,10 @@ const ProductTableTabs = ({ domain }: { domain: string }) => {
       </Tab.List>
       <Tab.Panels className="flex h-full">
         <Tab.Panel className="w-full max-h-[89%]">
-          <ProductsTable domain={domain} target="a" />
+          <ProductsTable domain={domain} target="a" settings={data} />
         </Tab.Panel>
         <Tab.Panel className="w-full max-h-[89%]">
-          <ProductsTable domain={domain} target="e" />
+          <ProductsTable domain={domain} target="e" settings={data} />
         </Tab.Panel>
       </Tab.Panels>
     </Tab.Group>

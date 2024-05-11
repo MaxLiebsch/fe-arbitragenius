@@ -22,6 +22,9 @@ import { Button } from "@mui/material";
 import { GridApiPremium } from "@mui/x-data-grid-premium/models/gridApiPremium";
 import { ChevronRightIcon, ChevronLeftIcon } from "@heroicons/react/16/solid";
 import { prefixLink } from "@/util/prefixLink";
+import usePreferences from "@/hooks/use-preferences";
+import { Settings } from "@/types/Settings";
+import { calculationDeduction } from "@/util/calculateDeduction";
 
 const LinkWrapper = (
   link: string | undefined,
@@ -34,7 +37,11 @@ const LinkWrapper = (
     if (!match) return <></>;
 
     return (
-      <Link href={match[0]} target="_blank" className="font-light hover:font-semibold">
+      <Link
+        href={match[0]}
+        target="_blank"
+        className="font-light hover:font-semibold"
+      >
         <div className="leading-2">
           {mnfctr ? `${mnfctr} ` : ""}
           {name ? name : "Visit"}
@@ -46,7 +53,10 @@ const LinkWrapper = (
   }
 };
 
-const columns: (target: string) => GridColDef[] = (target) => [
+const columns: (target: string, settings: Settings) => GridColDef[] = (
+  target,
+  settings
+) => [
   {
     field: "ctgry",
     flex: 0.24,
@@ -89,21 +99,28 @@ const columns: (target: string) => GridColDef[] = (target) => [
               params.row[`${target}_nm`]
             )}
           </div>
-          {params.row["bsr"] && params.row['bsr'].length ? (
+          {target === "a" && params.row["bsr"] && params.row["bsr"].length ? (
             <div className="">
               <span className="font-semibold">BSR:</span>
               <span className="">
                 {params.row["bsr"].map((bsr: any) => {
                   return (
-                    <span className='mx-1' key={bsr.number + bsr.category}>
+                    <span className="mx-1" key={bsr.number + bsr.category}>
                       Nr.{bsr.number.toLocaleString("de-DE")} in {bsr.category}
                     </span>
                   );
                 })}
               </span>
             </div>
-          ):<></>}
-          {params.row["asin"] && params.row["asin"] !== '' && <div><span className="font-semibold">ASIN: </span>{params.row["asin"]}</div>}
+          ) : (
+            <></>
+          )}
+          {params.row["asin"] && params.row["asin"] !== "" && (
+            <div>
+              <span className="font-semibold">ASIN: </span>
+              {params.row["asin"]}
+            </div>
+          )}
         </div>
       );
     },
@@ -126,18 +143,39 @@ const columns: (target: string) => GridColDef[] = (target) => [
   {
     field: "prc",
     headerName: `Preis`,
+    renderHeader: (params) => (
+      <div className="relative">
+        <div>Preis</div>
+        <div className="absolute bottom-1 text-xs text-gray-500">
+          {settings?.netto ? "Netto" : "Brutto"}
+        </div>
+      </div>
+    ),
     width: 80,
-    valueFormatter: (params) => formatCurrency(params.value),
+    valueFormatter: (params) =>
+      formatCurrency(
+        calculationDeduction(parseFloat(params.value), settings.netto)
+      ),
   },
   {
     field: `${target}_prc`,
 
     headerName: "Zielshoppreis",
-    valueFormatter: (params) => formatCurrency(params.value),
+    renderHeader: (params) => (
+      <div className="relative">
+        <div>Zielshoppreis</div>
+        <div className="absolute bottom-1 text-xs">
+          {settings?.netto ? "Netto" : "Brutto"}
+        </div>
+      </div>
+    ),
+    valueFormatter: (params) =>
+      formatCurrency(
+        calculationDeduction(parseFloat(params.value), settings.netto)
+      ),
   },
   {
     field: `${target}_mrgn_pct`,
-
     headerName: "Marge %",
     valueFormatter: (params) => appendPercentage(params.value),
   },
@@ -146,13 +184,12 @@ const columns: (target: string) => GridColDef[] = (target) => [
     headerName: "Marge",
     renderCell: (params) => (
       <div className="text-green-600 font-semibold">
-        {formatCurrency(params.value)}
+        {formatCurrency(calculationDeduction(parseFloat(params.value), settings.netto))}
       </div>
     ),
   },
   // {
   //   field: `${target}_nm`,
-
   //   headerName: "Name",
   //   flex: 0.5,
   //   renderCell: (params) =>
@@ -186,8 +223,10 @@ export default function ProductsTable(props: {
   className?: string;
   domain: string;
   target: string;
+  settings: Settings;
 }) {
-  const { className, domain, target } = props;
+  const { className, domain, target, settings } = props;
+
   const prefix = target === "a" ? "a_" : "e_";
   const name = target === "a" ? "Amazon" : "Ebay";
 
@@ -202,8 +241,14 @@ export default function ProductsTable(props: {
 
   const apiRef = useGridApiRef();
 
-  const productCountQuery = useProductCount(domain, target);
-  const productQuery = useProducts(domain, paginationModel, sortModel, target);
+  const productCountQuery = useProductCount(domain, target, settings);
+  const productQuery = useProducts(
+    domain,
+    paginationModel,
+    sortModel,
+    target,
+    settings
+  );
 
   const handleSortModelChange = (model: GridSortModel) => {
     if (model.length) {
@@ -229,9 +274,9 @@ export default function ProductsTable(props: {
         },
       }}
       getRowId={(row) => row._id}
-      columns={columns(target)}
+      columns={columns(target, settings)}
       rows={productQuery.data ?? []}
-      rowCount={productCountQuery.data}
+      rowCount={productCountQuery.data ?? 0}
       loading={productQuery.isFetching}
       pageSizeOptions={[5, 10, 20]}
       paginationModel={paginationModel}

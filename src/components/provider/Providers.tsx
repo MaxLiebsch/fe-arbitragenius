@@ -7,6 +7,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { SnackbarProvider } from "notistack";
 import MuiProvider from "@/components/provider/MuiProvider";
+import { ConfigProvider } from "antd";
+import tw from '../../../tailwind.config'
 
 function makeQueryClient() {
   return new QueryClient({
@@ -47,7 +49,24 @@ export default function Providers({ children }: { children: ReactNode }) {
     <>
       <QueryClientProvider client={queryClient}>
         <SnackbarProvider />
-        <MuiProvider>{children}</MuiProvider>
+        <MuiProvider>
+          <ConfigProvider
+            theme={{
+              token: {
+                // Seed Token
+                //@ts-ignore
+                colorPrimary: tw.theme.extend.colors["primary"]["500"],
+    
+                borderRadius: 2,
+
+                // Alias Token
+  
+              },
+            }}
+          >
+            {children}
+          </ConfigProvider>
+        </MuiProvider>
         <ReactQueryDevtools
           initialIsOpen={false}
           buttonPosition="bottom-left"

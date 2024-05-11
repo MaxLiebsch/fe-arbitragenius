@@ -3,6 +3,9 @@ import webpack from 'webpack'
 
 const nextConfig = {
   basePath: "/app",
+  experimental: {
+    serverComponentsExternalPackages: ['node-appwrite'],
+  },
   images: {
     remotePatterns: [
       {

@@ -9,6 +9,7 @@ export function SubmitButton({ text }: { text: string }) {
       <Button
         className="w-full"
         type="submit"
+      
         disabled={pending}
         variant="solid"
         color="slate"

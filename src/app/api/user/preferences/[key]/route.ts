@@ -22,6 +22,19 @@ const serializers: {
     },
     fallback: JSON.stringify([]),
   },
+  settings: {
+    serialize(input?: any) {
+      return JSON.stringify(input);
+    },
+    deserialize(input?: any) {
+      return typeof input === "string" ? JSON.parse(input) : {};
+    },
+    fallback: JSON.stringify({
+      netto: true,
+      minMargin: 0,
+      minPercentageMargin: 0,
+    }),
+  },
   address: {
     serialize(input?: any) {
       return JSON.stringify(input);

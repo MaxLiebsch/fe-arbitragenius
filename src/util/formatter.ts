@@ -3,9 +3,9 @@ export const formatter = new Intl.NumberFormat("de-DE", {
   currency: "EUR",
 });
 
-export function formatCurrency(price?: string) {
+export function formatCurrency(price?: number) {
   if (price) {
-    return formatter.format(parseFloat(price));
+    return formatter.format(price);
   } else {
     return "";
   }

@@ -23,7 +23,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="de">
-      <body className={`${inter.className} h-screen`}>
+      <body suppressHydrationWarning={true} className={`${inter.className} h-screen`}>
         <AntdRegistry>
           <Providers>{children}</Providers>
         </AntdRegistry>
