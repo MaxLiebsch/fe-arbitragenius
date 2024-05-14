@@ -2,10 +2,10 @@ import { Settings } from "@/types/Settings";
 import { useQuery } from "@tanstack/react-query";
 
 export default function useProductCount(domain: string, target: string, settings:Settings) {
-  return useQuery<number>({
+  return useQuery<{productCount: number}>({
     queryKey: ["shop", domain, target, "product", "count"],
     queryFn: () =>
-      fetch(`/app/api/shop/${domain}/${target}/product/count?minMargin=${settings.minMargin}&minPercentageMargin=${settings.minPercentageMargin}`).then((resp) =>
+      fetch(`/app/api/shop/${domain}/${target}/product/count?productsWithNoBsr=${settings.productsWithNoBsr}&maxSecondaryBsr=${settings.maxSecondaryBsr}&maxPrimaryBsr=${settings.maxPrimaryBsr}&minMargin=${settings.minMargin}&minPercentageMargin=${settings.minPercentageMargin}`).then((resp) =>
         resp.json()
       ),
   });

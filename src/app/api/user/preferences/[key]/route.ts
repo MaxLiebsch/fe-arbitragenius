@@ -33,6 +33,9 @@ const serializers: {
       netto: true,
       minMargin: 0,
       minPercentageMargin: 0,
+      maxPrimaryBsr: 1000000,
+      maxSecondaryBsr: 1000000,
+      productsWithNoBsr: true,
     }),
   },
   address: {

@@ -1,4 +1,5 @@
 import { mongoPromise } from "@/server/mongo";
+import { Settings } from "@/types/Settings";
 import { SortDirection } from "mongodb";
 import { NextRequest } from "next/server";
 
@@ -9,22 +10,91 @@ export async function GET(
   const searchParams = request.nextUrl.searchParams;
   const { domain, target } = params;
 
-  const customerSettings = {
+  const isAmazon = target === "a";
+
+  const customerSettings: Settings = {
     minMargin: Number(searchParams.get("minMargin")) || 0,
     minPercentageMargin: Number(searchParams.get("minPercentageMargin")) || 0,
+    maxPrimaryBsr: Number(searchParams.get("maxPrimaryBsr")) || 1000000,
+    maxSecondaryBsr: Number(searchParams.get("maxSecondaryBsr")) || 1000000,
+    productsWithNoBsr: searchParams.get("productsWithNoBsr") === "true",
+    netto: false,
   };
-  
-  const { minMargin, minPercentageMargin } = customerSettings;
-  
-  const findQuery = [
+
+  const {
+    minMargin,
+    minPercentageMargin,
+    maxPrimaryBsr,
+    maxSecondaryBsr,
+    productsWithNoBsr,
+  } = customerSettings;
+
+  const aggregation: { [key: string]: any }[] = [];
+
+  if (isAmazon) {
+    aggregation.push({
+      $addFields: {
+        primaryBsr: {
+          $cond: {
+            if: { $size: "$bsr" },
+            then: { $arrayElemAt: ["$bsr", 0] },
+            else: null,
+          },
+        },
+        secondaryBsr: {
+          $cond: {
+            if: { $size: "$bsr" },
+            then: { $arrayElemAt: ["$bsr", 1] },
+            else: null,
+          },
+        },
+        thirdBsr: {
+          $cond: {
+            if: { $size: "$bsr" },
+            then: { $arrayElemAt: ["$bsr", 2] },
+            else: null,
+          },
+        },
+      },
+    });
+  }
+
+  const findQuery: any[] = [
     { [`${target}_prc`]: { $gt: 0 } },
     { [`${target}_mrgn_pct`]: { $gt: minPercentageMargin, $lte: 150 } },
   ];
-  
+
   if (minMargin > 0) {
     findQuery.push({ [`${target}_mrgn`]: { $gt: minMargin } });
   }
-  
+
+  if (isAmazon) {
+    if (!productsWithNoBsr) {
+      findQuery.push(
+        {
+          $expr: { $gt: [{ $size: "$bsr" }, 0] },
+        },
+        { "primaryBsr.number": { $lte: maxPrimaryBsr } },
+        { "secondaryBsr.number": { $lte: maxSecondaryBsr } }
+      );
+    } else {
+      findQuery.push(
+        {
+          $or: [
+            { primaryBsr: { $eq: null } },
+            { "primaryBsr.number": { $lte: maxPrimaryBsr } },
+          ],
+        },
+        {
+          $or: [
+            { primaryBsr: { $eq: null } },
+            { "secondaryBsr.number": { $lte: maxSecondaryBsr } },
+          ],
+        }
+      );
+    }
+  }
+
   const query = {
     page: Number(searchParams.get("page")) || 0,
     size: Number(searchParams.get("size")) || 10,
@@ -42,21 +112,59 @@ export async function GET(
       status: 400,
     });
 
-  const mongo = await mongoPromise;
-
   const sort: {
     [key: string]: SortDirection;
-  } = query.field ? { [query.field]: query.order === "asc" ? 1 : -1 } : {};
+  } = {};
+
+  if (isAmazon) {
+  }
+
+  if (isAmazon) {
+    sort["primaryBsrExists"] = -1;
+    sort["primaryBsr.number"] = 1;
+    sort["secondaryBsr.number"] = 1;
+    sort["thirdBsr.number"] = 1;
+  }
+
+  if (query.field) {
+    sort[query.field] = query.order === "asc" ? 1 : -1;
+  }
+
+  aggregation.push(
+    {
+      $match: {
+        $and: findQuery,
+      },
+    },
+    {
+      $sort: sort,
+    },
+    {
+      $skip: query.page * query.size,
+    },
+    {
+      $limit: query.size,
+    }
+  );
+  if (isAmazon && productsWithNoBsr) {
+    aggregation.splice(2, 0, {
+      $addFields: {
+        primaryBsrExists: {
+          $cond: {
+            if: { $ifNull: ["$primaryBsr", false] },
+            then: true,
+            else: false,
+          },
+        },
+      },
+    });
+  }
+  const mongo = await mongoPromise;
 
   const res = await mongo
     .db(process.env.NEXT_MONGO_DB)
     .collection(domain)
-    .find({
-      $and: findQuery,
-    })
-    .sort(sort)
-    .skip(query.page * query.size)
-    .limit(query.size)
+    .aggregate(aggregation)
     .toArray();
 
   return Response.json(res);

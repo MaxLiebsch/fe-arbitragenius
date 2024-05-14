@@ -184,7 +184,9 @@ const columns: (target: string, settings: Settings) => GridColDef[] = (
     headerName: "Marge",
     renderCell: (params) => (
       <div className="text-green-600 font-semibold">
-        {formatCurrency(calculationDeduction(parseFloat(params.value), settings.netto))}
+        {formatCurrency(
+          calculationDeduction(parseFloat(params.value), settings.netto)
+        )}
       </div>
     ),
   },
@@ -276,7 +278,7 @@ export default function ProductsTable(props: {
       getRowId={(row) => row._id}
       columns={columns(target, settings)}
       rows={productQuery.data ?? []}
-      rowCount={productCountQuery.data ?? 0}
+      rowCount={productCountQuery.data?.productCount ?? 0}
       loading={productQuery.isFetching}
       pageSizeOptions={[5, 10, 20]}
       paginationModel={paginationModel}

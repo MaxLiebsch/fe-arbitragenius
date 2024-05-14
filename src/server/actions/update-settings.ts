@@ -1,14 +1,8 @@
 "use server";
 
-import { ZodIssue, z } from "zod";
 import { AppwriteException } from "node-appwrite";
 import { createSessionClient } from "../appwrite";
-
-const updateSettingsSchema = z.object({
-  netto: z.boolean(),
-  minMargin: z.number(),
-  minPercentageMargin: z.number(),
-});
+import { SettingsSchema } from "@/types/Settings";
 
 interface FieldError {
   message: string;
@@ -29,10 +23,13 @@ export async function updateSettingsAction(
   formData: FormData
 ): Promise<UpdateSettingsState> {
   const parsedFormData = JSON.parse(JSON.stringify(formData));
-  const form = updateSettingsSchema.safeParse({
+  const form = SettingsSchema.safeParse({
     netto: parsedFormData.netto,
-    minMargin: parsedFormData.minMargin,
-    minPercentageMargin: parsedFormData.minPercentageMargin,
+    minMargin: parseInt(parsedFormData.minMargin ?? "0"),
+    minPercentageMargin: parseInt(parsedFormData.minPercentageMargin ?? "0"),
+    maxSecondaryBsr: parseInt(parsedFormData.maxSecondaryBsr ?? "0"),
+    maxPrimaryBsr: parseInt(parsedFormData.maxPrimaryBsr ?? "0"),
+    productsWithNoBsr: parsedFormData.productsWithNoBsr,
   });
 
   if (!form.success)
@@ -50,7 +47,7 @@ export async function updateSettingsAction(
       }, {} as FieldErrors),
     };
 
-  const { minMargin, minPercentageMargin, netto } = form.data;
+  const { minMargin, minPercentageMargin, netto, productsWithNoBsr, maxPrimaryBsr, maxSecondaryBsr } = form.data;
   const { account } = await createSessionClient();
   const prefs = await account.getPrefs();
 
@@ -58,7 +55,12 @@ export async function updateSettingsAction(
     await account.updatePrefs({
       ...prefs,
       settings: JSON.stringify({
-         minMargin, minPercentageMargin, netto
+        minMargin,
+        minPercentageMargin,
+        netto,
+        productsWithNoBsr,
+        maxPrimaryBsr,
+        maxSecondaryBsr,
       }),
     });
     return { message: "Information geändert", fieldErrors: {} };

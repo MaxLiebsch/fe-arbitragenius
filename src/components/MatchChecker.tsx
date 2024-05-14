@@ -28,13 +28,16 @@ const MatchChecker = ({ shops }: { shops: any[] }) => {
     field: `${targetShop}_mrgn_pct`,
     direction: "desc",
   });
-  const collectionName = `test.${selectedShop}`;
+  const collectionName = `${selectedShop}`;
   const productCountQuery = useProductCount(collectionName, targetShop, {
     minMargin: 0,
     minPercentageMargin: 0,
     netto: true,
+    maxPrimaryBsr: 100000,
+    maxSecondaryBsr: 100000,
+    productsWithNoBsr: true,
   });
-  const productCnt = productCountQuery.data ? productCountQuery.data : 0;
+  const productCnt = productCountQuery.data ? productCountQuery.data.productCount : 0;
 
   const productQuery = useProducts(
     collectionName,
@@ -45,6 +48,9 @@ const MatchChecker = ({ shops }: { shops: any[] }) => {
       minMargin: 0,
       minPercentageMargin: 0,
       netto: true,
+      maxPrimaryBsr: 100000,
+      maxSecondaryBsr: 100000,
+      productsWithNoBsr: true,
     }
   );
   const productsCnt = productQuery.data ? productQuery.data.length : 0;

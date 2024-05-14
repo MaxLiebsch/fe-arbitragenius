@@ -18,6 +18,8 @@ export type Product = {
   ean: string;
   _id: string;
   pblsh: boolean;
+  bsr: []
+  primaryBsrExists: boolean;
   vrfd: boolean;
   ctgry: string;
   mnfctr: string;
@@ -66,7 +68,7 @@ export default function useProducts(
       let sortQuery = "";
       if (sort) sortQuery = `&sortby=${sort.field}&sortorder=${sort.direction}`;
       return fetch(
-        `/app/api/shop/${domain}/${target}/product?minMargin=${settings.minMargin}&minPercentageMargin=${settings.minPercentageMargin}&page=${pagination.page}&size=${pagination.pageSize}${sortQuery}`
+        `/app/api/shop/${domain}/${target}/product?productsWithNoBsr=${settings.productsWithNoBsr}&maxSecondaryBsr=${settings.maxSecondaryBsr}&maxPrimaryBsr=${settings.maxPrimaryBsr}&minMargin=${settings.minMargin}&minPercentageMargin=${settings.minPercentageMargin}&page=${pagination.page}&size=${pagination.pageSize}${sortQuery}`
       ).then((resp) => resp.json());
     },
   });
@@ -88,9 +90,15 @@ export default function useProducts(
           if (sort)
             sortQuery = `&sortby=${sort.field}&sortorder=${sort.direction}`;
           return fetch(
-            `/app/api/shop/${domain}/${target}/product?page=${
-              pagination.page + 1
-            }&size=${pagination.pageSize}${sortQuery}`
+            `/app/api/shop/${domain}/${target}/product?productsWithNoBsr=${
+              settings.productsWithNoBsr
+            }&maxSecondaryBsr=${settings.maxSecondaryBsr}&maxPrimaryBsr=${
+              settings.maxPrimaryBsr
+            }&minMargin=${settings.minMargin}&minPercentageMargin=${
+              settings.minPercentageMargin
+            }&page=${pagination.page + 1}&size=${
+              pagination.pageSize
+            }${sortQuery}`
           ).then((resp) => resp.json());
         },
       });
