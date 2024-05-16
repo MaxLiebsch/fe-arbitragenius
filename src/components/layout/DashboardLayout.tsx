@@ -20,6 +20,7 @@ import { Logo } from "../Logo";
 import { usePathname, useRouter } from "next/navigation";
 import Spinner from "../Spinner";
 import { useFormState } from "react-dom";
+import { MIMEType } from "util";
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: HomeIcon, current: true },
@@ -53,7 +54,8 @@ export const DashboardLayout = ({
     message: "",
   });
 
-  useEffect(() => {
+  useEffect(() => { 
+
     if (state.message === "success") {
       router.push("/auth/signin");
     }

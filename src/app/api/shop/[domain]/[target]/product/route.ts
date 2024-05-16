@@ -63,7 +63,9 @@ export async function GET(
     { [`${target}_prc`]: { $gt: 0 } },
     { [`${target}_mrgn_pct`]: { $gt: minPercentageMargin, $lte: 150 } },
   ];
-
+  
+ 
+  
   if (minMargin > 0) {
     findQuery.push({ [`${target}_mrgn`]: { $gt: minMargin } });
   }

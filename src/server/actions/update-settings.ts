@@ -24,7 +24,7 @@ export async function updateSettingsAction(
 ): Promise<UpdateSettingsState> {
   const parsedFormData = JSON.parse(JSON.stringify(formData));
   const form = SettingsSchema.safeParse({
-    netto: parsedFormData.netto,
+    netto: parsedFormData.netto?? true,
     minMargin: parseInt(parsedFormData.minMargin ?? "0"),
     minPercentageMargin: parseInt(parsedFormData.minPercentageMargin ?? "0"),
     maxSecondaryBsr: parseInt(parsedFormData.maxSecondaryBsr ?? "0"),

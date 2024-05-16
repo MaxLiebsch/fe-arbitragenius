@@ -10,13 +10,15 @@ import useFavorites from "@/hooks/use-favorites";
 import useFavoriteAdd from "@/hooks/use-favorite-add";
 import useFavoriteRemove from "@/hooks/use-favorite-remove";
 import Spinner from "./Spinner";
+import ShopTile from "./ShopTile";
+import usePreferences from "@/hooks/use-preferences";
 
 export default function ShopsGrid() {
   const [paginationModel, setPaginationModel] = useState<ShopPagination>({
     page: 0,
     pageSize: 100,
   });
-
+  const {data: settings} = usePreferences('settings')
   const shopQuery = useShops(paginationModel);
   const favorites = useFavorites();
   const favoriteAddMutation = useFavoriteAdd();
@@ -47,34 +49,7 @@ export default function ShopsGrid() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 gap-y-3">
       {shopQuery.data?.map((shop) => (
-        <Card key={shop.d} title={shop.ne} bordered={false}>
-          <div className="flex flex-row gap-2 items-center">
-            <Link href={`/dashboard/shop/${shop.d}`}>
-              <>
-                <p className="text-gray-500 font-bold">
-                  Produkte Gesamt - {shop.total ?? 0}
-                </p>
-                <p className="text-gray-500 font-bold">
-                  Profitabel Amazon - {shop.a_fat_total ?? 0}
-                </p>
-                <p className="text-gray-500 font-bold">
-                  Profitabel Ebay - {shop.e_fat_total ?? 0}
-                </p>
-              </>
-            </Link>
-            <Button
-              className="ml-auto"
-              icon={
-                favorites.data?.includes(shop.d) ? (
-                  <StarIcon className="h-6 w-6" />
-                ) : (
-                  <StarIconOutline className="h-6 w-6" />
-                )
-              }
-              onClick={() => handleToggleFavorite(shop.d)}
-            />
-          </div>
-        </Card>
+        <ShopTile settings={settings} key={shop.d} shop={shop} favorites={favorites.data} />
       ))}
     </div>
   );

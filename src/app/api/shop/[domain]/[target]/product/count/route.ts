@@ -2,6 +2,14 @@ import { mongoPromise } from "@/server/mongo";
 import { Settings } from "@/types/Settings";
 import { NextRequest } from "next/server";
 
+
+/*
+    verified empty show
+    verified [admin] not show
+    verified [user1, user2, user3] not show
+
+*/
+
 export async function GET(
   request: NextRequest,
   { params }: { params: { domain: string; target: string } }
@@ -21,7 +29,7 @@ export async function GET(
     netto: false,
   };
 
-  const {
+  const { 
     minMargin,
     minPercentageMargin,
     maxPrimaryBsr,
