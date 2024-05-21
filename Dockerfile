@@ -10,9 +10,8 @@ COPY [".env", "/app"]
 
 COPY package.json ./
 
-RUN rm yarn.lock
-RUN yarn install
 RUN yarn add sharp --ignore-engines
+RUN yarn install
 
 RUN echo `node -v`
 RUN echo `ls /app/node_modules`
