@@ -237,7 +237,7 @@ export default function ProductsTable(props: {
     pageSize: 20,
   });
   const [sortModel, setSortModel] = useState<ProductSort>({
-    field: `${target}_mrgn_pct`,
+    field: `none`,
     direction: "desc",
   });
 
@@ -267,6 +267,7 @@ export default function ProductsTable(props: {
     <DataGridPremium
       apiRef={apiRef}
       className={className}
+      sortingOrder={['desc', 'asc', null]}
       initialState={{
         columns: {
           columnVisibilityModel: {

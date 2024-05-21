@@ -1,18 +1,16 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-export default function useProductUpdate() {
+export default function useProductDelete() {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (options: {
       domain: string;
       productId: string;
-      update: { [key: string]: any };
     }) => {
-      const { domain, update, productId } = options;
+      const { domain, productId } = options;
       const response = await fetch(`/app/api/shop/${domain}/product/${productId}`, {
-        method: "POST",
-        body: JSON.stringify(update),
+        method: "DELETE",
       });
 
       if (!response.ok) throw new Error();

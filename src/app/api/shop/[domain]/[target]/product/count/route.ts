@@ -2,7 +2,6 @@ import { mongoPromise } from "@/server/mongo";
 import { Settings } from "@/types/Settings";
 import { NextRequest } from "next/server";
 
-
 /*
     verified empty show
     verified [admin] not show
@@ -29,13 +28,17 @@ export async function GET(
     netto: false,
   };
 
-  const { 
+  const {
     minMargin,
     minPercentageMargin,
     maxPrimaryBsr,
     maxSecondaryBsr,
     productsWithNoBsr,
   } = customerSettings;
+
+  const targetVerificationPending = searchParams.get(
+    `${target}_vrfd.vrfn_pending`
+  );
 
   const aggregation: { [key: string]: any }[] = [];
 
@@ -78,6 +81,44 @@ export async function GET(
     { [`${target}_prc`]: { $gt: 0 } },
     { [`${target}_mrgn_pct`]: { $gt: minPercentageMargin, $lte: 150 } },
   ];
+
+  if (targetVerificationPending) {
+    findQuery.push({
+      $and: [
+        {
+          [`${target}_vrfd.vrfn_pending`]: targetVerificationPending === "true",
+        },
+      ],
+    });
+  } else {
+    findQuery.push({
+      $or: [
+        {
+          $and: [
+            {
+              [`${target}_vrfd.vrfd`]: true,
+            },
+            {
+              [`${target}_vrfd.vrfn_pending`]: false,
+            },
+          ],
+        },
+        {
+          $and: [
+            {
+              [`${target}_vrfd.vrfd`]: false,
+            },
+            {
+              [`${target}_vrfd.vrfn_pending`]: true,
+            },
+          ],
+        },
+        {
+          [`${target}_vrfd.flag_cnt`]: {$lt: {$size:  3 }},
+        },
+      ],
+    });
+  }
 
   if (minMargin > 0) {
     findQuery.push({ [`${target}_mrgn`]: { $gt: minMargin } });

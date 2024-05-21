@@ -21,6 +21,9 @@ export async function GET(
     netto: false,
   };
 
+  const targetVerificationPending =
+      searchParams.get(`${target}_vrfd.vrfn_pending`) 
+
   const {
     minMargin,
     minPercentageMargin,
@@ -63,9 +66,49 @@ export async function GET(
     { [`${target}_prc`]: { $gt: 0 } },
     { [`${target}_mrgn_pct`]: { $gt: minPercentageMargin, $lte: 150 } },
   ];
-  
- 
-  
+
+  if (targetVerificationPending) {
+    findQuery.push({
+      $and: [
+        {
+          [`${target}_vrfd.vrfn_pending`]: targetVerificationPending === 'true',
+        },
+      ],
+    });
+  } else {
+    findQuery.push({
+      $or: [
+        {
+          $and: [
+            {
+              [`${target}_vrfd.vrfd`]: true,
+            },
+            {
+              [`${target}_vrfd.vrfn_pending`]: false,
+            },
+          ],
+        },
+        {
+          $and: [
+            {
+              [`${target}_vrfd.vrfd`]: false,
+            },
+            {
+              [`${target}_vrfd.vrfn_pending`]: true,
+            },
+          ],
+        },
+        {
+          [`${target}_vrfd.flag_cnt`]: { $lt: { $size: 3 } },
+        },
+      ],
+    });
+  }
+
+  if (minMargin > 0) {
+    findQuery.push({ [`${target}_mrgn`]: { $gt: minMargin } });
+  }
+
   if (minMargin > 0) {
     findQuery.push({ [`${target}_mrgn`]: { $gt: minMargin } });
   }
@@ -119,17 +162,19 @@ export async function GET(
   } = {};
 
   if (isAmazon) {
-  }
-
-  if (isAmazon) {
-    sort["primaryBsrExists"] = -1;
-    sort["primaryBsr.number"] = 1;
-    sort["secondaryBsr.number"] = 1;
-    sort["thirdBsr.number"] = 1;
-  }
-
-  if (query.field) {
-    sort[query.field] = query.order === "asc" ? 1 : -1;
+    if (query.field === "none") {
+      sort["primaryBsrExists"] = -1;
+      sort["primaryBsr.number"] = 1;
+      sort["secondaryBsr.number"] = 1;
+      sort["thirdBsr.number"] = 1;
+      sort["a_mrgn_pct"] = -1;
+    } else if (query.field) {
+      sort[query.field] = query.order === "asc" ? 1 : -1;
+    }
+  } else {
+    if (query.field) {
+      sort[query.field] = query.order === "asc" ? 1 : -1;
+    }
   }
 
   aggregation.push(

@@ -18,7 +18,7 @@ export type Product = {
   ean: string;
   _id: string;
   pblsh: boolean;
-  bsr: []
+  bsr: [];
   primaryBsrExists: boolean;
   vrfd: boolean;
   ctgry: string;
@@ -50,7 +50,8 @@ export default function useProducts(
   pagination: ProductPagination,
   sort: ProductSort,
   target: string,
-  settings: Settings
+  settings: Settings,
+  refetchOnWindowFocus: boolean = true
 ) {
   const queryClient = useQueryClient();
 
@@ -64,11 +65,18 @@ export default function useProducts(
       sort?.field,
       sort?.direction,
     ],
+    refetchOnWindowFocus,
     queryFn: async () => {
       let sortQuery = "";
+      let settingsQuery = "";
       if (sort) sortQuery = `&sortby=${sort.field}&sortorder=${sort.direction}`;
+      if (settings) {
+        settingsQuery = Object.keys(settings)
+          .map((key) => `&${key}=${settings[key as keyof Settings]}`)
+          .join("");
+      }
       return fetch(
-        `/app/api/shop/${domain}/${target}/product?productsWithNoBsr=${settings.productsWithNoBsr}&maxSecondaryBsr=${settings.maxSecondaryBsr}&maxPrimaryBsr=${settings.maxPrimaryBsr}&minMargin=${settings.minMargin}&minPercentageMargin=${settings.minPercentageMargin}&page=${pagination.page}&size=${pagination.pageSize}${sortQuery}`
+        `/app/api/shop/${domain}/${target}/product?page=${pagination.page}&size=${pagination.pageSize}${sortQuery}${settingsQuery}`
       ).then((resp) => resp.json());
     },
   });
