@@ -11,8 +11,8 @@ COPY [".env", "/app"]
 COPY package.json ./
 
 # RUN yarn add sharp --ignore-engines
-RUN npm install --os=linux --cpu=x64 sharp
 RUN yarn install
+RUN npm install --os=linux --cpu=x64 sharp
 
 RUN echo `node -v`
 RUN echo `ls /app/node_modules`
