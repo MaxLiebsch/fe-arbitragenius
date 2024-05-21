@@ -1,4 +1,4 @@
-FROM node:20-slim as build
+FROM node:20 as build
 
 ENV PATH $PATH:/app/node_modules/.bin
 
@@ -8,6 +8,8 @@ COPY . .
 COPY [".env.production", "/app"]
 COPY [".env", "/app"]
 
+RUN apt-get update && apt-get install -y ca-certificates
+RUN update-ca-certificates
 
 COPY package.json ./
 RUN yarn install
