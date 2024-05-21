@@ -7,14 +7,12 @@ WORKDIR /app
 COPY . .
 COPY [".env.production", "/app"]
 COPY [".env", "/app"]
+COPY [".env.sentry-build-plugin", "/app"]
+
 
 COPY package.json ./
-
 RUN yarn install
-RUN yarn add sharp --ignore-engines
-
-RUN echo `node -v`
-RUN echo `ls /app/node_modules`
+RUN yarn add sharp@v0.33.3 --ignore-engines
 
 RUN export NEXT_SHARP_PATH=/app/node_modules/sharp && \
     yarn build /app
