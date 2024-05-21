@@ -7,7 +7,6 @@ WORKDIR /app
 COPY . .
 COPY [".env.production", "/app"]
 COPY [".env", "/app"]
-COPY [".env.sentry-build-plugin", "/app"]
 
 
 COPY package.json ./
