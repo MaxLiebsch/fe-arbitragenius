@@ -10,7 +10,7 @@ COPY [".env", "/app"]
 
 COPY package.json ./
 
-
+RUN rm yarn.lock
 RUN yarn install
 RUN yarn add sharp --ignore-engines
 
