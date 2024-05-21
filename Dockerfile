@@ -11,13 +11,15 @@ COPY [".env", "/app"]
 COPY package.json ./
 
 RUN yarn install
-RUN yarn add sharp --ignore-engines
+# RUN yarn add sharp --ignore-engines
 
 RUN echo `node -v`
 RUN echo `ls /app/node_modules`
 
-RUN export NEXT_SHARP_PATH=/app/node_modules/sharp && \
-    yarn build /app
+# RUN export NEXT_SHARP_PATH=/app/node_modules/sharp && \
+#     yarn build /app
+ 
+RUN yarn build /app
 
 FROM node:20-slim as prod
 
