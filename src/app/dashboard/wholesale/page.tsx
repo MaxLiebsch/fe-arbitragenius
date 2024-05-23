@@ -7,7 +7,7 @@ import useTasks from "@/hooks/use-tasks";
 import { UploadChangeParam } from "antd/es/upload";
 import Papa from "papaparse";
 import { DataGridPremium, GridColDef } from "@mui/x-data-grid-premium";
-import { ProcessedProduct, ProductRow } from "@/types/wholesaleProduct";
+import {  ProductRow } from "@/types/wholesaleProduct";
 import { appendPercentage, formatCurrency, getPrice } from "@/util/formatter";
 import { calculationDeduction } from "@/util/calculateDeduction";
 import { z } from "zod";
@@ -16,7 +16,6 @@ import { LinkWrapper } from "@/components/LinkWrapper";
 import { Button } from "@/components/Button";
 import useCreateTask from "@/hooks/use-task-create";
 import Spinner from "@/components/Spinner";
-import { UploadRef } from "antd/es/upload/Upload";
 import TaskCard from "@/components/TaskCard";
 
 const { Dragger } = Upload;
@@ -339,7 +338,7 @@ const Page = () => {
             )}
             {tasks.data && tasks.data.length === 0 && (
               <div>
-                Kein Wholesale Analysen - Du kannst eine Analyse erstellen.
+                Keine Wholesale Analysen - Du kannst eine Analyse erstellen.
               </div>
             )}
           </div>

@@ -46,13 +46,6 @@ const columns: (target: string, settings: Settings) => GridColDef[] = (
       }
     },
   },
-  // {
-  //   field: "asin",
-  //   headerName: `ASIN`,
-  //   renderCell: (params) => {
-  //     return <>{params.value}</>;
-  //   },
-  // },
   {
     field: "nm",
     headerName: "Info",

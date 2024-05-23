@@ -97,6 +97,7 @@ const MatchChecker = ({ shops }: { shops: any[] }) => {
     [
       productToCheck,
       productsCnt,
+      verified,
       targetShop,
       collectionName,
       currentProductIdx,
@@ -120,7 +121,7 @@ const MatchChecker = ({ shops }: { shops: any[] }) => {
         setCurrentProductIdx(0);
       }
     }
-  }, [productDelete, setCurrentProductIdx, currentProductIdx]);
+  }, [productDelete, setCurrentProductIdx, currentProductIdx, collectionName, productsCnt, productToCheck,paginationModel.page]);
 
   const resetBsr = useCallback(() => {
     if (productToCheck)
@@ -133,7 +134,7 @@ const MatchChecker = ({ shops }: { shops: any[] }) => {
           asin: "",
         },
       });
-  }, [productMutation]);
+  }, [productMutation, productToCheck, collectionName]);
 
   const deleteTargetShop = useCallback(() => {
     if (productToCheck) {
@@ -170,6 +171,10 @@ const MatchChecker = ({ shops }: { shops: any[] }) => {
     }
   }, [
     productMutation,
+    productToCheck,
+    collectionName,
+    productsCnt,
+    targetShop,
     currentProductIdx,
     paginationModel.page,
     setCurrentProductIdx,

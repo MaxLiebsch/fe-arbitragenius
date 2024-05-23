@@ -115,6 +115,7 @@ export default function useProducts(
     productQuery.data,
     domain,
     target,
+    settings,
     pagination.page,
     pagination.pageSize,
     sort,

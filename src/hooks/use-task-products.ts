@@ -103,6 +103,7 @@ export default function useTaskProducts(
     pagination.page,
     pagination.pageSize,
     sort,
+    taskId,
     sort?.field,
     sort?.direction,
     queryClient,
