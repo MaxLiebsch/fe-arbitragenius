@@ -9,18 +9,17 @@ import {
   MagnifyingGlassIcon,
   UserCircleIcon,
   UsersIcon,
+  ArrowTrendingUpIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import useFavoriteShops from "@/hooks/use-favorite-shops";
-import { Spin } from "antd";
 import useAccount from "@/hooks/use-account";
 import { logoutAction } from "@/server/actions/logout";
 import { Logo } from "../Logo";
 import { usePathname, useRouter } from "next/navigation";
 import Spinner from "../Spinner";
 import { useFormState } from "react-dom";
-import { MIMEType } from "util";
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: HomeIcon, current: true },
@@ -30,6 +29,12 @@ const navigation = [
     icon: UsersIcon,
     current: false,
   },
+  {
+    name: "Wholesale Analyse",
+    href: "/dashboard/wholesale",
+    icon: ArrowTrendingUpIcon,
+    current: false,
+  }
 ];
 
 const userNavigation = [{ name: "Dein Profil", href: "/dashboard/profile" }];

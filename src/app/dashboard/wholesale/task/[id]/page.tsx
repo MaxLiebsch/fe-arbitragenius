@@ -1,0 +1,62 @@
+import WholeSaleProductsTable from "@/components/WholesaleProductsTable";
+import { createAdminClient, getLoggedInUser } from "@/server/appwrite";
+import { mongoAdminPromise } from "@/server/mongo";
+import { format, parseISO } from "date-fns";
+import { ObjectId } from "mongodb";
+import { redirect } from "next/navigation";
+import React from "react";
+
+const Page = async ({ params }: { params: { id: string } }) => {
+  const { id } = params;
+  const user = await getLoggedInUser();
+  if (!user) {
+    redirect("/login");
+  }
+  const { users } = await createAdminClient();
+  const userPrefs = await users.getPrefs(user.$id);
+  let settings = {
+    netto: true,
+    minMargin: 0,
+    minPercentageMargin: 0,
+    maxPrimaryBsr: 1000000,
+    maxSecondaryBsr: 1000000,
+    productsWithNoBsr: true,
+  };
+  // @ts-ignore
+  if (userPrefs?.settings) {
+    //@ts-ignore
+    settings = userPrefs.settings;
+  }
+
+  const mongo = await mongoAdminPromise;
+
+  const task = await mongo
+    .db(process.env.NEXT_MONOGO_CRAWLER_DATA ?? "")
+    .collection(process.env.NEXT_MONGO_TASKS ?? "")
+    .findOne({
+      userId: user.$id,
+      _id: new ObjectId(params.id),
+    });
+
+  if (!task) redirect("/dashboard/wholesale");
+
+  return (
+    <>
+      <div>
+        Fortschritt:{" "}
+        {((task.progress.total - task.progress.pending) / task.progress.total) *
+          100}{" "}
+        %
+      </div>
+      <div key={task._id.toString()}>
+        Status: {task.progress.pending > 0 ? "In Arbeit" : "Abgeschlossen"}
+      </div>
+      <div className="text-xs text-seconadary-400">Erstellt am: {format(parseISO(task.createdAt), "Pp")}</div>
+      <div className="w-full h-[89%] min-h-[89%] mt-2">
+        <WholeSaleProductsTable taskId={id} settings={settings} />
+      </div>
+    </>
+  );
+};
+
+export default Page;
