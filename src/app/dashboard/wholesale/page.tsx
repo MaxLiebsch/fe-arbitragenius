@@ -37,8 +37,7 @@ const props: UploadProps = {
 
 const translations = {
   category: ["Kategorie", "Category"],
-  description: ["Beschreibung", "Description"],
-  name: ["Name", "Name"],
+  name: ["Name", "Name","Beschreibung", "Description", 'PRODUCT DESCRIPTION'],
   price: ["Preis", "Price", "PRICE EUR"],
   ean: ["EAN"],
   reference: ["REF. NO.", "Referenz", "Reference"],
@@ -141,11 +140,11 @@ const columns: GridColDef<ProductRow>[] = [
 
 const productSchema = z.object({
   ean: z.string(),
-  name: z.string(),
-  category: z.string(),
+  name: z.string().optional().default(""),
+  category: z.string().optional().default(""),
   price: z.number(),
   id: z.number(),
-  reference: z.string().optional(),
+  reference: z.string().optional().default(""),
 });
 
 function getCaseInsensitiveProperty(obj: any, properties: string[]) {
@@ -174,8 +173,10 @@ const Page = () => {
     if (status === "done") {
       const parsedRows: ProductRow[] = [];
       let cnt = 0;
+      let cntErrors = 0;
       Papa.parse(originFileObj as File, {
         header: true,
+        skipEmptyLines: true,
         step: function (results: any, parser) {
           cnt++;
           if (cnt > 10000) {
@@ -194,7 +195,7 @@ const Page = () => {
               results.data,
               translations.category
             ),
-            price: price
+            price: parseInt(price)
               ? parsePrice(getPrice(price ? price.replace(/\s+/g, "") : ""))
               : "",
             reference: getCaseInsensitiveProperty(
@@ -204,16 +205,18 @@ const Page = () => {
           };
           const res = productSchema.safeParse(testRow);
           if (!res.success) {
-            console.error(res.error.errors);
-            // parser.abort();
+            const allValuesEmpty = Object.values(results.data).every((val: any) => val === "")
+            if(!allValuesEmpty){
+              cntErrors++;
+              console.error(res.error.errors);
+            }
           } else {
             parsedRows.push(res.data); // Push parsed row into array
           }
-          return res.data;
         },
         complete: (result) => {
           message.success(`${info.file.name} Datei erfolgreich hochgeladen.`);
-
+          message.error(`${cntErrors} Zeilen konnten nicht verarbeitet werden.`)
           setRows(
             parsedRows.map((row, i) => {
               return {
@@ -280,10 +283,8 @@ const Page = () => {
             </p>
           </Dragger>
           <div>
-            {rows.length ? (
-              <>
                 <Button
-                  disabled={createTaskMutation.isPending}
+                  disabled={createTaskMutation.isPending || !rows.length}
                   onClick={() => handleStartTask()}
                   className="mb-3 min-w-32"
                 >
@@ -295,6 +296,8 @@ const Page = () => {
                     <>Start Analyse</>
                   )}
                 </Button>
+            {rows.length ? (
+              <>
                 <DataGridPremium
                   autoHeight
                   rows={rows}
