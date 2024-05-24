@@ -216,7 +216,7 @@ const Page = () => {
         },
         complete: (result) => {
           message.success(`${info.file.name} Datei erfolgreich hochgeladen.`);
-          message.error(`${cntErrors} Zeilen konnten nicht verarbeitet werden.`)
+          cntErrors > 0 && message.error(`${cntErrors} Zeilen konnten nicht verarbeitet werden.`)
           setRows(
             parsedRows.map((row, i) => {
               return {

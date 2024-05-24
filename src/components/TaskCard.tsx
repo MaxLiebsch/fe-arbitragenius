@@ -8,7 +8,7 @@ import { ArrowPathIcon, TrashIcon } from "@heroicons/react/16/solid";
 import useDeleteTask from "@/hooks/use-task-delete";
 
 const TaskCard = ({ task }: { task: DbTask }) => {
-  const inProgress = task.progress.pending > 0;
+  const inProgress = task.executing;
   const deleteTask = useDeleteTask({ taskId: task._id.toString() });
 
   useEffect(() => {
@@ -38,13 +38,15 @@ const TaskCard = ({ task }: { task: DbTask }) => {
       <div className="flex flex-col">
         <div className="flex flex-row gap-1" key={task._id.toString()}>
           <span>Status:</span>
-          {inProgress ? (
+          {task.progress.pending === 0 ? (
+            "Abgeschlossen"
+          ) : inProgress ? (
             <span className="flex gap-4 items-center">
               <span>In Arbeit</span>
               <Spinner size="!h-4" />{" "}
             </span>
           ) : (
-            "Abgeschlossen"
+            "In Warteschlange"
           )}
         </div>
         <div>

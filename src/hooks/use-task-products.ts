@@ -1,4 +1,4 @@
-import { Settings } from "@/types/Settings";
+import { ModifiedProduct, Product } from "@/types/Product";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 
@@ -14,35 +14,9 @@ export type ProductSort =
       direction: "asc" | "desc";
     };
 
-export type Product = {
-  ean: string;
-  _id: string;
-  pblsh: boolean;
-  bsr: [];
-  primaryBsrExists: boolean;
-  vrfd: boolean;
-  ctgry: string;
-  mnfctr: string;
-  nm: string;
-  e_prc: number;
-  a_prc: number;
-  img: string;
-  lnk: string;
-  prc: number;
-  createdAt: string;
-  updatedAt: string;
-  e_lnk: string;
-  e_img: string;
-  e_nm: string;
-  e_mrgn: number;
-  e_fat: boolean;
-  e_mrgn_pct: number;
-  a_lnk: string;
-  a_img: string;
-  a_nm: string;
-  a_mrgn: number;
-  a_fat: boolean;
-  a_mrgn_pct: number;
+type ProductBsr = {
+  number: number;
+  category: string;
 };
 
 export default function useTaskProducts(
@@ -53,7 +27,7 @@ export default function useTaskProducts(
 ) {
   const queryClient = useQueryClient();
 
-  const productQuery = useQuery<Product[]>({
+  const productQuery = useQuery<ModifiedProduct[]>({
     queryKey: [
       "tasks",
       taskId,
@@ -71,6 +45,28 @@ export default function useTaskProducts(
       return fetch(
         `/app/api/tasks/${taskId}/product?page=${pagination.page}&size=${pagination.pageSize}${sortQuery}${settingsQuery}`
       ).then((resp) => resp.json());
+    },
+    select: (data): ModifiedProduct[] => {
+      return data.map((product) => {
+        const bsrLength = product.bsr?.length;
+        const bsr: { [key: string]: number | string } = {};
+        if (product.bsr && product.bsr.length > 0) {
+          const bsrArr = [...product.bsr] as ProductBsr[];
+          if (bsrLength > 0) {
+            bsr["bsr_1"] = bsrArr[0].number;
+            bsr["bsr_cat_1"] = bsrArr[0].category;
+          }
+          if (bsrLength > 1) {
+            bsr["bsr_2"] = bsrArr[1].number;
+            bsr["bsr_cat_2"] = bsrArr[1].category;
+          }
+          if (bsrLength > 2) {
+            bsr["bsr_3"] = bsrArr[2].number;
+            bsr["bsr_cat_3"] = bsrArr[2].category;
+          }
+        }
+        return { ...product, ...bsr };
+      });
     },
   });
 

@@ -67,12 +67,10 @@ const columns: (target: string, settings: Settings) => GridColDef[] = (
     renderCell: (params) => {
       return (
         <div className="flex flex-col divide-y p-1">
-          <div>
-            {LinkWrapper("https://arbispotter.com", params.row.name, "")}
-          </div>
+          <div>{params.row.name}</div>
           {params.row[`a_lnk`] && (
             <div>
-              Zielshop:
+              Amazon:
               {LinkWrapper(params.row[`a_lnk`], params.row[`a_nm`])}
             </div>
           )}
@@ -120,6 +118,10 @@ const columns: (target: string, settings: Settings) => GridColDef[] = (
       ),
   },
   {
+    field: `${target}_lnk`,
+    headerName: "Amazon Link",
+  },
+  {
     field: `${target}_img`,
     headerName: "Amazon Bild",
     cellClassName: "hover:!overflow-visible",
@@ -142,19 +144,28 @@ const columns: (target: string, settings: Settings) => GridColDef[] = (
       ),
   },
   {
-    field: "bsr",
-    headerName: "Amazon Bestseller Rank",
-    valueGetter: (params) => {
-      if (params.row.bsr && params.row.bsr.length) {
-        return params.row.bsr
-          .map(
-            (bsr: any) =>
-              `Nr.${bsr.number.toLocaleString("de-DE")} in ${bsr.category}`
-          )
-          .join(", ");
-      }
-      return "";
-    },
+    field: "bsr_1",
+    headerName: "BSR 1",
+  },
+  {
+    field: "bsr_cat_1",
+    headerName: "BSR 1 Kategorie",
+  },
+  {
+    field: "bsr_2",
+    headerName: "BSR 2",
+  },
+  {
+    field: "bsr_cat_2",
+    headerName: "BSR 2 Kategorie",
+  },
+  {
+    field: "bsr_3",
+    headerName: "BSR 3",
+  },
+  {
+    field: "bsr_cat_3",
+    headerName: "BSR 3 Kategorie",
   },
   {
     field: "asin",
@@ -226,12 +237,7 @@ export default function WholeSaleProductsTable(props: {
   const apiRef = useGridApiRef();
 
   const productCountQuery = useTaskProductCount(taskId);
-  const productQuery = useTaskProducts(
-    taskId,
-    paginationModel,
-    sortModel
-    // settings
-  );
+  const productQuery = useTaskProducts(taskId, paginationModel, sortModel);
 
   const handleSortModelChange = (model: GridSortModel) => {
     if (model.length) {
@@ -251,7 +257,13 @@ export default function WholeSaleProductsTable(props: {
       initialState={{
         columns: {
           columnVisibilityModel: {
-            bsr: false,
+            bsr_1: false,
+            [`a_lnk`]: false,
+            bsr_cat_1: false,
+            bsr_2: false,
+            bsr_cat_2: false,
+            bsr_3: false,
+            bsr_cat_3: false,
             asin: false,
           },
         },

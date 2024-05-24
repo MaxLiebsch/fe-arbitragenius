@@ -1,3 +1,4 @@
+import Spinner from "@/components/Spinner";
 import WholeSaleProductsTable from "@/components/WholesaleProductsTable";
 import { createAdminClient, getLoggedInUser } from "@/server/appwrite";
 import { mongoAdminPromise } from "@/server/mongo";
@@ -40,6 +41,8 @@ const Page = async ({ params }: { params: { id: string } }) => {
 
   if (!task) redirect("/dashboard/wholesale");
 
+  const inProgress = task.executing;
+
   return (
     <>
       <div>
@@ -49,9 +52,21 @@ const Page = async ({ params }: { params: { id: string } }) => {
         %
       </div>
       <div key={task._id.toString()}>
-        Status: {task.progress.pending > 0 ? "In Arbeit" : "Abgeschlossen"}
+        Status:{" "}
+        {task.progress.pending === 0 ? (
+          "Abgeschlossen"
+        ) : inProgress ? (
+          <span className="flex gap-4 items-center">
+            <span>In Arbeit</span>
+            <Spinner size="!h-4" />{" "}
+          </span>
+        ) : (
+          "In Warteschlange"
+        )}
       </div>
-      <div className="text-xs text-seconadary-400">Erstellt am: {format(parseISO(task.createdAt), "Pp")}</div>
+      <div className="text-xs text-seconadary-400">
+        Erstellt am: {format(parseISO(task.createdAt), "Pp")}
+      </div>
       <div className="w-full h-[89%] min-h-[89%] mt-2">
         <WholeSaleProductsTable taskId={id} settings={settings} />
       </div>
