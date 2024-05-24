@@ -5,7 +5,6 @@ import React, { use, useCallback, useEffect, useState } from "react";
 import { Button } from "./Button";
 import useProductCount from "@/hooks/use-product-count";
 import useProducts, {
-  Product,
   ProductPagination,
   ProductSort,
 } from "@/hooks/use-products";
@@ -13,6 +12,7 @@ import Link from "next/link";
 import useProductUpdate from "@/hooks/use-product-update";
 import { StarIcon } from "@heroicons/react/24/outline";
 import useProductDelete from "@/hooks/use-product-delete";
+import { Product } from "@/types/Product";
 
 const MatchChecker = ({ shops }: { shops: any[] }) => {
   const [targetShop, setTargetShop] = useState("a");
