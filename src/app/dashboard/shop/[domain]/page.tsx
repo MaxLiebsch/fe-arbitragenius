@@ -38,7 +38,7 @@ export default async function Shop({ params }: { params: { domain: string } }) {
   // @ts-ignore
   if (userPrefs?.settings) {
     //@ts-ignore
-    settings = userPrefs.settings;
+    settings = JSON.parse(userPrefs.settings);
   }
 
   return (
