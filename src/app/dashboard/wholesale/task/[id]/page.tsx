@@ -26,7 +26,7 @@ const Page = async ({ params }: { params: { id: string } }) => {
   // @ts-ignore
   if (userPrefs?.settings) {
     //@ts-ignore
-    settings = userPrefs.settings;
+    settings = JSON.parse(userPrefs.settings);
   }
 
   const mongo = await mongoAdminPromise;
