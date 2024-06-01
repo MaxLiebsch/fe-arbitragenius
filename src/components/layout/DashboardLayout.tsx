@@ -34,7 +34,7 @@ const navigation = [
     href: "/dashboard/wholesale",
     icon: ArrowTrendingUpIcon,
     current: false,
-  }
+  },
 ];
 
 const userNavigation = [{ name: "Dein Profil", href: "/dashboard/profile" }];
@@ -59,8 +59,7 @@ export const DashboardLayout = ({
     message: "",
   });
 
-  useEffect(() => { 
-
+  useEffect(() => {
     if (state.message === "success") {
       router.push("/auth/signin");
     }
@@ -195,6 +194,9 @@ export const DashboardLayout = ({
                         </li>
                       </ul>
                     </nav>
+                    <div className="absolute left-[0.25rem] bottom-0">
+                      v{process.env.NEXT_PUBLIC_VERSION}
+                    </div>
                   </div>
                 </Dialog.Panel>
               </Transition.Child>
@@ -278,6 +280,9 @@ export const DashboardLayout = ({
                 </li>
               </ul>
             </nav>
+            <div className="absolute left-[0.25rem] bottom-0">
+              v{process.env.NEXT_PUBLIC_VERSION}
+            </div>
           </div>
         </div>
 

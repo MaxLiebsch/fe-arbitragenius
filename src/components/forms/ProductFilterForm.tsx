@@ -61,7 +61,7 @@ const ProductFilterForm = ({
             htmlFor="name"
             className="block text-sm font-medium leading-6 text-secondary-950"
           >
-            Minimale Marge %
+            Minimale Marge % ({settings.netto ? "Netto" : "Brutto"})
           </label>
           <div className="mt-2">
             <Form.Item name="minPercentageMargin">
@@ -84,7 +84,7 @@ const ProductFilterForm = ({
             htmlFor="minMargin"
             className="block text-sm font-medium leading-6 text-secondary-950"
           >
-            Minimale Marge €
+            Minimale Marge € ({settings.netto ? "Netto" : "Brutto"})
           </label>
           <div className="mt-2">
             <Form.Item name="minMargin">

@@ -1,5 +1,6 @@
 import { mongoPromise } from "@/server/mongo";
 import { Settings } from "@/types/Settings";
+import { min } from "date-fns";
 import { NextRequest } from "next/server";
 
 /*
@@ -25,16 +26,22 @@ export async function GET(
     maxPrimaryBsr: Number(searchParams.get("maxPrimaryBsr")) || 1000000,
     maxSecondaryBsr: Number(searchParams.get("maxSecondaryBsr")) || 1000000,
     productsWithNoBsr: searchParams.get("productsWithNoBsr") === "true",
-    netto: false,
+    netto: searchParams.get("netto") === "true",
   };
 
-  const {
+  let {
     minMargin,
     minPercentageMargin,
     maxPrimaryBsr,
     maxSecondaryBsr,
     productsWithNoBsr,
+    netto,
   } = customerSettings;
+
+  if(netto){
+    minMargin = minMargin * 1.19;
+    minPercentageMargin = minPercentageMargin * 1.19;
+  }
 
   const targetVerificationPending = searchParams.get(
     `${target}_vrfd.vrfn_pending`
@@ -77,10 +84,15 @@ export async function GET(
     });
   }
 
-  const findQuery: any[] = [
-    { [`${target}_prc`]: { $gt: 0 } },
-    { [`${target}_mrgn_pct`]: { $gt: minPercentageMargin, $lte: 150 } },
-  ];
+  const findQuery: any[] = [];
+
+  findQuery.push({
+    $and: [
+      { [`${target}_prc`]: { $gt: 0 } },
+      { [`${target}_mrgn`]: { $gt: minMargin } },
+      { [`${target}_mrgn_pct`]: { $gt: minPercentageMargin, $lte: 150 } },
+    ],
+  });
 
   if (targetVerificationPending) {
     findQuery.push({
@@ -114,14 +126,10 @@ export async function GET(
           ],
         },
         {
-          [`${target}_vrfd.flag_cnt`]: {$lt: {$size:  3 }},
+          [`${target}_vrfd.flag_cnt`]: { $lt: { $size: 3 } },
         },
       ],
     });
-  }
-
-  if (minMargin > 0) {
-    findQuery.push({ [`${target}_mrgn`]: { $gt: minMargin } });
   }
 
   if (isAmazon) {
@@ -143,7 +151,7 @@ export async function GET(
         },
         {
           $or: [
-            { primaryBsr: { $eq: null } },
+            { secondaryBsr: { $eq: null } },
             { "secondaryBsr.number": { $lte: maxSecondaryBsr } },
           ],
         }

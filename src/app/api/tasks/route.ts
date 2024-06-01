@@ -95,7 +95,7 @@ export async function POST(request: NextRequest) {
     errored: false,
     maintenance: true,
     lastCrawler: [],
-    productLimit: 500,
+    productLimit: body.length <= 500 ? body.length : 500,
     userId: user.$id,
     executing: false,
     progress: {
@@ -117,7 +117,7 @@ export async function POST(request: NextRequest) {
         ean: item.ean,
         name: item.name ?? "",
         price: item.price,
-        reference: item.reference?? "",
+        reference: item.reference ?? "",
         category: item.category ?? "",
         taskId: taskcreated.insertedId.toHexString(),
         clrName: "",

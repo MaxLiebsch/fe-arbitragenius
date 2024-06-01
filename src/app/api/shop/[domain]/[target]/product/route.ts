@@ -18,19 +18,26 @@ export async function GET(
     maxPrimaryBsr: Number(searchParams.get("maxPrimaryBsr")) || 1000000,
     maxSecondaryBsr: Number(searchParams.get("maxSecondaryBsr")) || 1000000,
     productsWithNoBsr: searchParams.get("productsWithNoBsr") === "true",
-    netto: false,
+    netto: searchParams.get("netto") === "true",
   };
 
-  const targetVerificationPending =
-      searchParams.get(`${target}_vrfd.vrfn_pending`) 
+  const targetVerificationPending = searchParams.get(
+    `${target}_vrfd.vrfn_pending`
+  );
 
-  const {
+  let {
     minMargin,
     minPercentageMargin,
     maxPrimaryBsr,
     maxSecondaryBsr,
     productsWithNoBsr,
+    netto,
   } = customerSettings;
+
+  if(netto){
+    minMargin = minMargin * 1.19;
+    minPercentageMargin = minPercentageMargin * 1.19;
+  }
 
   const aggregation: { [key: string]: any }[] = [];
 
@@ -63,15 +70,20 @@ export async function GET(
   }
 
   const findQuery: any[] = [
-    { [`${target}_prc`]: { $gt: 0 } },
-    { [`${target}_mrgn_pct`]: { $gt: minPercentageMargin, $lte: 150 } },
+    {
+      $and: [
+        { [`${target}_prc`]: { $gt: 0 } },
+        { [`${target}_mrgn_pct`]: { $gt: minPercentageMargin, $lte: 150 } },
+        { [`${target}_mrgn`]: { $gt: minMargin } },
+      ],
+    },
   ];
 
   if (targetVerificationPending) {
     findQuery.push({
       $and: [
         {
-          [`${target}_vrfd.vrfn_pending`]: targetVerificationPending === 'true',
+          [`${target}_vrfd.vrfn_pending`]: targetVerificationPending === "true",
         },
       ],
     });
@@ -105,14 +117,6 @@ export async function GET(
     });
   }
 
-  if (minMargin > 0) {
-    findQuery.push({ [`${target}_mrgn`]: { $gt: minMargin } });
-  }
-
-  if (minMargin > 0) {
-    findQuery.push({ [`${target}_mrgn`]: { $gt: minMargin } });
-  }
-
   if (isAmazon) {
     if (!productsWithNoBsr) {
       findQuery.push(
@@ -132,7 +136,7 @@ export async function GET(
         },
         {
           $or: [
-            { primaryBsr: { $eq: null } },
+            { secondaryBsr: { $eq: null } },
             { "secondaryBsr.number": { $lte: maxSecondaryBsr } },
           ],
         }
