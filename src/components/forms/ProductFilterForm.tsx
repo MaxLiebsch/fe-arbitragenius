@@ -33,9 +33,14 @@ const ProductFilterForm = ({
           queryKey: ["preferences"],
           refetchType: "all",
         });
-        await queryClient.invalidateQueries({
-          queryKey: ["shop"],
-        });
+        await Promise.all([
+          queryClient.invalidateQueries({
+            queryKey: ["e"],
+          }),
+          queryClient.invalidateQueries({
+            queryKey: ["a"],
+          }),
+        ]);
       }
     })();
   }, [updateSettingsState, queryClient]);
@@ -68,6 +73,7 @@ const ProductFilterForm = ({
               <input
                 type="number"
                 name="minPercentageMargin"
+                step={1}
                 id="minPercentageMargin"
                 min={0}
                 max={150}
@@ -92,6 +98,7 @@ const ProductFilterForm = ({
                 type="number"
                 name="minMargin"
                 id="minMargin"
+                step={1}
                 min={0}
                 max={9999}
                 className="block w-full rounded-md border-0 bg-white/5 py-1.5 pl-1 text-secondary-950 shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
@@ -134,6 +141,7 @@ const ProductFilterForm = ({
             <Form.Item name="maxPrimaryBsr">
               <input
                 type="number"
+                step={1}
                 name="maxPrimaryBsr"
                 id="maxPrimaryBsr"
                 min={0}
@@ -158,6 +166,7 @@ const ProductFilterForm = ({
               <input
                 type="number"
                 name="maxSecondaryBsr"
+                step={1}
                 id="maxSecondaryBsr"
                 min={0}
                 max={1000000}

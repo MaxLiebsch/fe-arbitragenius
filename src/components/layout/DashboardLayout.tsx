@@ -6,7 +6,6 @@ import {
   Bars3Icon,
   ChevronDownIcon,
   HomeIcon,
-  MagnifyingGlassIcon,
   UserCircleIcon,
   UsersIcon,
   ArrowTrendingUpIcon,
@@ -20,6 +19,7 @@ import { Logo } from "../Logo";
 import { usePathname, useRouter } from "next/navigation";
 import Spinner from "../Spinner";
 import { useFormState } from "react-dom";
+import { Alert } from "antd";
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: HomeIcon, current: true },
@@ -305,7 +305,8 @@ export const DashboardLayout = ({
               />
 
               <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
-                <form className="relative flex flex-1" action="#" method="GET">
+                <div className="w-full"></div>
+                {/* <form className="relative flex flex-1" action="#" method="GET">
                   <label htmlFor="search-field" className="sr-only">
                     Search
                   </label>
@@ -320,7 +321,7 @@ export const DashboardLayout = ({
                     type="search"
                     name="search"
                   />
-                </form>
+                </form> */}
                 <div className="flex items-center gap-x-4 lg:gap-x-6">
                   {/* Separator */}
                   <div

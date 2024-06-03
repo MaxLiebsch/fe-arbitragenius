@@ -6,7 +6,7 @@ import { message, Space, Upload } from "antd";
 import useTasks from "@/hooks/use-tasks";
 import { UploadChangeParam } from "antd/es/upload";
 import Papa from "papaparse";
-import { DataGridPremium, GridColDef } from "@mui/x-data-grid-premium";
+import { DataGridPremium, GridColDef, deDE } from "@mui/x-data-grid-premium";
 import {  ProductRow } from "@/types/wholesaleProduct";
 import { appendPercentage, formatCurrency, getPrice } from "@/util/formatter";
 import { calculationDeduction } from "@/util/calculateDeduction";
@@ -300,6 +300,7 @@ const Page = () => {
               <>
                 <DataGridPremium
                   autoHeight
+                  localeText={deDE.components.MuiDataGrid.defaultProps.localeText}
                   rows={rows}
                   rowCount={rows.length}
                   columns={columns}

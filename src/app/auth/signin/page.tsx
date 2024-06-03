@@ -75,7 +75,7 @@ const SignIn = () => {
                   </a>
                   <a
                     className="text-secondary-950 underline text-sm"
-                    href="/auth/recovery"
+                    href="/app/auth/recovery"
                   >
                     Passwort vergessen?
                   </a>

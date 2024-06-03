@@ -10,7 +10,7 @@ export default function useProductCount(domain: string, target: string, settings
       .join("");
   }
   return useQuery<{productCount: number}>({
-    queryKey: ["shop", domain, target, "product", "count"],
+    queryKey: [ target,"shop", domain, "product", "count"],
     staleTime: 1000 * 60 * 5,
     refetchOnWindowFocus,
     queryFn: () =>

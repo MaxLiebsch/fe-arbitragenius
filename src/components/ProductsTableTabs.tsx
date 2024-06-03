@@ -32,7 +32,7 @@ const ProductTableTabs = ({
         ))}
       </Tab.List>
       <Tab.Panels className="flex h-full">
-        <Tab.Panel className="w-full max-h-[89%]">
+        <Tab.Panel className="w-full  max-h-[89%]">
           <ProductsTable domain={domain} target="a" settings={settings} />
         </Tab.Panel>
         <Tab.Panel className="w-full max-h-[89%]">

@@ -38,9 +38,9 @@ export async function GET(
     netto,
   } = customerSettings;
 
-  if(netto){
-    minMargin = minMargin * 1.19;
-    minPercentageMargin = minPercentageMargin * 1.19;
+  if (netto) {
+    minMargin = Number((minMargin * 1.19).toFixed(0));
+    minPercentageMargin = Number((minPercentageMargin * 1.19).toFixed(0));
   }
 
   const targetVerificationPending = searchParams.get(
@@ -166,6 +166,20 @@ export async function GET(
     },
     { $count: "productCount" }
   );
+
+  if (isAmazon && productsWithNoBsr) {
+    aggregation.splice(2, 0, {
+      $addFields: {
+        primaryBsrExists: {
+          $cond: {
+            if: { $ifNull: ["$primaryBsr", false] },
+            then: true,
+            else: false,
+          },
+        },
+      },
+    });
+  }
 
   const res = await mongo
     .db(process.env.NEXT_MONGO_DB)

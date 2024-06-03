@@ -35,8 +35,8 @@ export async function GET(
   } = customerSettings;
 
   if(netto){
-    minMargin = minMargin * 1.19;
-    minPercentageMargin = minPercentageMargin * 1.19;
+    minMargin = Number((minMargin * 1.19).toFixed(0));
+    minPercentageMargin = Number((minPercentageMargin * 1.19).toFixed(0));
   }
 
   const aggregation: { [key: string]: any }[] = [];

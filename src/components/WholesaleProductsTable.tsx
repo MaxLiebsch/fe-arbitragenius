@@ -6,6 +6,7 @@ import {
   GridSortModel,
   GridToolbarContainer,
   GridToolbarExport,
+  deDE,
   useGridApiRef,
 } from "@mui/x-data-grid-premium";
 import React, { MutableRefObject, ReactNode, useState } from "react";
@@ -269,6 +270,7 @@ export default function WholeSaleProductsTable(props: {
         },
       }}
       sortingOrder={["desc", "asc"]}
+      localeText={deDE.components.MuiDataGrid.defaultProps.localeText}
       getRowId={(row) => row._id}
       columns={columns("a", settings)}
       rows={productQuery.data ?? []}

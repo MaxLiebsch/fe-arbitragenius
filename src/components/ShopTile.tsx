@@ -7,7 +7,6 @@ import { StarIcon as StarIconOutline } from "@heroicons/react/24/outline";
 import useFavoriteAdd from "@/hooks/use-favorite-add";
 import useFavoriteRemove from "@/hooks/use-favorite-remove";
 import { Shop } from "@/hooks/use-shop";
-import usePreferences from "@/hooks/use-preferences";
 import useProductCount from "@/hooks/use-product-count";
 import { Settings } from "@/types/Settings";
 import Spinner from "./Spinner";

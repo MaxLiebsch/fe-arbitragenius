@@ -27,6 +27,7 @@ export default function useProducts(
 
   const productQuery = useQuery<Product[]>({
     queryKey: [
+      target,
       "shop",
       domain,
       "product",

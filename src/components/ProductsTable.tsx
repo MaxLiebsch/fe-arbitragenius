@@ -2,23 +2,19 @@
 import {
   DataGridPremium,
   GridColDef,
-  GridColumnVisibilityModel,
   GridSortModel,
+  deDE,
   useGridApiRef,
 } from "@mui/x-data-grid-premium";
-import React, { MutableRefObject, ReactNode, useState } from "react";
+import React, { useState } from "react";
 import ImageRenderer from "./ImageRenderer";
 import { appendPercentage, formatCurrency } from "@/util/formatter";
-import Link from "next/link";
 import useProductCount from "@/hooks/use-product-count";
 import useProducts, {
   ProductPagination,
   ProductSort,
 } from "@/hooks/use-products";
 import Spinner from "./Spinner";
-import { Button } from "@mui/material";
-import { GridApiPremium } from "@mui/x-data-grid-premium/models/gridApiPremium";
-import { ChevronRightIcon, ChevronLeftIcon } from "@heroicons/react/16/solid";
 import { prefixLink } from "@/util/prefixLink";
 import { Settings } from "@/types/Settings";
 import { calculationDeduction } from "@/util/calculateDeduction";
@@ -30,7 +26,7 @@ const columns: (target: string, settings: Settings) => GridColDef[] = (
 ) => [
   {
     field: "ctgry",
-    flex: 0.24,
+    flex: 0.15,
     headerName: "Kategorie",
     renderCell: (params) => {
       if (typeof params.row.ctrgy === "string") {
@@ -49,7 +45,7 @@ const columns: (target: string, settings: Settings) => GridColDef[] = (
   {
     field: "nm",
     headerName: "Info",
-    flex: 0.8,
+    flex: 0.75,
     renderCell: (params) => {
       return (
         <div className="flex flex-col divide-y p-1">
@@ -123,7 +119,6 @@ const columns: (target: string, settings: Settings) => GridColDef[] = (
   },
   {
     field: `${target}_prc`,
-
     headerName: "Zielshoppreis",
     renderHeader: (params) => (
       <div className="relative">
@@ -163,9 +158,6 @@ export default function ProductsTable(props: {
   settings: Settings;
 }) {
   const { className, domain, target, settings } = props;
-
-  const prefix = target === "a" ? "a_" : "e_";
-  const name = target === "a" ? "Amazon" : "Ebay";
 
   const [paginationModel, setPaginationModel] = useState<ProductPagination>({
     page: 0,
@@ -221,6 +213,7 @@ export default function ProductsTable(props: {
       onPaginationModelChange={setPaginationModel}
       paginationMode="server"
       pagination={true}
+      localeText={deDE.components.MuiDataGrid.defaultProps.localeText}
       getRowHeight={() => "auto"}
       sortingMode="server"
       sx={{
@@ -245,70 +238,3 @@ export default function ProductsTable(props: {
     />
   );
 }
-
-const GroupHeader = ({
-  name,
-  apiRef,
-}: {
-  name: string;
-  apiRef: MutableRefObject<GridApiPremium>;
-}) => {
-  const [hidden, setHidden] = useState(false);
-  const prefix = name.toLowerCase().slice(0, 1);
-  return (
-    <div className={`flex flex-row gap-1 items-center`}>
-      <div>{name}</div>
-
-      <Button
-        variant="text"
-        onClick={() => {
-          if (!hidden) {
-            apiRef.current.setColumnVisibility(`${prefix}_shadow`, true);
-          } else {
-            apiRef.current.setColumnVisibility(`${prefix}_shadow`, false);
-          }
-          const gridColModel = [
-            "_bsr",
-            "_img",
-            "_nm",
-            "_prc",
-            "_rgn",
-            "_mrgn_pct",
-            "_mrgn",
-            "_fat",
-            "_pct",
-          ].reduce<GridColumnVisibilityModel>((gridColModel, col) => {
-            gridColModel[`${prefix}${col}`] = hidden;
-            return gridColModel;
-          }, {});
-          const allColumns = apiRef.current.getAllColumns();
-          const visibleColumns = apiRef.current.getVisibleColumns();
-          const hiddenColumns = [
-            ...allColumns.map((col) => {
-              if (
-                visibleColumns.find(
-                  (visibleCol) => visibleCol.field === col.field
-                ) === undefined
-              ) {
-                return col.field;
-              }
-            }, []),
-          ]
-            .filter((col) => col !== undefined)
-            .reduce<GridColumnVisibilityModel>((gridColModel, col) => {
-              gridColModel[`${col}`] = false;
-              return gridColModel;
-            }, {});
-
-          apiRef.current.setColumnVisibilityModel({
-            ...hiddenColumns,
-            ...gridColModel,
-          });
-          setHidden(!hidden);
-        }}
-      >
-        {hidden ? <ChevronRightIcon /> : <ChevronLeftIcon />}
-      </Button>
-    </div>
-  );
-};
