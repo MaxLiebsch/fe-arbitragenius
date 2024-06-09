@@ -1,0 +1,1 @@
+export const keepaTimeSummand = 21564000

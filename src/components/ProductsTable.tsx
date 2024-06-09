@@ -19,23 +19,25 @@ import { prefixLink } from "@/util/prefixLink";
 import { Settings } from "@/types/Settings";
 import { calculationDeduction } from "@/util/calculateDeduction";
 import { LinkWrapper } from "./LinkWrapper";
+import { KeepaGraph } from "./KeepaGraph";
+import { ModifiedProduct } from "@/types/Product";
 
-const columns: (target: string, settings: Settings) => GridColDef[] = (
-  target,
-  settings
-) => [
+const columns: (
+  target: string,
+  settings: Settings
+) => GridColDef<ModifiedProduct>[] = (target, settings) => [
   {
     field: "ctgry",
     flex: 0.15,
     headerName: "Kategorie",
     renderCell: (params) => {
-      if (typeof params.row.ctrgy === "string") {
-        return <>{params.row.ctrgry}</>;
+      if (typeof params.row.ctgry === "string") {
+        return <>{params.row.ctgry}</>;
       } else if (Array.isArray(params.row.ctgry)) {
         return (
           <div className="flex flex-col">
-            {params.row.ctgry.map((ctrgy: string, i: number) => (
-              <div key={ctrgy + i}>{ctrgy}</div>
+            {params.row.ctgry.map((ctgry: string, i: number) => (
+              <div key={ctgry + i}>{ctgry}</div>
             ))}
           </div>
         );
@@ -55,36 +57,74 @@ const columns: (target: string, settings: Settings) => GridColDef[] = (
           <div>
             Zielshop:
             {LinkWrapper(
-              params.row[`${target}_lnk`],
-              params.row[`${target}_nm`]
+              params.row[`${target}_lnk` as "a_lnk" | "e_lnk"],
+              params.row[`${target}_nm` as "a_nm" | "e_nm"]
             )}
           </div>
-          {target === "a" && params.row["bsr"] && params.row["bsr"].length ? (
-            <div className="">
-              <span className="font-semibold">BSR:</span>
-              <span className="">
-                {params.row["bsr"].map((bsr: any) => {
-                  return (
-                    <span className="mx-1" key={bsr.number + bsr.category}>
-                      Nr.{bsr.number.toLocaleString("de-DE")} in {bsr.category}
-                    </span>
-                  );
-                })}
-              </span>
-            </div>
-          ) : (
-            <></>
-          )}
           {params.row["asin"] && params.row["asin"] !== "" && (
             <div>
               <span className="font-semibold">ASIN: </span>
               {params.row["asin"]}
             </div>
           )}
+          {target === "a" && params.row["bsr"] && params.row["bsr"].length ? (
+            <>
+              <div>
+                <span className="font-semibold">BSR:</span>
+                <span>
+                  {params.row["bsr"].map((bsr: any) => {
+                    return (
+                      <span className="mx-1" key={bsr.number + bsr.category}>
+                        Nr.{bsr.number.toLocaleString("de-DE")} in{" "}
+                        {bsr.category}
+                      </span>
+                    );
+                  })}
+                </span>
+              </div>
+              {params.row["ahstprcs"] && (
+                <div className="flex flex-row gap-2">
+                  <span>
+                    {params.row["buyBoxIsAmazon"]
+                      ? "BuyBox ist Amazon"
+                      : "BuyBox ist nicht Amazon"}
+                  </span>
+                  <span>
+                    {params.row["stockBuyBox"]
+                      ? "Lagerbestand BuyBox: " + params.row["stockBuyBox"]
+                      : "Kein Lagerbestand BuyBox verfügbar"}
+                  </span>
+                  <span>
+                    {params.row["stockAmount"]
+                      ? "Lagerbestand: " + params.row["stockAmount"]
+                      : "Kein Lagerbestand verfügbar"}
+                  </span>
+                  <span>
+                    {params.row["numberOfItems"]
+                      ? "Anzahl Artikel: " + params.row["numberOfItems"]
+                      : "Keine Anzahl Artikel verfügbar"}
+                  </span>
+                  <span>
+                    {params.row["monthlySold"]
+                      ? "Monatlich verkauft: " + params.row["monthlySold"]
+                      : "Keine Verkaufszahlen verfügbar"}
+                  </span>
+                  <span>
+                    {params.row["totalOfferCount"]
+                      ? "Anzahl Angebote: " + params.row["totalOfferCount"]
+                      : "Keine Angebote verfügbar"}
+                  </span>
+                </div>
+              )}
+            </>
+          ) : (
+            <></>
+          )}
         </div>
       );
     },
   },
+
   {
     field: "img",
     headerName: "Produktbild",
@@ -132,6 +172,13 @@ const columns: (target: string, settings: Settings) => GridColDef[] = (
       formatCurrency(
         calculationDeduction(parseFloat(params.value), settings.netto)
       ),
+  },
+  {
+    field: "analytics",
+    headerName: "Preisanalyse",
+    renderCell: (params) => {
+      return params.row?.ahstprcs ? <KeepaGraph product={params.row} /> : <></>;
+    },
   },
   {
     field: `${target}_mrgn_pct`,
@@ -199,6 +246,7 @@ export default function ProductsTable(props: {
         columns: {
           columnVisibilityModel: {
             bsr: target === "a" ? true : false,
+            analytics: target === "a" ? true : false,
             asin: target === "a" ? true : false,
           },
         },

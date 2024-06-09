@@ -1,4 +1,4 @@
-import { Product } from "@/types/Product";
+import { ModifiedProduct, Product } from "@/types/Product";
 import { Settings } from "@/types/Settings";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
@@ -25,7 +25,7 @@ export default function useProducts(
 ) {
   const queryClient = useQueryClient();
 
-  const productQuery = useQuery<Product[]>({
+  const productQuery = useQuery<ModifiedProduct[]>({
     queryKey: [
       target,
       "shop",
