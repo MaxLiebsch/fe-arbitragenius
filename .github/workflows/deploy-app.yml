@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Deploy staging
+        timeout-minutes: 30
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{secrets.HOST}}
@@ -26,6 +27,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Deploy live
+        timeout-minutes: 30
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{secrets.HOST}}
