@@ -17,6 +17,7 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.DEPLOY_FE_PK }}
           passphrase: ${{ secrets.PASSPHRASE }}
+          command_timeout: 30m
           script: |
             docker image prune -a -f
             git --work-tree=/etc/docker/container/staging --git-dir=/etc/docker/container/staging/.git pull
@@ -31,6 +32,7 @@ jobs:
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{secrets.HOST}}
+          command_timeout: 30m
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.DEPLOY_FE_PK }}
           passphrase: ${{ secrets.PASSPHRASE }}
