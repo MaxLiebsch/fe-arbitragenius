@@ -3,26 +3,37 @@ on:
   push:
     branches:
       - staging
-      - live
+      - main
 jobs:
   deploy-staging:
     if: github.ref == 'refs/heads/staging'
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Deploy to staging
-        run: |
-          echo "Deploying to staging environment"
-          # Add your deployment script/commands here
-
+      - name: Deploy staging
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{secrets.HOST}}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.DEPLOY_FE_PK }}
+          passphrase: ${{ secrets.PASSPHRASE }}
+          script: |
+            docker image prune -a -f
+            git --work-tree=/etc/docker/container/staging --git-dir=/etc/docker/container/staging/.git pull
+            cd /etc/docker/container/staging
+            docker compose up -f docker-compose.staging.yml --build -d
   deploy-live:
-    if: github.ref == 'refs/heads/live'
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Deploy to live
-        run: |
-          echo "Deploying to live environment"
-          # Add your deployment script/commands here
+      - name: Deploy live
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{secrets.HOST}}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.DEPLOY_FE_PK }}
+          passphrase: ${{ secrets.PASSPHRASE }}
+          script: |
+            docker image prune -a -f
+            git --work-tree=/etc/docker/container/live --git-dir=/etc/docker/container/live/.git pull
+            cd /etc/docker/container/live
+            docker compose up -f docker-compose.live.yml  --build -d
