@@ -20,7 +20,7 @@ jobs:
             docker image prune -a -f
             git --work-tree=/etc/docker/container/staging --git-dir=/etc/docker/container/staging/.git pull
             cd /etc/docker/container/staging
-            docker compose -f docker-compose.staging.yml --build -d up
+            docker compose -f docker-compose.staging.yml up --build -d
   deploy-live:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
@@ -36,4 +36,4 @@ jobs:
             docker image prune -a -f
             git --work-tree=/etc/docker/container/live --git-dir=/etc/docker/container/live/.git pull
             cd /etc/docker/container/live
-            docker compose -f docker-compose.live.yml --build -d up
+            docker compose -f docker-compose.live.yml up --build -d 
