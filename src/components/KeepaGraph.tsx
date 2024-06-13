@@ -3,6 +3,7 @@ import { ModifiedProduct } from "@/types/Product";
 import { formatter } from "@/util/formatter";
 import { format, fromUnixTime } from "date-fns";
 import { de } from "date-fns/locale";
+import { parse } from "path";
 import { useCallback, useMemo, useState } from "react";
 import {
   LineChart,
@@ -16,7 +17,7 @@ import {
 
 type DataPoint = "amazonPrice" | "usedPrice" | "newPrice" | "salesRank";
 
-const createUnixTimeFromKeepaTime = (timestamp: number) =>
+export const createUnixTimeFromKeepaTime = (timestamp: number) =>
   (timestamp + keepaTimeSummand) * 60;
 
 export const KeepaGraph = ({ product }: { product: ModifiedProduct }) => {
@@ -35,7 +36,7 @@ export const KeepaGraph = ({ product }: { product: ModifiedProduct }) => {
   const hasAhstprcs = ahstprcs.length && ahstprcs[1] !== -1;
   const hasAuhstprcs = auhstprcs.length && auhstprcs[1] !== -1;
   const hasAnhstprcs = anhstprcs.length && anhstprcs[1] !== -1;
-  const hasSalesRanks = Object.keys(salesRanks).length;
+  const hasSalesRanks = salesRanks && Object.keys(salesRanks).length;
 
   const parseArray = (array: number[]) => {
     const parsedArray = [];
@@ -47,6 +48,7 @@ export const KeepaGraph = ({ product }: { product: ModifiedProduct }) => {
 
   const parseSalesRank = useCallback(
     (salesRanks: { [key: string]: number[] }) => {
+      if(!salesRanks)return {}
       const parsedSalesRank: { [key: string]: number[] } = {};
       Object.entries(salesRanks).forEach(([key, value]) => {
         const categoryName = categoryTree.find(
@@ -122,19 +124,22 @@ export const KeepaGraph = ({ product }: { product: ModifiedProduct }) => {
     []
   );
 
+  const parsedSalesRanks = useMemo(() => parseSalesRank(salesRanks), [salesRanks, parseSalesRank]);
+
   const data = useMemo(
     () =>
       combineData(
         parseArray(ahstprcs),
         parseArray(auhstprcs),
         parseArray(anhstprcs),
-        parseSalesRank(salesRanks)
+        parsedSalesRanks
       ),
-    [salesRanks, ahstprcs, anhstprcs, auhstprcs, combineData, parseSalesRank]
+    [parsedSalesRanks, ahstprcs, anhstprcs, auhstprcs, combineData]
   );
 
   const CustomLegend = (props: any) => {
     const { payload } = props;
+    if(product.curr_salesRank === -1) {}
     return (
       <ul style={{ listStyleType: "none", padding: 0 }}>
         {payload.map((entry: any, index: number) => {
@@ -158,7 +163,7 @@ export const KeepaGraph = ({ product }: { product: ModifiedProduct }) => {
               entry.color = "#8888dd";
               break;
             case "salesRank":
-              entry.value = `Sales Rank #${product.curr_salesRank}`;
+              entry.value = `Sales Rank #${product.curr_salesRank === -1 ? "N/A" : product.curr_salesRank}`;
               entry.color = "#3a883a";
               break;
           }
@@ -230,12 +235,12 @@ export const KeepaGraph = ({ product }: { product: ModifiedProduct }) => {
           }`}
         >
           <LineChart
-            width={isHovered ? 800 : 100}
+            width={isHovered ? 870 : 100}
             height={isHovered ? 500 : 50}
             data={data}
             margin={
               isHovered
-                ? { top: 20, right: 5, left: 5, bottom: 5 }
+                ? { top: 20, right: 5, left: 20, bottom: 5 }
                 : {
                     top: 5,
                     right: 5,
@@ -292,7 +297,7 @@ export const KeepaGraph = ({ product }: { product: ModifiedProduct }) => {
                 type="step"
                 dataKey="amazonPrice"
                 connectNulls
-                stroke="#FFA500"
+                stroke="#ff9900"
               />
             )}
             {hasAnhstprcs && (

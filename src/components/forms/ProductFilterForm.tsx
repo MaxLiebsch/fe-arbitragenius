@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useRef } from "react";
 import { useFormState } from "react-dom";
-import { Checkbox, Form, Slider, Switch } from "antd";
+import { Checkbox, Dropdown, Form, Select, Slider, Switch } from "antd";
 import { updateSettingsAction } from "@/server/actions/update-settings";
 import { useQueryClient } from "@tanstack/react-query";
 import { SubmitButton } from "../FormSubmitBn";
@@ -36,9 +36,11 @@ const ProductFilterForm = ({
         await Promise.all([
           queryClient.invalidateQueries({
             queryKey: ["e"],
+            refetchType: "all",
           }),
           queryClient.invalidateQueries({
             queryKey: ["a"],
+            refetchType: "all",
           }),
         ]);
       }
@@ -126,7 +128,6 @@ const ProductFilterForm = ({
             </div>
           </div>
         )}
-
         {/* Maximaler Primary BSR */}
         <div
           className={`${layout === "wide" ? "sm:col-span-3" : "sm:col-span-2"}`}
@@ -171,6 +172,79 @@ const ProductFilterForm = ({
                 min={0}
                 max={1000000}
                 className="block w-full rounded-md border-0 bg-white/5 py-1.5 pl-1 text-secondary-950 shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
+              />
+            </Form.Item>
+          </div>
+        </div>
+        {/* Minimale monatliche Verkäufe */}
+        <div
+          className={`${layout === "wide" ? "sm:col-span-3" : "sm:col-span-2"}`}
+        >
+          <label
+            htmlFor="monthlySold"
+            className="block text-sm font-medium leading-6 text-secondary-950"
+          >
+            Minimale monatliche Verkäufe
+          </label>
+          <div className="mt-2">
+            <Form.Item name="monthlySold">
+              <input
+                type="number"
+                name="monthlySold"
+                step={1}
+                id="monthlySold"
+                min={0}
+                max={9999}
+                className="block w-full rounded-md border-0 bg-white/5 py-1.5 pl-1 text-secondary-950 shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
+              />
+            </Form.Item>
+          </div>
+        </div>
+        {/* Maximale Offer */}
+        <div
+          className={`${layout === "wide" ? "sm:col-span-3" : "sm:col-span-2"}`}
+        >
+          <label
+            htmlFor="totalOfferCount"
+            className="block text-sm font-medium leading-6 text-secondary-950"
+          >
+            Maximale Offer
+          </label>
+          <div className="mt-2">
+            <Form.Item name="totalOfferCount">
+              <input
+                type="number"
+                name="totalOfferCount"
+                id="totalOfferCount"
+                step={1}
+                min={0}
+                max={9999}
+                className="block w-full rounded-md border-0 bg-white/5 py-1.5 pl-1 text-secondary-950 shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
+              />
+            </Form.Item>
+          </div>
+        </div>
+        {/* BuyBox */}
+        <div
+          className={`${layout === "wide" ? "sm:col-span-3" : "sm:col-span-2"}`}
+        >
+          <label
+            htmlFor="buyBox"
+            className="block text-sm font-medium leading-6 text-secondary-950"
+          >
+            BuyBox
+          </label>
+          <div className="mt-2">
+            <Form.Item name="buyBox">
+              <Select
+                id="buyBox"
+                defaultValue={settings.buyBox}
+                style={{ width: "100%" }}
+                options={[
+                  { value: "amazon", label: "Amazon" },
+                  { value: "seller", label: "Seller" },
+                  { value: "both", label: "Beide" },
+                ]}
               />
             </Form.Item>
           </div>

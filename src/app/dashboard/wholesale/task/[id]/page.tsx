@@ -1,5 +1,6 @@
 import Spinner from "@/components/Spinner";
 import WholeSaleProductsTable from "@/components/WholesaleProductsTable";
+import { defaultProductFilterSettings } from "@/constant/productFilterSettings";
 import { createAdminClient, getLoggedInUser } from "@/server/appwrite";
 import { mongoAdminPromise } from "@/server/mongo";
 import { format, parseISO } from "date-fns";
@@ -14,19 +15,12 @@ const Page = async ({ params }: { params: { id: string } }) => {
     redirect("/login");
   }
   const { users } = await createAdminClient();
-  const userPrefs = await users.getPrefs(user.$id);
-  let settings = {
-    netto: true,
-    minMargin: 0,
-    minPercentageMargin: 0,
-    maxPrimaryBsr: 1000000,
-    maxSecondaryBsr: 1000000,
-    productsWithNoBsr: true,
-  };
-  // @ts-ignore
-  if (userPrefs?.settings) {
-    //@ts-ignore
-    settings = JSON.parse(userPrefs.settings);
+  const prefs = (await users.getPrefs(user.$id)) as any;
+
+  let settings = defaultProductFilterSettings;
+
+  if (prefs?.settings && Object.keys(JSON.parse(prefs.settings)).length > 0) {
+    settings = JSON.parse(prefs.settings);
   }
 
   const mongo = await mongoAdminPromise;

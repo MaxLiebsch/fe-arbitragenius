@@ -6,5 +6,8 @@ export const defaultProductFilterSettings: Settings = {
   netto: true,
   maxSecondaryBsr: 1000000,
   maxPrimaryBsr: 1000000,
-  productsWithNoBsr: true
+  productsWithNoBsr: true,
+  monthlySold: 0,
+  totalOfferCount: 0,
+  buyBox: "both"
 }

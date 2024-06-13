@@ -2,7 +2,7 @@
 
 ## TODO - Overall
 
-- [ ] initial sort margin amazon desc
+- [x] initial sort margin amazon desc
 - [x] table picture z-index
 - [x] color scheme
 - [ ] search bar - product search, in shop page search products in all shops?
@@ -16,4 +16,9 @@
 - [x] sign out
 - [x] tom cook (placeholder image?)
 - [x] settings / profile page dummy
-- [] settings / profile page rechnungen, einstellungen
+- [x] settings / profile page rechnungen, einstellungen
+
+## TODO - Filter
+
+- [x] min montlySold, max totalOfferCount
+- [x] buyBox 

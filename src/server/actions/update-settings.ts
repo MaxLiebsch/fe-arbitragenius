@@ -24,14 +24,17 @@ export async function updateSettingsAction(
 ): Promise<UpdateSettingsState> {
   const parsedFormData = JSON.parse(JSON.stringify(formData));
   const form = SettingsSchema.safeParse({
-    netto: parsedFormData.netto?? true,
+    netto: parsedFormData.netto ?? true,
     minMargin: parseInt(parsedFormData.minMargin ?? "0"),
     minPercentageMargin: parseInt(parsedFormData.minPercentageMargin ?? "0"),
     maxSecondaryBsr: parseInt(parsedFormData.maxSecondaryBsr ?? "0"),
     maxPrimaryBsr: parseInt(parsedFormData.maxPrimaryBsr ?? "0"),
     productsWithNoBsr: parsedFormData.productsWithNoBsr,
-  });
-
+    monthlySold: parseInt(parsedFormData.monthlySold ?? "0"),
+    totalOfferCount: parseInt(parsedFormData.totalOfferCount ?? "0"),
+    buyBox: parsedFormData.buyBox,
+    });
+    
   if (!form.success)
     return {
       fieldErrors: form.error.errors.reduce((errorList, error) => {
@@ -47,7 +50,17 @@ export async function updateSettingsAction(
       }, {} as FieldErrors),
     };
 
-  const { minMargin, minPercentageMargin, netto, productsWithNoBsr, maxPrimaryBsr, maxSecondaryBsr } = form.data;
+  const {
+    minMargin,
+    minPercentageMargin,
+    netto,
+    productsWithNoBsr,
+    maxPrimaryBsr,
+    maxSecondaryBsr,
+    monthlySold,
+    totalOfferCount,
+    buyBox,
+  } = form.data;
   const { account } = await createSessionClient();
   const prefs = await account.getPrefs();
 
@@ -61,6 +74,9 @@ export async function updateSettingsAction(
         productsWithNoBsr,
         maxPrimaryBsr,
         maxSecondaryBsr,
+        totalOfferCount,
+        monthlySold,
+        buyBox,
       }),
     });
     return { message: "Information geändert", fieldErrors: {} };

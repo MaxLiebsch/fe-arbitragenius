@@ -1,8 +1,15 @@
+export interface BSR {
+  category: string;
+  number: number;
+  createdAt: string;
+}
+
 export type Product = {
   ean: string;
   _id: string;
   pblsh: boolean;
-  bsr: [];
+  bsr: BSR[];
+  keepaUpdatedAt: string;
   s: string;
   primaryBsrExists: boolean;
   vrfd: boolean;

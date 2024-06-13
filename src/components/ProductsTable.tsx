@@ -6,7 +6,7 @@ import {
   deDE,
   useGridApiRef,
 } from "@mui/x-data-grid-premium";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import ImageRenderer from "./ImageRenderer";
 import { appendPercentage, formatCurrency } from "@/util/formatter";
 import useProductCount from "@/hooks/use-product-count";
@@ -19,10 +19,11 @@ import { prefixLink } from "@/util/prefixLink";
 import { Settings } from "@/types/Settings";
 import { calculationDeduction } from "@/util/calculateDeduction";
 import { LinkWrapper } from "./LinkWrapper";
-import { KeepaGraph } from "./KeepaGraph";
-import { ModifiedProduct } from "@/types/Product";
+import { KeepaGraph, createUnixTimeFromKeepaTime } from "./KeepaGraph";
+import { BSR, CategoryTree, ModifiedProduct } from "@/types/Product";
+import { fromUnixTime, parseISO } from "date-fns";
 
-const columns: (
+const createColumns: (
   target: string,
   settings: Settings
 ) => GridColDef<ModifiedProduct>[] = (target, settings) => [
@@ -49,6 +50,21 @@ const columns: (
     headerName: "Info",
     flex: 0.75,
     renderCell: (params) => {
+      const bsr = params.row["bsr"];
+      if (bsr && bsr.length) {
+        if (params.row["salesRanks"]) {
+          const bsrLastUpdate = parseISO(bsr[0].createdAt).getTime();
+          const salesRanksLastUpdate = parseISO(
+            params.row["keepaUpdatedAt"]
+          ).getTime();
+          if (bsrLastUpdate < salesRanksLastUpdate) {
+            params.row.bsr = parseSalesRank(
+              params.row["salesRanks"],
+              params.row["categoryTree"]
+            );
+          }
+        }
+      }
       return (
         <div className="flex flex-col divide-y p-1">
           <div>
@@ -65,10 +81,41 @@ const columns: (
             <div>
               <span className="font-semibold">ASIN: </span>
               {params.row["asin"]}
+              {params.row["buyBoxIsAmazon"] !== undefined && (
+                <span>
+                  {params.row["buyBoxIsAmazon"] ? (
+                    <span>
+                      <span className="font-semibold"> BuyBox:</span>
+                      <span className="text-amazon"> Amazon</span>
+                    </span>
+                  ) : (
+                    <span>
+                      <span className="font-semibold"> BuyBox:</span>
+                      <span className="text-green-600 font-medium">
+                        {" "}
+                        Seller
+                      </span>
+                    </span>
+                  )}
+                </span>
+              )}
+              {params.row["totalOfferCount"] !== undefined && (
+                <span>
+                  <span>
+                    <span className="font-semibold"> Seller:</span>
+                    {params.row["totalOfferCount"] ? (
+                      <span className=""> {params.row["totalOfferCount"]}</span>
+                    ) : (
+                      "0"
+                    )}
+                  </span>
+                </span>
+              )}
             </div>
           )}
-          {target === "a" && params.row["bsr"] && params.row["bsr"].length ? (
-            <>
+          <></>
+          <>
+            {target === "a" && params.row["bsr"] && params.row["bsr"].length ? (
               <div>
                 <span className="font-semibold">BSR:</span>
                 <span>
@@ -82,44 +129,28 @@ const columns: (
                   })}
                 </span>
               </div>
-              {params.row["ahstprcs"] && (
-                <div className="flex flex-row gap-2">
-                  <span>
-                    {params.row["buyBoxIsAmazon"]
-                      ? "BuyBox ist Amazon"
-                      : "BuyBox ist nicht Amazon"}
-                  </span>
-                  <span>
-                    {params.row["stockBuyBox"]
-                      ? "Lagerbestand BuyBox: " + params.row["stockBuyBox"]
-                      : "Kein Lagerbestand BuyBox verfügbar"}
-                  </span>
-                  <span>
-                    {params.row["stockAmount"]
-                      ? "Lagerbestand: " + params.row["stockAmount"]
-                      : "Kein Lagerbestand verfügbar"}
-                  </span>
-                  <span>
-                    {params.row["numberOfItems"]
-                      ? "Anzahl Artikel: " + params.row["numberOfItems"]
-                      : "Keine Anzahl Artikel verfügbar"}
-                  </span>
-                  <span>
-                    {params.row["monthlySold"]
-                      ? "Monatlich verkauft: " + params.row["monthlySold"]
-                      : "Keine Verkaufszahlen verfügbar"}
-                  </span>
-                  <span>
-                    {params.row["totalOfferCount"]
-                      ? "Anzahl Angebote: " + params.row["totalOfferCount"]
-                      : "Keine Angebote verfügbar"}
-                  </span>
-                </div>
-              )}
-            </>
-          ) : (
-            <></>
-          )}
+            ) : (
+              <></>
+            )}
+            {params.row["monthlySold"] && (
+              <div className="flex flex-row gap-2">
+                {/* eigene Reihe */}
+                <span>
+                  {params.row["monthlySold"] ? (
+                    <span>
+                      <span className="font-semibold">Monatliche Sales:</span>
+                      <span className="text-md">
+                        {" "}
+                        {params.row["monthlySold"]}
+                      </span>
+                    </span>
+                  ) : (
+                    "Keine Sales verfügbar"
+                  )}
+                </span>
+              </div>
+            )}
+          </>
         </div>
       );
     },
@@ -177,7 +208,11 @@ const columns: (
     field: "analytics",
     headerName: "Preisanalyse",
     renderCell: (params) => {
-      return params.row?.ahstprcs ? <KeepaGraph product={params.row} /> : <></>;
+      return params.row["ahstprcs"] ? (
+        <KeepaGraph product={params.row} />
+      ) : (
+        <></>
+      );
     },
   },
   {
@@ -197,6 +232,30 @@ const columns: (
     ),
   },
 ];
+
+const parseSalesRank = (
+  salesRanks: { [key: string]: number[] },
+  categoryTree: CategoryTree[]
+  ) => {
+  const parsedSalesRank: BSR[] = [];
+  Object.entries(salesRanks).forEach(([key, value]) => {
+    const bsr = {
+      number: 0,
+      category: "",
+      createdAt: "",
+    };
+    const categoryName = categoryTree.find(
+      (category) => category.catId === parseInt(key)
+    );
+    if (!categoryName) return;
+    const rank = value[value.length - 1] != -1 ? value[value.length - 1] : value[value.length - 3];
+    bsr.number = rank
+    bsr.category = categoryName.name;
+    bsr.createdAt = fromUnixTime(createUnixTimeFromKeepaTime(value[value.length -2])).toISOString()
+    parsedSalesRank.push(bsr);
+  });
+  return parsedSalesRank;
+};
 
 export default function ProductsTable(props: {
   className?: string;
@@ -237,6 +296,9 @@ export default function ProductsTable(props: {
     }
   };
 
+  const columns = useMemo(() => createColumns(target, settings), [target, settings]);
+
+
   return (
     <DataGridPremium
       apiRef={apiRef}
@@ -252,7 +314,7 @@ export default function ProductsTable(props: {
         },
       }}
       getRowId={(row) => row._id}
-      columns={columns(target, settings)}
+      columns={columns}
       rows={productQuery.data ?? []}
       rowCount={productCountQuery.data?.productCount ?? 0}
       loading={productQuery.isFetching}

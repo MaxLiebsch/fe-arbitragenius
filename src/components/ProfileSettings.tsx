@@ -31,9 +31,14 @@ const ProfileSettings = ({ prefs }: any) => {
           queryKey: ["preferences"],
           refetchType: "all",
         });
-        await queryClient.invalidateQueries({
-          queryKey: ["shop"],
-        });
+        await Promise.all([
+          queryClient.invalidateQueries({
+            queryKey: ["e"],
+          }),
+          queryClient.invalidateQueries({
+            queryKey: ["a"],
+          }),
+        ]);
       }
     })();
   }, [updateSettingsState, queryClient]);

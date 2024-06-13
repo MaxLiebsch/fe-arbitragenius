@@ -1,3 +1,4 @@
+import { defaultProductFilterSettings } from "@/constant/productFilterSettings";
 import { createSessionClient, getLoggedInUser } from "@/server/appwrite";
 import { NextRequest } from "next/server";
 import { z } from "zod";
@@ -29,14 +30,7 @@ const serializers: {
     deserialize(input?: any) {
       return typeof input === "string" ? JSON.parse(input) : {};
     },
-    fallback: JSON.stringify({
-      netto: true,
-      minMargin: 0,
-      minPercentageMargin: 0,
-      maxPrimaryBsr: 1000000,
-      maxSecondaryBsr: 1000000,
-      productsWithNoBsr: true,
-    }),
+    fallback: JSON.stringify(defaultProductFilterSettings),
   },
   address: {
     serialize(input?: any) {

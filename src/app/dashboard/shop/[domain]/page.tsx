@@ -1,6 +1,7 @@
 "use server";
 
 import ProductsTableTabs from "@/components/ProductsTableTabs";
+import { defaultProductFilterSettings } from "@/constant/productFilterSettings";
 import {
   createAdminClient,
   createSessionClient,
@@ -26,19 +27,12 @@ export default async function Shop({ params }: { params: { domain: string } }) {
     redirect("/login");
   }
   const { users } = await createAdminClient();
-  const userPrefs = await users.getPrefs(user.$id);
-  let settings = {
-    netto: true,
-    minMargin: 0,
-    minPercentageMargin: 0,
-    maxPrimaryBsr: 1000000,
-    maxSecondaryBsr: 1000000,
-    productsWithNoBsr: true,
-  };
-  // @ts-ignore
-  if (userPrefs?.settings) {
-    //@ts-ignore
-    settings = JSON.parse(userPrefs.settings);
+  const prefs = (await users.getPrefs(user.$id)) as any;
+
+  let settings = defaultProductFilterSettings;
+
+  if (prefs?.settings && Object.keys(JSON.parse(prefs.settings)).length > 0) {
+    settings = JSON.parse(prefs.settings);
   }
 
   return (

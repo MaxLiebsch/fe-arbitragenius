@@ -1,5 +1,5 @@
 import { mongoPromise } from "@/server/mongo";
-import { Settings } from "@/types/Settings";
+import { BuyBox, Settings } from "@/types/Settings";
 import { min } from "date-fns";
 import { NextRequest } from "next/server";
 
@@ -27,6 +27,13 @@ export async function GET(
     maxSecondaryBsr: Number(searchParams.get("maxSecondaryBsr")) || 1000000,
     productsWithNoBsr: searchParams.get("productsWithNoBsr") === "true",
     netto: searchParams.get("netto") === "true",
+    monthlySold: searchParams.get("monthlySold")
+      ? Number(searchParams.get("monthlySold"))
+      : 0,
+    totalOfferCount: searchParams.get("totalOfferCount")
+      ? Number(searchParams.get("totalOfferCount"))
+      : 0,
+    buyBox: searchParams.get("buyBox") as BuyBox || 'both',
   };
 
   let {
@@ -36,6 +43,9 @@ export async function GET(
     maxSecondaryBsr,
     productsWithNoBsr,
     netto,
+    monthlySold,
+    totalOfferCount,
+    buyBox,
   } = customerSettings;
 
   if (netto) {
@@ -133,15 +143,39 @@ export async function GET(
   }
 
   if (isAmazon) {
-    if (!productsWithNoBsr) {
-      findQuery.push(
-        {
-          $expr: { $gt: [{ $size: "$bsr" }, 0] },
-        },
-        { "primaryBsr.number": { $lte: maxPrimaryBsr } },
-        { "secondaryBsr.number": { $lte: maxSecondaryBsr } }
-      );
-    } else {
+    if (monthlySold > 0) {
+      findQuery.push({
+        monthlySold: { $gte: monthlySold },
+      });
+    }
+
+    if (totalOfferCount > 0) {
+      findQuery.push({
+        totalOfferCount: { $lte: totalOfferCount },
+      });
+    }
+
+    if (buyBox === "amazon") {
+      findQuery.push({
+        buyBoxIsAmazon: true,
+      });
+    }
+    if (buyBox === "seller") {
+      findQuery.push({
+        buyBoxIsAmazon: null,
+      });
+    }
+
+    if (buyBox === "both") {
+      findQuery.push({
+        $or: [
+          { buyBoxIsAmazon: true },
+          { buyBoxIsAmazon: null },
+        ]
+      });
+    }
+
+    if (productsWithNoBsr) {
       findQuery.push(
         {
           $or: [
@@ -155,6 +189,14 @@ export async function GET(
             { "secondaryBsr.number": { $lte: maxSecondaryBsr } },
           ],
         }
+      );
+    } else {
+      findQuery.push(
+        {
+          $expr: { $gt: [{ $size: "$bsr" }, 0] },
+        },
+        { "primaryBsr.number": { $lte: maxPrimaryBsr } },
+        { "secondaryBsr.number": { $lte: maxSecondaryBsr } }
       );
     }
   }
