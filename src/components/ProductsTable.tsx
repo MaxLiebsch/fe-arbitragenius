@@ -58,7 +58,7 @@ const createColumns: (
           const salesRanksLastUpdate = parseISO(
             params.row["keepaUpdatedAt"]
           ).getTime();
-          if (bsrLastUpdate < salesRanksLastUpdate) {
+          if (bsrLastUpdate < salesRanksLastUpdate && params.row['categoryTree']) {
             params.row.bsr = parseSalesRank(
               params.row["salesRanks"],
               params.row["categoryTree"]
@@ -245,6 +245,8 @@ const parseSalesRank = (
       category: "",
       createdAt: "",
     };
+    if(!categoryTree) return;
+
     const categoryName = categoryTree.find(
       (category) => category.catId === parseInt(key)
     );
