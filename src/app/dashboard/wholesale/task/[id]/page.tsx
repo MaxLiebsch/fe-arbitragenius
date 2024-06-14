@@ -20,7 +20,10 @@ const Page = async ({ params }: { params: { id: string } }) => {
   let settings = defaultProductFilterSettings;
 
   if (prefs?.settings && Object.keys(JSON.parse(prefs.settings)).length > 0) {
-    settings = JSON.parse(prefs.settings);
+    settings = {
+      ...defaultProductFilterSettings,
+      ...JSON.parse(prefs.settings),
+    }; 
   }
 
   const mongo = await mongoAdminPromise;

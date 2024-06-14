@@ -16,10 +16,13 @@ const ProfileSettings = ({ prefs }: any) => {
       error: "",
     }
   );
-  let productFilterSettings = defaultProductFilterSettings;
+  let settings = defaultProductFilterSettings;
 
   if (prefs?.settings) {
-    productFilterSettings = JSON.parse(prefs.settings);
+    settings = {
+      ...defaultProductFilterSettings,
+      ...JSON.parse(prefs.settings),
+    }; 
   } 
   const queryClient = useQueryClient();
 
@@ -54,7 +57,7 @@ const ProfileSettings = ({ prefs }: any) => {
         </p>
       </div>
 
-      <ProductFilterForm layout="wide" settings={productFilterSettings} /> 
+      <ProductFilterForm layout="wide" settings={settings} /> 
     </div>
   );
 };

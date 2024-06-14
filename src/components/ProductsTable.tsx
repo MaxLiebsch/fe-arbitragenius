@@ -22,6 +22,7 @@ import { LinkWrapper } from "./LinkWrapper";
 import { KeepaGraph, createUnixTimeFromKeepaTime } from "./KeepaGraph";
 import { BSR, CategoryTree, ModifiedProduct } from "@/types/Product";
 import { fromUnixTime, parseISO } from "date-fns";
+import CopyToClipboard from "./CopyToClipboard";
 
 const createColumns: (
   target: string,
@@ -80,7 +81,7 @@ const createColumns: (
           {params.row["asin"] && params.row["asin"] !== "" && (
             <div>
               <span className="font-semibold">ASIN: </span>
-              {params.row["asin"]}
+               <CopyToClipboard text={params.row["asin"]}/>
               {params.row["buyBoxIsAmazon"] !== undefined && (
                 <span>
                   {params.row["buyBoxIsAmazon"] ? (

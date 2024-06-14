@@ -26,10 +26,13 @@ export default async function Dashboard({
 
   let settings = defaultProductFilterSettings;
 
-  if (prefs?.settings && Object.keys(JSON.parse(prefs.settings)).length > 0){
-    settings = JSON.parse(prefs.settings);
+  if (prefs?.settings && Object.keys(JSON.parse(prefs.settings)).length > 0) {
+    settings = {
+      ...defaultProductFilterSettings,
+      ...JSON.parse(prefs.settings),
+    };
   }
-  
+
   const view = searchParams.view ?? "grid";
 
   const mongo = await mongoPromise;
