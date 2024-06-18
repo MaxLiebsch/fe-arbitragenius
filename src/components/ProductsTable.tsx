@@ -58,7 +58,10 @@ const createColumns: (
           const salesRanksLastUpdate = parseISO(
             params.row["keepaUpdatedAt"]
           ).getTime();
-          if (bsrLastUpdate < salesRanksLastUpdate && params.row['categoryTree']) {
+          if (
+            bsrLastUpdate < salesRanksLastUpdate &&
+            params.row["categoryTree"]
+          ) {
             params.row.bsr = parseSalesRank(
               params.row["salesRanks"],
               params.row["categoryTree"]
@@ -78,10 +81,22 @@ const createColumns: (
               params.row[`${target}_nm` as "a_nm" | "e_nm"]
             )}
           </div>
+          {params.row["eanList"] && params.row["eanList"].length ? (
+            <div className="flex flex-row gap-1">
+              <span className="font-semibold">EAN:</span>
+              <div className="flex flex-row gap-2">
+                {params.row["eanList"].map((ean: string) => (
+                  <CopyToClipboard key={ean} text={ean} />
+                ))}
+              </div>
+            </div>
+          ) : (
+            <></>
+          )}
           {params.row["asin"] && params.row["asin"] !== "" && (
             <div>
               <span className="font-semibold">ASIN: </span>
-               <CopyToClipboard text={params.row["asin"]}/>
+              <CopyToClipboard text={params.row["asin"]} />
               {params.row["buyBoxIsAmazon"] !== undefined && (
                 <span>
                   {params.row["buyBoxIsAmazon"] ? (
@@ -179,15 +194,29 @@ const createColumns: (
       <div className="relative">
         <div>Preis</div>
         <div className="absolute bottom-1 text-xs text-gray-500">
-          {settings?.netto ? "Netto" : "Brutto"}
+          <span className="text-green-600">
+            {settings?.netto ? "Netto" : "Brutto"}
+          </span>
+        </div>
+      </div>
+    ),
+    renderCell: (params) => (
+      <div className="flex flex-col">
+        <div
+          className={`${settings.netto ? "" : "font-semibold text-green-600"}`}
+        >
+          {formatCurrency(parseFloat(params.value))}
+        </div>
+        <div
+          className={`${settings.netto ? "font-semibold text-green-600" : ""}`}
+        >
+          {formatCurrency(
+            calculationDeduction(parseFloat(params.value), true)
+          )}
         </div>
       </div>
     ),
     width: 80,
-    valueFormatter: (params) =>
-      formatCurrency(
-        calculationDeduction(parseFloat(params.value), settings.netto)
-      ),
   },
   {
     field: `${target}_prc`,
@@ -196,14 +225,28 @@ const createColumns: (
       <div className="relative">
         <div>Zielshoppreis</div>
         <div className="absolute bottom-1 text-xs">
-          {settings?.netto ? "Netto" : "Brutto"}
+          <span className="text-green-600">
+            {settings?.netto ? "Netto" : "Brutto"}
+          </span>
         </div>
       </div>
     ),
-    valueFormatter: (params) =>
-      formatCurrency(
-        calculationDeduction(parseFloat(params.value), settings.netto)
-      ),
+    renderCell: (params) => (
+      <div className="flex flex-col">
+       <div
+          className={`${settings.netto ? "" : "font-semibold text-green-600"}`}
+        >
+          {formatCurrency(parseFloat(params.value))}
+        </div>
+        <div
+          className={`${settings.netto ? "font-semibold text-green-600" : ""}`}
+        >
+          {formatCurrency(
+            calculationDeduction(parseFloat(params.value), true)
+          )}
+        </div>
+      </div>
+    ),
   },
   {
     field: "analytics",
@@ -224,11 +267,30 @@ const createColumns: (
   {
     field: `${target}_mrgn`,
     headerName: "Marge",
+    renderHeader: (params) => (
+      <div className="relative">
+        <div>Marge</div>
+        <div className="absolute bottom-1 text-xs">
+          <span className="text-green-600">
+            {settings?.netto ? "Netto" : "Brutto"}
+          </span>
+        </div>
+      </div>
+    ),
     renderCell: (params) => (
-      <div className="text-green-600 font-semibold">
-        {formatCurrency(
-          calculationDeduction(parseFloat(params.value), settings.netto)
-        )}
+      <div className="flex flex-col">
+        <div
+          className={`${settings.netto ? "" : "font-semibold text-green-600"}`}
+        >
+          {formatCurrency(parseFloat(params.value))}
+        </div>
+        <div
+          className={`${settings.netto ? "font-semibold text-green-600" : ""}`}
+        >
+          {formatCurrency(
+            calculationDeduction(parseFloat(params.value), true)
+          )}
+        </div>
       </div>
     ),
   },
@@ -237,7 +299,7 @@ const createColumns: (
 const parseSalesRank = (
   salesRanks: { [key: string]: number[] },
   categoryTree: CategoryTree[]
-  ) => {
+) => {
   const parsedSalesRank: BSR[] = [];
   Object.entries(salesRanks).forEach(([key, value]) => {
     const bsr = {
@@ -245,16 +307,19 @@ const parseSalesRank = (
       category: "",
       createdAt: "",
     };
-    if(!categoryTree) return;
-
     const categoryName = categoryTree.find(
       (category) => category.catId === parseInt(key)
     );
     if (!categoryName) return;
-    const rank = value[value.length - 1] != -1 ? value[value.length - 1] : value[value.length - 3];
-    bsr.number = rank
+    const rank =
+      value[value.length - 1] != -1
+        ? value[value.length - 1]
+        : value[value.length - 3];
+    bsr.number = rank;
     bsr.category = categoryName.name;
-    bsr.createdAt = fromUnixTime(createUnixTimeFromKeepaTime(value[value.length -2])).toISOString()
+    bsr.createdAt = fromUnixTime(
+      createUnixTimeFromKeepaTime(value[value.length - 2])
+    ).toISOString();
     parsedSalesRank.push(bsr);
   });
   return parsedSalesRank;
@@ -299,8 +364,10 @@ export default function ProductsTable(props: {
     }
   };
 
-  const columns = useMemo(() => createColumns(target, settings), [target, settings]);
-
+  const columns = useMemo(
+    () => createColumns(target, settings),
+    [target, settings]
+  );
 
   return (
     <DataGridPremium

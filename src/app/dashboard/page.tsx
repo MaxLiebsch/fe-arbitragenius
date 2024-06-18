@@ -52,7 +52,7 @@ export default async function Dashboard({
           Dich noch{" "}
           {differenceInDays(
             Number(trialEnd as string) * 1000,
-            Number(trialStart as string) * 1000
+            Date.now()
           )}{" "}
           Tage in der Testphase.
         </div>
