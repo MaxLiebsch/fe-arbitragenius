@@ -28,13 +28,11 @@ export type Product = {
   e_img: string;
   e_nm: string;
   e_mrgn: number;
-  e_fat: boolean;
   e_mrgn_pct: number;
   a_lnk: string;
   a_img: string;
   a_nm: string;
   a_mrgn: number;
-  a_fat: boolean;
   a_mrgn_pct: number;
 };
 
@@ -42,39 +40,47 @@ export interface ModifiedProduct extends Product {
   bsr_1: number;
   bsr_cat_1: string;
   bsr_2: number;
+  tax: number;
   bsr_cat_2: string;
   bsr_3: number;
   bsr_cat_3: string;
-  categories: number[]
-  eanList: string[]
-  brand: string
-  numberOfItems: number
-  availabilityAmazon: number
-  categoryTree: CategoryTree[]
-  salesRanks: SalesRanks
-  monthlySold: any
-  ahstprcs: number[]
-  anhstprcs: number[]
-  auhstprcs: number[]
+  categories: number[];
+  eanList: string[];
+  brand: string;
+  numberOfItems: number;
+  availabilityAmazon: number;
+  categoryTree: CategoryTree[];
+  salesRanks: SalesRanks;
+  monthlySold: any;
+  ahstprcs: number[];
+  anhstprcs: number[];
+  auhstprcs: number[];
   curr_salesRank: number;
-  curr_ahsprcs: number
-  curr_ansprcs: number
-  curr_ausprcs: number
-  avg90_ahsprcs: number
-  avg90_ansprcs: number
-  avg90_ausprcs: number
+  curr_ahsprcs: number;
+  curr_ansprcs: number;
+  curr_ausprcs: number;
+  avg90_ahsprcs: number;
+  avg90_ansprcs: number;
+  avg90_ausprcs: number;
   avg90_salesRank: number;
-  buyBoxIsAmazon: boolean
-  stockAmount: any
-  stockBuyBox: any
-  totalOfferCount: number
+  buyBoxIsAmazon: boolean;
+  stockAmount: any;
+  costs: {
+    tpt: number;
+    varc: number;
+    azn: number;
+    strg_1_hy: number;
+    strg_2_hy: number;
+  };
+  stockBuyBox: any;
+  totalOfferCount: number;
 }
 
 export interface CategoryTree {
-  catId: number
-  name: string
+  catId: number;
+  name: string;
 }
 
 export interface SalesRanks {
-  [key: string]: number[]
+  [key: string]: number[];
 }

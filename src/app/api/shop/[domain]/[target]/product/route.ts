@@ -21,7 +21,7 @@ export async function GET(
     netto: searchParams.get("netto") === "true",
     monthlySold: Number(searchParams.get("monthlySold")) || 0,
     totalOfferCount: Number(searchParams.get("totalOfferCount")) || 0,
-    buyBox: searchParams.get("buyBox") as BuyBox|| "both",
+    buyBox: (searchParams.get("buyBox") as BuyBox) || "both",
   };
 
   const targetVerificationPending = searchParams.get(
@@ -47,6 +47,7 @@ export async function GET(
 
   const aggregation: { [key: string]: any }[] = [];
 
+  const findQuery: any[] = [];
   if (isAmazon) {
     aggregation.push({
       $addFields: {
@@ -75,15 +76,17 @@ export async function GET(
     });
   }
 
-  const findQuery: any[] = [
-    {
-      $and: [
-        { [`${target}_prc`]: { $gt: 0 } },
-        { [`${target}_mrgn_pct`]: { $gt: minPercentageMargin, $lte: 150 } },
-        { [`${target}_mrgn`]: { $gt: minMargin } },
-      ],
-    },
-  ];
+  findQuery.push({
+    $and: [
+      { [`${target}_prc`]: { $gt: 0 } },
+      { [`${target}_mrgn_pct`]: { $gt: minPercentageMargin, $lte: 150 } },
+      { [`${target}_mrgn`]: { $gt: minMargin } },
+    ],
+  });
+
+  if (isAmazon) {
+    findQuery[0].$and.push({ info_prop: "complete" });
+  }
 
   if (targetVerificationPending) {
     findQuery.push({
@@ -203,16 +206,19 @@ export async function GET(
   if (isAmazon) {
     if (query.field === "none") {
       sort["primaryBsrExists"] = -1;
+      sort["a_mrgn_pct"] = -1;
       sort["primaryBsr.number"] = 1;
       sort["secondaryBsr.number"] = 1;
       sort["thirdBsr.number"] = 1;
-      sort["a_mrgn_pct"] = -1;
     } else if (query.field) {
       sort[query.field] = query.order === "asc" ? 1 : -1;
     }
   } else {
-    if (query.field) {
+    if (query.field === 'none') {
+      sort["e_mrgn_pct"] = -1;
+    }else if (query.field) {
       sort[query.field] = query.order === "asc" ? 1 : -1;
+
     }
   }
 

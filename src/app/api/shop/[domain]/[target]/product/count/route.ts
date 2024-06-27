@@ -33,7 +33,7 @@ export async function GET(
     totalOfferCount: searchParams.get("totalOfferCount")
       ? Number(searchParams.get("totalOfferCount"))
       : 0,
-    buyBox: searchParams.get("buyBox") as BuyBox || 'both',
+    buyBox: (searchParams.get("buyBox") as BuyBox) || "both",
   };
 
   let {
@@ -58,6 +58,7 @@ export async function GET(
   );
 
   const aggregation: { [key: string]: any }[] = [];
+  const findQuery: any[] = [];
 
   if (isAmazon) {
     aggregation.push({
@@ -94,8 +95,6 @@ export async function GET(
     });
   }
 
-  const findQuery: any[] = [];
-
   findQuery.push({
     $and: [
       { [`${target}_prc`]: { $gt: 0 } },
@@ -104,6 +103,9 @@ export async function GET(
     ],
   });
 
+  if (isAmazon) {
+    findQuery[0].$and.push({ info_prop: "complete" });
+  }
   if (targetVerificationPending) {
     findQuery.push({
       $and: [
@@ -168,10 +170,7 @@ export async function GET(
 
     if (buyBox === "both") {
       findQuery.push({
-        $or: [
-          { buyBoxIsAmazon: true },
-          { buyBoxIsAmazon: null },
-        ]
+        $or: [{ buyBoxIsAmazon: true }, { buyBoxIsAmazon: null }],
       });
     }
 

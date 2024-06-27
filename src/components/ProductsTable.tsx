@@ -23,6 +23,8 @@ import { KeepaGraph, createUnixTimeFromKeepaTime } from "./KeepaGraph";
 import { BSR, CategoryTree, ModifiedProduct } from "@/types/Product";
 import { fromUnixTime, parseISO } from "date-fns";
 import CopyToClipboard from "./CopyToClipboard";
+import { Popover } from "antd";
+import ContentMarge from "./ContentMarge";
 
 const createColumns: (
   target: string,
@@ -210,9 +212,7 @@ const createColumns: (
         <div
           className={`${settings.netto ? "font-semibold text-green-600" : ""}`}
         >
-          {formatCurrency(
-            calculationDeduction(parseFloat(params.value), true)
-          )}
+          {formatCurrency(calculationDeduction(parseFloat(params.value), true))}
         </div>
       </div>
     ),
@@ -233,7 +233,7 @@ const createColumns: (
     ),
     renderCell: (params) => (
       <div className="flex flex-col">
-       <div
+        <div
           className={`${settings.netto ? "" : "font-semibold text-green-600"}`}
         >
           {formatCurrency(parseFloat(params.value))}
@@ -241,9 +241,7 @@ const createColumns: (
         <div
           className={`${settings.netto ? "font-semibold text-green-600" : ""}`}
         >
-          {formatCurrency(
-            calculationDeduction(parseFloat(params.value), true)
-          )}
+          {formatCurrency(calculationDeduction(parseFloat(params.value), true))}
         </div>
       </div>
     ),
@@ -278,20 +276,37 @@ const createColumns: (
       </div>
     ),
     renderCell: (params) => (
-      <div className="flex flex-col">
-        <div
-          className={`${settings.netto ? "" : "font-semibold text-green-600"}`}
-        >
-          {formatCurrency(parseFloat(params.value))}
+      <Popover
+        placement="topLeft"
+        arrow={false}
+        content={
+          params.row["costs"] ? (
+            <ContentMarge product={params.row} />
+          ) : (
+            <div>Verkaufspreis - Einkaufspreis</div>
+          )
+        }
+        title="Margenberechnung"
+      >
+        <div className="flex flex-col">
+          <div
+            className={`${
+              settings.netto ? "" : "font-semibold text-green-600"
+            }`}
+          >
+            {formatCurrency(parseFloat(params.value))}
+          </div>
+          <div
+            className={`${
+              settings.netto ? "font-semibold text-green-600" : ""
+            }`}
+          >
+            {formatCurrency(
+              calculationDeduction(parseFloat(params.value), true)
+            )}
+          </div>
         </div>
-        <div
-          className={`${settings.netto ? "font-semibold text-green-600" : ""}`}
-        >
-          {formatCurrency(
-            calculationDeduction(parseFloat(params.value), true)
-          )}
-        </div>
-      </div>
+      </Popover>
     ),
   },
 ];

@@ -14,7 +14,6 @@ export interface WholeSaleProduct {
 }
 
 export interface ProcessedProduct extends WholeSaleProduct {
-  a_fat?: boolean;
   a_img?: any;
   a_lnk?: string;
   a_mrgn?: number;

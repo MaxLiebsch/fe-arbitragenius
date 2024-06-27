@@ -2,7 +2,7 @@
 import ShopsGrid from "@/components/ShopsGrid";
 import ShopsTable from "@/components/ShopsTable";
 import { StarIcon } from "@heroicons/react/16/solid";
-import { Button } from "antd";
+import { Button, Input } from "antd";
 import { mongoPromise } from "@/server/mongo";
 import DashboardViewButton from "@/components/DashboardViewButton";
 import ProductFilterForm from "@/components/forms/ProductFilterForm";
@@ -10,6 +10,8 @@ import { createSessionClient } from "@/server/appwrite";
 import { defaultProductFilterSettings } from "@/constant/productFilterSettings";
 import { headers } from "next/headers";
 import { differenceInDays } from "date-fns";
+
+
 
 export default async function Dashboard({
   searchParams,
@@ -50,11 +52,8 @@ export default async function Dashboard({
         <div className="absolute text-center w-full">
           Danke, dass Du dich für Arbispotter entschieden hast. Du befindest
           Dich noch{" "}
-          {differenceInDays(
-            Number(trialEnd as string) * 1000,
-            Date.now()
-          )}{" "}
-          Tage in der Testphase.
+          {differenceInDays(Number(trialEnd as string) * 1000, Date.now())} Tage
+          in der Testphase.
         </div>
       ) : (
         <></>
