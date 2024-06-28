@@ -35,6 +35,7 @@ export default function useProducts(
       pagination.pageSize,
       sort?.field,
       sort?.direction,
+      ...Object.values(settings),
     ],
     refetchOnWindowFocus,
     queryFn: async () => {
@@ -43,8 +44,8 @@ export default function useProducts(
       if (sort) sortQuery = `&sortby=${sort.field}&sortorder=${sort.direction}`;
       if (settings) {
         settingsQuery = Object.keys(settings)
-        .map((key) => `&${key}=${settings[key as keyof Settings]}`)
-        .join("");
+          .map((key) => `&${key}=${settings[key as keyof Settings]}`)
+          .join("");
       }
       return fetch(
         `/app/api/shop/${domain}/${target}/product?page=${pagination.page}&size=${pagination.pageSize}${sortQuery}${settingsQuery}`

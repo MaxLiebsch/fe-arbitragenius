@@ -40,7 +40,10 @@ const ContentMarge = ({ product }: { product: ModifiedProduct }) => {
 
   return (
     <div className="w-72">
-      <div>{product.nm}</div>
+      <div className="font-light">
+        <span>{product.mnfctr} </span>
+        {product.nm}
+      </div>
       {product.eanList.length ? (
         <div className="mb-1">
           EAN: <CopyToClipboard text={product.eanList[0]} />

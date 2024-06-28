@@ -102,10 +102,6 @@ export async function GET(
       { [`${target}_mrgn_pct`]: { $gt: minPercentageMargin, $lte: 150 } },
     ],
   });
-
-  if (isAmazon) {
-    findQuery[0].$and.push({ info_prop: "complete" });
-  }
   if (targetVerificationPending) {
     findQuery.push({
       $and: [
@@ -195,13 +191,20 @@ export async function GET(
           $expr: { $gt: [{ $size: "$bsr" }, 0] },
         },
         { "primaryBsr.number": { $lte: maxPrimaryBsr } },
-        { "secondaryBsr.number": { $lte: maxSecondaryBsr } }
+        {
+          $or: [
+            { "secondaryBsr.number": { $exists: false } },
+            { "secondaryBsr.number": { $lte: maxSecondaryBsr } },
+          ],
+        }
       );
     }
   }
+  const pblshKey = isAmazon ? "a_pblsh" : "e_pblsh";
   aggregation.push(
     {
       $match: {
+        [pblshKey]: true,
         $and: findQuery,
       },
     },
@@ -221,6 +224,8 @@ export async function GET(
       },
     });
   }
+
+  
 
   const res = await mongo
     .db(process.env.NEXT_MONGO_DB)

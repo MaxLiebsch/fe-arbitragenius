@@ -28,11 +28,10 @@ const ProductFilterForm = ({
   useEffect(() => {
     (async () => {
       if (updateSettingsState?.message) {
-        await queryClient.invalidateQueries({ queryKey: ["user"] });
         await queryClient.invalidateQueries({
           queryKey: ["preferences"],
           refetchType: "all",
-        });
+        })
         await Promise.all([
           queryClient.invalidateQueries({
             queryKey: ["e"],

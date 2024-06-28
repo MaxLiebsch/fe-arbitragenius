@@ -84,10 +84,6 @@ export async function GET(
     ],
   });
 
-  if (isAmazon) {
-    findQuery[0].$and.push({ info_prop: "complete" });
-  }
-
   if (targetVerificationPending) {
     findQuery.push({
       $and: [
@@ -177,7 +173,12 @@ export async function GET(
           $expr: { $gt: [{ $size: "$bsr" }, 0] },
         },
         { "primaryBsr.number": { $lte: maxPrimaryBsr } },
-        { "secondaryBsr.number": { $lte: maxSecondaryBsr } }
+        {
+          $or: [
+            { "secondaryBsr.number": { $exists: false } },
+            { "secondaryBsr.number": { $lte: maxSecondaryBsr } },
+          ],
+        }
       );
     }
   }
@@ -206,25 +207,25 @@ export async function GET(
   if (isAmazon) {
     if (query.field === "none") {
       sort["primaryBsrExists"] = -1;
-      sort["a_mrgn_pct"] = -1;
       sort["primaryBsr.number"] = 1;
       sort["secondaryBsr.number"] = 1;
       sort["thirdBsr.number"] = 1;
+      sort["a_mrgn_pct"] = -1;
     } else if (query.field) {
       sort[query.field] = query.order === "asc" ? 1 : -1;
     }
   } else {
-    if (query.field === 'none') {
+    if (query.field === "none") {
       sort["e_mrgn_pct"] = -1;
-    }else if (query.field) {
+    } else if (query.field) {
       sort[query.field] = query.order === "asc" ? 1 : -1;
-
     }
   }
-
+  const pblshKey = isAmazon ? "a_pblsh" : "e_pblsh";
   aggregation.push(
     {
       $match: {
+        [pblshKey]: true,
         $and: findQuery,
       },
     },
@@ -252,7 +253,6 @@ export async function GET(
     });
   }
   const mongo = await mongoPromise;
-
   const res = await mongo
     .db(process.env.NEXT_MONGO_DB)
     .collection(domain)
