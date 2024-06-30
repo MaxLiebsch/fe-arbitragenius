@@ -62,7 +62,7 @@ const createColumns: (
           ).getTime();
           if (
             bsrLastUpdate < salesRanksLastUpdate &&
-            params.row["categoryTree"]
+            params.row["categoryTree"] !== null
           ) {
             params.row.bsr = parseSalesRank(
               params.row["salesRanks"],
