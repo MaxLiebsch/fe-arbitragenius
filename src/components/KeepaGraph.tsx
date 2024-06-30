@@ -48,8 +48,11 @@ export const KeepaGraph = ({ product }: { product: ModifiedProduct }) => {
 
   const parseSalesRank = useCallback(
     (salesRanks: { [key: string]: number[] }) => {
-      if(!salesRanks)return {}
+      if (!salesRanks) return {};
       const parsedSalesRank: { [key: string]: number[] } = {};
+
+      if (!categoryTree) return {};
+
       Object.entries(salesRanks).forEach(([key, value]) => {
         const categoryName = categoryTree.find(
           (category) => category.catId === parseInt(key)
@@ -124,7 +127,10 @@ export const KeepaGraph = ({ product }: { product: ModifiedProduct }) => {
     []
   );
 
-  const parsedSalesRanks = useMemo(() => parseSalesRank(salesRanks), [salesRanks, parseSalesRank]);
+  const parsedSalesRanks = useMemo(
+    () => parseSalesRank(salesRanks),
+    [salesRanks, parseSalesRank]
+  );
 
   const data = useMemo(
     () =>
@@ -139,7 +145,8 @@ export const KeepaGraph = ({ product }: { product: ModifiedProduct }) => {
 
   const CustomLegend = (props: any) => {
     const { payload } = props;
-    if(product.curr_salesRank === -1) {}
+    if (product.curr_salesRank === -1) {
+    }
     return (
       <ul style={{ listStyleType: "none", padding: 0 }}>
         {payload.map((entry: any, index: number) => {
@@ -163,7 +170,9 @@ export const KeepaGraph = ({ product }: { product: ModifiedProduct }) => {
               entry.color = "#8888dd";
               break;
             case "salesRank":
-              entry.value = `Sales Rank #${product.curr_salesRank === -1 ? "N/A" : product.curr_salesRank}`;
+              entry.value = `Sales Rank #${
+                product.curr_salesRank === -1 ? "N/A" : product.curr_salesRank
+              }`;
               entry.color = "#3a883a";
               break;
           }
