@@ -35,8 +35,9 @@ export default function useProducts(
       pagination.pageSize,
       sort?.field,
       sort?.direction,
-      ...Object.values(settings),
+      ...(settings ? Object.values(settings) : []),
     ],
+    enabled: !!domain && !!target && !!settings,
     refetchOnWindowFocus,
     queryFn: async () => {
       let sortQuery = "";

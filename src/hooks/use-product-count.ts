@@ -20,9 +20,10 @@ export default function useProductCount(
       domain,
       "product",
       "count",
-      ...Object.values(settings),
+      ...(settings ? Object.values(settings) : []),
     ],
     staleTime: 1000 * 60 * 5,
+    enabled: !!domain && !!target && !!settings,
     refetchOnWindowFocus,
     queryFn: () =>
       fetch(
