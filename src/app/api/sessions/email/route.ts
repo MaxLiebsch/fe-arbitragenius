@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-
+import https from 'https'
 import axios from "axios";
 import { SigninRequestSchema } from "@/server/actions/signin";
 
@@ -28,6 +28,9 @@ export async function POST(request: NextRequest) {
     process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT + "/account/sessions/email",
     body,
     {
+      httpsAgent: new https.Agent({
+        rejectUnauthorized: false
+      }),
       validateStatus: function (status) {
         return status <= 500; // Resolve only if the status code is 500 and less
       },
@@ -42,6 +45,7 @@ export async function POST(request: NextRequest) {
 
   const status = response.status;
   const data = response.data;
+  console.log('data:', data)
 
   let headers = response.headers;
   delete headers["content-length"];

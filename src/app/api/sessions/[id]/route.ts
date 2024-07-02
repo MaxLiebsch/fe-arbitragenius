@@ -1,5 +1,6 @@
 import axios from "axios";
 import { NextRequest } from "next/server";
+import https from 'https'
 
 export async function DELETE(
   request: NextRequest,
@@ -13,6 +14,9 @@ export async function DELETE(
   const response = await axios.delete(
     process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT + `/account/sessions/${id}`,
     {
+      httpsAgent: new https.Agent({
+        rejectUnauthorized: false
+      }),
       validateStatus: function (status) {
         return status <= 500; // Resolve only if the status code is 500 and less
       },
