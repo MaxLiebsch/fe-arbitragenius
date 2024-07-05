@@ -38,7 +38,7 @@ const TaskCard = ({ task }: { task: DbTask }) => {
       <div className="flex flex-col">
         <div className="flex flex-row gap-1" key={task._id.toString()}>
           <span>Status:</span>
-          {task.progress.pending === 0 ? (
+          {task.progress.completed === task.progress.total ? (
             "Abgeschlossen"
           ) : inProgress ? (
             <span className="flex gap-4 items-center">
@@ -50,11 +50,7 @@ const TaskCard = ({ task }: { task: DbTask }) => {
           )}
         </div>
         <div>
-          Fortschritt:{" "}
-          {((task.progress.total - task.progress.pending) /
-            task.progress.total) *
-            100}{" "}
-          %
+          Fortschritt: {(Number((task.progress.completed / task.progress.total).toFixed(0))) * 100} %
         </div>
         <div>Anzahl Produkte: {task.progress.total}</div>
         <div className="text-xs text-seconadary-400">

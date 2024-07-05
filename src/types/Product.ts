@@ -65,15 +65,17 @@ export interface ModifiedProduct extends Product {
   avg90_salesRank: number;
   buyBoxIsAmazon: boolean;
   stockAmount: any;
-  costs: {
-    tpt: number;
-    varc: number;
-    azn: number;
-    strg_1_hy: number;
-    strg_2_hy: number;
-  };
+  costs: Costs;
   stockBuyBox: any;
   totalOfferCount: number;
+}
+
+export interface Costs {
+  tpt: number;
+  varc: number;
+  azn: number;
+  strg_1_hy: number;
+  strg_2_hy: number;
 }
 
 export interface CategoryTree {

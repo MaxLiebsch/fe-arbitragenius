@@ -40,7 +40,7 @@ const newTaskBodySchema = z.array(
     ean: z.string(),
     name: z.string().optional(),
     category: z.string().optional(),
-    price: z.number(),
+    prc: z.number(),
     reference: z.string().optional(),
   })
 );
@@ -88,6 +88,9 @@ export async function POST(request: NextRequest) {
 
   const newTask: Task = {
     type: "WHOLESALE_SEARCH",
+    id: "wholesale_search",
+    browserConcurrency: 4,
+    concurrency: 1,
     recurrent: false,
     startedAt: "",
     completedAt: "",
@@ -99,6 +102,7 @@ export async function POST(request: NextRequest) {
     userId: user.$id,
     executing: false,
     progress: {
+      completed: 0,
       pending: body.length,
       total: body.length,
     },
@@ -115,8 +119,9 @@ export async function POST(request: NextRequest) {
     parsedBody.data.map((item) => {
       const newItem: WholeSaleProduct = {
         ean: item.ean,
-        name: item.name ?? "",
-        price: item.price,
+        eanList: [item.ean],
+        nm: item.name ?? "",
+        prc: item.prc,
         reference: item.reference ?? "",
         category: item.category ?? "",
         taskId: taskcreated.insertedId.toHexString(),

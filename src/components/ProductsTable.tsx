@@ -267,12 +267,7 @@ const createColumns: (
     headerName: "Marge",
     renderHeader: (params) => (
       <div className="relative">
-        <div>Marge</div>
-        <div className="absolute bottom-1 text-xs">
-          <span className="text-green-600">
-            {settings?.netto ? "Netto" : "Brutto"}
-          </span>
-        </div>
+        <div>Marge</div> 
       </div>
     ),
     renderCell: (params) => (
@@ -295,16 +290,7 @@ const createColumns: (
             }`}
           >
             {formatCurrency(parseFloat(params.value))}
-          </div>
-          <div
-            className={`${
-              settings.netto ? "font-semibold text-green-600" : ""
-            }`}
-          >
-            {formatCurrency(
-              calculationDeduction(parseFloat(params.value), true)
-            )}
-          </div>
+          </div> 
         </div>
       </Popover>
     ),

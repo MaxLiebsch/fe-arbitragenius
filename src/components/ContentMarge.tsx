@@ -6,12 +6,20 @@ import { Input, Switch } from "antd";
 import React, { useState } from "react";
 import CopyToClipboard from "./CopyToClipboard";
 
-const ContentMarge = ({ product }: { product: ModifiedProduct }) => {
+const ContentMarge = ({
+  product,
+}: {
+  product: Pick<
+    ModifiedProduct,
+    "costs" | "prc" | "a_prc" | "tax" | "mnfctr" | "nm" | "eanList"
+  >;
+}) => {
   const [costs, setCosts] = useState(product["costs"]);
   const [buyPrice, setBuyPrice] = useState(
     Number((product["prc"] / 1.19).toFixed(2))
   );
   const [price, setPrice] = useState(product["a_prc"]);
+  console.log('price:', price)
   const [qty, setQty] = useState(1);
   const [period, setPeriod] = useState<"strg_1_hy" | "strg_2_hy">("strg_1_hy");
 
@@ -41,7 +49,7 @@ const ContentMarge = ({ product }: { product: ModifiedProduct }) => {
   return (
     <div className="w-72">
       <div className="font-light">
-        <span>{product.mnfctr} </span>
+        <span>{product?.mnfctr ? product.mnfctr: ""} </span>
         {product.nm}
       </div>
       {product.eanList.length ? (

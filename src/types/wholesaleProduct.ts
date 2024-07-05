@@ -1,7 +1,10 @@
+import { Costs } from "./Product";
+
 export interface WholeSaleProduct {
   ean: string;
-  name: string;
-  price: number;
+  eanList: string[]
+  nm: string;
+  prc: number;
   category: string;
   taskId: string;
   reference: string;
@@ -20,9 +23,13 @@ export interface ProcessedProduct extends WholeSaleProduct {
   a_mrgn_pct?: number;
   a_nm?: string;
   a_prc?: number;
+  buyBoxIsAmazon?: boolean;
+  bsr?: number;
+  totalOfferCount?: number;
+  costs?: Costs,
 }
 
 export type ProductRow = Pick<
   ProcessedProduct,
-  "ean" | "name" | "price" | "category" | "a_lnk" | "a_nm"
+  "ean" | "nm" | "prc" | "category" | "a_lnk" | "a_nm"
 > & { id: number, reference?: string };

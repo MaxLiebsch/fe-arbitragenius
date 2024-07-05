@@ -7,7 +7,7 @@ import useTasks from "@/hooks/use-tasks";
 import { UploadChangeParam } from "antd/es/upload";
 import Papa from "papaparse";
 import { DataGridPremium, GridColDef, deDE } from "@mui/x-data-grid-premium";
-import {  ProductRow } from "@/types/wholesaleProduct";
+import { ProductRow } from "@/types/wholesaleProduct";
 import { appendPercentage, formatCurrency, getPrice } from "@/util/formatter";
 import { calculationDeduction } from "@/util/calculateDeduction";
 import { z } from "zod";
@@ -37,7 +37,7 @@ const props: UploadProps = {
 
 const translations = {
   category: ["Kategorie", "Category"],
-  name: ["Name", "Name","Beschreibung", "Description", 'PRODUCT DESCRIPTION'],
+  name: ["Name", "Name", "Beschreibung", "Description", "PRODUCT DESCRIPTION"],
   price: ["Preis", "Price", "PRICE EUR"],
   ean: ["EAN"],
   reference: ["REF. NO.", "Referenz", "Reference"],
@@ -71,7 +71,7 @@ const columns: GridColDef<ProductRow>[] = [
       return (
         <div className="flex flex-col divide-y p-1">
           <div>
-            {LinkWrapper("https://arbispotter.com", params.row.name, "")}
+            {LinkWrapper("https://arbispotter.com", params.row.nm, "")}
           </div>
           Zielshop:
           {LinkWrapper(params.row[`a_lnk`], params.row[`a_nm`])}
@@ -102,7 +102,7 @@ const columns: GridColDef<ProductRow>[] = [
     },
   },
   {
-    field: "price",
+    field: "prc",
     headerName: "Preis",
     type: "number",
     width: 110,
@@ -140,9 +140,9 @@ const columns: GridColDef<ProductRow>[] = [
 
 const productSchema = z.object({
   ean: z.string(),
-  name: z.string().optional().default(""),
+  nm: z.string().optional().default(""),
   category: z.string().optional().default(""),
-  price: z.number(),
+  prc: z.number(),
   id: z.number(),
   reference: z.string().optional().default(""),
 });
@@ -190,12 +190,12 @@ const Page = () => {
           const testRow: ProductRow = {
             id: 0,
             ean: getCaseInsensitiveProperty(results.data, translations.ean),
-            name: getCaseInsensitiveProperty(results.data, translations.name),
+            nm: getCaseInsensitiveProperty(results.data, translations.name),
             category: getCaseInsensitiveProperty(
               results.data,
               translations.category
             ),
-            price: parseInt(price)
+            prc: parseInt(price)
               ? parsePrice(getPrice(price ? price.replace(/\s+/g, "") : ""))
               : "",
             reference: getCaseInsensitiveProperty(
@@ -205,8 +205,10 @@ const Page = () => {
           };
           const res = productSchema.safeParse(testRow);
           if (!res.success) {
-            const allValuesEmpty = Object.values(results.data).every((val: any) => val === "")
-            if(!allValuesEmpty){
+            const allValuesEmpty = Object.values(results.data).every(
+              (val: any) => val === ""
+            );
+            if (!allValuesEmpty) {
               cntErrors++;
               console.error(res.error.errors);
             }
@@ -216,7 +218,10 @@ const Page = () => {
         },
         complete: (result) => {
           message.success(`${info.file.name} Datei erfolgreich hochgeladen.`);
-          cntErrors > 0 && message.error(`${cntErrors} Zeilen konnten nicht verarbeitet werden.`)
+          cntErrors > 0 &&
+            message.error(
+              `${cntErrors} Zeilen konnten nicht verarbeitet werden.`
+            );
           setRows(
             parsedRows.map((row, i) => {
               return {
@@ -283,24 +288,26 @@ const Page = () => {
             </p>
           </Dragger>
           <div>
-                <Button
-                  disabled={createTaskMutation.isPending || !rows.length}
-                  onClick={() => handleStartTask()}
-                  className="mb-3 min-w-32"
-                >
-                  {createTaskMutation.isPending ? (
-                    <div className="w-full flex justify-center">
-                      <Spinner size={"!w-6"} />
-                    </div>
-                  ) : (
-                    <>Start Analyse</>
-                  )}
-                </Button>
+            <Button
+              disabled={createTaskMutation.isPending || !rows.length}
+              onClick={() => handleStartTask()}
+              className="mb-3 min-w-32"
+            >
+              {createTaskMutation.isPending ? (
+                <div className="w-full flex justify-center">
+                  <Spinner size={"!w-6"} />
+                </div>
+              ) : (
+                <>Start Analyse</>
+              )}
+            </Button>
             {rows.length ? (
               <>
                 <DataGridPremium
                   autoHeight
-                  localeText={deDE.components.MuiDataGrid.defaultProps.localeText}
+                  localeText={
+                    deDE.components.MuiDataGrid.defaultProps.localeText
+                  }
                   rows={rows}
                   rowCount={rows.length}
                   columns={columns}

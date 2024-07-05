@@ -23,34 +23,34 @@ const Page = async ({ params }: { params: { id: string } }) => {
     settings = {
       ...defaultProductFilterSettings,
       ...JSON.parse(prefs.settings),
-    }; 
+    };
   }
 
   const mongo = await mongoAdminPromise;
 
   const task = await mongo
-    .db(process.env.NEXT_MONOGO_CRAWLER_DATA ?? "")
-    .collection(process.env.NEXT_MONGO_TASKS ?? "")
-    .findOne({
-      userId: user.$id,
-      _id: new ObjectId(params.id),
-    });
-
+  .db(process.env.NEXT_MONOGO_CRAWLER_DATA ?? "")
+  .collection(process.env.NEXT_MONGO_TASKS ?? "")
+  .findOne({
+    userId: user.$id,
+    _id: new ObjectId(params.id),
+  });
+  
   if (!task) redirect("/dashboard/wholesale");
-
+  
   const inProgress = task.executing;
 
   return (
     <>
       <div>
         Fortschritt:{" "}
-        {((task.progress.total - task.progress.pending) / task.progress.total) *
+        {Number((task.progress.completed / task.progress.total).toFixed(2)) *
           100}{" "}
         %
       </div>
       <div key={task._id.toString()}>
         Status:{" "}
-        {task.progress.pending === 0 ? (
+        {task.progress.completed === task.progress.total ? (
           "Abgeschlossen"
         ) : inProgress ? (
           <span className="flex gap-4 items-center">

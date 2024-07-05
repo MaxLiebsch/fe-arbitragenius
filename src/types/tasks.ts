@@ -2,6 +2,9 @@ import { ObjectId } from "mongodb";
 
 export interface Task {
   type: string;
+  id: string;
+  browserConcurrency: number;
+  concurrency: number;
   recurrent: boolean;
   startedAt: string;
   createdAt: string;
@@ -17,6 +20,7 @@ export interface Task {
 
 export interface Progress {
   pending: number;
+  completed: number;
   total: number;
 }
 

@@ -28,6 +28,9 @@ import useTaskProducts from "@/hooks/use-task-products";
 import useTaskProductCount from "@/hooks/use-task-product-count";
 import ImageRenderer from "./ImageRenderer";
 import { prefixLink } from "@/util/prefixLink";
+import CopyToClipboard from "./CopyToClipboard";
+import ContentMarge from "./ContentMarge";
+import { Popover } from "antd";
 
 const columns: (target: string, settings: Settings) => GridColDef[] = (
   target,
@@ -60,6 +63,7 @@ const columns: (target: string, settings: Settings) => GridColDef[] = (
     field: `ean`,
     flex: 0.12,
     headerName: "EAN",
+    renderCell: (params) => <CopyToClipboard text={params.row.ean} />,
   },
   {
     field: "name",
@@ -67,42 +71,84 @@ const columns: (target: string, settings: Settings) => GridColDef[] = (
     flex: 0.8,
     renderCell: (params) => {
       return (
-        <div className="flex flex-col divide-y p-1">
-          <div>{params.row.name}</div>
-          {params.row[`a_lnk`] && (
-            <div>
-              Amazon:
-              {LinkWrapper(params.row[`a_lnk`], params.row[`a_nm`])}
-            </div>
-          )}
-          {target === "a" && params.row["bsr"] && params.row["bsr"].length ? (
-            <div className="">
-              <span className="font-semibold">BSR:</span>
-              <span className="">
-                {params.row["bsr"].map((bsr: any) => {
-                  return (
-                    <span className="mx-1" key={bsr.number + bsr.category}>
-                      Nr.{bsr.number.toLocaleString("de-DE")} in {bsr.category}
-                    </span>
-                  );
-                })}
-              </span>
-            </div>
+        <>
+          {params.row["status"] === "not found" ? (
+            <div className="text-red-600">Produkt nicht gefunden</div>
           ) : (
-            <></>
-          )}
-          {params.row["asin"] && params.row["asin"] !== "" && (
-            <div>
-              <span className="font-semibold">ASIN: </span>
-              {params.row["asin"]}
+            <div className="flex flex-col divide-y p-1">
+              <div>{params.row.name}</div>
+              {params.row[`a_lnk`] && (
+                <div>
+                  Amazon:
+                  {LinkWrapper(params.row[`a_lnk`], params.row[`a_nm`])}
+                </div>
+              )}
+              {target === "a" &&
+              params.row["bsr"] &&
+              params.row["bsr"].length ? (
+                <div className="">
+                  <span className="font-semibold">BSR:</span>
+                  <span className="">
+                    {params.row["bsr"].map((bsr: any) => {
+                      return (
+                        <span className="mx-1" key={bsr.number + bsr.category}>
+                          Nr.{bsr.number.toLocaleString("de-DE")} in{" "}
+                          {bsr.category}
+                        </span>
+                      );
+                    })}
+                  </span>
+                </div>
+              ) : (
+                <></>
+              )}
+              {params.row["asin"] && params.row["asin"] !== "" && (
+                <div>
+                  <span className="font-semibold">ASIN: </span>
+                  <CopyToClipboard text={params.row["asin"]} />
+                  {params.row["buyBoxIsAmazon"] !== undefined && (
+                    <span>
+                      {params.row["buyBoxIsAmazon"] ? (
+                        <span>
+                          <span className="font-semibold"> BuyBox:</span>
+                          <span className="text-amazon"> Amazon</span>
+                        </span>
+                      ) : (
+                        <span>
+                          <span className="font-semibold"> BuyBox:</span>
+                          <span className="text-green-600 font-medium">
+                            {" "}
+                            Seller
+                          </span>
+                        </span>
+                      )}
+                    </span>
+                  )}
+                  {params.row["totalOfferCount"] !== undefined && (
+                    <span>
+                      <span>
+                        <span className="font-semibold"> Seller:</span>
+                        {params.row["totalOfferCount"] ? (
+                          <span className="">
+                            {" "}
+                            {params.row["totalOfferCount"]}
+                          </span>
+                        ) : (
+                          "0"
+                        )}
+                      </span>
+                    </span>
+                  )}
+                </div>
+              )}
             </div>
           )}
-        </div>
+        </>
       );
     },
   },
   {
-    field: "price",
+    field: "prc",
     headerName: `Preis`,
     renderHeader: (params) => (
       <div className="relative">
@@ -181,15 +227,31 @@ const columns: (target: string, settings: Settings) => GridColDef[] = (
     field: `${target}_mrgn`,
     headerName: "Marge €",
     renderCell: (params) => (
-      <div
-        className={`${
-          params.value > 0 ? "text-green-600" : "text-red-600"
-        } font-semibold`}
+      <Popover
+        placement="topLeft"
+        arrow={false}
+        content={
+          params.row["costs"] ? (
+            <ContentMarge product={params.row} />
+          ) : (
+            <div>Verkaufspreis - Einkaufspreis</div>
+          )
+        }
+        title="Margenberechnung"
       >
-        {formatCurrency(
-          calculationDeduction(parseFloat(params.value), settings.netto)
-        )}
-      </div>
+        <div className="flex flex-col">
+          <div
+            className={`
+              ${
+                parseFloat(params.value) <= 0
+                  ? "text-red-600"
+                  : "text-green-600"
+              }`}
+          >
+            {formatCurrency(parseFloat(params.value))}
+          </div>
+        </div>
+      </Popover>
     ),
   },
   {
