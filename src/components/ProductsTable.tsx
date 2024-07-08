@@ -187,7 +187,12 @@ const createColumns: (
     headerName: "Zielshopbild",
     cellClassName: "hover:!overflow-visible",
     renderCell: (params) =>
-      ImageRenderer(prefixLink(params.row.a_img, params.row.s)),
+      ImageRenderer(
+        prefixLink(
+          params.row[`${target}_img` as keyof ModifiedProduct],
+          params.row.s
+        )
+      ),
   },
   {
     field: "prc",
@@ -267,7 +272,7 @@ const createColumns: (
     headerName: "Marge",
     renderHeader: (params) => (
       <div className="relative">
-        <div>Marge</div> 
+        <div>Marge</div>
       </div>
     ),
     renderCell: (params) => (
@@ -290,7 +295,7 @@ const createColumns: (
             }`}
           >
             {formatCurrency(parseFloat(params.value))}
-          </div> 
+          </div>
         </div>
       </Popover>
     ),
