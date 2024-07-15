@@ -22,8 +22,8 @@ const ProfileSettings = ({ prefs }: any) => {
     settings = {
       ...defaultProductFilterSettings,
       ...JSON.parse(prefs.settings),
-    }; 
-  } 
+    };
+  }
   const queryClient = useQueryClient();
 
   useEffect(() => {
@@ -56,8 +56,7 @@ const ProfileSettings = ({ prefs }: any) => {
           Hier kannst Du die Filtereinstellungen für die Produkte anpassen.
         </p>
       </div>
-
-      <ProductFilterForm layout="wide" settings={settings} /> 
+      <ProductFilterForm layout="wide" settings={settings} />
     </div>
   );
 };

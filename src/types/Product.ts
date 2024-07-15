@@ -4,6 +4,12 @@ export interface BSR {
   createdAt: string;
 }
 
+export interface EbyCategory {
+  category: string;
+  id: number;
+  createdAt: string;
+}
+
 export type Product = {
   ean: string;
   _id: string;
@@ -39,6 +45,14 @@ export type Product = {
 export interface ModifiedProduct extends Product {
   bsr_1: number;
   bsr_cat_1: string;
+  e_uprc: number;
+  a_uprc: number;
+  esin: string;
+  uprc: number;
+  ebyCategories: EbyCategory[];
+  qty: number;
+  e_qty: number;
+  a_qty: number;
   bsr_2: number;
   tax: number;
   bsr_cat_2: string;

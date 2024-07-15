@@ -25,6 +25,8 @@ import { fromUnixTime, parseISO } from "date-fns";
 import CopyToClipboard from "./CopyToClipboard";
 import { Popover } from "antd";
 import ContentMarge from "./ContentMarge";
+import ContentEbyMarge from "./ContentEbyMarge";
+import Link from "next/link";
 
 const createColumns: (
   target: string,
@@ -73,15 +75,31 @@ const createColumns: (
       }
       return (
         <div className="flex flex-col divide-y p-1">
-          <div>
+          <div className={`${params.row["nm"]?.length < 114 && "flex gap-1"}`}>
             {LinkWrapper(params.row.lnk, params.row.nm, params.row.mnfctr)}
+            {params.row[`qty` as "qty"] > 1 && (
+              <div>({params.row[`qty` as "qty"]} Stück)</div>
+            )}
           </div>
           <div>
-            Zielshop:
-            {LinkWrapper(
-              params.row[`${target}_lnk` as "a_lnk" | "e_lnk"],
-              params.row[`${target}_nm` as "a_nm" | "e_nm"]
-            )}
+            <div
+              className={`${
+                params.row[`${target}_nm` as "a_nm" | "e_nm"]?.length < 114 &&
+                "flex gap-1"
+              }`}
+            >
+              <span>Zielshop:</span>
+              {LinkWrapper(
+                params.row[`${target}_lnk` as "a_lnk" | "e_lnk"],
+                params.row[`${target}_nm` as "a_nm" | "e_nm"]
+              )}
+
+              {params.row[`${target}_qty` as "a_qty" | "e_qty"] > 1 && (
+                <div className="inline">
+                  ({params.row[`${target}_qty` as "a_qty" | "e_qty"]} Stück)
+                </div>
+              )}
+            </div>
           </div>
           {params.row["eanList"] && params.row["eanList"].length ? (
             <div className="flex flex-row gap-1">
@@ -95,44 +113,90 @@ const createColumns: (
           ) : (
             <></>
           )}
-          {params.row["asin"] && params.row["asin"] !== "" && (
-            <div>
-              <span className="font-semibold">ASIN: </span>
-              <CopyToClipboard text={params.row["asin"]} />
-              {params.row["buyBoxIsAmazon"] !== undefined && (
-                <span>
-                  {params.row["buyBoxIsAmazon"] ? (
-                    <span>
-                      <span className="font-semibold"> BuyBox:</span>
-                      <span className="text-amazon"> Amazon</span>
-                    </span>
-                  ) : (
-                    <span>
-                      <span className="font-semibold"> BuyBox:</span>
-                      <span className="text-green-600 font-medium">
-                        {" "}
-                        Seller
-                      </span>
-                    </span>
-                  )}
-                </span>
-              )}
-              {params.row["totalOfferCount"] !== undefined && (
-                <span>
+          {target === "a" &&
+            params.row["asin"] &&
+            params.row["asin"] !== "" && (
+              <div>
+                <span className="font-semibold">ASIN: </span>
+                <CopyToClipboard text={params.row["asin"]} />
+                {params.row["buyBoxIsAmazon"] !== undefined && (
                   <span>
-                    <span className="font-semibold"> Seller:</span>
-                    {params.row["totalOfferCount"] ? (
-                      <span className=""> {params.row["totalOfferCount"]}</span>
+                    {params.row["buyBoxIsAmazon"] ? (
+                      <span>
+                        <span className="font-semibold"> BuyBox:</span>
+                        <span className="text-amazon"> Amazon</span>
+                      </span>
                     ) : (
-                      "0"
+                      <span>
+                        <span className="font-semibold"> BuyBox:</span>
+                        <span className="text-green-600 font-medium">
+                          {" "}
+                          Seller
+                        </span>
+                      </span>
                     )}
                   </span>
-                </span>
-              )}
-            </div>
-          )}
+                )}
+                {params.row["totalOfferCount"] !== undefined && (
+                  <span>
+                    <span>
+                      <span className="font-semibold"> Seller:</span>
+                      {params.row["totalOfferCount"] ? (
+                        <span className="">
+                          {" "}
+                          {params.row["totalOfferCount"]}
+                        </span>
+                      ) : (
+                        "0"
+                      )}
+                    </span>
+                  </span>
+                )}
+              </div>
+            )}
+          {target === "e" &&
+            params.row["esin"] &&
+            params.row["esin"] !== "" && (
+              <div>
+                <span className="font-semibold">ESIN: </span>
+                <CopyToClipboard text={params.row["esin"]} />
+              </div>
+            )}
           <></>
           <>
+            {target === "e" &&
+            params.row["ebyCategories"] &&
+            params.row["ebyCategories"].length ? (
+              <div>
+                <span className="font-semibold">Kategorie:</span>
+                <span>
+                  {params.row["ebyCategories"].map((category: any) => {
+                    return (
+                      <span
+                        className="mx-1"
+                        key={category.id + category.category}
+                      >
+                        <Link
+                          target="_blank"
+                          href={
+                            "https://www.ebay.de/b/" +
+                            encodeURIComponent(category.category) +
+                            "/" +
+                            category.id
+                          }
+                        >
+                          {category.category}
+                        </Link>
+                        <span className="font-semibold"> ID: </span>
+                        <CopyToClipboard text={category.id} />
+                      </span>
+                    );
+                  })}
+                </span>
+              </div>
+            ) : (
+              <></>
+            )}
             {target === "a" && params.row["bsr"] && params.row["bsr"].length ? (
               <div>
                 <span className="font-semibold">BSR:</span>
@@ -150,7 +214,7 @@ const createColumns: (
             ) : (
               <></>
             )}
-            {params.row["monthlySold"] && (
+            {target === "a" && params.row["monthlySold"] && (
               <div className="flex flex-row gap-2">
                 {/* eigene Reihe */}
                 <span>
@@ -173,7 +237,6 @@ const createColumns: (
       );
     },
   },
-
   {
     field: "img",
     headerName: "Produktbild",
@@ -214,6 +277,9 @@ const createColumns: (
         >
           {formatCurrency(parseFloat(params.value))}
         </div>
+        {params.row.qty > 1 && (
+          <span className="text-xs">({params.row.uprc} € / Stück)</span>
+        )}
         <div
           className={`${settings.netto ? "font-semibold text-green-600" : ""}`}
         >
@@ -221,10 +287,11 @@ const createColumns: (
         </div>
       </div>
     ),
-    width: 80,
+    width: 120,
   },
   {
     field: `${target}_prc`,
+    width: 120,
     headerName: "Zielshoppreis",
     renderHeader: (params) => (
       <div className="relative">
@@ -243,6 +310,11 @@ const createColumns: (
         >
           {formatCurrency(parseFloat(params.value))}
         </div>
+        {params.row[`${target}_qty` as keyof ModifiedProduct] > 1 && (
+          <span className="text-xs">
+            ({params.row[`${target}_uprc` as keyof ModifiedProduct]} € / Stück)
+          </span>
+        )}
         <div
           className={`${settings.netto ? "font-semibold text-green-600" : ""}`}
         >
@@ -280,10 +352,10 @@ const createColumns: (
         placement="topLeft"
         arrow={false}
         content={
-          params.row["costs"] ? (
+          params.row["costs"] && target === "a" ? (
             <ContentMarge product={params.row} />
           ) : (
-            <div>Verkaufspreis - Einkaufspreis</div>
+            <ContentEbyMarge product={params.row} />
           )
         }
         title="Margenberechnung"

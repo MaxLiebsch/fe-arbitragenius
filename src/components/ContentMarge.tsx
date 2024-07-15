@@ -5,6 +5,7 @@ import { formatter } from "@/util/formatter";
 import { Input, Switch } from "antd";
 import React, { useState } from "react";
 import CopyToClipboard from "./CopyToClipboard";
+import { roundToTwoDecimals } from "@/util/roundToTwoDecimals";
 
 const ContentMarge = ({
   product,
@@ -16,15 +17,14 @@ const ContentMarge = ({
 }) => {
   const [costs, setCosts] = useState(product["costs"]);
   const [buyPrice, setBuyPrice] = useState(
-    Number((product["prc"] / 1.19).toFixed(2))
+    roundToTwoDecimals(product["prc"] / 1.19)
   );
   const [price, setPrice] = useState(product["a_prc"]);
-  console.log('price:', price)
   const [qty, setQty] = useState(1);
   const [period, setPeriod] = useState<"strg_1_hy" | "strg_2_hy">("strg_1_hy");
 
   const multiplier = product.a_prc / product["costs"].azn;
-  const tax = Number((price - price / (1 + product.tax / 100)).toFixed(2));
+  const tax = roundToTwoDecimals(price - price / (1 + product.tax / 100));
   const earning =
     (price -
       costs.azn -
@@ -49,10 +49,10 @@ const ContentMarge = ({
   return (
     <div className="w-72">
       <div className="font-light">
-        <span>{product?.mnfctr ? product.mnfctr: ""} </span>
+        <span>{product?.mnfctr ? product.mnfctr : ""} </span>
         {product.nm}
       </div>
-      {product.eanList.length ? (
+      {product.eanList && product.eanList.length ? (
         <div className="mb-1">
           EAN: <CopyToClipboard text={product.eanList[0]} />
         </div>
@@ -67,7 +67,7 @@ const ContentMarge = ({
           setCosts({ ...costs, azn: Number(e.target.value) / multiplier });
         }}
         type="number"
-        addonBefore="Verkaufspreis €"
+        addonBefore="Verkaufspreis € (Brutto)"
       />
       <h3 className="text-xs font-semibold leading-6 mb-1 text-gray-900 flex flex-row space-x-1 items-center">
         <div className="flex flex-row w-full">
@@ -117,7 +117,7 @@ const ContentMarge = ({
       </h3>
       <div className="grid grid-rows-2 gap-1">
         <div className="flex flex-row">
-          <p>Geschätze Umsatzsteuer({product.tax} %):</p>
+          <p>Geschätze Umsatzsteuer ({product.tax} %):</p>
           <p className="ml-auto">{formatter.format(Number(tax))}</p>
         </div>
         <Input
@@ -127,7 +127,7 @@ const ContentMarge = ({
             setBuyPrice(Number(e.target.value));
           }}
           type="number"
-          addonBefore="Einkaufspreis €"
+          addonBefore="Einkaufspreis € (Netto)"
         />
         <Input
           classNames={{ input: "!text-right" }}

@@ -31,7 +31,7 @@ const ProductFilterForm = ({
         await queryClient.invalidateQueries({
           queryKey: ["preferences"],
           refetchType: "all",
-        })
+        });
         await Promise.all([
           queryClient.invalidateQueries({
             queryKey: ["e"],
@@ -59,6 +59,26 @@ const ProductFilterForm = ({
             : "gap-x-1 gap-y-1 sm:grid-cols-8"
         }`}
       >
+        {/* Netto/Brutto */}
+        {layout === "wide" && (
+          <div
+            className={`${
+              layout === "wide" ? "sm:col-span-6" : "sm:col-span-1"
+            }`}
+          >
+            <label
+              htmlFor="minMargin"
+              className="block text-sm font-medium leading-6 text-secondary-950"
+            >
+              Preise
+            </label>
+            <div className="mt-2">
+              <Form.Item name="netto">
+                <Switch checkedChildren="netto" unCheckedChildren="brutto" />
+              </Form.Item>
+            </div>
+          </div>
+        )}
         {/* Minimale Marge % */}
         <div
           className={`${layout === "wide" ? "sm:col-span-3" : "sm:col-span-2"}`}
@@ -107,26 +127,6 @@ const ProductFilterForm = ({
             </Form.Item>
           </div>
         </div>
-        {/* Netto/Brutto */}
-        {layout === "wide" && (
-          <div
-            className={`${
-              layout === "wide" ? "sm:col-span-6" : "sm:col-span-1"
-            }`}
-          >
-            <label
-              htmlFor="minMargin"
-              className="block text-sm font-medium leading-6 text-secondary-950"
-            >
-              Preise
-            </label>
-            <div className="mt-2">
-              <Form.Item name="netto">
-                <Switch checkedChildren="netto" unCheckedChildren="brutto" />
-              </Form.Item>
-            </div>
-          </div>
-        )}
         {/* Maximaler Primary BSR */}
         <div
           className={`${layout === "wide" ? "sm:col-span-3" : "sm:col-span-2"}`}
