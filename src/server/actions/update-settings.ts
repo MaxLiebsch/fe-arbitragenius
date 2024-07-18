@@ -3,6 +3,7 @@
 import { AppwriteException } from "node-appwrite";
 import { createSessionClient } from "../appwrite";
 import { SettingsSchema } from "@/types/Settings";
+import { parse } from "path";
 
 interface FieldError {
   message: string;
@@ -31,7 +32,6 @@ export async function updateSettingsAction(
     tptSmall: parseFloat(parsedFormData.tptSmall ?? "2.95"),
     tptMiddle: parseFloat(parsedFormData.tptMiddle ?? "4.95"),
     tptLarge: parseFloat(parsedFormData.tptLarge ?? "6.95"),
-    strg: parseFloat(parsedFormData.strg ?? "0.00"),
     tptStandard: parsedFormData.tptStandard ?? "tptMiddle",
     maxPrimaryBsr: parseInt(parsedFormData.maxPrimaryBsr ?? "0"),
     productsWithNoBsr: parsedFormData.productsWithNoBsr,
@@ -57,6 +57,9 @@ export async function updateSettingsAction(
   const { account } = await createSessionClient();
   const prefs = await account.getPrefs();
 
+  if (parsedFormData.strg !== undefined) {
+    form.data.strg = parseFloat(parsedFormData.strg);
+  }
   try {
     await account.updatePrefs({
       ...prefs,

@@ -86,7 +86,7 @@ const ContentEbyMarge = ({
     roundToTwoDecimals((product["prc"] / 1.19) * factor)
   );
   const [qty, setQty] = useState(1);
-  const [storageCosts, setStorageCosts] = useState(settings.strg);
+  const [storageCosts, setStorageCosts] = useState(settings.strg!);
 
   const [transportCosts, setTransportCosts] = useState(
     settings[settings.tptStandard as keyof Settings] as number

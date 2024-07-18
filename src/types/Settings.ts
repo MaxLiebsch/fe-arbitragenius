@@ -14,7 +14,7 @@ export const SettingsSchema = z.object({
   tptSmall: z.number(),
   tptMiddle: z.number(),
   tptLarge: z.number(),
-  strg: z.number(),
+  strg: z.number().optional(),
   tptStandard: z.string(),
   "a_vrfd.vrfn_pending": z.boolean().optional(),
   "e_vrfd.vrfn_pending": z.boolean().optional(),

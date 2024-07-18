@@ -88,7 +88,7 @@ const createColumns: (
                 "flex gap-1"
               }`}
             >
-              <span>Zielshop:</span>
+              <span>{target === "a" ? "Amazon:" : "Ebay:"}</span>
               {LinkWrapper(
                 params.row[`${target}_lnk` as "a_lnk" | "e_lnk"],
                 params.row[`${target}_nm` as "a_nm" | "e_nm"]
@@ -109,7 +109,6 @@ const createColumns: (
                   <CopyToClipboard key={ean} text={ean} />
                 ))}
               </div>
-              
             </div>
           ) : (
             <></>
