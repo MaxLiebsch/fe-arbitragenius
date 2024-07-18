@@ -22,3 +22,8 @@
 
 - [x] min montlySold, max totalOfferCount
 - [x] buyBox 
+
+
+1 freifeld für lagerkosten
+3 Freifelder für Versandkosten: klein Mittel Groß
+1 Button für das festlegen was die Primären Versandkosten sind (für die Anzeige)

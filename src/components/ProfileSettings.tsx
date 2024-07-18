@@ -1,7 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { SubmitButton } from "./FormSubmitBn";
 import { useFormState } from "react-dom";
-import { Checkbox, Form, Slider, Switch } from "antd";
 import { updateSettingsAction } from "@/server/actions/update-settings";
 import { useQueryClient } from "@tanstack/react-query";
 import { defaultProductFilterSettings } from "@/constant/productFilterSettings";

@@ -27,6 +27,11 @@ export async function GET(
     maxSecondaryBsr: Number(searchParams.get("maxSecondaryBsr")) || 1000000,
     productsWithNoBsr: searchParams.get("productsWithNoBsr") === "true",
     netto: searchParams.get("netto") === "true",
+    tptSmall: Number(searchParams.get("tptSmall")) || 2.95,
+    tptMiddle: Number(searchParams.get("tptMiddle")) || 4.95,
+    tptLarge: Number(searchParams.get("tptLarge")) || 6.95,
+    strg: Number(searchParams.get("strg")) || 0,
+    tptStandard: searchParams.get("tptStandard") || "tptSmall",
     monthlySold: searchParams.get("monthlySold")
       ? Number(searchParams.get("monthlySold"))
       : 0,
@@ -41,6 +46,11 @@ export async function GET(
     minPercentageMargin,
     maxPrimaryBsr,
     maxSecondaryBsr,
+    tptSmall,
+    tptMiddle,
+    tptLarge,
+    strg,
+    tptStandard,
     productsWithNoBsr,
     netto,
     monthlySold,
@@ -93,6 +103,71 @@ export async function GET(
         },
       },
     });
+  } else {
+    aggregation.push(
+      {
+        $match: {
+          e_pblsh: true,
+          e_prc: { $gt: 0 },
+          e_uprc: { $gt: 0 },
+        },
+      },
+      {
+        $addFields: {
+          e_mrgn: {
+            $round: [
+              {
+                $subtract: [
+                  "$e_prc",
+                  {
+                    $add: [
+                      {
+                        $divide: [
+                          {
+                            $multiply: [
+                              "$prc",
+                              { $divide: ["$e_qty", "$qty"] },
+                            ],
+                          },
+                          {
+                            $add: [
+                              1,
+                              { $divide: [{ $ifNull: ["$tax", 19] }, 100] },
+                            ],
+                          },
+                        ],
+                      },
+                      "$e_tax",
+                      customerSettings[tptStandard as "tptSmall"],
+                      strg,
+                      "$e_costs",
+                    ],
+                  },
+                ],
+              },
+              2,
+            ],
+          },
+        },
+      },
+      {
+        $addFields: {
+          e_mrgn_pct: {
+            $round: [
+              {
+                $multiply: [
+                  {
+                    $divide: ["$e_mrgn", "$e_prc"],
+                  },
+                  100,
+                ],
+              },
+              2,
+            ],
+          },
+        },
+      }
+    );
   }
 
   findQuery.push({
@@ -224,8 +299,6 @@ export async function GET(
       },
     });
   }
-
-  
 
   const res = await mongo
     .db(process.env.NEXT_MONGO_DB)

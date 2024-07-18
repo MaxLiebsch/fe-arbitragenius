@@ -2,16 +2,19 @@
 
 import { ModifiedProduct } from "@/types/Product";
 import { formatter } from "@/util/formatter";
-import { Input, Popover, Switch, Tooltip } from "antd";
-import React, { useCallback, useMemo, useState } from "react";
+import { Input, Popover, Switch } from "antd";
+import React, { useMemo, useState } from "react";
 import CopyToClipboard from "./CopyToClipboard";
 import { ebayTier } from "@/constant/ebay";
 import { Above, EbyTierCategory, UpTo } from "@/types/EbyTierCategory";
 import { roundToTwoDecimals } from "@/util/roundToTwoDecimals";
+import { Settings } from "@/types/Settings";
 
 const ContentEbyMarge = ({
   product,
+  settings,
 }: {
+  settings: Settings;
   product: Pick<
     ModifiedProduct,
     | "ebyCategories"
@@ -20,11 +23,15 @@ const ContentEbyMarge = ({
     | "eanList"
     | "esin"
     | "e_uprc"
+    | "e_prc"
+    | "e_qty"
+    | "qty"
     | "tax"
     | "mnfctr"
     | "nm"
   >;
 }) => {
+  const factor = product.e_qty / product.qty;
   function findMappedCategory(categories: number[]): EbyTierCategory | null {
     let mappedCategory = null as EbyTierCategory | null;
     categories.forEach((x: number) => {
@@ -76,11 +83,14 @@ const ContentEbyMarge = ({
   }, [sellPrice, ebyShop, mappedCategory]);
 
   const [buyPrice, setBuyPrice] = useState(
-    roundToTwoDecimals(product["uprc"] / 1.19)
+    roundToTwoDecimals((product["prc"] / 1.19) * factor)
   );
   const [qty, setQty] = useState(1);
-  const [storageCosts, setStorageCosts] = useState(0);
-  const [transportCosts, setTransportCosts] = useState(0);
+  const [storageCosts, setStorageCosts] = useState(settings.strg);
+
+  const [transportCosts, setTransportCosts] = useState(
+    settings[settings.tptStandard as keyof Settings] as number
+  );
   const earning =
     (sellPrice - costs - storageCosts - transportCosts - taxCosts - buyPrice) *
     qty;
@@ -106,7 +116,7 @@ const ContentEbyMarge = ({
   };
 
   return (
-    <div className="w-72">
+    <div className="w-72 relative">
       <div className="font-light">
         <span>{product?.mnfctr ? product.mnfctr : ""} </span>
         {product.nm}
@@ -118,7 +128,7 @@ const ContentEbyMarge = ({
       ) : (
         <></>
       )}
-      <div className="mb-2">
+      <div className="-top-8 right-0 absolute">
         <Switch
           checkedChildren="Mit Shop"
           unCheckedChildren="Ohne Shop"
@@ -141,7 +151,7 @@ const ContentEbyMarge = ({
         type="number"
         addonBefore="Verkaufspreis € (Brutto)"
       />
-      <h3 className="text-xs font-semibold leading-6 mb-1 text-gray-900 flex flex-row space-x-1 items-center">
+      <h3 className="font-semibold leading-6 mb-1 text-gray-900 flex flex-row space-x-1 items-center">
         <div className="flex flex-row w-full mt-3">
           <p>Ebay Gebühren:</p>
           <Popover
@@ -204,7 +214,7 @@ const ContentEbyMarge = ({
           </Popover>
         </div>
       </h3>
-      <h3 className="text-xs font-semibold leading-6 mt-2 mb-1 text-gray-900 flex flex-row space-x-1 items-center">
+      <h3 className="font-semibold leading-6 mt-2 mb-1 text-gray-900 flex flex-row space-x-1 items-center">
         <Input
           classNames={{ input: "!text-right" }}
           value={transportCosts}
@@ -212,10 +222,11 @@ const ContentEbyMarge = ({
             setTransportCosts(Number(e.target.value));
           }}
           type="number"
+          step={0.01}
           addonBefore="Versandkosten €"
         />
       </h3>
-      <h3 className="text-xs font-semibold leading-6 mb-1 text-gray-900 flex flex-row space-x-1 items-center">
+      <h3 className="font-semibold leading-6 mb-1 text-gray-900 flex flex-row space-x-1 items-center">
         <Input
           classNames={{ input: "!text-right" }}
           value={storageCosts}
@@ -223,10 +234,11 @@ const ContentEbyMarge = ({
             setStorageCosts(Number(e.target.value));
           }}
           type="number"
+          step={0.01}
           addonBefore="Lagerkosten €"
         />
       </h3>
-      <h3 className="text-xs font-semibold leading-6 mt-2 mb-1 text-gray-900 flex flex-row space-x-1 items-center">
+      <h3 className="font-semibold leading-6 mt-2 mb-1 text-gray-900 flex flex-row space-x-1 items-center">
         <div className="flex flex-row w-full">
           <p>Sonstige Kosten:</p>
           <p className="ml-auto">{formatter.format(taxCosts + buyPrice)}</p>
@@ -241,7 +253,7 @@ const ContentEbyMarge = ({
           classNames={{ input: "!text-right" }}
           value={buyPrice}
           onChange={(e) => {
-            setBuyPrice(Number(e.target.value));
+            setBuyPrice(Number(e.target.value) * factor);
           }}
           type="number"
           addonBefore="Einkaufspreis € (Netto)"
@@ -259,7 +271,7 @@ const ContentEbyMarge = ({
         />
       </div>
       <div>
-        <h3 className="text-xs font-semibold leading-6 mt-2 mb-1 text-gray-900 flex flex-row space-x-1 items-center">
+        <h3 className="font-semibold leading-6 mt-2 mb-1 text-gray-900 flex flex-row space-x-1 items-center">
           <div className="flex flex-row w-full">
             <p>Nettogewinn:</p>
             <p
@@ -271,7 +283,7 @@ const ContentEbyMarge = ({
             </p>
           </div>
         </h3>
-        <h3 className="text-xs font-semibold leading-6 mb-1 text-gray-900 flex flex-row space-x-1 items-center">
+        <h3 className="font-semibold leading-6 mb-1 text-gray-900 flex flex-row space-x-1 items-center">
           <div className="flex flex-row w-full">
             <p>Nettospanne:</p>
             <p

@@ -12,12 +12,21 @@ const ContentMarge = ({
 }: {
   product: Pick<
     ModifiedProduct,
-    "costs" | "prc" | "a_prc" | "tax" | "mnfctr" | "nm" | "eanList"
+    | "costs"
+    | "prc"
+    | "a_prc"
+    | "tax"
+    | "mnfctr"
+    | "nm"
+    | "eanList"
+    | "a_qty"
+    | "qty"
   >;
 }) => {
   const [costs, setCosts] = useState(product["costs"]);
+  const factor = product.a_qty / product.qty;
   const [buyPrice, setBuyPrice] = useState(
-    roundToTwoDecimals(product["prc"] / 1.19)
+    roundToTwoDecimals((product["prc"] / 1.19) * factor)
   );
   const [price, setPrice] = useState(product["a_prc"]);
   const [qty, setQty] = useState(1);
@@ -69,7 +78,7 @@ const ContentMarge = ({
         type="number"
         addonBefore="Verkaufspreis € (Brutto)"
       />
-      <h3 className="text-xs font-semibold leading-6 mb-1 text-gray-900 flex flex-row space-x-1 items-center">
+      <h3 className="font-semibold leading-6 mb-1 mt-2 text-gray-900 flex flex-row space-x-1 items-center">
         <div className="flex flex-row w-full">
           <p>Amazon Gebühren:</p>
           <p className="ml-auto">{formatter.format(costs.azn + costs.varc)}</p>
@@ -85,10 +94,16 @@ const ContentMarge = ({
           <p className="ml-auto">{formatter.format(costs.varc)}</p>
         </div>
       </div>
-      <h3 className="text-xs font-semibold leading-6 mt-2 mb-1 text-gray-900 flex flex-row space-x-1 items-center">
+      <h3 className="font-semibold leading-6 mt-2 mb-1 text-gray-900 flex flex-row space-x-1 items-center">
         <div className="flex flex-row w-full">
           <p>Versandkosten:</p>
           <p className="ml-auto">{formatter.format(costs.tpt)}</p>
+        </div>
+      </h3>
+      <h3 className="font-semibold leading-6 mb-1 mt-2 text-gray-900 flex flex-row space-x-1 items-center">
+        <div className="flex flex-row w-full">
+          <p>Lagerkosten:</p>
+          <p className="ml-auto">{formatter.format(costs[period])}</p>
         </div>
       </h3>
       <Switch
@@ -103,13 +118,7 @@ const ContentMarge = ({
           }
         }}
       />
-      <h3 className="text-xs font-semibold leading-6 mb-1 text-gray-900 flex flex-row space-x-1 items-center">
-        <div className="flex flex-row w-full">
-          <p>Lagerkosten:</p>
-          <p className="ml-auto">{formatter.format(costs[period])}</p>
-        </div>
-      </h3>
-      <h3 className="text-xs font-semibold leading-6 mt-2 mb-1 text-gray-900 flex flex-row space-x-1 items-center">
+      <h3 className="font-semibold leading-6 mt-2 mb-1 text-gray-900 flex flex-row space-x-1 items-center">
         <div className="flex flex-row w-full">
           <p>Sonstige Kosten:</p>
           <p className="ml-auto">{formatter.format(tax + buyPrice)}</p>
@@ -124,7 +133,7 @@ const ContentMarge = ({
           classNames={{ input: "!text-right" }}
           value={buyPrice}
           onChange={(e) => {
-            setBuyPrice(Number(e.target.value));
+            setBuyPrice(Number(e.target.value) * factor);
           }}
           type="number"
           addonBefore="Einkaufspreis € (Netto)"
@@ -142,7 +151,7 @@ const ContentMarge = ({
         />
       </div>
       <div>
-        <h3 className="text-xs font-semibold leading-6 mt-2 mb-1 text-gray-900 flex flex-row space-x-1 items-center">
+        <h3 className="font-semibold leading-6 mt-2 mb-1 text-gray-900 flex flex-row space-x-1 items-center">
           <div className="flex flex-row w-full">
             <p>Nettogewinn:</p>
             <p
@@ -154,7 +163,7 @@ const ContentMarge = ({
             </p>
           </div>
         </h3>
-        <h3 className="text-xs font-semibold leading-6 mb-1 text-gray-900 flex flex-row space-x-1 items-center">
+        <h3 className="font-semibold leading-6 mb-1 text-gray-900 flex flex-row space-x-1 items-center">
           <div className="flex flex-row w-full">
             <p>Nettospanne:</p>
             <p

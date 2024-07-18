@@ -109,6 +109,7 @@ const createColumns: (
                   <CopyToClipboard key={ean} text={ean} />
                 ))}
               </div>
+              
             </div>
           ) : (
             <></>
@@ -355,7 +356,7 @@ const createColumns: (
           params.row["costs"] && target === "a" ? (
             <ContentMarge product={params.row} />
           ) : (
-            <ContentEbyMarge product={params.row} />
+            <ContentEbyMarge product={params.row} settings={settings} />
           )
         }
         title="Margenberechnung"

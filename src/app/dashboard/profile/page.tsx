@@ -13,8 +13,8 @@ import ProfileSettings from "@/components/ProfileSettings";
 import { useQueryClient } from "@tanstack/react-query";
 
 const secondaryNavigation = [
-  { name: "Account", href: "#", current: true },
   { name: "Einstellungen", href: "#", current: false },
+  { name: "Account", href: "#", current: true },
   { name: "Rechungen", href: "#", current: false },
   { name: "Benachrichtigungen", href: "#", current: false },
 ];
@@ -101,14 +101,13 @@ const Page = () => {
 
   useEffect(() => {
     (async () => {
-      if(updateNameState?.message) {
+      if (updateNameState?.message) {
         await queryClient.invalidateQueries({
           queryKey: ["user"],
         });
       }
-  
     })();
-    }, [updateNameState, queryClient])
+  }, [updateNameState, queryClient]);
   return (
     <Tab.Group>
       <header className="border-b border-white/5">
@@ -131,6 +130,12 @@ const Page = () => {
         </nav>
       </header>
       <Tab.Panels>
+        <Tab.Panel>
+          <div className="divide-y divide-white/5">
+            <h1 className="sr-only">Einstellungen</h1>
+            <ProfileSettings prefs={prefs} />
+          </div>
+        </Tab.Panel>
         <Tab.Panel>
           <div className="divide-y divide-white/5">
             <h1 className="sr-only">Account Einstellungen</h1>
@@ -483,9 +488,9 @@ const Page = () => {
                   Andere Sitzungen abmelden
                 </h2>
                 <p className="mt-1 text-sm leading-6 text-gray-400">
-                  Bitte gebe dein Passwort ein, um zu bestätigen, dass Du
-                  dich von deinen anderen Sitzungen auf all deinen Geräten
-                  abmelden möchtest.
+                  Bitte gebe dein Passwort ein, um zu bestätigen, dass Du dich
+                  von deinen anderen Sitzungen auf all deinen Geräten abmelden
+                  möchtest.
                 </p>
               </div>
 
@@ -565,12 +570,7 @@ const Page = () => {
             </div>
           </div>
         </Tab.Panel>
-        <Tab.Panel>
-          <div className="divide-y divide-white/5">
-            <h1 className="sr-only">Einstellungen</h1>
-            <ProfileSettings prefs={prefs} />
-          </div>
-        </Tab.Panel>
+
         <Tab.Panel>
           <div className="divide-y divide-white/5">
             <h1 className="sr-only">Rechnungen</h1>

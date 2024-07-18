@@ -1,7 +1,7 @@
 "use client";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 import { useFormState } from "react-dom";
-import { Checkbox, Dropdown, Form, Select, Slider, Switch } from "antd";
+import { Checkbox, Form, Radio, Select, Switch } from "antd";
 import { updateSettingsAction } from "@/server/actions/update-settings";
 import { useQueryClient } from "@tanstack/react-query";
 import { SubmitButton } from "../FormSubmitBn";
@@ -56,7 +56,7 @@ const ProductFilterForm = ({
         className={`grid grid-cols-1 ${
           layout === "wide"
             ? "gap-x-6 gap-y-3 sm:grid-cols-6 sm:max-w-7xl"
-            : "gap-x-1 gap-y-1 sm:grid-cols-8"
+            : "gap-x-2 gap-y-1 sm:grid-cols-10"
         }`}
       >
         {/* Netto/Brutto */}
@@ -80,6 +80,13 @@ const ProductFilterForm = ({
           </div>
         )}
         {/* Minimale Marge % */}
+        <h2
+          className={`${
+            layout === "wide" ? "sm:col-span-6" : "hidden"
+          }  text-base font-semibold leading-7 text-secondary-950`}
+        >
+          Amazon
+        </h2>
         <div
           className={`${layout === "wide" ? "sm:col-span-3" : "sm:col-span-2"}`}
         >
@@ -250,21 +257,156 @@ const ProductFilterForm = ({
         </div>
         {/* BSR */}
         <div
-          className={`${layout === "wide" ? "sm:col-span-6" : "sm:col-span-6"}`}
+          className={`${layout === "wide" ? "sm:col-span-6" : "sm:col-span-2"}`}
         >
-          <h2 className="text-base font-semibold leading-7 text-secondary-950">
+          <div className="block text-sm font-medium leading-6 text-secondary-950">
             BSR (Amazon Bestseller Rang)
-          </h2>
+          </div>
           <div className="relative flex items-start">
-            <div className="flex flex-row items-center justify-center">
+            <div className="flex flex-row items-center justify-center mt-2">
               <Form.Item valuePropName="checked" name="productsWithNoBsr">
-                <Checkbox className="rounded border-gray-300 text-secondary-950 focus:ring-secondary-500">
+                <Checkbox className="rounded border-gray-300 pt-4 text-secondary-950 focus:ring-secondary-500">
                   Produkte ohne BSR anzeigen
                 </Checkbox>
               </Form.Item>
             </div>
           </div>
         </div>
+        <h2
+          className={`${
+            layout === "wide" ? "sm:col-span-6" : "hidden"
+          }  text-base font-semibold leading-7 text-secondary-950`}
+        >
+          Ebay
+        </h2>
+        {/* Standard Versandkosten */}
+        <div
+          className={`${layout === "wide" ? "sm:col-span-6" : "sm:col-span-3"}`}
+        >
+          <label
+            htmlFor="tptStandard"
+            className="block text-sm font-medium leading-6 text-secondary-950"
+          >
+            Standard Ebay Versandkosten
+          </label>
+          <div className="mt-2">
+            <Form.Item name="tptStandard">
+              <Radio.Group name="tptStandard" id="tptStandard">
+                <Radio value={"tptSmall"}>Versand klein</Radio>
+                <Radio value={"tptMiddle"}>Versand mittel</Radio>
+                <Radio value={"tptLarge"}>Versand groß</Radio>
+              </Radio.Group>
+            </Form.Item>
+          </div>
+        </div>
+        {layout === "wide" && (
+          <>
+            {/* Versand klein */}
+            <div
+              className={`${
+                layout === "wide" ? "sm:col-span-1" : "sm:col-span-2"
+              }`}
+            >
+              <label
+                htmlFor="tptSmall"
+                className="block text-sm font-medium leading-6 text-secondary-950"
+              >
+                Versand klein €
+              </label>
+              <div className="mt-2">
+                <Form.Item name="tptSmall">
+                  <input
+                    type="number"
+                    name="tptSmall"
+                    id="tptSmall"
+                    step={0.01}
+                    min={0}
+                    max={9999}
+                    className="block w-full rounded-md border-0 bg-white/5 py-1.5 pl-1 text-secondary-950 shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
+                  />
+                </Form.Item>
+              </div>
+            </div>
+            {/* Versand mittel */}
+            <div
+              className={`${
+                layout === "wide" ? "sm:col-span-1" : "sm:col-span-2"
+              }`}
+            >
+              <label
+                htmlFor="tptMiddle"
+                className="block text-sm font-medium leading-6 text-secondary-950"
+              >
+                Versand mittel €
+              </label>
+              <div className="mt-2">
+                <Form.Item name="tptMiddle">
+                  <input
+                    type="number"
+                    name="tptMiddle"
+                    id="tptMiddle"
+                    step={0.01}
+                    min={0}
+                    max={9999}
+                    className="block w-full rounded-md border-0 bg-white/5 py-1.5 pl-1 text-secondary-950 shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
+                  />
+                </Form.Item>
+              </div>
+            </div>
+            {/* Versand big */}
+            <div
+              className={`${
+                layout === "wide" ? "sm:col-span-1" : "sm:col-span-2"
+              }`}
+            >
+              <label
+                htmlFor="tptLarge"
+                className="block text-sm font-medium leading-6 text-secondary-950"
+              >
+                Versand groß €
+              </label>
+              <div className="mt-2">
+                <Form.Item name="tptLarge">
+                  <input
+                    type="number"
+                    name="tptLarge"
+                    id="tptLarge"
+                    step={0.01}
+                    min={0}
+                    max={9999}
+                    className="block w-full rounded-md border-0 bg-white/5 py-1.5 pl-1 text-secondary-950 shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
+                  />
+                </Form.Item>
+              </div>
+            </div>
+            {/* Lagerkosten */}
+            <div
+              className={`${
+                layout === "wide" ? "sm:col-span-1" : "sm:col-span-2"
+              }`}
+            >
+              <label
+                htmlFor="strg"
+                className="block text-sm font-medium leading-6 text-secondary-950"
+              >
+                Lagerkosten €
+              </label>
+              <div className="mt-2">
+                <Form.Item name="strg">
+                  <input
+                    type="number"
+                    name="strg"
+                    id="strg"
+                    step={0.01}
+                    min={0}
+                    max={9999}
+                    className="block w-full rounded-md border-0 bg-white/5 py-1.5 pl-1 text-secondary-950 shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
+                  />
+                </Form.Item>
+              </div>
+            </div>
+          </>
+        )}
         <div
           className={`relative ${
             layout === "wide" ? "sm:col-span-6" : "sm:col-span-2"
@@ -276,12 +418,12 @@ const ProductFilterForm = ({
             </div>
           )}
           {Boolean(updateSettingsState?.message) && (
-            <div className="text-sm text-green-500 text-right absolute -top-3 w-full">
+            <div className="text-sm text-green-500 text-right absolute -top-6 w-full">
               ✓ {updateSettingsState?.message}
             </div>
           )}
 
-          <div className="mt-3 flex ml-auto">
+          <div className="flex ml-auto">
             <SubmitButton text="Speichern" />
           </div>
         </div>
