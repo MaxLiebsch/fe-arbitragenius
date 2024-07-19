@@ -4,7 +4,8 @@ import "./globals.css";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
 import MuiXLicense from "../components/MuiXLicense";
 import Providers from "../components/provider/Providers";
-const sharp = require('sharp')
+import Script from "next/script";
+const sharp = require("sharp");
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,11 +24,32 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="de">
-      <body suppressHydrationWarning={true} className={`${inter.className} h-screen`}>
+      <body
+        suppressHydrationWarning={true}
+        className={`${inter.className} h-screen`}
+      >
         <AntdRegistry>
           <Providers>{children}</Providers>
         </AntdRegistry>
         <MuiXLicense />
+        <Script id="chatwood">
+          {`
+      (function(d,t) {
+        var BASE_URL="https://app.chatwoot.com";
+        var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+        g.src=BASE_URL+"/packs/js/sdk.js";
+        g.defer = true;
+        g.async = true;
+        s.parentNode.insertBefore(g,s);
+        g.onload=function(){
+          window.chatwootSDK.run({
+            websiteToken: 'VEsfYg2xaejGmiArkzgJpvPq',
+            baseUrl: BASE_URL
+          })
+        }
+      })(document,"script");
+       `}
+        </Script>
       </body>
     </html>
   );
