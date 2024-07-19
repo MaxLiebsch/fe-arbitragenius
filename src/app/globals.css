@@ -3,6 +3,10 @@
 @tailwind utilities;
 
 
+.woot-widget-bubble.woot-elements--left{
+  bottom: 30px;
+}
+
 .loader {
     width: 24px;
     aspect-ratio: 1;

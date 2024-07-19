@@ -1,7 +1,7 @@
 "use client";
 
 import { Tab } from "@headlessui/react";
-import React from "react";
+import React, { useEffect } from "react";
 import ProductsTable from "./ProductsTable";
 import { Settings } from "@/types/Settings";
 

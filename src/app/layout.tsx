@@ -5,6 +5,7 @@ import { AntdRegistry } from "@ant-design/nextjs-registry";
 import MuiXLicense from "../components/MuiXLicense";
 import Providers from "../components/provider/Providers";
 import Script from "next/script";
+import { use } from "react";
 const sharp = require("sharp");
 
 const inter = Inter({ subsets: ["latin"] });
@@ -42,10 +43,16 @@ export default function RootLayout({
         g.async = true;
         s.parentNode.insertBefore(g,s);
         g.onload=function(){
+          window.chatwootSettings = {
+  hideMessageBubble: false,
+  position: 'left', // This can be left or right
+  locale: 'de', // Language to be set
+  type: 'standard', // [standard, expanded_bubble]
+};
           window.chatwootSDK.run({
             websiteToken: 'VEsfYg2xaejGmiArkzgJpvPq',
-            baseUrl: BASE_URL
-          })
+            baseUrl: BASE_URL,
+          });
         }
       })(document,"script");
        `}
