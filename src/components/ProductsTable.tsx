@@ -8,7 +8,7 @@ import {
 } from "@mui/x-data-grid-premium";
 import React, { useMemo, useState } from "react";
 import ImageRenderer from "./ImageRenderer";
-import { appendPercentage, formatCurrency } from "@/util/formatter";
+import { appendPercentage, formatCurrency, formatter } from "@/util/formatter";
 import useProductCount from "@/hooks/use-product-count";
 import useProducts, {
   ProductPagination,
@@ -23,7 +23,7 @@ import { KeepaGraph, createUnixTimeFromKeepaTime } from "./KeepaGraph";
 import { BSR, CategoryTree, ModifiedProduct } from "@/types/Product";
 import { fromUnixTime, parseISO } from "date-fns";
 import CopyToClipboard from "./CopyToClipboard";
-import { Popover } from "antd";
+import { Popover, Tooltip } from "antd";
 import ContentMarge from "./ContentMarge";
 import ContentEbyMarge from "./ContentEbyMarge";
 import Link from "next/link";
@@ -88,7 +88,7 @@ const createColumns: (
                 "flex gap-1"
               }`}
             >
-              <span>{target === "a" ? "Amazon:" : "Ebay:"}</span>
+              <span className="font-semibold">Ziel:</span>
               {LinkWrapper(
                 params.row[`${target}_lnk` as "a_lnk" | "e_lnk"],
                 params.row[`${target}_nm` as "a_nm" | "e_nm"]
@@ -260,9 +260,13 @@ const createColumns: (
   {
     field: "prc",
     headerName: `Preis`,
+    headerAlign: "left",
+    align: "left",
     renderHeader: (params) => (
-      <div className="relative">
-        <div>Preis</div>
+      <div className="relative w-16 flex">
+        <Tooltip title="Einkaufspreis" placement="topLeft">
+          <div>EK</div>
+        </Tooltip>
         <div className="absolute bottom-1 text-xs text-gray-500">
           <span className="text-green-600">
             {settings?.netto ? "Netto" : "Brutto"}
@@ -291,11 +295,16 @@ const createColumns: (
   },
   {
     field: `${target}_prc`,
-    width: 120,
+    width: 170,
+    align: "left",
+    headerAlign: "left",
     headerName: "Zielshoppreis",
     renderHeader: (params) => (
-      <div className="relative">
-        <div>Zielshoppreis</div>
+      <div className="relative w-24 flex">
+        <Tooltip title="Verkaufspreis" placement="topLeft">
+          <div>VK {target === "a" ? "(∅ 90 Tage)" : ""}</div>
+        </Tooltip>
+
         <div className="absolute bottom-1 text-xs">
           <span className="text-green-600">
             {settings?.netto ? "Netto" : "Brutto"}
@@ -308,7 +317,12 @@ const createColumns: (
         <div
           className={`${settings.netto ? "" : "font-semibold text-green-600"}`}
         >
-          {formatCurrency(parseFloat(params.value))}
+          <span>{formatCurrency(parseFloat(params.value))} </span>
+          <span className="">
+            {target === "a"
+              ? `(${formatter.format(params.row?.avg90_ahsprcs / 100)})`
+              : ""}
+          </span>
         </div>
         {params.row[`${target}_qty` as keyof ModifiedProduct] > 1 && (
           <span className="text-xs">

@@ -39,9 +39,32 @@ export const KeepaGraph = ({ product }: { product: ModifiedProduct }) => {
   const hasSalesRanks = salesRanks && Object.keys(salesRanks).length;
 
   const parseArray = (array: number[]) => {
-    const parsedArray = [];
-    for (let i = 0; i < array.length; i += 2) {
-      parsedArray.push([array[i], array[i + 1]]);
+    let steps = 8;
+    switch (true) {
+      case array.length / 2 < 7:
+        steps = 2;
+        break;
+      case array.length / 2 > 400:
+        steps = 24;
+        break;
+    }
+    const parsedArray: [number, number][] = [];
+    const dates: string[] = [];
+    for (let i = 0; i < array.length; i += steps) {
+      const unixTimestamp = createUnixTimeFromKeepaTime(array[i]);
+      const date = new Date(unixTimestamp * 1000);
+      const year = date.getFullYear();
+      const month = date.getMonth() + 1; // Months are zero-indexed
+      const day = date.getDate();
+      const dateStr = `${year}-${month.toString().padStart(2, "0")}-${day
+        .toString()
+        .padStart(2, "0")}`;
+      if (dates.some((_) => _ === dateStr)) {
+        continue;
+      } else {
+        dates.push(dateStr);
+        parsedArray.push([unixTimestamp, array[i + 1]]);
+      }
     }
     return parsedArray;
   };
@@ -83,7 +106,7 @@ export const KeepaGraph = ({ product }: { product: ModifiedProduct }) => {
 
       const addToCombinedData = (data: number[][], type: DataPoint) => {
         data.forEach((entry, i) => {
-          const date = createUnixTimeFromKeepaTime(entry[0]);
+          const date = entry[0]
           if (entry[1] === -1) return;
 
           const value = type !== "salesRank" ? entry[1] / 100 : entry[1];
@@ -148,50 +171,53 @@ export const KeepaGraph = ({ product }: { product: ModifiedProduct }) => {
     if (product.curr_salesRank === -1) {
     }
     return (
-      <ul style={{ listStyleType: "none", padding: 0 }}>
-        {payload.map((entry: any, index: number) => {
-          switch (entry.dataKey) {
-            case "amazonPrice":
-              entry.value = `Amazon Price ${formatter.format(
-                product.avg90_ahsprcs / 100
-              )}`;
-              entry.color = "#FFA500";
-              break;
-            case "usedPrice":
-              entry.value = `Used Price ${formatter.format(
-                product.avg90_ausprcs / 100
-              )}`;
-              entry.color = "#444444";
-              break;
-            case "newPrice":
-              entry.value = `New Price ${formatter.format(
-                product.avg90_ansprcs / 100
-              )}`;
-              entry.color = "#8888dd";
-              break;
-            case "salesRank":
-              entry.value = `Sales Rank #${
-                product.curr_salesRank === -1 ? "N/A" : product.curr_salesRank
-              }`;
-              entry.color = "#3a883a";
-              break;
-          }
-          return (
-            <li
-              key={`item-${index}`}
-              style={{ marginBottom: 4 }}
-              className="flex flex-row items-center"
-            >
-              <svg width="14" height="14" style={{ marginRight: 4 }}>
-                <circle cx="7" cy="7" r="7" fill={entry.color} />{" "}
-                {/* Default circle symbol */}
-              </svg>
-              <span style={{ color: entry.color }}>{entry.value}</span>{" "}
-              {/* Customize text here */}
-            </li>
-          );
-        })}
-      </ul>
+      <>
+        <ul style={{ listStyleType: "none", padding: 0 }}>
+          {payload.map((entry: any, index: number) => {
+            switch (entry.dataKey) {
+              case "amazonPrice":
+                entry.value = `Amazon ${formatter.format(
+                  product.avg90_ahsprcs / 100
+                )} *`;
+                entry.color = "#FFA500";
+                break;
+              case "usedPrice":
+                entry.value = `Gebraucht ${formatter.format(
+                  product.avg90_ausprcs / 100
+                )} *`;
+                entry.color = "#444444";
+                break;
+              case "newPrice":
+                entry.value = `Neu ${formatter.format(
+                  product.avg90_ansprcs / 100
+                )} *`;
+                entry.color = "#8888dd";
+                break;
+              case "salesRank":
+                entry.value = `Bestseller Rang #${
+                  product.curr_salesRank === -1 ? "N/A" : product.curr_salesRank
+                }`;
+                entry.color = "#3a883a";
+                break;
+            }
+            return (
+              <li
+                key={`item-${index}`}
+                style={{ marginBottom: 4 }}
+                className="flex flex-row items-center"
+              >
+                <svg width="14" height="14" style={{ marginRight: 4 }}>
+                  <circle cx="7" cy="7" r="7" fill={entry.color} />{" "}
+                  {/* Default circle symbol */}
+                </svg>
+                <span style={{ color: entry.color }}>{entry.value}</span>{" "}
+                {/* Customize text here */}
+              </li>
+            );
+          })}
+        </ul>
+        <div className="text-xs">* 90 Tage-Durchschnitt</div>
+      </>
     );
   };
 
@@ -230,95 +256,94 @@ export const KeepaGraph = ({ product }: { product: ModifiedProduct }) => {
   };
 
   return (
-    <>
+    <div
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      className={`cursor:pointer relative h-full w-full`}
+    >
       <div
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-        className={`cursor:pointer relative h-full w-full`}
+        className={`${
+          isHovered
+            ? "absolute z-[5000] bg-white top-0 right-0"
+            : "flex items-center h-full"
+        }`}
       >
-        <div
-          className={`${
+        <LineChart
+          width={isHovered ? 870 : 100}
+          height={isHovered ? 500 : 50}
+          data={data}
+          margin={
             isHovered
-              ? "absolute z-[5000] bg-white top-0 right-0"
-              : "flex items-center h-full"
-          }`}
+              ? { top: 20, right: 5, left: 20, bottom: 5 }
+              : {
+                  top: 5,
+                  right: 5,
+                  left: 5,
+                  bottom: 5,
+                }
+          }
         >
-          <LineChart
-            width={isHovered ? 870 : 100}
-            height={isHovered ? 500 : 50}
-            data={data}
-            margin={
-              isHovered
-                ? { top: 20, right: 5, left: 20, bottom: 5 }
-                : {
-                    top: 5,
-                    right: 5,
-                    left: 5,
-                    bottom: 5,
-                  }
-            }
-          >
-            {isHovered && (
-              <>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="date" scale={"auto"} />
-                <YAxis
-                  yAxisId="left"
-                  tickFormatter={(value) =>
-                    formatter.format(
-                      Math.round(Number(Math.round(value).toFixed(0)))
-                    )
-                  }
-                  type="number"
-                  domain={["auto", "auto"]}
-                />
-                <YAxis />
-                <YAxis
-                  yAxisId="right"
-                  tickFormatter={(value) => `#${Math.round(value).toFixed(0)}`}
-                  orientation="right"
-                  type="number"
-                  domain={["auto", "auto"]}
-                />
-                <YAxis />
-                <Legend
-                  layout="vertical"
-                  verticalAlign="top"
-                  align="right"
-                  content={<CustomLegend />}
-                />
-              </>
-            )}
-            <Tooltip content={<CustomTooltip />} />
-            {hasSalesRanks && (
-              <Line
+          {isHovered && (
+            <>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="date" scale={"auto"} />
+              <YAxis
+                yAxisId="left"
+                tickFormatter={(value) =>
+                  formatter.format(
+                    Math.round(Number(Math.round(value).toFixed(0)))
+                  )
+                }
+                type="number"
+                domain={["auto", "auto"]}
+              />
+              <YAxis />
+              <YAxis
                 yAxisId="right"
-                dot={false}
-                connectNulls
-                type="monotone"
-                dataKey="salesRank"
-                stroke="#3a883a"
+                tickFormatter={(value) => `#${Math.round(value).toFixed(0)}`}
+                orientation="right"
+                type="number"
+                domain={["auto", "auto"]}
               />
-            )}
-            {hasAhstprcs && (
-              <Line
-                yAxisId="left"
-                type="step"
-                dataKey="amazonPrice"
-                connectNulls
-                stroke="#ff9900"
+              <YAxis />
+              <Legend
+                layout="vertical"
+                verticalAlign="top"
+                align="right"
+                content={<CustomLegend />}
               />
-            )}
-            {hasAnhstprcs && (
-              <Line
-                yAxisId="left"
-                type="step"
-                connectNulls
-                dataKey="newPrice"
-                stroke="#8888dd"
-              />
-            )}
-            {hasAuhstprcs && (
+            </>
+          )}
+          <Tooltip content={<CustomTooltip />} />
+          {hasSalesRanks && (
+            <Line
+              yAxisId="right"
+              dot={false}
+              connectNulls
+              type="monotone"
+              dataKey="salesRank"
+              stroke="#3a883a"
+            />
+          )}
+          {isHovered && hasAhstprcs && (
+            <Line
+              yAxisId="left"
+              type="step"
+              dataKey="amazonPrice"
+              connectNulls
+              stroke="#ff9900"
+            />
+          )}
+          {isHovered && hasAnhstprcs && (
+            <Line
+              yAxisId="left"
+              type="step"
+              connectNulls
+              dataKey="newPrice"
+              stroke="#8888dd"
+            />
+          )}
+          {/* {isHovered && hasAuhstprcs && (
               <Line
                 yAxisId="left"
                 type="step"
@@ -326,10 +351,9 @@ export const KeepaGraph = ({ product }: { product: ModifiedProduct }) => {
                 dataKey="usedPrice"
                 stroke="#444444"
               />
-            )}
-          </LineChart>
-        </div>
+            )} */}
+        </LineChart>
       </div>
-    </>
+    </div>
   );
 };
