@@ -85,7 +85,7 @@ const Page = async () => {
       acc.push({
         active: task ? true : false,
         task: task?.id ?? "",
-        lastSevenDays: `${((lastSevenDays / cntDays) * 100).toFixed(2)} %`,
+        lastSevenDays: `${(lastSevenDays / cntDays) * 100} `,
         today: `${totalToday.toFixed(2)} h`,
         name: _.crawlerId,
       });
@@ -96,30 +96,36 @@ const Page = async () => {
   );
 
   const usagePerTask = (taskType: string) => {
-    return crawler.reduce((acc: number, _) => {
-      const lastSevenDays = Object.entries(
-        _.activityPeriods as activityPeriods
-      ).reduce((acc, [date, types], i) => {
-        const day = Object.entries(types)
-          .filter(([type, val]) => type === taskType)
-          .reduce((acc, [type, val]) => {
-            acc += val.activeTime;
-            return acc;
-          }, 0);
-        acc += day;
+    const { zaehler, nenner } = crawler.reduce(
+      (acc: { nenner: number; zaehler: number }, _) => {
+        const lastSevenDays = Object.entries(
+          _.activityPeriods as activityPeriods
+        ).reduce((acc, [date, types], i) => {
+          const day = Object.entries(types)
+            .filter(([type, val]) => type === taskType)
+            .reduce((acc, [type, val]) => {
+              acc += val.activeTime;
+              return acc;
+            }, 0);
+          acc += day;
+          return acc;
+        }, 0);
+
+        const cntDays =
+          Object.keys(_.activityPeriods as activityPeriods).length *
+          24 *
+          60 *
+          60 *
+          1000;
+
+        acc.nenner += cntDays;
+        acc.zaehler += lastSevenDays;
         return acc;
-      }, 0);
+      },
+      { nenner: 0, zaehler: 0 }
+    );
 
-      const cntDays =
-        Object.keys(_.activityPeriods as activityPeriods).length *
-        24 *
-        60 *
-        60 *
-        1000;
-
-      acc += (lastSevenDays / cntDays) * 100;
-      return acc;
-    }, 0);
+    return `${((zaehler / nenner) * 100).toFixed(2)} %`;
   };
 
   const lookupInfoProgress = tasks.find(
@@ -164,7 +170,7 @@ const Page = async () => {
         <h3 className="text-base font-semibold leading-6 text-gray-900 flex flex-row space-x-1 items-center">
           {shops.length} Shops Crawl Shops Total: {total}
         </h3>
-        <div> Usage last 7 days: {usagePerTask("CRAWL_SHOP").toFixed(2)} %</div>
+        <div> Usage last 7 days: {usagePerTask("CRAWL_SHOP")} </div>
         <div className="flex gap-2">
           {shops.map((_) => (
             <Card key={_} style={{ width: 300 }}>
@@ -191,10 +197,7 @@ const Page = async () => {
         <h3 className="text-base font-semibold leading-6 text-gray-900 flex flex-row space-x-1 items-center">
           Match
         </h3>
-        <div>
-          {" "}
-          Usage last 7 days: {usagePerTask("MATCH_PRODUCTS").toFixed(2)} %
-        </div>
+        <div> Usage last 7 days: {usagePerTask("MATCH_PRODUCTS")}</div>
         {tasks
           .filter((task) => task.type === "MATCH_PRODUCTS")
           .map((_) => (
@@ -207,7 +210,7 @@ const Page = async () => {
         <h3 className="text-base font-semibold leading-6 text-gray-900 flex flex-row space-x-1 items-center">
           Crawl Eans
         </h3>
-        <div> Usage last 7 days: {usagePerTask("CRAWL_EAN").toFixed(2)} %</div>
+        <div> Usage last 7 days: {usagePerTask("CRAWL_EAN")} </div>
         {crawlEansProgress.length ? (
           crawlEansProgress.map((_: any) => (
             <div key={`crawl-eans-${_.shop}`}>
@@ -222,10 +225,7 @@ const Page = async () => {
         <h3 className="text-base font-semibold leading-6 text-gray-900 flex flex-row space-x-1 items-center">
           Lookup Infos
         </h3>
-        <div>
-          {" "}
-          Usage last 7 days: {usagePerTask("LOOKUP_INFO").toFixed(2)} %
-        </div>
+        <div> Usage last 7 days: {usagePerTask("LOOKUP_INFO")}</div>
         {lookupInfoProgress.length ? (
           lookupInfoProgress.map((_: any) => (
             <div key={`lookup-info-${_.shop}`}>
@@ -240,10 +240,7 @@ const Page = async () => {
         <h3 className="text-base font-semibold leading-6 text-gray-900 flex flex-row space-x-1 items-center">
           Query Eans on Ebay
         </h3>
-        <div>
-          {" "}
-          Usage last 7 days: {usagePerTask("QUERY_EANS_EBY").toFixed(2)} %
-        </div>
+        <div> Usage last 7 days: {usagePerTask("QUERY_EANS_EBY")}</div>
         {queryEansEbyProgress.length ? (
           queryEansEbyProgress.map((_: any) => (
             <div key={`query-eans-on-eby-${_.shop}`}>
@@ -259,10 +256,7 @@ const Page = async () => {
         <h3 className="text-base font-semibold leading-6 text-gray-900 flex flex-row space-x-1 items-center">
           LookupCategories
         </h3>
-        <div>
-          {" "}
-          Usage last 7 days: {usagePerTask("LOOKUP_CATEGORY").toFixed(2)} %
-        </div>
+        <div> Usage last 7 days: {usagePerTask("LOOKUP_CATEGORY")}</div>
         {lookupCategoryProgress ? (
           lookupCategoryProgress.map((_: any) => (
             <div key={`lookup-category-${_.shop}`}>
@@ -277,10 +271,7 @@ const Page = async () => {
         <h3 className="text-base font-semibold leading-6 text-gray-900 flex flex-row space-x-1 items-center">
           Crawl Azn Listings
         </h3>
-        <div>
-          {" "}
-          Usage last 7 days: {usagePerTask("CRAWL_AZN_LISTINGS").toFixed(2)} %
-        </div>
+        <div> Usage last 7 days: {usagePerTask("CRAWL_AZN_LISTINGS")}</div>
         {tasks
           .filter((task) => task.type === "CRAWL_EBY_LISTINGS")
           .sort((a, b) => b.progress.pending - a.progress.pending)
@@ -297,10 +288,7 @@ const Page = async () => {
         <h3 className="text-base font-semibold leading-6 text-gray-900 flex flex-row space-x-1 items-center">
           Crawl Eby Listings
         </h3>
-        <div>
-          {" "}
-          Usage last 7 days: {usagePerTask("CRAWL_AZN_LISTINGS").toFixed(2)} %
-        </div>
+        <div> Usage last 7 days: {usagePerTask("CRAWL_AZN_LISTINGS")}</div>
         {tasks
           .filter((task) => task.type === "CRAWL_AZN_LISTINGS")
           .sort((a, b) => b.progress.pending - a.progress.pending)
