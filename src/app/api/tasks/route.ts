@@ -1,6 +1,6 @@
 import { getLoggedInUser } from "@/server/appwrite";
 import { mongoAdminPromise, mongoPromise } from "@/server/mongo";
-import { Task } from "@/types/tasks";
+import { Task, WholeSaleTask } from "@/types/tasks";
 import { WholeSaleProduct } from "@/types/wholesaleProduct";
 import { NextRequest } from "next/server";
 import { z } from "zod";
@@ -86,7 +86,7 @@ export async function POST(request: NextRequest) {
     });
   }
 
-  const newTask: Task = {
+  const newTask: WholeSaleTask = {
     type: "WHOLESALE_SEARCH",
     id: "wholesale_search",
     browserConcurrency: 4,
