@@ -85,7 +85,7 @@ const Page = async () => {
       acc.push({
         active: task ? true : false,
         task: task?.id ?? "",
-        lastSevenDays: `${(lastSevenDays / cntDays) * 100} `,
+        lastSevenDays: `${((lastSevenDays / cntDays) * 100).toFixed(2)} %`,
         today: `${totalToday.toFixed(2)} h`,
         name: _.crawlerId,
       });
