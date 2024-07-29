@@ -309,7 +309,7 @@ export const DashboardLayout = ({
 
               <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
                 <div className="w-full">
-                  <TotalDeals />
+                {pathname === '/dashboard' &&<TotalDeals />}
                 </div>
                 {/* <form className="relative flex flex-1" action="#" method="GET">
                   <label htmlFor="search-field" className="sr-only">
