@@ -4,6 +4,7 @@ import webpack from 'webpack'
 
 const nextConfig = {
   basePath: "/app",
+  reactStrictMode: false,
   experimental: {
     serverComponentsExternalPackages: ['node-appwrite'],
   },

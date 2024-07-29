@@ -1,6 +1,6 @@
 {
   "name": "fe-arbitrage",
-  "version": "0.0.413",
+  "version": "0.0.414",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -38,6 +38,7 @@
     "papaparse": "^5.4.1",
     "parse-price": "^1.1.8",
     "react": "^18.3.1",
+    "react-countup": "^6.5.3",
     "react-dom": "^18.3.1",
     "react-imported-component": "^6.5.4",
     "recharts": "^2.12.7",

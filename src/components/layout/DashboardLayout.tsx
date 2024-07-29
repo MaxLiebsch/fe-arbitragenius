@@ -20,6 +20,8 @@ import { usePathname, useRouter } from "next/navigation";
 import Spinner from "../Spinner";
 import { useFormState } from "react-dom";
 import { Alert } from "antd";
+import TotalDeals from "../TotalDeals";
+import { TotalDealsContext } from "@/context/totalDealsContext";
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: HomeIcon, current: true },
@@ -58,6 +60,7 @@ export const DashboardLayout = ({
   const [state, formAction] = useFormState(logoutAction, {
     message: "",
   });
+  const [queryUpdate, setQueryUpdate] = useState(0);
 
   useEffect(() => {
     if (state.message === "success") {
@@ -66,7 +69,7 @@ export const DashboardLayout = ({
   }, [state, router]);
 
   return (
-    <>
+    <TotalDealsContext.Provider value={{queryUpdate, setQueryUpdate}}>
       <div className="h-full">
         <Transition.Root show={sidebarOpen} as={Fragment}>
           <Dialog
@@ -305,7 +308,9 @@ export const DashboardLayout = ({
               />
 
               <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
-                <div className="w-full"></div>
+                <div className="w-full">
+                  <TotalDeals />
+                </div>
                 {/* <form className="relative flex flex-1" action="#" method="GET">
                   <label htmlFor="search-field" className="sr-only">
                     Search
@@ -402,6 +407,6 @@ export const DashboardLayout = ({
           </div>
         </main>
       </div>
-    </>
+    </TotalDealsContext.Provider>
   );
 };

@@ -1,11 +1,12 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import { useFormState } from "react-dom";
 import { Checkbox, Form, Radio, Select, Switch } from "antd";
 import { updateSettingsAction } from "@/server/actions/update-settings";
 import { useQueryClient } from "@tanstack/react-query";
 import { SubmitButton } from "../FormSubmitBn";
 import { Settings } from "@/types/Settings";
+import { TotalDealsContext } from "@/context/totalDealsContext";
 
 const ProductFilterForm = ({
   settings,
@@ -14,6 +15,7 @@ const ProductFilterForm = ({
   settings: Settings;
   layout?: "slim" | "wide";
 }) => {
+  const {queryUpdate, setQueryUpdate} = useContext(TotalDealsContext)
   const [updateSettingsState, updateNameFormAction] = useFormState(
     updateSettingsAction,
     {
@@ -32,6 +34,7 @@ const ProductFilterForm = ({
           queryKey: ["preferences"],
           refetchType: "all",
         });
+        setQueryUpdate(new Date().getTime())
         await Promise.all([
           queryClient.invalidateQueries({
             queryKey: ["e"],
@@ -44,7 +47,7 @@ const ProductFilterForm = ({
         ]);
       }
     })();
-  }, [updateSettingsState, queryClient]);
+  }, [updateSettingsState, queryClient, setQueryUpdate]);
 
   return (
     <Form
@@ -244,7 +247,6 @@ const ProductFilterForm = ({
             <Form.Item name="buyBox">
               <Select
                 id="buyBox"
-                defaultValue={settings.buyBox}
                 style={{ width: "100%" }}
                 options={[
                   { value: "amazon", label: "Amazon" },
