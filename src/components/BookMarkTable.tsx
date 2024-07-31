@@ -6,25 +6,20 @@ import {
   useGridApiRef,
 } from "@mui/x-data-grid-premium";
 import React, { useMemo, useState } from "react";
-import useProductCount from "@/hooks/use-product-count";
-import useProducts, {
-  ProductPagination,
-  ProductSort,
-} from "@/hooks/use-products";
+import { ProductPagination, ProductSort } from "@/hooks/use-products";
 import Spinner from "./Spinner";
-import { Settings } from "@/types/Settings";
 import useBookMarkAdd from "@/hooks/use-bookmark-add";
-import { createColumns } from "@/util/ProductTableColumns";
 import useBookMarkRemove from "@/hooks/use-bookmark-remove";
+import { BookMarkProduct } from "@/types/Product";
+import { bookMarkColumns } from "@/util/BookmarkColumns";
+import { Settings } from "@/types/Settings";
 
-export default function ProductsTable(props: {
-  className?: string;
-  domain: string;
+export default function BookmarkTable(props: {
+  products: BookMarkProduct[];
   target: string;
-  settings: Settings;
+  loading: boolean;
 }) {
-  const { className, domain, target, settings } = props;
-
+  const { target, loading, products } = props;
   const [paginationModel, setPaginationModel] = useState<ProductPagination>({
     page: 0,
     pageSize: 20,
@@ -36,17 +31,8 @@ export default function ProductsTable(props: {
 
   const apiRef = useGridApiRef();
 
-  const productCountQuery = useProductCount(domain, target, settings);
-  const productQuery = useProducts(
-    domain,
-    paginationModel,
-    sortModel,
-    target,
-    settings
-  );
-
-  const bookMarkMutation = useBookMarkAdd();
-  const bookMarkDeleteMutation = useBookMarkRemove();
+  const addBookMark = useBookMarkAdd();
+  const removeBookmark = useBookMarkRemove();
 
   const handleSortModelChange = (model: GridSortModel) => {
     if (model.length) {
@@ -61,28 +47,19 @@ export default function ProductsTable(props: {
 
   const columns = useMemo(
     () =>
-      createColumns(
+      bookMarkColumns(
         target,
-        domain,
+        { netto: true } as Settings,
         paginationModel,
-        settings,
-        bookMarkMutation.mutate,
-        bookMarkDeleteMutation.mutate
+        addBookMark.mutate,
+        removeBookmark.mutate
       ),
-    [
-      target,
-      settings,
-      paginationModel,
-      domain,
-      bookMarkMutation.mutate,
-      bookMarkDeleteMutation.mutate,
-    ]
+    [removeBookmark.mutate, addBookMark.mutate, paginationModel, target]
   );
 
   return (
     <DataGridPremium
       apiRef={apiRef}
-      className={className}
       sortingOrder={["desc", "asc"]}
       initialState={{
         columns: {
@@ -95,17 +72,14 @@ export default function ProductsTable(props: {
       }}
       getRowId={(row) => row._id}
       columns={columns}
-      rows={productQuery.data ?? []}
-      rowCount={productCountQuery.data?.productCount ?? 0}
-      loading={productQuery.isFetching}
+      rows={products}
+      loading={loading}
       pageSizeOptions={[10, 20, 50]}
       paginationModel={paginationModel}
       onPaginationModelChange={setPaginationModel}
-      paginationMode="server"
       pagination={true}
       localeText={deDE.components.MuiDataGrid.defaultProps.localeText}
       getRowHeight={() => "auto"}
-      sortingMode="server"
       sx={{
         // disable cell selection style
         ".MuiDataGrid-cell:focus": {

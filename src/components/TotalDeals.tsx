@@ -47,7 +47,8 @@ const TotalDeals = () => {
         });
       }
     });
-  }, [queryUpdate]);
+    //@ts-ignore
+  }, [queryUpdate, amazon, ebay]);
 
   return (
     <div className="flex flex-row gap-2 items-center h-full">

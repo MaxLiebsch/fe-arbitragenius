@@ -31,6 +31,7 @@ export default function useProducts(
       "shop",
       domain,
       "product",
+      "get",
       pagination.page,
       pagination.pageSize,
       sort?.field,

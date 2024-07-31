@@ -46,8 +46,10 @@ export interface ModifiedProduct extends Product {
   bsr_1: number;
   bsr_cat_1: string;
   e_uprc: number;
+  isBookmarked: boolean;
   a_uprc: number;
   esin: string;
+  shop?: string;
   uprc: number;
   ebyCategories: EbyCategory[];
   qty: number;
@@ -82,6 +84,10 @@ export interface ModifiedProduct extends Product {
   costs: Costs;
   stockBuyBox: any;
   totalOfferCount: number;
+}
+
+export interface BookMarkProduct extends ModifiedProduct {
+  shop:string;
 }
 
 export interface Costs {

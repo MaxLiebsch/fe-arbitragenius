@@ -9,6 +9,7 @@ import {
   UserCircleIcon,
   UsersIcon,
   ArrowTrendingUpIcon,
+  BookmarkIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
@@ -37,6 +38,12 @@ const navigation = [
     icon: ArrowTrendingUpIcon,
     current: false,
   },
+  {
+    name: "Meine Deals",
+    href: "/dashboard/my-deals",
+    icon: BookmarkIcon,
+    current: false,
+  }
 ];
 
 const userNavigation = [{ name: "Dein Profil", href: "/dashboard/profile" }];

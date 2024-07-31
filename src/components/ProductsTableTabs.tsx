@@ -31,11 +31,11 @@ const ProductTableTabs = ({
           </Tab>
         ))}
       </Tab.List>
-      <Tab.Panels className="flex h-full">
-        <Tab.Panel className="w-full  max-h-[89%]">
+      <Tab.Panels className="flex h-[calc(100vh-195px)]">
+        <Tab.Panel className="w-full  h-full">
           <ProductsTable domain={domain} target="a" settings={settings} />
         </Tab.Panel>
-        <Tab.Panel className="w-full max-h-[89%]">
+        <Tab.Panel className="w-full h-full">
           <ProductsTable domain={domain} target="e" settings={settings} />
         </Tab.Panel>
       </Tab.Panels>

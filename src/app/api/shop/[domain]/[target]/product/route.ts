@@ -1,12 +1,19 @@
+import { getLoggedInUser } from "@/server/appwrite";
 import { mongoPromise } from "@/server/mongo";
 import { BuyBox, Settings } from "@/types/Settings";
-import { SortDirection } from "mongodb";
+import { ObjectId, SortDirection } from "mongodb";
 import { NextRequest } from "next/server";
 
 export async function GET(
   request: NextRequest,
   { params }: { params: { domain: string; target: string } }
 ) {
+  const user = await getLoggedInUser();
+  if (!user) {
+    return new Response("Unauthorized", {
+      status: 401,
+    });
+  }
   const searchParams = request.nextUrl.searchParams;
   const { domain, target } = params;
 
@@ -101,7 +108,12 @@ export async function GET(
                     $add: [
                       {
                         $divide: [
-                          {$multiply:["$prc", {$divide: ["$e_qty", '$qty']}]},
+                          {
+                            $multiply: [
+                              "$prc",
+                              { $divide: ["$e_qty", "$qty"] },
+                            ],
+                          },
                           {
                             $add: [
                               1,
@@ -319,6 +331,35 @@ export async function GET(
       },
     });
   }
+  aggregation.push(
+    {
+      $lookup: {
+        from: "users",
+        let: { productId: "$_id", target },
+        pipeline: [
+          { $match: { userId: user.$id } },
+          { $unwind: "$bookmarks" },
+          {
+            $match: {
+              $expr: {
+                $and: [
+                  { $eq: ["$bookmarks.productId", "$$productId"] },
+                  { $eq: ["$bookmarks.target", "$$target"] },
+                ],
+              },
+            },
+          },
+          { $project: { _id: 1 } },
+        ],
+        as: "isBookmarked",
+      },
+    },
+    {
+      $addFields: {
+        isBookmarked: { $gt: [{ $size: "$isBookmarked" }, 0] },
+      },
+    }
+  );
   const mongo = await mongoPromise;
   const res = await mongo
     .db(process.env.NEXT_MONGO_DB)
