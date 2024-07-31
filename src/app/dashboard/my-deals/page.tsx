@@ -8,7 +8,6 @@ import BookmarkTable from "@/components/BookMarkTable";
 
 const Page = () => {
   const bookMarks = useBookmarks();
-  console.log("bookMarks:", bookMarks);
 
   return (
     <div className="h-full">
