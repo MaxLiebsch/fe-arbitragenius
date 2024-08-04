@@ -25,6 +25,9 @@ ENV PATH $PATH:/app/node_modules/.bin
 
 EXPOSE 3000/tcp
 
+RUN touch /var/log/app.log
+RUN chmod 666 /var/log/app.log
+
 WORKDIR /app
 
 COPY --from=build /app/node_modules node_modules

@@ -62,7 +62,6 @@ export async function DELETE(
     "process.pending": { $eq: 0 },
   });
 
-  console.log('taskFinished:', taskFinished)
   if (taskFinished !== null) {
     return new Response(
       "Analyse kann nicht gelöscht werden, da sie noch in Bearbeitung ist",

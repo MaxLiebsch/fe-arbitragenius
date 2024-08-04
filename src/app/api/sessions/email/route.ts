@@ -44,8 +44,7 @@ export async function POST(request: NextRequest) {
   );
 
   const status = response.status;
-  const data = response.data;
-  console.log('data:', data)
+  const data = response.data; 
 
   let headers = response.headers;
   delete headers["content-length"];

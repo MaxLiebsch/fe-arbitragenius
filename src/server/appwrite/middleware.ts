@@ -4,6 +4,7 @@ import { ReadonlyRequestCookies } from "next/dist/server/web/spec-extension/adap
 import { RequestCookies } from "next/dist/server/web/spec-extension/cookies";
 import type { NextRequest, NextResponse } from "next/server";
 import { sessionCookieName } from "../constant";
+import logger from "@/util/logger";
 
 const legacy = process.env.NODE_ENV === 'development' ? "_legacy": ""
 
@@ -49,7 +50,7 @@ export function authMiddleware<Preferences extends Models.Preferences>(
 
       return handler(request);
     } catch (error) {
-      console.error(error);
+      logger.error(`Error fetching user: ${error}`);
 
       return handler(request);
     }

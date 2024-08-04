@@ -4,7 +4,6 @@ import { Client, Account, Databases, Users } from "node-appwrite";
 import { cookies } from "next/headers";
 import { sessionCookieName } from "../constant";
 
-
 export async function createSessionClient(token?: string) {
   const client = new Client()
     .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT ?? "")
@@ -20,6 +19,17 @@ export async function createSessionClient(token?: string) {
     client.setSession(token);
   }
 
+  return {
+    get account() {
+      return new Account(client);
+    },
+  };
+}
+
+export async function createClient() {
+  const client = new Client()
+    .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT ?? "")
+    .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT ?? "");
   return {
     get account() {
       return new Account(client);
