@@ -11,8 +11,6 @@ import { defaultProductFilterSettings } from "@/constant/productFilterSettings";
 import { headers } from "next/headers";
 import { differenceInDays } from "date-fns";
 
-
-
 export default async function Dashboard({
   searchParams,
 }: {
@@ -72,7 +70,7 @@ export default async function Dashboard({
         </Button>
         <DashboardViewButton />
       </div>
-      <section className="grow">
+      <section className="grow relative">
         {view === "grid" && (
           <>
             <div className="px-4 relative">
@@ -88,6 +86,10 @@ export default async function Dashboard({
         )}
         <div className="mb-8">
           {view === "table" ? <ShopsTable className="h-full" /> : <ShopsGrid />}
+        </div>
+        <div className="absolute text-primary-950 text-xs bottom-2">
+          DipMax Export GmbH übernimmt für die dargestellten Informationen und
+          deren Genauigkeit und Vollständigkeit keine Gewährleistung.
         </div>
       </section>
     </main>

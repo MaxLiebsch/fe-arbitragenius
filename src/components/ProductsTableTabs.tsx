@@ -13,6 +13,8 @@ const ProductTableTabs = ({
   settings: Settings;
 }) => {
   return (
+    <div className="relative">
+
     <Tab.Group>
       <Tab.List className="flex min-w-full flex-none gap-x-6 text-lg font-semibold leading-2 text-gray-400 pb-2">
         {[
@@ -31,7 +33,11 @@ const ProductTableTabs = ({
           </Tab>
         ))}
       </Tab.List>
-      <Tab.Panels className="flex h-[calc(100vh-195px)]">
+      <div className="absolute text-primary-950 text-xs right-0 top-[1.25rem]">
+        DipMax Export GmbH übernimmt für die dargestellten Informationen und
+        deren Genauigkeit und Vollständigkeit keine Gewährleistung.
+      </div>
+      <Tab.Panels className="flex h-[calc(100vh-198px)]">
         <Tab.Panel className="w-full  h-full">
           <ProductsTable domain={domain} target="a" settings={settings} />
         </Tab.Panel>
@@ -40,6 +46,7 @@ const ProductTableTabs = ({
         </Tab.Panel>
       </Tab.Panels>
     </Tab.Group>
+    </div>
   );
 };
 

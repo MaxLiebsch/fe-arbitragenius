@@ -10,7 +10,7 @@ const Page = () => {
   const bookMarks = useBookmarks();
 
   return (
-    <div className="h-full">
+    <div className="h-full relative">
       <Title>Meine Deals</Title>
       <Tab.Group>
         <Tab.List className="flex min-w-full flex-none gap-x-6 text-lg font-semibold leading-2 text-gray-400 pb-2">
@@ -30,6 +30,10 @@ const Page = () => {
             </Tab>
           ))}
         </Tab.List>
+        <div className="absolute text-primary-950 text-xs right-0 top-[5.2rem]">
+        DipMax Export GmbH übernimmt für die dargestellten Informationen und
+        deren Genauigkeit und Vollständigkeit keine Gewährleistung.
+      </div>
         <Tab.Panels className="flex h-[calc(100vh-195px)]">
           <Tab.Panel className="w-full  h-full">
             <BookmarkTable
