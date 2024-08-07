@@ -1,3 +1,5 @@
+'use client'
+
 import { TotalDealsContext } from "@/context/totalDealsContext";
 import { QueryKey, useQueryClient } from "@tanstack/react-query";
 import React, { useContext, useEffect } from "react";
@@ -50,8 +52,7 @@ const TotalDeals = () => {
   }, [queryUpdate]);
 
   return (
-    <div className="flex flex-row gap-2 items-center h-full">
-      <div className="font-semibold text-lg">Gesamt:</div>
+    <div className="flex flex-row gap-2 items-center mb-3">
       <div className="border-primary-400 border w-72 group inline-flex items-center justify-center rounded-md py-2 px-4 font-semibold focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2">
         {amazonTotal > 0 ? (
           <CountUp

@@ -68,12 +68,12 @@ export default function Page() {
               featured
               name={
                 <div className="text-silver-chalice-400 text-3xl line-through">
-                  149€
+                  199€
                 </div>
               }
               price={
                 <div className="relative">
-                  99€/<span className="text-3xl">Monat</span>
+                  149€/<span className="text-3xl">Monat</span>
                   <span className="text-xs absolute -bottom-3 -right-1">
                     exkl. MwSt.
                   </span>
@@ -89,12 +89,12 @@ export default function Page() {
             <Plan
               name={
                 <div className="text-silver-chalice-300 text-3xl line-through">
-                  99€
+                  149€
                 </div>
               }
               price={
                 <div className="relative">
-                  79€/<span className="text-3xl">Monat</span>
+                  99€/<span className="text-3xl">Monat</span>
                   <span className="text-xs absolute -bottom-3 -right-1">
                     exkl. MwSt.
                   </span>

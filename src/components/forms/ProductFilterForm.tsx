@@ -1,7 +1,15 @@
 "use client";
 import React, { useContext, useEffect } from "react";
 import { useFormState } from "react-dom";
-import { Checkbox, Form, Radio, Select, Switch } from "antd";
+import {
+  Checkbox,
+  Form,
+  Input,
+  InputNumber,
+  Radio,
+  Select,
+  Switch,
+} from "antd";
 import { updateSettingsAction } from "@/server/actions/update-settings";
 import { useQueryClient } from "@tanstack/react-query";
 import { SubmitButton } from "../FormSubmitBn";
@@ -15,7 +23,7 @@ const ProductFilterForm = ({
   settings: Settings;
   layout?: "slim" | "wide";
 }) => {
-  const {queryUpdate, setQueryUpdate} = useContext(TotalDealsContext)
+  const { queryUpdate, setQueryUpdate } = useContext(TotalDealsContext);
   const [updateSettingsState, updateNameFormAction] = useFormState(
     updateSettingsAction,
     {
@@ -24,6 +32,7 @@ const ProductFilterForm = ({
       error: "",
     }
   );
+  console.log("updateSettingsState:", updateSettingsState);
 
   const queryClient = useQueryClient();
 
@@ -34,7 +43,7 @@ const ProductFilterForm = ({
           queryKey: ["preferences"],
           refetchType: "all",
         });
-        setQueryUpdate(new Date().getTime())
+        setQueryUpdate(new Date().getTime());
         await Promise.all([
           queryClient.invalidateQueries({
             queryKey: ["e"],
@@ -59,7 +68,7 @@ const ProductFilterForm = ({
         className={`grid grid-cols-1 ${
           layout === "wide"
             ? "gap-x-6 gap-y-3 sm:grid-cols-6 sm:max-w-7xl"
-            : "gap-x-2 gap-y-1 sm:grid-cols-10"
+            : "gap-x-2 gap-y-1 sm:grid-cols-1"
         }`}
       >
         {/* Netto/Brutto */}
@@ -100,13 +109,27 @@ const ProductFilterForm = ({
             Minimale Marge % ({settings.netto ? "Netto" : "Brutto"})
           </label>
           <div className="mt-2">
-            <Form.Item name="minPercentageMargin">
-              <input
-                type="number"
+            <Form.Item
+              name="minPercentageMargin"
+              rules={[
+                {
+                  validator: (_, value) => {
+                    if (value === 0 || value) {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject(
+                      new Error("Positive Zahl zwischen 0 und 150")
+                    );
+                  },
+                },
+              ]}
+            >
+              <InputNumber
                 name="minPercentageMargin"
                 step={1}
                 id="minPercentageMargin"
                 min={0}
+                style={{ width: "100%" }}
                 max={150}
                 className="block w-full rounded-md border-0 bg-white/5 py-1.5 pl-1 text-secondary-950 shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
               />
@@ -124,11 +147,26 @@ const ProductFilterForm = ({
             Minimale Marge € ({settings.netto ? "Netto" : "Brutto"})
           </label>
           <div className="mt-2">
-            <Form.Item name="minMargin">
-              <input
+            <Form.Item
+              name="minMargin"
+              rules={[
+                {
+                  validator: (_, value) => {
+                    if (value === 0 || value) {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject(
+                      new Error("Positive Zahl zwischen 0 und 9999")
+                    );
+                  },
+                },
+              ]}
+            >
+              <InputNumber
                 type="number"
                 name="minMargin"
                 id="minMargin"
+                style={{ width: "100%" }}
                 step={1}
                 min={0}
                 max={9999}
@@ -148,12 +186,27 @@ const ProductFilterForm = ({
             Maximaler BSR Hauptkategorie
           </label>
           <div className="mt-2">
-            <Form.Item name="maxPrimaryBsr">
-              <input
+            <Form.Item
+              name="maxPrimaryBsr"
+              rules={[
+                {
+                  validator: (_, value) => {
+                    if (value === 0 || value) {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject(
+                      new Error("Positive Zahl zwischen 0 und 1.000.000")
+                    );
+                  },
+                },
+              ]}
+            >
+              <InputNumber
                 type="number"
                 step={1}
                 name="maxPrimaryBsr"
                 id="maxPrimaryBsr"
+                style={{ width: "100%" }}
                 min={0}
                 max={1000000}
                 className="block w-full rounded-md border-0 bg-white/5 py-1.5 pl-1 text-secondary-950 shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
@@ -172,11 +225,26 @@ const ProductFilterForm = ({
             Maximaler BSR Nebenkategorie
           </label>
           <div className="mt-2">
-            <Form.Item name="maxSecondaryBsr">
-              <input
+            <Form.Item
+              name="maxSecondaryBsr"
+              rules={[
+                {
+                  validator: (_, value) => {
+                    if (value === 0 || value) {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject(
+                      new Error("Positive Zahl zwischen 0 und 1.000.000")
+                    );
+                  },
+                },
+              ]}
+            >
+              <InputNumber
                 type="number"
                 name="maxSecondaryBsr"
                 step={1}
+                style={{ width: "100%" }}
                 id="maxSecondaryBsr"
                 min={0}
                 max={1000000}
@@ -196,11 +264,26 @@ const ProductFilterForm = ({
             Minimale monatliche Verkäufe
           </label>
           <div className="mt-2">
-            <Form.Item name="monthlySold">
-              <input
+            <Form.Item
+              name="monthlySold"
+              rules={[
+                {
+                  validator: (_, value) => {
+                    if (value === 0 || value) {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject(
+                      new Error("Positive Zahl zwischen 0 und 9999")
+                    );
+                  },
+                },
+              ]}
+            >
+              <InputNumber
                 type="number"
                 name="monthlySold"
                 step={1}
+                style={{ width: "100%" }}
                 id="monthlySold"
                 min={0}
                 max={9999}
@@ -219,12 +302,27 @@ const ProductFilterForm = ({
           >
             Maximale Offer
           </label>
-          <div className="mt-2">
-            <Form.Item name="totalOfferCount">
-              <input
+          <div className="mt-2 w-full">
+            <Form.Item
+              name="totalOfferCount"
+              rules={[
+                {
+                  validator: (_, value) => {
+                    if (value === 0 || value) {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject(
+                      new Error("Positive Zahl zwischen 0 und 9999")
+                    );
+                  },
+                },
+              ]}
+            >
+              <InputNumber
                 type="number"
                 name="totalOfferCount"
                 id="totalOfferCount"
+                style={{ width: "100%" }}
                 step={1}
                 min={0}
                 max={9999}
@@ -316,11 +414,26 @@ const ProductFilterForm = ({
                 Versand klein €
               </label>
               <div className="mt-2">
-                <Form.Item name="tptSmall">
-                  <input
+                <Form.Item
+                  name="tptSmall"
+                  rules={[
+                    {
+                      validator: (_, value) => {
+                        if (value === 0 || value) {
+                          return Promise.resolve();
+                        }
+                        return Promise.reject(
+                          new Error("Positive Zahl zwischen 0 und 9999")
+                        );
+                      },
+                    },
+                  ]}
+                >
+                  <InputNumber
                     type="number"
                     name="tptSmall"
                     id="tptSmall"
+                    style={{ width: '100%' }}
                     step={0.01}
                     min={0}
                     max={9999}
@@ -342,12 +455,27 @@ const ProductFilterForm = ({
                 Versand mittel €
               </label>
               <div className="mt-2">
-                <Form.Item name="tptMiddle">
-                  <input
+                <Form.Item
+                  name="tptMiddle"
+                  rules={[
+                    {
+                      validator: (_, value) => {
+                        if (value === 0 || value) {
+                          return Promise.resolve();
+                        }
+                        return Promise.reject(
+                          new Error("Positive Zahl zwischen 0 und 9999")
+                        );
+                      },
+                    },
+                  ]}
+                >
+                  <InputNumber
                     type="number"
                     name="tptMiddle"
                     id="tptMiddle"
                     step={0.01}
+                    style={{ width: '100%' }}
                     min={0}
                     max={9999}
                     className="block w-full rounded-md border-0 bg-white/5 py-1.5 pl-1 text-secondary-950 shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
@@ -368,12 +496,25 @@ const ProductFilterForm = ({
                 Versand groß €
               </label>
               <div className="mt-2">
-                <Form.Item name="tptLarge">
-                  <input
+                <Form.Item name="tptLarge"
+                rules={[
+                  {
+                    validator: (_, value) => {
+                      if (value === 0 || value) {
+                        return Promise.resolve();
+                      }
+                      return Promise.reject(
+                        new Error("Positive Zahl zwischen 0 und 9999")
+                      );
+                    },
+                  },
+                ]}>
+                  <InputNumber
                     type="number"
                     name="tptLarge"
                     id="tptLarge"
                     step={0.01}
+                    style={{ width: '100%' }}
                     min={0}
                     max={9999}
                     className="block w-full rounded-md border-0 bg-white/5 py-1.5 pl-1 text-secondary-950 shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
@@ -395,7 +536,7 @@ const ProductFilterForm = ({
               </label>
               <div className="mt-2">
                 <Form.Item name="strg">
-                  <input
+                  <Input
                     type="number"
                     name="strg"
                     id="strg"

@@ -1,26 +1,17 @@
 "use server";
 import ShopsGrid from "@/components/ShopsGrid";
-import ShopsTable from "@/components/ShopsTable";
 import { StarIcon } from "@heroicons/react/16/solid";
-import { Button, Input } from "antd";
 import { mongoPromise } from "@/server/mongo";
-import DashboardViewButton from "@/components/DashboardViewButton";
 import ProductFilterForm from "@/components/forms/ProductFilterForm";
 import { createSessionClient } from "@/server/appwrite";
 import { defaultProductFilterSettings } from "@/constant/productFilterSettings";
-import { headers } from "next/headers";
-import { differenceInDays } from "date-fns";
+import TotalDeals from "@/components/TotalDeals";
 
 export default async function Dashboard({
   searchParams,
 }: {
   searchParams: any;
 }) {
-  const headersList = headers();
-  const status = headersList.get("subscription-status");
-  const trialEnd = headersList.get("subscription-trial-end");
-  const trialStart = headersList.get("subscription-trial-start");
-
   const { account } = await createSessionClient();
   const prefs = (await account.getPrefs()) as any;
 
@@ -33,8 +24,6 @@ export default async function Dashboard({
     };
   }
 
-  const view = searchParams.view ?? "grid";
-
   const mongo = await mongoPromise;
 
   const shopCount = await mongo
@@ -46,50 +35,34 @@ export default async function Dashboard({
 
   return (
     <main className="h-full flex flex-col relative">
-      {status === "trialing" ? (
-        <div className="absolute text-center w-full">
-          Danke, dass Du dich für Arbispotter entschieden hast. Du befindest
-          Dich noch{" "}
-          {differenceInDays(Number(trialEnd as string) * 1000, Date.now())} Tage
-          in der Testphase.
-        </div>
-      ) : (
-        <></>
-      )}
-      <div className="flex flex-row gap-2 mt-4 mb-3 items-center">
-        <Button type="text">
-          <h3 className="text-base font-semibold leading-6 text-gray-900 flex flex-row space-x-1 items-center">
-            <div>Retailer ({shopCount})</div>
+      <section className="grow relative grid grid-cols-4 gap-2">
+        <div className="px-4 relative col-span-1 flex flex-col border-r border-gray-200">
+          <h3 className="flex flex-row text-base font-semibold leading-6 mb-3 text-gray-900 space-x-1 items-center">
+            Produktfilter
           </h3>
-        </Button>
-        <Button type="text">
-          <h3 className="flex flex-row gap-1 items-center justify-items-center text-base font-semibold leading-6 text-gray-900">
-            <StarIcon className="h-6 w-6" />
-            <div>Favoriten</div>
-          </h3>
-        </Button>
-        <DashboardViewButton />
-      </div>
-      <section className="grow relative">
-        {view === "grid" && (
-          <>
-            <div className="px-4 relative">
-              <h3 className="text-base font-semibold leading-6 mb-3 text-gray-900 flex flex-row space-x-1 items-center">
-                Produktfilter
-              </h3>
-              <ProductFilterForm settings={settings} />
-              <div className="text-sm text-end text-gray-700 absolute bottom-0 right-4">
-                Anzahl profitabler Produkte auf Grundlage deiner Einstellungen
-              </div>
-            </div>
-          </>
-        )}
-        <div className="mb-8">
-          {view === "table" ? <ShopsTable className="h-full" /> : <ShopsGrid />}
+          <div className="flex overflow-y-auto h-[calc(100vh-130px)]">
+            <ProductFilterForm settings={settings} />
+          </div>
         </div>
-        <div className="absolute text-primary-950 text-xs bottom-2">
-          DipMax Export GmbH übernimmt für die dargestellten Informationen und
-          deren Genauigkeit und Vollständigkeit keine Gewährleistung.
+        <div className="mb-8 ml-6 col-span-3">
+          <div className="flex flex-row gap-2 pb-3 items-center">
+            <h3 className="flex flex-row text-base font-semibold leading-6 mb-3 text-gray-900 space-x-1 items-center">
+              <div>Retailer ({shopCount})</div>
+            </h3>
+            <h3 className="flex flex-row text-base font-semibold leading-6 mb-3 text-gray-900 space-x-1 items-center">
+              <StarIcon className="h-6 w-6" />
+              <div>Favoriten</div>
+            </h3>
+          </div>
+          <TotalDeals />
+          <div className="text-sm text-end text-gray-700 absolute top-0 right-4">
+            Anzahl profitabler Produkte auf Grundlage deiner Einstellungen
+          </div>
+          <div className="absolute text-primary-950 text-xs bottom-0 right-0">
+            DipMax Export GmbH übernimmt für die dargestellten Informationen und
+            deren Genauigkeit und Vollständigkeit keine Gewährleistung.
+          </div>
+          <ShopsGrid />
         </div>
       </section>
     </main>

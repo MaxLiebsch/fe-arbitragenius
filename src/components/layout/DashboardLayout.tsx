@@ -20,16 +20,15 @@ import { Logo } from "../Logo";
 import { usePathname, useRouter } from "next/navigation";
 import Spinner from "../Spinner";
 import { useFormState } from "react-dom";
-import { Alert } from "antd";
-import TotalDeals from "../TotalDeals";
 import { TotalDealsContext } from "@/context/totalDealsContext";
+import { differenceInDays } from "date-fns";
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: HomeIcon, current: true },
   {
-    name: "Profile",
-    href: "/dashboard/profile",
-    icon: UsersIcon,
+    name: "Meine Deals",
+    href: "/dashboard/my-deals",
+    icon: BookmarkIcon,
     current: false,
   },
   {
@@ -39,9 +38,9 @@ const navigation = [
     current: false,
   },
   {
-    name: "Meine Deals",
-    href: "/dashboard/my-deals",
-    icon: BookmarkIcon,
+    name: "Profile",
+    href: "/dashboard/profile",
+    icon: UsersIcon,
     current: false,
   },
 ];
@@ -54,8 +53,14 @@ function classNames(...classes: string[]) {
 
 export const DashboardLayout = ({
   children,
+  subscriptionStatus,
 }: Readonly<{
   children: React.ReactNode;
+  subscriptionStatus: {
+    status: string | null;
+    trialEnd: string | null;
+    trialStart: string | null;
+  };
 }>) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const accountQuery = useAccount();
@@ -316,7 +321,22 @@ export const DashboardLayout = ({
 
               <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
                 <div className="w-full">
-                  {pathname === "/dashboard" && <TotalDeals />}
+                  {subscriptionStatus.status === "trialing" ? (
+                    <div className="mt-5">
+                      Danke, dass Du dich für Arbispotter entschieden hast. Du
+                      befindest Dich noch{" "}
+                      <span className="font-semibold">
+
+                      {differenceInDays(
+                        Number(subscriptionStatus.trialEnd as string) * 1000,
+                        Date.now()
+                      )}{" "}
+                      </span>
+                      Tage in der Testphase.
+                    </div>
+                  ) : (
+                    <></>
+                  )}
                 </div>
                 {/* <form className="relative flex flex-1" action="#" method="GET">
                   <label htmlFor="search-field" className="sr-only">
@@ -410,7 +430,7 @@ export const DashboardLayout = ({
             </div>
           </div>
           <div className="lg:pl-80 pt-20 pb-4 px-4 sm:px-6 lg:px-8 h-full relative">
-            {children} 
+            {children}
           </div>
         </main>
       </div>

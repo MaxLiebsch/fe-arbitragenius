@@ -12,7 +12,7 @@ export async function createCheckoutSession(
 ) {
   const origin: string = headers().get("origin") as string;
 
-  const amount = interval === "year" ? 79 * 12 : 99;
+  const amount = interval === "year" ? 99 * 12 : 149;
 
   const taxRate = await stripe.taxRates.create({
     display_name: "MwSt.",

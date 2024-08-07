@@ -3,6 +3,7 @@ import { NextRequest } from "next/server";
 
 import axios from "axios";
 import { z } from "zod";
+import https from 'https'
 
 
 const VerificationSchema = z.object({
@@ -36,6 +37,9 @@ export async function POST(request: NextRequest) {
       validateStatus: function (status) {
         return status <= 500; // Resolve only if the status code is 500 and less
       },
+      httpsAgent: new https.Agent({
+        rejectUnauthorized: false
+      }),
       headers: {
         ...requestHeaders,
         "Content-Type": "application/json",
