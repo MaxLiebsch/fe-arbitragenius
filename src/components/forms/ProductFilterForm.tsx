@@ -1,5 +1,5 @@
 "use client";
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useFormState } from "react-dom";
 import {
   Checkbox,
@@ -24,15 +24,15 @@ const ProductFilterForm = ({
   layout?: "slim" | "wide";
 }) => {
   const { queryUpdate, setQueryUpdate } = useContext(TotalDealsContext);
-  const [updateSettingsState, updateNameFormAction] = useFormState(
-    updateSettingsAction,
-    {
-      message: "",
-      fieldErrors: {},
-      error: "",
-    }
-  );
-  console.log("updateSettingsState:", updateSettingsState);
+  const [updateSettingsState, setUpdateSettingsState] = useState<{
+    message?: string;
+    fieldErrors: {};
+    error?: string
+  }>({
+    message: "",
+    fieldErrors: {},
+    error: "",
+  });
 
   const queryClient = useQueryClient();
 
@@ -58,14 +58,29 @@ const ProductFilterForm = ({
     })();
   }, [updateSettingsState, queryClient, setQueryUpdate]);
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const onFinish = async (values: any) => {
+    setUpdateSettingsState({ message: "", fieldErrors: {}, error: "" });
+    setIsSubmitting(true); // Set the submission state to true
+    try {
+      // Simulate an async operation (like an API call)
+      const updateSettings = await updateSettingsAction(values);
+      setUpdateSettingsState(updateSettings)
+    } finally {
+      setIsSubmitting(false); // Reset the submission state
+      
+    }
+  };
+
   return (
     <Form
       className="md:col-span-2"
       initialValues={settings}
-      onFinish={updateNameFormAction}
+      onFinish={onFinish}
     >
       <div
-        className={`grid grid-cols-1 ${
+        className={`grid grid-cols-1 h-full ${
           layout === "wide"
             ? "gap-x-6 gap-y-3 sm:grid-cols-6 sm:max-w-7xl"
             : "gap-x-2 gap-y-1 sm:grid-cols-1"
@@ -82,10 +97,16 @@ const ProductFilterForm = ({
               htmlFor="minMargin"
               className="block text-sm font-medium leading-6 text-secondary-950"
             >
-              Preise
+              <h2
+                className={`${
+                  layout === "wide" ? "sm:col-span-6" : "hidden"
+                }  text-base font-semibold leading-7 text-secondary-950`}
+              >
+                Preise
+              </h2>
             </label>
             <div className="mt-2">
-              <Form.Item name="netto">
+              <Form.Item style={{ marginBottom: "0px" }} name="netto">
                 <Switch checkedChildren="netto" unCheckedChildren="brutto" />
               </Form.Item>
             </div>
@@ -110,6 +131,7 @@ const ProductFilterForm = ({
           </label>
           <div className="mt-2">
             <Form.Item
+              style={{ marginBottom: "0px" }}
               name="minPercentageMargin"
               rules={[
                 {
@@ -148,6 +170,7 @@ const ProductFilterForm = ({
           </label>
           <div className="mt-2">
             <Form.Item
+              style={{ marginBottom: "0px" }}
               name="minMargin"
               rules={[
                 {
@@ -187,6 +210,7 @@ const ProductFilterForm = ({
           </label>
           <div className="mt-2">
             <Form.Item
+              style={{ marginBottom: "0px" }}
               name="maxPrimaryBsr"
               rules={[
                 {
@@ -226,6 +250,7 @@ const ProductFilterForm = ({
           </label>
           <div className="mt-2">
             <Form.Item
+              style={{ marginBottom: "0px" }}
               name="maxSecondaryBsr"
               rules={[
                 {
@@ -265,6 +290,7 @@ const ProductFilterForm = ({
           </label>
           <div className="mt-2">
             <Form.Item
+              style={{ marginBottom: "0px" }}
               name="monthlySold"
               rules={[
                 {
@@ -304,6 +330,7 @@ const ProductFilterForm = ({
           </label>
           <div className="mt-2 w-full">
             <Form.Item
+              style={{ marginBottom: "0px" }}
               name="totalOfferCount"
               rules={[
                 {
@@ -342,7 +369,7 @@ const ProductFilterForm = ({
             BuyBox
           </label>
           <div className="mt-2">
-            <Form.Item name="buyBox">
+            <Form.Item style={{ marginBottom: "0px" }} name="buyBox">
               <Select
                 id="buyBox"
                 style={{ width: "100%" }}
@@ -364,7 +391,11 @@ const ProductFilterForm = ({
           </div>
           <div className="relative flex items-start">
             <div className="flex flex-row items-center justify-center mt-2">
-              <Form.Item valuePropName="checked" name="productsWithNoBsr">
+              <Form.Item
+                style={{ marginBottom: "0px" }}
+                valuePropName="checked"
+                name="productsWithNoBsr"
+              >
                 <Checkbox className="rounded border-gray-300 pt-4 text-secondary-950 focus:ring-secondary-500">
                   Produkte ohne BSR anzeigen
                 </Checkbox>
@@ -390,7 +421,7 @@ const ProductFilterForm = ({
             Standard Ebay Versandkosten
           </label>
           <div className="mt-2">
-            <Form.Item name="tptStandard">
+            <Form.Item style={{ marginBottom: "0px" }} name="tptStandard">
               <Radio.Group name="tptStandard" id="tptStandard">
                 <Radio value={"tptSmall"}>Versand klein</Radio>
                 <Radio value={"tptMiddle"}>Versand mittel</Radio>
@@ -404,7 +435,7 @@ const ProductFilterForm = ({
             {/* Versand klein */}
             <div
               className={`${
-                layout === "wide" ? "sm:col-span-1" : "sm:col-span-2"
+                layout === "wide" ? "sm:col-span-2" : "sm:col-span-2"
               }`}
             >
               <label
@@ -415,6 +446,7 @@ const ProductFilterForm = ({
               </label>
               <div className="mt-2">
                 <Form.Item
+                  style={{ marginBottom: "0px" }}
                   name="tptSmall"
                   rules={[
                     {
@@ -433,7 +465,7 @@ const ProductFilterForm = ({
                     type="number"
                     name="tptSmall"
                     id="tptSmall"
-                    style={{ width: '100%' }}
+                    style={{ width: "100%" }}
                     step={0.01}
                     min={0}
                     max={9999}
@@ -445,17 +477,18 @@ const ProductFilterForm = ({
             {/* Versand mittel */}
             <div
               className={`${
-                layout === "wide" ? "sm:col-span-1" : "sm:col-span-2"
+                layout === "wide" ? "sm:col-span-2" : "sm:col-span-2"
               }`}
             >
               <label
                 htmlFor="tptMiddle"
-                className="block text-sm font-medium leading-6 text-secondary-950"
+                className="block pre text-sm font-medium leading-6 text-secondary-950"
               >
                 Versand mittel €
               </label>
               <div className="mt-2">
                 <Form.Item
+                  style={{ marginBottom: "0px" }}
                   name="tptMiddle"
                   rules={[
                     {
@@ -475,7 +508,7 @@ const ProductFilterForm = ({
                     name="tptMiddle"
                     id="tptMiddle"
                     step={0.01}
-                    style={{ width: '100%' }}
+                    style={{ width: "100%" }}
                     min={0}
                     max={9999}
                     className="block w-full rounded-md border-0 bg-white/5 py-1.5 pl-1 text-secondary-950 shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
@@ -486,7 +519,7 @@ const ProductFilterForm = ({
             {/* Versand big */}
             <div
               className={`${
-                layout === "wide" ? "sm:col-span-1" : "sm:col-span-2"
+                layout === "wide" ? "sm:col-span-2" : "sm:col-span-2"
               }`}
             >
               <label
@@ -496,25 +529,28 @@ const ProductFilterForm = ({
                 Versand groß €
               </label>
               <div className="mt-2">
-                <Form.Item name="tptLarge"
-                rules={[
-                  {
-                    validator: (_, value) => {
-                      if (value === 0 || value) {
-                        return Promise.resolve();
-                      }
-                      return Promise.reject(
-                        new Error("Positive Zahl zwischen 0 und 9999")
-                      );
+                <Form.Item
+                  style={{ marginBottom: "0px" }}
+                  name="tptLarge"
+                  rules={[
+                    {
+                      validator: (_, value) => {
+                        if (value === 0 || value) {
+                          return Promise.resolve();
+                        }
+                        return Promise.reject(
+                          new Error("Positive Zahl zwischen 0 und 9999")
+                        );
+                      },
                     },
-                  },
-                ]}>
+                  ]}
+                >
                   <InputNumber
                     type="number"
                     name="tptLarge"
                     id="tptLarge"
                     step={0.01}
-                    style={{ width: '100%' }}
+                    style={{ width: "100%" }}
                     min={0}
                     max={9999}
                     className="block w-full rounded-md border-0 bg-white/5 py-1.5 pl-1 text-secondary-950 shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
@@ -525,7 +561,7 @@ const ProductFilterForm = ({
             {/* Lagerkosten */}
             <div
               className={`${
-                layout === "wide" ? "sm:col-span-1" : "sm:col-span-2"
+                layout === "wide" ? "sm:col-span-2" : "sm:col-span-2"
               }`}
             >
               <label
@@ -535,7 +571,7 @@ const ProductFilterForm = ({
                 Lagerkosten €
               </label>
               <div className="mt-2">
-                <Form.Item name="strg">
+                <Form.Item style={{ marginBottom: "0px" }} name="strg">
                   <Input
                     type="number"
                     name="strg"
@@ -567,7 +603,7 @@ const ProductFilterForm = ({
           )}
 
           <div className="flex ml-auto">
-            <SubmitButton text="Speichern" />
+            <SubmitButton text="Speichern" isSubmitting={isSubmitting} />
           </div>
         </div>
       </div>

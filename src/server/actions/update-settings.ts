@@ -3,7 +3,6 @@
 import { AppwriteException } from "node-appwrite";
 import { createSessionClient } from "../appwrite";
 import { SettingsSchema } from "@/types/Settings";
-import { parse } from "path";
 
 interface FieldError {
   message: string;
@@ -20,7 +19,6 @@ interface UpdateSettingsState {
 }
 
 export async function updateSettingsAction(
-  prevState: UpdateSettingsState | null,
   formData: FormData
 ): Promise<UpdateSettingsState> {
   const parsedFormData = JSON.parse(JSON.stringify(formData));

@@ -41,7 +41,7 @@ const ShopTile = ({
     }
   }
   return (
-    <Card key={shop.d} title={shop.ne} bordered={false}>
+    <Card key={shop.d} title={shop.ne} bordered={false} style={{width: '100%'}}>
       <div className="flex flex-row gap-2 items-center">
         <Link href={`/dashboard/shop/${shop.d}`}>
           <>

@@ -139,7 +139,7 @@ const Page = () => {
         <Tab.Panel>
           <div className="divide-y divide-white/5">
             <h1 className="sr-only">Account Einstellungen</h1>
-            <div className="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 px-4 py-16 sm:px-6 md:grid-cols-3 lg:px-8">
+            <div className="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 px-4 py-6 sm:px-6 md:grid-cols-3 lg:px-8">
               <div>
                 <h2 className="text-base font-semibold leading-7 text-secondary-950">
                   Persönliche Informationen
@@ -211,7 +211,7 @@ const Page = () => {
               </form>
             </div>
             {/* Change business information */}
-            <div className="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 px-4 py-16 sm:px-6 md:grid-cols-3 lg:px-8">
+            <div className="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 px-4 py-6 sm:px-6 md:grid-cols-3 lg:px-8">
               <div>
                 <h2 className="text-base font-semibold leading-7 text-secondary-950">
                   Geschäftsinformation
@@ -412,7 +412,7 @@ const Page = () => {
               </form>
             </div>
             {/* Change password */}
-            <div className="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 px-4 py-16 sm:px-6 md:grid-cols-3 lg:px-8">
+            <div className="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 px-4 py-6 sm:px-6 md:grid-cols-3 lg:px-8">
               <div>
                 <h2 className="text-base font-semibold leading-7 text-secondary-950">
                   Passwort ändern
@@ -482,7 +482,7 @@ const Page = () => {
               </form>
             </div>
             {/* Logout from all sessions */}
-            <div className="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 px-4 py-16 sm:px-6 md:grid-cols-3 lg:px-8">
+            <div className="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 px-4 py-6 sm:px-6 md:grid-cols-3 lg:px-8">
               <div>
                 <h2 className="text-base font-semibold leading-7 text-secondary-950">
                   Andere Sitzungen abmelden
@@ -535,7 +535,7 @@ const Page = () => {
               </form>
             </div>
             {/* Delete account */}
-            <div className="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 px-4 py-16 sm:px-6 md:grid-cols-3 lg:px-8">
+            <div className="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 px-4 py-6 sm:px-6 md:grid-cols-3 lg:px-8">
               <div>
                 <h2 className="text-base font-semibold leading-7 text-secondary-950">
                   Account löschen
@@ -574,7 +574,7 @@ const Page = () => {
         <Tab.Panel>
           <div className="divide-y divide-white/5">
             <h1 className="sr-only">Rechnungen</h1>
-            <div className="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 px-4 py-16 sm:px-6 md:grid-cols-3 lg:px-8">
+            <div className="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 px-4 py-6 sm:px-6 md:grid-cols-3 lg:px-8">
               <div>
                 <h2 className="text-base font-semibold leading-7 text-secondary-950">
                   Rechnungen
@@ -587,7 +587,7 @@ const Page = () => {
         <Tab.Panel>
           <div className="divide-y divide-white/5">
             <h1 className="sr-only">Benachrichtigungen</h1>
-            <div className="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 px-4 py-16 sm:px-6 md:grid-cols-3 lg:px-8">
+            <div className="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 px-4 py-6 sm:px-6 md:grid-cols-3 lg:px-8">
               <div>
                 <h2 className="text-base font-semibold leading-7 text-secondary-950">
                   Benachrichtigungen - coming soon

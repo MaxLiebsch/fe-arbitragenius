@@ -62,7 +62,9 @@ export default async function Dashboard({
             DipMax Export GmbH übernimmt für die dargestellten Informationen und
             deren Genauigkeit und Vollständigkeit keine Gewährleistung.
           </div>
-          <ShopsGrid />
+          <div className="flex h-[calc(100vh-250px)] overflow-y-auto w-full">
+            <ShopsGrid />
+          </div>
         </div>
       </section>
     </main>
