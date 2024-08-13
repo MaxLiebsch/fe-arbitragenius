@@ -9,7 +9,7 @@ import { KeepaGraph } from "../components/KeepaGraph";
 import { ModifiedProduct } from "@/types/Product";
 import { parseISO } from "date-fns";
 import CopyToClipboard from "../components/CopyToClipboard";
-import { Checkbox, Popover, Tooltip } from "antd";
+import { Badge, Checkbox, Popover, Tooltip } from "antd";
 import ContentMarge from "../components/ContentMarge";
 import ContentEbyMarge from "../components/ContentEbyMarge";
 import Link from "next/link";
@@ -50,6 +50,20 @@ export const createSalesTableColumns: (
   addBookmark,
   removeBookmark
 ) => [
+  {
+    field: "updatedAt",
+    headerName: "Gelistet seit",
+    width: 140,
+    renderCell: (params) => (
+      <div>
+        {new Date(params.row.updatedAt).toLocaleString("de-DE", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "2-digit",
+        })}
+      </div>
+    ),
+  },
   {
     field: "nm",
     headerName: "Info",

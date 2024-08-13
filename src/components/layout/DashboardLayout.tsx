@@ -28,7 +28,12 @@ import { Settings } from "@/types/Settings";
 import { Badge } from "antd";
 
 const navigation = [
-  { name: "Shops Übersicht", href: "/dashboard", icon: HomeIcon, current: true },
+  {
+    name: "Shops Übersicht",
+    href: "/dashboard",
+    icon: HomeIcon,
+    current: true,
+  },
   {
     name: "Deal Monitor",
     href: "/dashboard/daily-deals",
@@ -80,7 +85,10 @@ export const DashboardLayout = ({
   const favoriteShopsQuery = useFavoriteShops();
   const eSalesCount = useSalesCount("e", settings);
   const aSalesCount = useSalesCount("a", settings);
-  const newDeals = Boolean(eSalesCount.data?.totalProductsToday || aSalesCount.data?.totalProductsToday)
+  const newDeals = Boolean(
+    eSalesCount.data?.totalProductsToday || aSalesCount.data?.totalProductsToday
+  );
+  console.log("newDeals:", newDeals);
   const pathname = usePathname();
 
   const [state, formAction] = useFormState(logoutAction, {
@@ -186,15 +194,8 @@ export const DashboardLayout = ({
                                     )}
                                     aria-hidden="true"
                                   />
-                                  {item.href === "/dashboard/daily-deals" ? (
-                                    <div>
-                                      <Badge.Ribbon text="Hippies">
-                                        {item.name}
-                                      </Badge.Ribbon>
-                                    </div>
-                                  ) : (
-                                    item.name
-                                  )}
+
+                                  {item.name}
                                 </Link>
                               </li>
                             ))}
@@ -265,9 +266,14 @@ export const DashboardLayout = ({
                         <Badge.Ribbon
                           text="Neue Deals"
                           placement="end"
-
-                          className={`!-top-2 ${item.href !=='/dashboard/daily-deals' && 'hidden'} ${
-                            item.href === "/dashboard/daily-deals" && newDeals && "visible"
+                          className={`!-top-2 ${
+                            item.href !== "/dashboard/daily-deals"
+                              ? "hidden"
+                              : ""
+                          } ${
+                            item.href === "/dashboard/daily-deals" && newDeals
+                              ? "visible"
+                              : "hidden"
                           }`}
                         >
                           <Link

@@ -9,14 +9,17 @@ export const usePagination = () => {
 
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);
-    const page = searchParams.get("page") || 0;
+    let page = Number(searchParams.get("page")) || 0;
+    if(page  > 0){
+      page = page - 1;
+    }
     const pageSize = searchParams.get("pageSize") || 20;
     setPaginationModel({ page: +page, pageSize: +pageSize });
   }, []);
 
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);
-    searchParams.set("page", paginationModel.page.toString());
+    searchParams.set("page", (paginationModel.page + 1).toString());
     searchParams.set("pageSize", paginationModel.pageSize.toString());
     window.history.replaceState(
       {},
