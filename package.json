@@ -1,6 +1,6 @@
 {
   "name": "fe-arbitrage",
-  "version": "0.0.441",
+  "version": "0.0.442",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -32,7 +32,7 @@
     "jsoneditor": "^10.1.0",
     "jsoneditor-react": "^3.1.2",
     "mongodb": "^6.4.0",
-    "next": "^14.3.0-canary.33",
+    "next": "v14.2.5",
     "node-appwrite": "^12.0.0",
     "notistack": "^3.0.1",
     "papaparse": "^5.4.1",
@@ -45,6 +45,7 @@
     "sharp": "^0.33.4",
     "stripe": "^14.21.0",
     "winston": "^3.13.1",
+    "xlsx": "^0.18.5",
     "zod": "^3.22.4"
   },
   "devDependencies": {

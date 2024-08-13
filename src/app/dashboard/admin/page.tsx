@@ -1,6 +1,6 @@
 import MatchChecker from "@/components/MatchChecker";
 import { getLoggedInUser } from "@/server/appwrite";
-import { mongoPromise } from "@/server/mongo";
+import clientPool from "@/server/mongoPool";
 import { redirect } from "next/navigation";
 import React from "react";
 
@@ -9,7 +9,7 @@ const Page = async () => {
 
   if (!user?.labels.includes("admin")) redirect("/");
 
-  const mongo = await mongoPromise;
+  const mongo = await clientPool['NEXT_MONGO'];
 
   const shops = await mongo
     .db(process.env.NEXT_MONGO_DB)

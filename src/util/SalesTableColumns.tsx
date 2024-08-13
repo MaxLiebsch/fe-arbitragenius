@@ -18,9 +18,9 @@ import { UseMutateFunction } from "@tanstack/react-query";
 import { parseSalesRank } from "./parseSalesRank";
 import { ProductPagination } from "@/hooks/use-products";
 
-export const createColumns: (
+export const createSalesTableColumns: (
   target: string,
-  domain: string,
+
   pagination: ProductPagination,
   settings: Settings,
   addBookmark: UseMutateFunction<
@@ -45,30 +45,11 @@ export const createColumns: (
   >
 ) => GridColDef<ModifiedProduct>[] = (
   target,
-  domain,
   pagination,
   settings,
   addBookmark,
   removeBookmark
 ) => [
-  {
-    field: "ctgry",
-    flex: 0.15,
-    headerName: "Kategorie",
-    renderCell: (params) => {
-      if (typeof params.row.ctgry === "string") {
-        return <>{params.row.ctgry}</>;
-      } else if (Array.isArray(params.row.ctgry)) {
-        return (
-          <div className="flex flex-col">
-            {params.row.ctgry.map((ctgry: string, i: number) => (
-              <div key={ctgry + i}>{ctgry}</div>
-            ))}
-          </div>
-        );
-      }
-    },
-  },
   {
     field: "nm",
     headerName: "Info",
@@ -95,6 +76,11 @@ export const createColumns: (
       return (
         <div className="flex flex-col divide-y p-1">
           <div className={`${params.row["nm"]?.length < 114 && "flex gap-1"}`}>
+            <span className="font-semibold">
+              {params.row.shop!.slice(0, 1).toUpperCase() +
+                params.row.shop!.slice(1)}
+              :{" "}
+            </span>
             {LinkWrapper(params.row.lnk, params.row.nm, params.row.mnfctr)}
             {params.row[`qty` as "qty"] > 1 && (
               <div>({params.row[`qty` as "qty"]} Stück)</div>
@@ -416,13 +402,21 @@ export const createColumns: (
         onChange={(e) => {
           if (e.target.checked) {
             addBookmark({
-              body: { target: target, shop: domain, productId: params.row._id },
+              body: {
+                target: target,
+                shop: "sales",
+                productId: params.row._id,
+              },
               page: pagination.page,
               pageSize: pagination.pageSize,
             });
           } else {
             removeBookmark({
-              body: { target: target, shop: domain, productId: params.row._id },
+              body: {
+                target: target,
+                shop: "sales",
+                productId: params.row._id,
+              },
               page: pagination.page,
               pageSize: pagination.pageSize,
             });

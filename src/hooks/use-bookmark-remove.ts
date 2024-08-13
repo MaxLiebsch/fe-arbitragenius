@@ -3,9 +3,122 @@ import {
   BookmarkDeleteSchema,
   BookMarkReturn,
   BookmarkSchema,
+  Variables,
 } from "@/types/Bookmarks";
 import { ModifiedProduct } from "@/types/Product";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  QueryClient,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
+import {
+  invalidateProductQueriesOnSettled,
+  invalidateSalesQueriesOnSettled,
+} from "./use-bookmark-add";
+
+const invalidateProductQueries = async (
+  variables: Variables,
+  queryClient: QueryClient
+) => {
+  const queryKey = [
+    variables.body.target,
+    "shop",
+    variables.body.shop,
+    "product",
+    "get",
+    variables.page,
+    variables.pageSize,
+  ];
+  await queryClient.cancelQueries({ queryKey, exact: false });
+  const previousQuery = queryClient.getQueriesData({
+    queryKey,
+    exact: false,
+  });
+  if (previousQuery.length) {
+    const previousQueryData = previousQuery[0];
+    const products = (previousQueryData[1] as ModifiedProduct[]).map(
+      (product) => {
+        if (product._id === variables.body.productId) {
+          return {
+            ...product,
+            isBookmarked: false,
+          };
+        }
+        return product;
+      }
+    );
+    queryClient.setQueryData(previousQueryData[0], products);
+  }
+  await queryClient.cancelQueries({ queryKey: ["bookmarks"] });
+  const previousBookmarks = queryClient.getQueryData([
+    "bookmarks",
+  ]) as BookMarkReturn;
+
+  if (previousBookmarks) {
+    const bookmarks = {
+      ...previousBookmarks,
+      [variables.body.target]: previousBookmarks[
+        variables.body.target as "e" | "a"
+      ].filter((product) => {
+        if (product._id !== variables.body.productId) {
+          return product;
+        }
+      }),
+    };
+    queryClient.setQueryData(["bookmarks"], bookmarks);
+  }
+};
+
+const invalidateSalesQueries = async (
+  variables: Variables,
+  queryClient: QueryClient
+) => {
+  const queryKey = [
+    variables.body.target,
+    "sales",
+    "get",
+    variables.page,
+    variables.pageSize,
+  ];
+  await queryClient.cancelQueries({ queryKey, exact: false });
+  const previousQuery = queryClient.getQueriesData({
+    queryKey,
+    exact: false,
+  });
+  if (previousQuery.length) {
+    const previousQueryData = previousQuery[0];
+    const products = (previousQueryData[1] as ModifiedProduct[]).map(
+      (product) => {
+        if (product._id === variables.body.productId) {
+          return {
+            ...product,
+            isBookmarked: false,
+          };
+        }
+        return product;
+      }
+    );
+    queryClient.setQueryData(previousQueryData[0], products);
+  }
+  await queryClient.cancelQueries({ queryKey: ["bookmarks"] });
+  const previousBookmarks = queryClient.getQueryData([
+    "bookmarks",
+  ]) as BookMarkReturn;
+
+  if (previousBookmarks) {
+    const bookmarks = {
+      ...previousBookmarks,
+      [variables.body.target]: previousBookmarks[
+        variables.body.target as "e" | "a"
+      ].filter((product) => {
+        if (product._id !== variables.body.productId) {
+          return product;
+        }
+      }),
+    };
+    queryClient.setQueryData(["bookmarks"], bookmarks);
+  }
+};
 
 export default function useBookMarkRemove() {
   const queryClient = useQueryClient();
@@ -25,67 +138,18 @@ export default function useBookMarkRemove() {
       if (!response.ok) throw new Error(await response.text());
     },
     onMutate: async (variables) => {
-      const queryKey = [
-        variables.body.target,
-        "shop",
-        variables.body.shop,
-        "product",
-        "get",
-        variables.page,
-        variables.pageSize,
-      ];
-      await queryClient.cancelQueries({ queryKey, exact: false });
-      const previousQuery = queryClient.getQueriesData({
-        queryKey,
-        exact: false,
-      });
-      if (previousQuery.length) {
-        const previousQueryData = previousQuery[0];
-        const products = (previousQueryData[1] as ModifiedProduct[]).map(
-          (product) => {
-            if (product._id === variables.body.productId) {
-              return {
-                ...product,
-                isBookmarked: false,
-              };
-            }
-            return product;
-          }
-        );
-        queryClient.setQueryData(previousQueryData[0], products);
-      }
-      await queryClient.cancelQueries({ queryKey: ["bookmarks"] });
-      const previousBookmarks = queryClient.getQueryData([
-        "bookmarks",
-      ]) as BookMarkReturn;
-      
-      if (previousBookmarks) {
-        const bookmarks = {
-          ...previousBookmarks,
-          [variables.body.target]: previousBookmarks[
-            variables.body.target as "e" | "a"
-          ].filter((product) => {
-            if (product._id !== variables.body.productId) {
-              return product;
-            }
-          }),
-        };
-        queryClient.setQueryData(["bookmarks"], bookmarks);
+      if (variables.body.shop === "sales") {
+        await invalidateSalesQueries(variables, queryClient);
+      } else {
+        await invalidateProductQueries(variables, queryClient);
       }
     },
     onSettled: (data, error, variables, context) => {
-      queryClient.invalidateQueries({ queryKey: ["bookmarks"] });
-      const queryKey = [
-        variables.body.target,
-        "shop",
-        variables.body.shop,
-        "product",
-        "get",
-      ];
-      queryClient.invalidateQueries({
-        queryKey,
-        exact: false,
-      });
+      if (variables.body.shop === "sales") {
+        invalidateSalesQueriesOnSettled(variables, queryClient);
+      } else {
+        invalidateProductQueriesOnSettled(variables, queryClient);
+      }
     },
     onError: (err, domain, context) => {
       console.log("err:", err);

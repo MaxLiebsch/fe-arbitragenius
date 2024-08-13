@@ -1,21 +1,21 @@
+import { getLoggedInUser } from "@/server/appwrite";
 import clientPool from "@/server/mongoPool";
 import { BuyBox, Settings } from "@/types/Settings";
+import { ObjectId, SortDirection } from "mongodb";
 import { NextRequest } from "next/server";
-
-/*
-    verified empty show
-    verified [admin] not show
-    verified [user1, user2, user3] not show
-
-*/
 
 export async function GET(
   request: NextRequest,
   { params }: { params: { domain: string; target: string } }
 ) {
-  const { target, domain } = params;
-  const mongo = await clientPool['NEXT_MONGO'];
+  const user = await getLoggedInUser();
+  if (!user) {
+    return new Response("Unauthorized", {
+      status: 401,
+    });
+  }
   const searchParams = request.nextUrl.searchParams;
+  const target = searchParams.get("target") || "a";
 
   const isAmazon = target === "a";
 
@@ -23,35 +23,32 @@ export async function GET(
     minMargin: Number(searchParams.get("minMargin")) || 0,
     minPercentageMargin: Number(searchParams.get("minPercentageMargin")) || 0,
     maxPrimaryBsr: Number(searchParams.get("maxPrimaryBsr")) || 1000000,
-    maxSecondaryBsr: Number(searchParams.get("maxSecondaryBsr")) || 1000000,
-    productsWithNoBsr: searchParams.get("productsWithNoBsr") === "true",
-    netto: searchParams.get("netto") === "true",
     tptSmall: Number(searchParams.get("tptSmall")) || 2.95,
     tptMiddle: Number(searchParams.get("tptMiddle")) || 4.95,
     tptLarge: Number(searchParams.get("tptLarge")) || 6.95,
     strg: Number(searchParams.get("strg")) || 0,
-    tptStandard: searchParams.get("tptStandard") || "tptSmall",
-    monthlySold: searchParams.get("monthlySold")
-      ? Number(searchParams.get("monthlySold"))
-      : 0,
-    totalOfferCount: searchParams.get("totalOfferCount")
-      ? Number(searchParams.get("totalOfferCount"))
-      : 0,
+    tptStandard: searchParams.get("tptStandard") || "tptMiddle",
+    maxSecondaryBsr: Number(searchParams.get("maxSecondaryBsr")) || 1000000,
+    productsWithNoBsr: searchParams.get("productsWithNoBsr") === "true",
+    netto: searchParams.get("netto") === "true",
+    monthlySold: Number(searchParams.get("monthlySold")) || 0,
+    totalOfferCount: Number(searchParams.get("totalOfferCount")) || 0,
     buyBox: (searchParams.get("buyBox") as BuyBox) || "both",
   };
+
+  const targetVerificationPending = searchParams.get(
+    `${target}_vrfd.vrfn_pending`
+  );
 
   let {
     minMargin,
     minPercentageMargin,
     maxPrimaryBsr,
     maxSecondaryBsr,
-    tptSmall,
-    tptMiddle,
-    tptLarge,
-    strg,
-    tptStandard,
     productsWithNoBsr,
     netto,
+    strg,
+    tptStandard,
     monthlySold,
     totalOfferCount,
     buyBox,
@@ -62,13 +59,9 @@ export async function GET(
     minPercentageMargin = Number((minPercentageMargin * 1.19).toFixed(0));
   }
 
-  const targetVerificationPending = searchParams.get(
-    `${target}_vrfd.vrfn_pending`
-  );
-
   const aggregation: { [key: string]: any }[] = [];
-  const findQuery: any[] = [];
 
+  const findQuery: any[] = [];
   if (isAmazon) {
     aggregation.push({
       $addFields: {
@@ -91,13 +84,6 @@ export async function GET(
             if: { $size: "$bsr" },
             then: { $arrayElemAt: ["$bsr", 2] },
             else: null,
-          },
-        },
-        primaryBsrExists: {
-          $cond: {
-            if: [{ $ne: ["$primaryBsr", null] }],
-            then: true,
-            else: false,
           },
         },
       },
@@ -172,10 +158,11 @@ export async function GET(
   findQuery.push({
     $and: [
       { [`${target}_prc`]: { $gt: 0 } },
-      { [`${target}_mrgn`]: { $gt: minMargin } },
       { [`${target}_mrgn_pct`]: { $gt: minPercentageMargin, $lte: 150 } },
+      { [`${target}_mrgn`]: { $gt: minMargin } },
     ],
   });
+
   if (targetVerificationPending) {
     findQuery.push({
       $and: [
@@ -215,18 +202,6 @@ export async function GET(
   }
 
   if (isAmazon) {
-    if (monthlySold > 0) {
-      findQuery.push({
-        monthlySold: { $gte: monthlySold },
-      });
-    }
-
-    if (totalOfferCount > 0) {
-      findQuery.push({
-        totalOfferCount: { $lte: totalOfferCount },
-      });
-    }
-
     if (buyBox === "amazon") {
       findQuery.push({
         buyBoxIsAmazon: true,
@@ -250,6 +225,18 @@ export async function GET(
           { buyBoxIsAmazon: false },
           { buyBoxIsAmazon: null },
         ],
+      });
+    }
+
+    if (monthlySold > 0) {
+      findQuery.push({
+        monthlySold: { $gte: monthlySold },
+      });
+    }
+
+    if (totalOfferCount > 0) {
+      findQuery.push({
+        totalOfferCount: { $lte: totalOfferCount },
       });
     }
 
@@ -283,6 +270,45 @@ export async function GET(
       );
     }
   }
+
+  const query = {
+    page: Number(searchParams.get("page")) || 0,
+    size: Number(searchParams.get("size")) || 10,
+    field: searchParams.get("sortby"),
+    order: searchParams.get("sortorder"),
+  };
+
+  if (query.page < 0)
+    return new Response("page must be at least 0", {
+      status: 400,
+    });
+
+  if (query.size < 1)
+    return new Response("size must be at least 1", {
+      status: 400,
+    });
+
+  const sort: {
+    [key: string]: SortDirection;
+  } = {};
+
+  if (isAmazon) {
+    if (query.field === "none") {
+      sort["primaryBsrExists"] = -1;
+      sort["primaryBsr.number"] = 1;
+      sort["secondaryBsr.number"] = 1;
+      sort["thirdBsr.number"] = 1;
+      sort["a_mrgn_pct"] = -1;
+    } else if (query.field) {
+      sort[query.field] = query.order === "asc" ? 1 : -1;
+    }
+  } else {
+    if (query.field === "none") {
+      sort["e_mrgn_pct"] = -1;
+    } else if (query.field) {
+      sort[query.field] = query.order === "asc" ? 1 : -1;
+    }
+  }
   const pblshKey = isAmazon ? "a_pblsh" : "e_pblsh";
   aggregation.push(
     {
@@ -291,9 +317,16 @@ export async function GET(
         $and: findQuery,
       },
     },
-    { $count: "productCount" }
+    {
+      $sort: sort,
+    },
+    {
+      $skip: query.page * query.size,
+    },
+    {
+      $limit: query.size,
+    }
   );
-
   if (isAmazon && productsWithNoBsr) {
     aggregation.splice(2, 0, {
       $addFields: {
@@ -307,12 +340,41 @@ export async function GET(
       },
     });
   }
-
+  aggregation.push(
+    {
+      $lookup: {
+        from: "users",
+        let: { productId: "$_id", target },
+        pipeline: [
+          { $match: { userId: user.$id } },
+          { $unwind: "$bookmarks" },
+          {
+            $match: {
+              $expr: {
+                $and: [
+                  { $eq: ["$bookmarks.productId", "$$productId"] },
+                  { $eq: ["$bookmarks.target", "$$target"] },
+                ],
+              },
+            },
+          },
+          { $project: { _id: 1 } },
+        ],
+        as: "isBookmarked",
+      },
+    },
+    {
+      $addFields: {
+        isBookmarked: { $gt: [{ $size: "$isBookmarked" }, 0] },
+      },
+    }
+  );
+  const mongo = await clientPool['NEXT_MONGO'];
   const res = await mongo
     .db(process.env.NEXT_MONGO_DB)
-    .collection(domain)
+    .collection("sales")
     .aggregate(aggregation)
     .toArray();
 
-  return Response.json(res.length ? res[0] : { productCount: 0 });
+  return Response.json(res);
 }

@@ -1,6 +1,6 @@
 import TaskEditor from "@/components/TaskEditor";
 import { getLoggedInUser } from "@/server/appwrite";
-import { mongoAdminPromise } from "@/server/mongo";
+import clientPool from "@/server/mongoPool";
 import { CrawlTask } from "@/types/tasks";
 import { redirect } from "next/navigation";
 import React from "react";
@@ -15,7 +15,7 @@ const Page = async ({
 
   if (!user?.labels.includes("admin")) redirect("/");
 
-  const mongo = await mongoAdminPromise;
+  const mongo = await clientPool['NEXT_MONGO_CRAWLER_DATA_ADMIN'];
 
   const tasks = await mongo
     .db(process.env.NEXT_MONOGO_CRAWLER_DATA)
@@ -26,7 +26,7 @@ const Page = async ({
   if (!tasks.length) redirect("/");
 
   const _tasks = tasks
-    .filter((task) => task.type === "CRAWL_SHOP")
+    .filter((task) => task.type === "CRAWL_SHOP"&& task.type === 'DAILY_SALES')
     .map((task) => {
       return { ...task, _id: task._id.toString() };
     }) as CrawlTask[];

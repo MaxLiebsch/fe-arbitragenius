@@ -1,5 +1,5 @@
 import { getLoggedInUser } from "@/server/appwrite";
-import { mongoAdminPromise } from "@/server/mongo";
+import clientPool from "@/server/mongoPool";
 import { SortDirection } from "mongodb";
 import { NextRequest } from "next/server";
 
@@ -33,7 +33,7 @@ export async function GET(
     });
   const aggregation = [];
 
-  const mongo = await mongoAdminPromise;
+  const mongo = await clientPool["NEXT_MONGO_CRAWLER_DATA_ADMIN"];
   const wholsaleCollection = mongo
     .db(process.env.NEXT_MONOGO_CRAWLER_DATA ?? "")
     .collection(process.env.NEXT_MONGO_WHOLESALE ?? "wholesale");
@@ -41,7 +41,7 @@ export async function GET(
   const sort: {
     [key: string]: SortDirection;
   } = {};
-  
+
   sort["status"] = 1;
 
   if (query.field === "none") {
@@ -49,8 +49,6 @@ export async function GET(
   } else if (query.field) {
     sort[query.field] = query.order === "asc" ? 1 : -1;
   }
-
-
 
   aggregation.push(
     {

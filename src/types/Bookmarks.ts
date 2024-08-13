@@ -24,3 +24,10 @@ export type BookmarkDeleteSchema = z.infer<typeof BookmarkDeleteSchema>;
   }
 
 export interface BookMarkReturn { e:BookMarkProduct[]; a: BookMarkProduct[] }
+
+
+export interface Variables {
+  body: BookmarkSchema;
+  page: number;
+  pageSize: number;
+}

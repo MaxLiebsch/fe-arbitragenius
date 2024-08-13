@@ -16,6 +16,8 @@ import { Settings } from "@/types/Settings";
 import useBookMarkAdd from "@/hooks/use-bookmark-add";
 import { createColumns } from "@/util/ProductTableColumns";
 import useBookMarkRemove from "@/hooks/use-bookmark-remove";
+import { usePagination } from "@/hooks/use-pagination";
+
 
 export default function ProductsTable(props: {
   className?: string;
@@ -25,10 +27,8 @@ export default function ProductsTable(props: {
 }) {
   const { className, domain, target, settings } = props;
 
-  const [paginationModel, setPaginationModel] = useState<ProductPagination>({
-    page: 0,
-    pageSize: 20,
-  });
+  const [paginationModel, setPaginationModel] = usePagination();  
+
   const [sortModel, setSortModel] = useState<ProductSort>({
     field: `none`,
     direction: "desc",

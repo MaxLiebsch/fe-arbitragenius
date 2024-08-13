@@ -1,11 +1,11 @@
 "use server";
 import ShopsGrid from "@/components/ShopsGrid";
 import { StarIcon } from "@heroicons/react/16/solid";
-import { mongoPromise } from "@/server/mongo";
 import ProductFilterForm from "@/components/forms/ProductFilterForm";
 import { createSessionClient } from "@/server/appwrite";
 import { defaultProductFilterSettings } from "@/constant/productFilterSettings";
 import TotalDeals from "@/components/TotalDeals";
+import clientPool from "@/server/mongoPool";
 
 export default async function Dashboard({
   searchParams,
@@ -24,7 +24,7 @@ export default async function Dashboard({
     };
   }
 
-  const mongo = await mongoPromise;
+  const mongo = await clientPool['NEXT_MONGO'];
 
   const shopCount = await mongo
     .db(process.env.NEXT_MONGO_DB)
@@ -47,7 +47,7 @@ export default async function Dashboard({
         <div className="mb-8 ml-6 col-span-3">
           <div className="flex flex-row gap-2 pb-3 items-center">
             <h3 className="flex flex-row text-base font-semibold leading-6 mb-3 text-gray-900 space-x-1 items-center">
-              <div>Retailer ({shopCount})</div>
+              <div>Retailer ({shopCount-1})</div>
             </h3>
             <h3 className="flex flex-row text-base font-semibold leading-6 mb-3 text-gray-900 space-x-1 items-center">
               <StarIcon className="h-6 w-6" />

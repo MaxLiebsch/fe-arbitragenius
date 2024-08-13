@@ -2,7 +2,7 @@ import Spinner from "@/components/Spinner";
 import WholeSaleProductsTable from "@/components/WholesaleProductsTable";
 import { defaultProductFilterSettings } from "@/constant/productFilterSettings";
 import { createAdminClient, getLoggedInUser } from "@/server/appwrite";
-import { mongoAdminPromise } from "@/server/mongo";
+import clientPool from "@/server/mongoPool";
 import { format, parseISO } from "date-fns";
 import { ObjectId } from "mongodb";
 import { redirect } from "next/navigation";
@@ -26,28 +26,24 @@ const Page = async ({ params }: { params: { id: string } }) => {
     };
   }
 
-  const mongo = await mongoAdminPromise;
+  const mongo = await clientPool["NEXT_MONGO_CRAWLER_DATA_ADMIN"];
 
   const task = await mongo
-  .db(process.env.NEXT_MONOGO_CRAWLER_DATA ?? "")
-  .collection(process.env.NEXT_MONGO_TASKS ?? "")
-  .findOne({
-    userId: user.$id,
-    _id: new ObjectId(params.id),
-  });
-  
-  if (!task) redirect("/dashboard/wholesale");
-  
-  const inProgress = task.executing;
+    .db(process.env.NEXT_MONOGO_CRAWLER_DATA ?? "")
+    .collection(process.env.NEXT_MONGO_TASKS ?? "")
+    .findOne({
+      userId: user.$id,
+      _id: new ObjectId(params.id),
+    });
 
+  if (!task) redirect("/dashboard/wholesale");
+
+  const inProgress = task.executing;
+  const progress =
+    Number((task.progress.completed / task.progress.total).toFixed(2)) * 100;
   return (
     <>
-      <div>
-        Fortschritt:{" "}
-        {Number((task.progress.completed / task.progress.total).toFixed(2)) *
-          100}{" "}
-        %
-      </div>
+      <div>Fortschritt: {progress} %</div>
       <div key={task._id.toString()}>
         Status:{" "}
         {task.progress.completed === task.progress.total ? (

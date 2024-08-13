@@ -1,5 +1,5 @@
 import { getLoggedInUser } from "@/server/appwrite";
-import { mongoAdminPromise } from "@/server/mongo";
+import clientPool from "@/server/mongoPool";
 import { ObjectId } from "mongodb";
 import { NextRequest } from "next/server";
 
@@ -15,7 +15,7 @@ export async function GET(
     });
   }
 
-  const mongo = await mongoAdminPromise;
+  const mongo = await clientPool["NEXT_MONGO_CRAWLER_DATA_ADMIN"];
 
   const res = await mongo
     .db(process.env.NEXT_MONOGO_CRAWLER_DATA ?? "")
@@ -48,7 +48,7 @@ export async function DELETE(
     });
   }
 
-  const mongo = await mongoAdminPromise;
+  const mongo = await clientPool["NEXT_MONGO_CRAWLER_DATA_ADMIN"];
 
   const taskCollection = mongo
     .db(process.env.NEXT_MONGO_CRAWLER_DATA ?? "")

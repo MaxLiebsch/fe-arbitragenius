@@ -15,8 +15,7 @@ export type ProductSort =
       direction: "asc" | "desc";
     };
 
-export default function useProducts(
-  domain: string,
+export default function useSalesProducts(
   pagination: ProductPagination,
   sort: ProductSort,
   target: string,
@@ -25,22 +24,18 @@ export default function useProducts(
 ) {
   const queryClient = useQueryClient();
 
-  const queryKey = [
-    target,
-    "shop",
-    domain,
-    "product",
-    "get",
-    pagination.page,
-    pagination.pageSize,
-    sort?.field,
-    sort?.direction,
-    ...(settings ? Object.values(settings) : []),
-  ];
-
   const productQuery = useQuery<ModifiedProduct[]>({
-    queryKey,
-    enabled: !!domain && !!target && !!settings,
+    queryKey: [
+      target,
+      "sales",
+      "get",
+      pagination.page,
+      pagination.pageSize,
+      sort?.field,
+      sort?.direction,
+      ...(settings ? Object.values(settings) : []),
+    ],
+    enabled: !!target && !!settings,
     refetchOnWindowFocus,
     queryFn: async () => {
       const { page, pageSize } = pagination;
@@ -54,7 +49,7 @@ export default function useProducts(
           .join("");
       }
       return fetch(
-        `/app/api/shop/${domain}/${target}/product?${pageQuery}${sortQuery}${settingsQuery}`
+        `/app/api/sales?target=${target}${pageQuery}${sortQuery}${settingsQuery}`
       ).then((resp) => resp.json());
     },
   });
@@ -64,41 +59,36 @@ export default function useProducts(
       queryClient.prefetchQuery({
         queryKey: [
           target,
-          "shop",
-          domain,
-          "product",
+          "sales",
           "get",
           pagination.page + 1,
           pagination.pageSize,
           sort?.field,
           sort?.direction,
-          ...(settings ? Object.values(settings) : []),
         ],
         queryFn: async () => {
           const { page, pageSize } = pagination;
           let sortQuery = "";
           let settingsQuery = "";
-          let pageQuery = `&page=${page + 1}&size=${pageSize}`;
+          let pageQuery = `&page=${page}&size=${pageSize}`;
           if (sort)
             sortQuery = `&sortby=${sort.field}&sortorder=${sort.direction}`;
-
           if (settings) {
             settingsQuery = Object.keys(settings)
               .map((key) => `&${key}=${settings[key as keyof Settings]}`)
               .join("");
           }
           return fetch(
-            `/app/api/shop/${domain}/${target}/product?${sortQuery}${settingsQuery}${pageQuery}`
+            `/app/api/sales?target=${target}${settingsQuery}${pageQuery}${sortQuery}`
           ).then((resp) => resp.json());
         },
       });
     }
   }, [
     productQuery.data,
-    domain,
     target,
-    pagination,
     settings,
+    pagination,
     pagination.page,
     pagination.pageSize,
     sort,

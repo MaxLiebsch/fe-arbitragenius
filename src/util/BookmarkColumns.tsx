@@ -337,7 +337,7 @@ export const bookMarkColumns: (
         >
           <span>{formatCurrency(parseFloat(params.value))} </span>
           <span className="">
-            {target === "a"
+            {target === "a" && params.row?.avg90_ahsprcs
               ? `(${formatter.format(params.row?.avg90_ahsprcs / 100)})`
               : ""}
           </span>

@@ -1,5 +1,4 @@
 import { getLoggedInUser } from "@/server/appwrite";
-import { mongoAdminPromise } from "@/server/mongo";
 import clientPool from "@/server/mongoPool";
 import {
   Bookmark,

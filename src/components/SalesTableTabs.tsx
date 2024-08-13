@@ -1,25 +1,22 @@
 "use client";
 
 import { Tab } from "@headlessui/react";
-import React, { useEffect, useState } from "react";
-import ProductsTable from "./ProductsTable";
+import React from "react";
 import { Settings } from "@/types/Settings";
+import SalesTable from "./SalesTable";
 import { useTargetShop } from "@/hooks/use-targetShop";
 
-const ProductTableTabs = ({
-  domain,
+const SalesTableTabs = ({
   settings,
 }: {
-  domain: string;
   settings: Settings;
 }) => {
-
   const [selectedIndex, setSelectedIndex]= useTargetShop()
 
   return (
     <div className="relative">
       <Tab.Group selectedIndex={selectedIndex} onChange={setSelectedIndex}>
-        <Tab.List className="flex min-w-full flex-none gap-x-6 text-lg font-semibold leading-2 text-gray-400 pb-2">
+        <Tab.List  className="flex min-w-full flex-none gap-x-6 text-lg font-semibold leading-2 text-gray-400 pb-2">
           {[
             { name: "Amazon", domain: "amazon.de" },
             { name: "Ebay", domain: "ebay.de" },
@@ -42,10 +39,10 @@ const ProductTableTabs = ({
         </div>
         <Tab.Panels className="flex h-[calc(100vh-198px)]">
           <Tab.Panel className="w-full  h-full">
-            <ProductsTable domain={domain} target="a" settings={settings} />
+            <SalesTable target="a" settings={settings} />
           </Tab.Panel>
           <Tab.Panel className="w-full h-full">
-            <ProductsTable domain={domain} target="e" settings={settings} />
+            <SalesTable target="e" settings={settings} />
           </Tab.Panel>
         </Tab.Panels>
       </Tab.Group>
@@ -53,4 +50,4 @@ const ProductTableTabs = ({
   );
 };
 
-export default ProductTableTabs;
+export default SalesTableTabs;

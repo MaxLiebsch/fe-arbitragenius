@@ -1,26 +1,13 @@
 "use server";
 
-import ProductsTableTabs from "@/components/ProductsTableTabs";
+import SalesTableTabs from "@/components/SalesTableTabs";
 import { defaultProductFilterSettings } from "@/constant/productFilterSettings";
-import {
-  createAdminClient,
-  getLoggedInUser,
-} from "@/server/appwrite";
-import clientPool from "@/server/mongoPool";
+import { createAdminClient, getLoggedInUser } from "@/server/appwrite";
 import Title from "antd/es/typography/Title";
 import { redirect } from "next/navigation";
 import React from "react";
 
-export default async function Shop({ params }: { params: { domain: string } }) {
-  const mongo = await clientPool["NEXT_MONGO"];
-
-  const res = await mongo
-    .db(process.env.NEXT_MONGO_DB)
-    .collection(process.env.NEXT_MONGO_SHOPS ?? "shops")
-    .findOne({ d: { $eq: params.domain }, active: { $eq: true } });
-
-  if (!res) redirect("/dashboard");
-
+const Page = async ({ searchParams }: { searchParams: { target: string } }) => {
   const user = await getLoggedInUser();
   if (!user) {
     redirect("/login");
@@ -33,11 +20,12 @@ export default async function Shop({ params }: { params: { domain: string } }) {
   if (prefs?.settings && Object.keys(JSON.parse(prefs.settings)).length > 0) {
     settings = JSON.parse(prefs.settings);
   }
-
   return (
     <div className="h-full flex flex-col overflow-y-hidden">
-      <Title>{res.ne}</Title>
-      <ProductsTableTabs settings={settings} domain={params.domain} />
+      <Title>Deal-Monitor</Title>
+      <SalesTableTabs settings={settings} />
     </div>
   );
-}
+};
+
+export default Page;

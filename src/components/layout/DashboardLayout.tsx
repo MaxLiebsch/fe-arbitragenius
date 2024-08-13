@@ -11,6 +11,7 @@ import {
   ArrowTrendingUpIcon,
   BookmarkIcon,
   XMarkIcon,
+  SparklesIcon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import useFavoriteShops from "@/hooks/use-favorite-shops";
@@ -22,9 +23,18 @@ import Spinner from "../Spinner";
 import { useFormState } from "react-dom";
 import { TotalDealsContext } from "@/context/totalDealsContext";
 import { differenceInDays } from "date-fns";
+import useSalesCount from "@/hooks/use-sales-count";
+import { Settings } from "@/types/Settings";
+import { Badge } from "antd";
 
 const navigation = [
-  { name: "Dashboard", href: "/dashboard", icon: HomeIcon, current: true },
+  { name: "Shops Übersicht", href: "/dashboard", icon: HomeIcon, current: true },
+  {
+    name: "Deal Monitor",
+    href: "/dashboard/daily-deals",
+    current: false,
+    icon: SparklesIcon,
+  },
   {
     name: "Meine Deals",
     href: "/dashboard/my-deals",
@@ -63,16 +73,28 @@ export const DashboardLayout = ({
   };
 }>) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [settings, setSettings] = useState<Settings | undefined>();
   const accountQuery = useAccount();
+
   const router = useRouter();
   const favoriteShopsQuery = useFavoriteShops();
-
+  const eSalesCount = useSalesCount("e", settings);
+  const aSalesCount = useSalesCount("a", settings);
+  const newDeals = Boolean(eSalesCount.data?.totalProductsToday || aSalesCount.data?.totalProductsToday)
   const pathname = usePathname();
 
   const [state, formAction] = useFormState(logoutAction, {
     message: "",
   });
   const [queryUpdate, setQueryUpdate] = useState(0);
+
+  useEffect(() => {
+    if (accountQuery.isSuccess) {
+      if (accountQuery.data.prefs?.settings) {
+        setSettings(JSON.parse(accountQuery.data.prefs.settings));
+      }
+    }
+  }, [accountQuery.data, accountQuery.isSuccess]);
 
   useEffect(() => {
     if (state.message === "success") {
@@ -164,7 +186,15 @@ export const DashboardLayout = ({
                                     )}
                                     aria-hidden="true"
                                   />
-                                  {item.name}
+                                  {item.href === "/dashboard/daily-deals" ? (
+                                    <div>
+                                      <Badge.Ribbon text="Hippies">
+                                        {item.name}
+                                      </Badge.Ribbon>
+                                    </div>
+                                  ) : (
+                                    item.name
+                                  )}
                                 </Link>
                               </li>
                             ))}
@@ -172,7 +202,7 @@ export const DashboardLayout = ({
                         </li>
                         <li>
                           <div className="text-xs font-semibold leading-6 text-gray-400">
-                            Your Favorites{" "}
+                            Deine Favoriten{" "}
                             {favoriteShopsQuery.isLoading && (
                               <div className="w-full flex justify-center">
                                 <Spinner />
@@ -232,33 +262,42 @@ export const DashboardLayout = ({
                   <ul role="list" className="-mx-2 space-y-1">
                     {navigation.map((item) => (
                       <li key={item.name}>
-                        <Link
-                          href={item.href}
-                          className={classNames(
-                            item.href === pathname
-                              ? "bg-gray-50 text-secondary-900"
-                              : "text-gray-700 hover:text-secondary-900 hover:bg-gray-50",
-                            "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
-                          )}
+                        <Badge.Ribbon
+                          text="Neue Deals"
+                          placement="end"
+
+                          className={`!-top-2 ${item.href !=='/dashboard/daily-deals' && 'hidden'} ${
+                            item.href === "/dashboard/daily-deals" && newDeals && "visible"
+                          }`}
                         >
-                          <item.icon
+                          <Link
+                            href={item.href}
                             className={classNames(
                               item.href === pathname
-                                ? "text-secondary-900"
-                                : "text-gray-400 group-hover:text-secondary-900",
-                              "h-6 w-6 shrink-0"
+                                ? "bg-gray-50 text-secondary-900"
+                                : "text-gray-700 hover:text-secondary-900 hover:bg-gray-50",
+                              "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
                             )}
-                            aria-hidden="true"
-                          />
-                          {item.name}
-                        </Link>
+                          >
+                            <item.icon
+                              className={classNames(
+                                item.href === pathname
+                                  ? "text-secondary-900"
+                                  : "text-gray-400 group-hover:text-secondary-900",
+                                "h-6 w-6 shrink-0"
+                              )}
+                              aria-hidden="true"
+                            />
+                            {item.name}
+                          </Link>
+                        </Badge.Ribbon>
                       </li>
                     ))}
                   </ul>
                 </li>
                 <li>
                   <div className="text-xs font-semibold leading-6 text-gray-400">
-                    Your Favorites{" "}
+                    Deine Favoriten{" "}
                     {favoriteShopsQuery.isLoading && (
                       <div className="w-full flex justify-center">
                         <Spinner />
@@ -326,11 +365,10 @@ export const DashboardLayout = ({
                       Danke, dass Du dich für Arbispotter entschieden hast. Du
                       befindest Dich noch{" "}
                       <span className="font-semibold">
-
-                      {differenceInDays(
-                        Number(subscriptionStatus.trialEnd as string) * 1000,
-                        Date.now()
-                      )}{" "}
+                        {differenceInDays(
+                          Number(subscriptionStatus.trialEnd as string) * 1000,
+                          Date.now()
+                        )}{" "}
                       </span>
                       Tage in der Testphase.
                     </div>

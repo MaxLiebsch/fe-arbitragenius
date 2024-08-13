@@ -9,6 +9,7 @@ import useDeleteTask from "@/hooks/use-task-delete";
 
 const TaskCard = ({ task }: { task: DbTask }) => {
   const inProgress = task.executing;
+  const progress = ((Number((task.progress.completed / task.progress.total))) * 100).toFixed(0)
   const deleteTask = useDeleteTask({ taskId: task._id.toString() });
 
   useEffect(() => {
@@ -50,7 +51,7 @@ const TaskCard = ({ task }: { task: DbTask }) => {
           )}
         </div>
         <div>
-          Fortschritt: {(Number((task.progress.completed / task.progress.total).toFixed(0))) * 100} %
+          Fortschritt: {progress} %
         </div>
         <div>Anzahl Produkte: {task.progress.total}</div>
         <div className="text-xs text-seconadary-400">

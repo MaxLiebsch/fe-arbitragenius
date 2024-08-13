@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import { TotalDealsContext } from "@/context/totalDealsContext";
 import { QueryKey, useQueryClient } from "@tanstack/react-query";
@@ -11,6 +11,8 @@ const TotalDeals = () => {
   const [ebayPrevTotal, setEbayPrevTotal] = React.useState(0);
   const ebay = ["e", "shop", "count"];
   const amazon = ["a", "shop", "count"];
+  const eSales = ["e", "sales", "count"];
+  const aSales = ["a", "sales", "count"];
   const [amazonTotal, setAmazonTotal] = React.useState(0);
   const [amazonPrevTotal, setAmazonPrevTotal] = React.useState(0);
   const { queryUpdate } = useContext(TotalDealsContext);
@@ -21,11 +23,24 @@ const TotalDeals = () => {
     setAmazonTotal(0);
     let ebayShops: string[] = [];
     let aznShops: string[] = [];
+    let ebaySales: string[] = [];
+    let aznSales: string[] = [];
     queryClient.getQueryCache().subscribe(({ query }) => {
       const queryKey = query.queryKey as QueryKey;
       const shop = queryKey.length > 2 ? (queryKey[2] as string) : "";
 
       const { status, data } = query.state;
+      if (
+        status === "success" &&
+        !ebaySales.includes(shop) &&
+        eSales.every((value) => queryKey.includes(value))
+      ) {
+        ebaySales.push(queryKey[2] as string);
+        setEbayTotal((state) => {
+          setEbayPrevTotal(state);
+          return state + data.productCount;
+        });
+      }
       if (
         status === "success" &&
         !ebayShops.includes(shop) &&
@@ -45,6 +60,17 @@ const TotalDeals = () => {
         aznShops.push(queryKey[2] as string);
         setAmazonTotal((state) => {
           setAmazonPrevTotal(state);
+          return state + data.productCount;
+        });
+      }
+      if (
+        status === "success" &&
+        !aznSales.includes(shop) &&
+        aSales.every((value) => queryKey.includes(value))
+      ) {
+        aznSales.push(queryKey[2] as string);
+        setAmazonTotal((state) => {
+          setEbayPrevTotal(state);
           return state + data.productCount;
         });
       }

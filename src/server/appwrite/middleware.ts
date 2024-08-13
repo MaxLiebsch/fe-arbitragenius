@@ -33,7 +33,7 @@ export type AppwriteNextMiddleware<Preferences extends Models.Preferences> = (
 
 export function authMiddleware<Preferences extends Models.Preferences>(
   handler: AppwriteNextMiddlewareHandler<Preferences>
-): AppwriteNextMiddlewareHandler<Preferences> {
+): AppwriteNextMiddlewareHandler<Preferences>{
   return async (request) => {
     const token = request.cookies.get(sessionCookieName)?.value;
 

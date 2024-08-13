@@ -1,5 +1,5 @@
 import { getLoggedInUser } from "@/server/appwrite";
-import { mongoAdminPromise } from "@/server/mongo";
+import clientPool from "@/server/mongoPool";
 import { Card } from "antd";
 import { format } from "date-fns";
 import Link from "next/link";
@@ -17,7 +17,7 @@ const Page = async () => {
 
   if (!user?.labels.includes("admin")) redirect("/");
 
-  const mongo = await mongoAdminPromise;
+  const mongo = await clientPool['NEXT_MONGO_CRAWLER_DATA_ADMIN'];
 
   const crawler = await mongo
     .db(process.env.NEXT_MONOGO_CRAWLER_DATA)
@@ -41,6 +41,10 @@ const Page = async () => {
   const total = tasks
     .filter((task) => task.type === "CRAWL_SHOP" && !task.maintenance)
     .reduce((acc, _) => acc + _.productLimit, 0);
+
+  const totalSales = tasks
+  .filter((task) => task.type === "DAILY_SALES" && !task.maintenance)
+  .reduce((acc, _) => acc + _.productLimit, 0);
 
   const activeCrawler = crawler.reduce(
     (
@@ -195,6 +199,33 @@ const Page = async () => {
       </li>
       <li>
         <h3 className="text-base font-semibold leading-6 text-gray-900 flex flex-row space-x-1 items-center">
+          {shops.length} Daily Deals Total: {totalSales}
+        </h3>
+        <div> Usage last 7 days: {usagePerTask("DAILY_SALES")} </div>
+        <div className="flex gap-2">
+          {shops.map((_) => (
+            <Card key={_} style={{ width: 300 }}>
+              <Link href={`/dashboard/admin/overview/${_}`}>
+                <>
+                  <p>{_}</p>
+                  <p>
+                    {tasks
+                      .filter(
+                        (task) =>
+                          task.shopDomain === _ &&
+                          task.type === "DAILY_SALES" &&
+                          !task.maintenance
+                      )
+                      .reduce((acc, _) => acc + _.productLimit, 0)}
+                  </p>
+                </>
+              </Link>
+            </Card>
+          ))}
+        </div>
+      </li>
+      <li>
+        <h3 className="text-base font-semibold leading-6 text-gray-900 flex flex-row space-x-1 items-center">
           Match
         </h3>
         <div> Usage last 7 days: {usagePerTask("MATCH_PRODUCTS")}</div>
@@ -226,7 +257,7 @@ const Page = async () => {
           Lookup Infos
         </h3>
         <div> Usage last 7 days: {usagePerTask("LOOKUP_INFO")}</div>
-        {lookupInfoProgress.length ? (
+        {lookupInfoProgress?.length ? (
           lookupInfoProgress.map((_: any) => (
             <div key={`lookup-info-${_.shop}`}>
               {_.shop}: {_.pending}
@@ -241,7 +272,7 @@ const Page = async () => {
           Query Eans on Ebay
         </h3>
         <div> Usage last 7 days: {usagePerTask("QUERY_EANS_EBY")}</div>
-        {queryEansEbyProgress.length ? (
+        {queryEansEbyProgress?.length ? (
           queryEansEbyProgress.map((_: any) => (
             <div key={`query-eans-on-eby-${_.shop}`}>
               {_.shop}: {_.pending}
@@ -258,7 +289,7 @@ const Page = async () => {
         </h3>
         <div> Usage last 7 days: {usagePerTask("LOOKUP_CATEGORY")}</div>
         {lookupCategoryProgress ? (
-          lookupCategoryProgress.map((_: any) => (
+          lookupCategoryProgress?.map((_: any) => (
             <div key={`lookup-category-${_.shop}`}>
               {_.shop}: {_.pending}
             </div>

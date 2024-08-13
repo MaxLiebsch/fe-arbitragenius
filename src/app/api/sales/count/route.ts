@@ -9,13 +9,10 @@ import { NextRequest } from "next/server";
 
 */
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { domain: string; target: string } }
-) {
-  const { target, domain } = params;
+export async function GET(request: NextRequest) {
   const mongo = await clientPool['NEXT_MONGO'];
   const searchParams = request.nextUrl.searchParams;
+  const target = searchParams.get("target") || "a";
 
   const isAmazon = target === "a";
 
@@ -245,11 +242,7 @@ export async function GET(
 
     if (buyBox === "both") {
       findQuery.push({
-        $or: [
-          { buyBoxIsAmazon: true },
-          { buyBoxIsAmazon: false },
-          { buyBoxIsAmazon: null },
-        ],
+        $or: [{ buyBoxIsAmazon: true },{buyBoxIsAmazon: false}, { buyBoxIsAmazon: null }],
       });
     }
 
@@ -284,14 +277,45 @@ export async function GET(
     }
   }
   const pblshKey = isAmazon ? "a_pblsh" : "e_pblsh";
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const tomorrow = new Date(today);
+  tomorrow.setDate(today.getDate() + 1);
   aggregation.push(
     {
-      $match: {
-        [pblshKey]: true,
-        $and: findQuery,
+      $facet: {
+        totalProducts: [
+          {
+            $match: {
+              [pblshKey]: true,
+              $and: findQuery,
+            },
+          },
+          { $count: "count" },
+        ],
+        totalProductsToday: [
+          {
+            $match: {
+              createdAt: {
+                $gte: today.toISOString(),
+                $lt: tomorrow.toISOString(),
+              },
+              [pblshKey]: true,
+              $and: findQuery,
+            },
+          },
+          { $count: "count" },
+        ],
       },
     },
-    { $count: "productCount" }
+    {
+      $project: {
+        productCount: {
+          $arrayElemAt: ["$totalProducts.count", 0],
+        },
+        totalProductsToday: { $arrayElemAt: ["$totalProductsToday.count", 0] },
+      },
+    }
   );
 
   if (isAmazon && productsWithNoBsr) {
@@ -309,10 +333,12 @@ export async function GET(
   }
 
   const res = await mongo
-    .db(process.env.NEXT_MONGO_DB)
-    .collection(domain)
-    .aggregate(aggregation)
-    .toArray();
+  .db(process.env.NEXT_MONGO_DB)
+  .collection("sales")
+  .aggregate(aggregation)
+  .toArray();
 
-  return Response.json(res.length ? res[0] : { productCount: 0 });
+  return Response.json(
+    res.length && res[0]?.productCount ? res[0] : { productCount: 0, todayCount: 0 }
+  );
 }

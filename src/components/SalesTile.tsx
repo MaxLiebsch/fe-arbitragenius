@@ -7,11 +7,11 @@ import { StarIcon as StarIconOutline } from "@heroicons/react/24/outline";
 import useFavoriteAdd from "@/hooks/use-favorite-add";
 import useFavoriteRemove from "@/hooks/use-favorite-remove";
 import { Shop } from "@/hooks/use-shop";
-import useProductCount from "@/hooks/use-product-count";
 import { Settings } from "@/types/Settings";
 import Spinner from "./Spinner";
+import useSalesCount from "@/hooks/use-sales-count";
 
-const ShopTile = ({
+const SalesTile = ({
   shop,
   favorites,
   settings,
@@ -23,13 +23,11 @@ const ShopTile = ({
   const favoriteAddMutation = useFavoriteAdd();
   const favoriteRemoveMutation = useFavoriteRemove();
 
-  const { data: aCount, isFetching: aIsFetching } = useProductCount(
-    shop.d,
+  const { data: aCount, isFetching: aIsFetching } = useSalesCount(
     "a",
     settings
   );
-  const { data: eCount, isFetching: eIsFetching } = useProductCount(
-    shop.d,
+  const { data: eCount, isFetching: eIsFetching } = useSalesCount(
     "e",
     settings
   );
@@ -46,22 +44,11 @@ const ShopTile = ({
       title={
         <div className="flex flex-row items-center">
           <div className="flex flex-col">
-            <div>{shop.ne}</div>
+            <div>Deal Monitor</div>
             <div className="text-sm font-thin text-gray-500">
               Gesamt: {shop.total ?? 0}
             </div>
           </div>
-          <Button
-            className="ml-auto"
-            icon={
-              favorites?.includes(shop.d) ? (
-                <StarIcon className="h-4 w-4" />
-              ) : (
-                <StarIconOutline className="h-4 w-4" />
-              )
-            }
-            onClick={() => handleToggleFavorite(shop.d)}
-          />
         </div>
       }
       bordered={false}
@@ -71,8 +58,8 @@ const ShopTile = ({
         <div className='w-full'>
           <p className="w-full border-b border-gray-200 mb-2">Profitabel</p>
           <div className="flex flex-row gap-1">
-            <Button className="flex-grow" href={`/app/dashboard/shop/${shop.d}?target=amazon`}>
-              <p className=" font-semibold flex flex-row hover:font-bold justify-center">
+            <Button className="flex-grow"  href={`/app/dashboard/daily-deals?target=amazon`}>
+              <p className="font-semibold flex flex-row hover:font-bold">
                 <span>Amazon: </span>
                 {aIsFetching ? (
                   <Spinner size={"!w-1 ml-4"} />
@@ -81,8 +68,8 @@ const ShopTile = ({
                 )}
               </p>
             </Button>
-            <Button className="flex-grow" href={`/app/dashboard/shop/${shop.d}?target=ebay`}>
-              <p className=" font-semibold flex flex-row hover:font-bold justify-center">
+            <Button className="flex-grow"  href={`/app/dashboard/daily-deals?target=ebay`}>
+              <p className="font-semibold flex flex-row hover:font-bold">
                 <span>Ebay: </span>
                 {eIsFetching ? (
                   <Spinner size={"!w-1 ml-4"} />
@@ -98,4 +85,4 @@ const ShopTile = ({
   );
 };
 
-export default ShopTile;
+export default SalesTile;

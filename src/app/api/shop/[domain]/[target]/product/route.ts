@@ -1,7 +1,7 @@
 import { getLoggedInUser } from "@/server/appwrite";
-import { mongoPromise } from "@/server/mongo";
+import clientPool from "@/server/mongoPool";
 import { BuyBox, Settings } from "@/types/Settings";
-import { ObjectId, SortDirection } from "mongodb";
+import { SortDirection } from "mongodb";
 import { NextRequest } from "next/server";
 
 export async function GET(
@@ -209,13 +209,22 @@ export async function GET(
     }
     if (buyBox === "seller") {
       findQuery.push({
-        buyBoxIsAmazon: null,
+        $or: [
+          {
+            buyBoxIsAmazon: null,
+          },
+          { buyBoxIsAmazon: false },
+        ],
       });
     }
 
     if (buyBox === "both") {
       findQuery.push({
-        $or: [{ buyBoxIsAmazon: true }, { buyBoxIsAmazon: null }],
+        $or: [
+          { buyBoxIsAmazon: true },
+          { buyBoxIsAmazon: false },
+          { buyBoxIsAmazon: null },
+        ],
       });
     }
 
@@ -360,7 +369,7 @@ export async function GET(
       },
     }
   );
-  const mongo = await mongoPromise;
+  const mongo = await clientPool['NEXT_MONGO'];
   const res = await mongo
     .db(process.env.NEXT_MONGO_DB)
     .collection(domain)

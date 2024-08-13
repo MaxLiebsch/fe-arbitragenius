@@ -17,18 +17,26 @@ import { Button } from "@/components/Button";
 import useCreateTask from "@/hooks/use-task-create";
 import Spinner from "@/components/Spinner";
 import TaskCard from "@/components/TaskCard";
+import * as XLSX from "xlsx";
 
 const { Dragger } = Upload;
+
+const xlsxType =
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+const xlsType = "application/vnd.ms-excel";
+const csvType = "text/csv";
 
 const props: UploadProps = {
   name: "file",
   multiple: false,
   beforeUpload: (file) => {
-    const isCSV = file.type === "text/csv";
-    if (!isCSV) {
+    const isXLSX = file.type === xlsxType;
+    const isXLS = file.type === xlsType;
+    const isCSV = file.type === csvType;
+    if (!isCSV && !isXLS && !isXLSX) {
       message.error(`${file.name} ist keine CSV-Datei!`);
     }
-    return isCSV || Upload.LIST_IGNORE;
+    return isCSV || isXLSX || isXLS || Upload.LIST_IGNORE;
   },
   onDrop(e) {
     console.log("Dropped files", e.dataTransfer.files);
@@ -70,9 +78,7 @@ const columns: GridColDef<ProductRow>[] = [
     renderCell: (params) => {
       return (
         <div className="flex flex-col divide-y p-1">
-          <div>
-            {LinkWrapper("https://arbispotter.com", params.row.nm, "")}
-          </div>
+          <div>{LinkWrapper("https://arbispotter.com", params.row.nm, "")}</div>
           Zielshop:
           {LinkWrapper(params.row[`a_lnk`], params.row[`a_nm`])}
           {/* {target === "a" && params.row["bsr"] && params.row["bsr"].length ? (
@@ -142,7 +148,7 @@ const productSchema = z.object({
   ean: z.string(),
   nm: z.string().optional().default(""),
   category: z.string().optional().default(""),
-  prc: z.number(),
+  prc: z.number().min(0.01),
   id: z.number(),
   reference: z.string().optional().default(""),
 });
@@ -171,41 +177,102 @@ const Page = () => {
   const handleImport = async (info: UploadChangeParam<UploadFile<any>>) => {
     const { status, originFileObj } = info.file;
     if (status === "done") {
-      const parsedRows: ProductRow[] = [];
-      let cnt = 0;
-      let cntErrors = 0;
-      Papa.parse(originFileObj as File, {
-        header: true,
-        skipEmptyLines: true,
-        step: function (results: any, parser) {
+      if (originFileObj?.type === csvType) {
+        const parsedRows: ProductRow[] = [];
+        let cnt = 0;
+        let cntErrors = 0;
+        Papa.parse(originFileObj as File, {
+          header: true,
+          skipEmptyLines: true,
+          step: function (results: any, parser) {
+            cnt++;
+            if (cnt > 10000) {
+              message.info(`Maximum von ${cnt - 1} Produkten überschritten.`);
+              parser.abort();
+            }
+            const price = getCaseInsensitiveProperty(
+              results.data,
+              translations.price
+            );
+            const testRow: ProductRow = {
+              id: 0,
+              ean: getCaseInsensitiveProperty(results.data, translations.ean),
+              nm: getCaseInsensitiveProperty(results.data, translations.name),
+              category: getCaseInsensitiveProperty(
+                results.data,
+                translations.category
+              ),
+              prc: parseInt(price)
+                ? parsePrice(getPrice(price ? price.replace(/\s+/g, "") : ""))
+                : "",
+              reference: getCaseInsensitiveProperty(
+                results.data,
+                translations.reference
+              ),
+            };
+            const res = productSchema.safeParse(testRow);
+            if (!res.success) {
+              const allValuesEmpty = Object.values(results.data).every(
+                (val: any) => val === ""
+              );
+              if (!allValuesEmpty) {
+                cntErrors++;
+                console.error(res.error.errors);
+              }
+            } else {
+              parsedRows.push(res.data); // Push parsed row into array
+            }
+          },
+          complete: (result) => {
+            message.success(`${info.file.name} Datei erfolgreich hochgeladen.`);
+            cntErrors > 0 &&
+              message.error(
+                `${cntErrors} Zeilen konnten nicht verarbeitet werden.`
+              );
+            setRows(
+              parsedRows.map((row, i) => {
+                return {
+                  ...row,
+                  id: i,
+                };
+              })
+            );
+          },
+        });
+      } 
+      if (originFileObj?.type === xlsType || originFileObj?.type === xlsxType) {
+        const workbook = XLSX.read(await originFileObj.arrayBuffer(), {
+          type: "binary",
+        });
+        const firstSheetName = workbook.SheetNames[0];
+        const worksheet = XLSX.utils.sheet_to_json(
+          workbook.Sheets[firstSheetName]
+        );
+        const parsedRows: ProductRow[] = [];
+        let cnt = 0;
+        let cntErrors = 0;
+
+        for (let index = 0; index < worksheet.length; index++) {
+          const row = worksheet[index];
           cnt++;
           if (cnt > 10000) {
             message.info(`Maximum von ${cnt - 1} Produkten überschritten.`);
-            parser.abort();
+            break;
           }
-          const price = getCaseInsensitiveProperty(
-            results.data,
-            translations.price
-          );
+          const price = getCaseInsensitiveProperty(row, translations.price).toString();
           const testRow: ProductRow = {
             id: 0,
-            ean: getCaseInsensitiveProperty(results.data, translations.ean),
-            nm: getCaseInsensitiveProperty(results.data, translations.name),
-            category: getCaseInsensitiveProperty(
-              results.data,
-              translations.category
-            ),
+            ean: getCaseInsensitiveProperty(row, translations.ean).toString(),
+            nm: getCaseInsensitiveProperty(row, translations.name),
+            category: getCaseInsensitiveProperty(row, translations.category),
             prc: parseInt(price)
               ? parsePrice(getPrice(price ? price.replace(/\s+/g, "") : ""))
               : "",
-            reference: getCaseInsensitiveProperty(
-              results.data,
-              translations.reference
-            ),
+            reference: getCaseInsensitiveProperty(row, translations.reference).toString(),
           };
           const res = productSchema.safeParse(testRow);
           if (!res.success) {
-            const allValuesEmpty = Object.values(results.data).every(
+            const allValuesEmpty = Object.values(row!).every(
               (val: any) => val === ""
             );
             if (!allValuesEmpty) {
@@ -215,13 +282,8 @@ const Page = () => {
           } else {
             parsedRows.push(res.data); // Push parsed row into array
           }
-        },
-        complete: (result) => {
-          message.success(`${info.file.name} Datei erfolgreich hochgeladen.`);
-          cntErrors > 0 &&
-            message.error(
-              `${cntErrors} Zeilen konnten nicht verarbeitet werden.`
-            );
+        }
+        if(parsedRows.length > 0) {
           setRows(
             parsedRows.map((row, i) => {
               return {
@@ -230,8 +292,13 @@ const Page = () => {
               };
             })
           );
-        },
-      });
+          message.success(`${info.file.name} Datei erfolgreich hochgeladen.`);
+        }
+        cntErrors > 0 &&
+          message.error(
+            `${cntErrors} Zeilen konnten nicht verarbeitet werden.`
+          );
+      }
     } else if (status === "error") {
       message.error(`${info.file.name} file upload failed.`);
     }
@@ -272,8 +339,8 @@ const Page = () => {
               <InboxOutlined />
             </p>
             <p className="ant-upload-text">
-              Klicke hier oder ziehe die CSV-Datei zum Hochladen in diesen
-              Bereich!
+              Klicke hier oder ziehe die Datei (.csv, .xslx) zum Hochladen in
+              diesen Bereich!
             </p>
             <p className="ant-upload-hint">
               Unterstützte Dateitypen: .csv <br />
