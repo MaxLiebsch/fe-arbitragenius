@@ -19,7 +19,7 @@ const PasswordPrompt = () => {
     }
   }, []);
 
-  const query = useQuery({
+  useQuery({
     queryKey: ["terminal", "authentication"],
     enabled: !Boolean(
       creds.username === "username" && creds.password === "password"
@@ -43,27 +43,11 @@ const PasswordPrompt = () => {
         }
       );
       if(auth.ok) {
-         const data = await auth.json();
-         console.log('data:', data)
-        // console.log('cookie:', cookie)
-        // let localhostCookie = "";
-        // if (!cookie) {
-        //   return "unauthorized";
-        // }
-        // localhostCookie = cookie.replace("Path=/;", "Path=/; Domain=localhost;");
-        // const headers = new Headers();
-        // headers.append("Set-Cookie", localhostCookie);
         return "success";
       }
       return "unauthorized";
     },
   });
-  console.log("query:", query.data);
-
-  useEffect(() => {
-    if (creds.username !== "username" && creds.password !== "password") {
-    }
-  }, [creds]);
 
   return <></>;
 };

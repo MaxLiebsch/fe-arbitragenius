@@ -1,5 +1,5 @@
 "use client";
-import { QueryKey, useQuery, useQueryClient } from "@tanstack/react-query";
+import { QueryKey, useQueryClient } from "@tanstack/react-query";
 import { Button } from "antd";
 import React, { useState } from "react";
 
