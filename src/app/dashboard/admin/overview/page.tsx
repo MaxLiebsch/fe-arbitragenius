@@ -1,3 +1,4 @@
+import Terminal from "@/components/Terminal";
 import { getLoggedInUser } from "@/server/appwrite";
 import clientPool from "@/server/mongoPool";
 import { Button, Card } from "antd";
@@ -169,12 +170,7 @@ const Page = async () => {
                     {_.active ? "Active" : "Inactive"}
                   </span>
                 </p>
-                <Button
-                  href={`http://localhost:9090/@${_.ip}/system/terminal`}
-                  target="_blank"
-                >
-                  Terminal
-                </Button>
+                <Terminal ip={_.ip} /> 
                 {_.task ? `Task: ${_.task}` : ""}
                 <div>
                   <p>Usage: </p>
@@ -197,12 +193,7 @@ const Page = async () => {
                 <p>
                   {_.name}
                 </p>
-                <Button
-                  href={`http://localhost:9090/@${_.ip}/system/terminal`}
-                  target="_blank"
-                >
-                  Terminal
-                </Button>
+                <Terminal ip={_.ip} /> 
               </div>
             </Card>
           ))}
