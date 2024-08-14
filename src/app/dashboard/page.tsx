@@ -47,7 +47,7 @@ export default async function Dashboard({
         <div className="mb-8 ml-6 col-span-3">
           <div className="flex flex-row gap-2 pb-3 items-center">
             <h3 className="flex flex-row text-base font-semibold leading-6 mb-3 text-gray-900 space-x-1 items-center">
-              <div>Retailer ({shopCount-1})</div>
+              <div>Shops ({shopCount-1})</div>
             </h3>
             <h3 className="flex flex-row text-base font-semibold leading-6 mb-3 text-gray-900 space-x-1 items-center">
               <StarIcon className="h-6 w-6" />

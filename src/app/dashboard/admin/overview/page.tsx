@@ -1,6 +1,6 @@
 import { getLoggedInUser } from "@/server/appwrite";
 import clientPool from "@/server/mongoPool";
-import { Card } from "antd";
+import { Button, Card } from "antd";
 import { format } from "date-fns";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -17,12 +17,18 @@ const Page = async () => {
 
   if (!user?.labels.includes("admin")) redirect("/");
 
-  const mongo = await clientPool['NEXT_MONGO_CRAWLER_DATA_ADMIN'];
+  const mongo = await clientPool["NEXT_MONGO_CRAWLER_DATA_ADMIN"];
 
   const crawler = await mongo
     .db(process.env.NEXT_MONOGO_CRAWLER_DATA)
     .collection("metadata")
-    .find({})
+    .find({ crawlerId: { $exists: true } })
+    .toArray();
+
+  const infrastructure = await mongo
+    .db(process.env.NEXT_MONOGO_CRAWLER_DATA)
+    .collection("metadata")
+    .find({ crawlerId: { $exists: false } })
     .toArray();
 
   const tasks = await mongo
@@ -43,8 +49,8 @@ const Page = async () => {
     .reduce((acc, _) => acc + _.productLimit, 0);
 
   const totalSales = tasks
-  .filter((task) => task.type === "DAILY_SALES" && !task.maintenance)
-  .reduce((acc, _) => acc + _.productLimit, 0);
+    .filter((task) => task.type === "DAILY_SALES" && !task.maintenance)
+    .reduce((acc, _) => acc + _.productLimit, 0);
 
   const activeCrawler = crawler.reduce(
     (
@@ -54,6 +60,7 @@ const Page = async () => {
         today: string;
         task: string;
         name: string;
+        ip: string;
       }[],
       _
     ) => {
@@ -91,7 +98,8 @@ const Page = async () => {
         task: task?.id ?? "",
         lastSevenDays: `${((lastSevenDays / cntDays) * 100).toFixed(2)} %`,
         today: `${totalToday.toFixed(2)} h`,
-        name: _.crawlerId,
+        name: _.name,
+        ip: _.ip,
       });
 
       return acc;
@@ -151,20 +159,50 @@ const Page = async () => {
         <h3 className="text-base font-semibold leading-6 text-gray-900 flex flex-row space-x-1 items-center">
           {crawler.length} Crawlers
         </h3>
-        <div className="flex gap-2">
+        <div className="flex gap-2 w-[calc(100vw-400px)] overflow-x-auto">
           {activeCrawler.map((_) => (
-            <Card key={_.name} style={{ width: 500 }}>
-              <p>
-                {_.name}:{" "}
-                <span className="font-semibold">
-                  {_.active ? "Active" : "Inactive"}
-                </span>
-              </p>
-              {_.task ? `Task: ${_.task}` : ""}
-              <div>
-                <p>Usage: </p>
-                <p>Last 7 days: {_.lastSevenDays}</p>
-                <p>Today: {_.today}</p>
+            <Card key={_.name} style={{ minWidth: 250 }}>
+              <div className="flex flex-col">
+                <p>
+                  {_.name}:{" "}
+                  <span className="font-semibold">
+                    {_.active ? "Active" : "Inactive"}
+                  </span>
+                </p>
+                <Button
+                  href={`http://localhost:9090/@${_.ip}/system/terminal`}
+                  target="_blank"
+                >
+                  Terminal
+                </Button>
+                {_.task ? `Task: ${_.task}` : ""}
+                <div>
+                  <p>Usage: </p>
+                  <p>Last 7 days: {_.lastSevenDays}</p>
+                  <p>Today: {_.today}</p>
+                </div>
+              </div>
+            </Card>
+          ))}
+        </div>
+      </li>
+      <li>
+        <h3 className="text-base font-semibold leading-6 text-gray-900 flex flex-row space-x-1 items-center">
+          {infrastructure.length} Other (Infrastructure)
+        </h3>
+        <div className="flex gap-2 w-[calc(100vw-400px)] overflow-x-auto">
+          {infrastructure.map((_) => (
+            <Card key={_.name} style={{ minWidth: 250 }}>
+              <div className="flex flex-col">
+                <p>
+                  {_.name}
+                </p>
+                <Button
+                  href={`http://localhost:9090/@${_.ip}/system/terminal`}
+                  target="_blank"
+                >
+                  Terminal
+                </Button>
               </div>
             </Card>
           ))}

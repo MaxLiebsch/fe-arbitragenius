@@ -88,7 +88,6 @@ export const DashboardLayout = ({
   const newDeals = Boolean(
     eSalesCount.data?.totalProductsToday || aSalesCount.data?.totalProductsToday
   );
-  console.log("newDeals:", newDeals);
   const pathname = usePathname();
 
   const [state, formAction] = useFormState(logoutAction, {
