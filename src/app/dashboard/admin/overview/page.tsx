@@ -21,7 +21,7 @@ const Page = async () => {
 
   const mongo = await clientPool["NEXT_MONGO_CRAWLER_DATA_ADMIN"];
 
-  const crawler = await mongo
+  const scraper = await mongo
     .db(process.env.NEXT_MONOGO_CRAWLER_DATA)
     .collection("metadata")
     .find({ crawlerId: { $exists: true } })
@@ -54,7 +54,7 @@ const Page = async () => {
     .filter((task) => task.type === "DAILY_SALES" && !task.maintenance)
     .reduce((acc, _) => acc + _.productLimit, 0);
 
-  const activeCrawler = crawler.reduce(
+  const activeCrawler = scraper.reduce(
     (
       acc: {
         active: boolean;
@@ -110,7 +110,7 @@ const Page = async () => {
   );
 
   const usagePerTask = (taskType: string) => {
-    const { zaehler, nenner } = crawler.reduce(
+    const { zaehler, nenner } = scraper.reduce(
       (acc: { nenner: number; zaehler: number }, _) => {
         const lastSevenDays = Object.entries(
           _.activityPeriods as activityPeriods
@@ -161,7 +161,7 @@ const Page = async () => {
       <ul>
         <li>
           <h3 className="text-base font-semibold leading-6 text-gray-900 flex flex-row space-x-1 items-center">
-            {crawler.length} Crawlers
+            {scraper.length} Scraper
           </h3>
           <div className="flex gap-2 w-[calc(100vw-400px)] overflow-x-auto">
             {activeCrawler.map((_) => (

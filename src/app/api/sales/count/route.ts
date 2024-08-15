@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
     maxSecondaryBsr: Number(searchParams.get("maxSecondaryBsr")) || 1000000,
     productsWithNoBsr: searchParams.get("productsWithNoBsr") === "true",
     netto: searchParams.get("netto") === "true",
-    tptSmall: Number(searchParams.get("tptSmall")) || 2.95,
+    tptSmall: Number(searchParams.get("tptSmall")) || 0,
     tptMiddle: Number(searchParams.get("tptMiddle")) || 4.95,
     tptLarge: Number(searchParams.get("tptLarge")) || 6.95,
     strg: Number(searchParams.get("strg")) || 0,

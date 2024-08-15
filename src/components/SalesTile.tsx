@@ -44,7 +44,7 @@ const SalesTile = ({
       title={
         <div className="flex flex-row items-center">
           <div className="flex flex-col">
-            <div>Deal Monitor</div>
+            <div>Sales Monitor</div>
             <div className="text-sm font-thin text-gray-500">
               Gesamt: {shop.total ?? 0}
             </div>

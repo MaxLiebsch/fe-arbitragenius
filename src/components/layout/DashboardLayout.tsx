@@ -35,7 +35,7 @@ const navigation = [
     current: true,
   },
   {
-    name: "Deal Monitor",
+    name: "Sales Monitor",
     href: "/dashboard/daily-deals",
     current: false,
     icon: SparklesIcon,

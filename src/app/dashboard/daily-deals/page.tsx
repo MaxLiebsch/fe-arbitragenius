@@ -22,7 +22,7 @@ const Page = async ({ searchParams }: { searchParams: { target: string } }) => {
   }
   return (
     <div className="h-full flex flex-col overflow-y-hidden">
-      <Title>Deal-Monitor</Title>
+      <Title>Sales Monitor</Title>
       <SalesTableTabs settings={settings} />
     </div>
   );

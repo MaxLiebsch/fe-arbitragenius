@@ -23,7 +23,7 @@ export async function GET(
     minMargin: Number(searchParams.get("minMargin")) || 0,
     minPercentageMargin: Number(searchParams.get("minPercentageMargin")) || 0,
     maxPrimaryBsr: Number(searchParams.get("maxPrimaryBsr")) || 1000000,
-    tptSmall: Number(searchParams.get("tptSmall")) || 2.95,
+    tptSmall: Number(searchParams.get("tptSmall")) || 0,
     tptMiddle: Number(searchParams.get("tptMiddle")) || 4.95,
     tptLarge: Number(searchParams.get("tptLarge")) || 6.95,
     strg: Number(searchParams.get("strg")) || 0,
