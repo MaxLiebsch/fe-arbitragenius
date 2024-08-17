@@ -26,9 +26,7 @@ const PasswordPrompt = () => {
     ),
     queryFn: async () => {
       try {
-        await fetch(process.env.NEXT_PUBLIC_COCKPIT_URL!, {
-          method: "HEAD",
-        });
+        await fetch(process.env.NEXT_PUBLIC_COCKPIT_URL! + "/ping");
       } catch (error) {
         return "unauthorized";
       }
