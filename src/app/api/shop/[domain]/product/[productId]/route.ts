@@ -108,6 +108,8 @@ export async function POST(
     } else {
       if (esin !== originalEsin) {
         const resetEby = resetEbyProductQuery();
+        delete resetEby.$unset["esin"];
+        delete resetEby.$unset["e_qty"];
         query = {
           $unset: { ...resetEby.$unset },
           $set: {
@@ -119,6 +121,8 @@ export async function POST(
       }
       if (asin !== originalAsin) {
         const resetAzn = resetAznProductQuery();
+        delete resetAzn.$unset["asin"];
+        delete resetAzn.$unset["a_qty"];
         query = {
           $unset: { ...resetAzn.$unset },
           $set: {
@@ -214,7 +218,6 @@ export async function POST(
     }
   }
 
-  
   if (Object.keys(query).length === 0) {
     return Response.json({ acknowledged: true });
   }
