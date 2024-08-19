@@ -1,0 +1,1 @@
+export const amazonTransportFee = 0.25;

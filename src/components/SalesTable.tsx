@@ -6,11 +6,7 @@ import {
   useGridApiRef,
 } from "@mui/x-data-grid-premium";
 import React, { useMemo, useState } from "react";
-import useProductCount from "@/hooks/use-product-count";
-import useProducts, {
-  ProductPagination,
-  ProductSort,
-} from "@/hooks/use-products";
+import { ProductSort } from "@/hooks/use-products";
 import Spinner from "./Spinner";
 import { Settings } from "@/types/Settings";
 import useBookMarkAdd from "@/hooks/use-bookmark-add";
@@ -18,23 +14,21 @@ import useBookMarkRemove from "@/hooks/use-bookmark-remove";
 import useSalesCount from "@/hooks/use-sales-count";
 import useSalesProducts from "@/hooks/use-sales-products";
 import { createSalesTableColumns } from "@/util/SalesTableColumns";
-import { usePagination } from "@/hooks/use-pagination";
+import useAccount from "@/hooks/use-account";
+import { usePaginationAndSort } from "@/hooks/use-pagination";
 
 export default function SalesTable(props: {
   className?: string;
   target: string;
   settings: Settings;
 }) {
-  const { className,  target, settings } = props;
+  const { className, target, settings } = props;
 
-  const [paginationModel, setPaginationModel] = usePagination(); 
-
-  const [sortModel, setSortModel] = useState<ProductSort>({
-    field: `none`,
-    direction: "desc",
-  });
+  const [paginationModel, setPaginationModel,sortModel, setSortModel] = usePaginationAndSort();   
 
   const apiRef = useGridApiRef();
+  const user = useAccount();
+  const userRoles = useMemo(() => user.data?.labels ?? [], [user.data?.labels]);
 
   const productCountQuery = useSalesCount(target, settings);
   const productQuery = useSalesProducts(
@@ -65,7 +59,8 @@ export default function SalesTable(props: {
         paginationModel,
         settings,
         bookMarkMutation.mutate,
-        bookMarkDeleteMutation.mutate
+        bookMarkDeleteMutation.mutate,
+        userRoles
       ),
     [
       target,
@@ -73,6 +68,7 @@ export default function SalesTable(props: {
       paginationModel,
       bookMarkMutation.mutate,
       bookMarkDeleteMutation.mutate,
+      userRoles,
     ]
   );
 

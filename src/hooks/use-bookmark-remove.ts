@@ -15,20 +15,15 @@ import {
   invalidateProductQueriesOnSettled,
   invalidateSalesQueriesOnSettled,
 } from "./use-bookmark-add";
+import { productQueryKey, salesQueryKey } from "@/util/queryKeys";
 
 const invalidateProductQueries = async (
   variables: Variables,
   queryClient: QueryClient
 ) => {
-  const queryKey = [
-    variables.body.target,
-    "shop",
-    variables.body.shop,
-    "product",
-    "get",
-    variables.page,
-    variables.pageSize,
-  ];
+  const { body, page, pageSize } = variables;
+  const { target, shop } = body;
+  const queryKey = productQueryKey(target, shop, page, pageSize);
   await queryClient.cancelQueries({ queryKey, exact: false });
   const previousQuery = queryClient.getQueriesData({
     queryKey,
@@ -73,13 +68,11 @@ const invalidateSalesQueries = async (
   variables: Variables,
   queryClient: QueryClient
 ) => {
-  const queryKey = [
+  const queryKey = salesQueryKey(
     variables.body.target,
-    "sales",
-    "get",
     variables.page,
-    variables.pageSize,
-  ];
+    variables.pageSize
+  );
   await queryClient.cancelQueries({ queryKey, exact: false });
   const previousQuery = queryClient.getQueriesData({
     queryKey,

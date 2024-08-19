@@ -1,4 +1,5 @@
 import { Settings } from "@/types/Settings";
+import { countQueryKey } from "@/util/queryKeys";
 import { useQuery } from "@tanstack/react-query";
 
 export default function useSalesCount(
@@ -14,9 +15,7 @@ export default function useSalesCount(
   }
   return useQuery<{ productCount: number; totalProductsToday: number }>({
     queryKey: [
-      target,
-      "sales",
-      "count",
+      ...countQueryKey(target, 'sales') ,
       ...(settings ? Object.values(settings) : []),
     ],
     staleTime: 1000 * 60 * 5,

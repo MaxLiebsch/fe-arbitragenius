@@ -9,20 +9,17 @@ import {
   deDE,
   useGridApiRef,
 } from "@mui/x-data-grid-premium";
-import React, { MutableRefObject,  useState } from "react";
-import {  ProductSort } from "@/hooks/use-products";
+import React, { MutableRefObject, useState } from "react";
+import { ProductSort } from "@/hooks/use-products";
 import Spinner from "./Spinner";
 import { Button } from "@mui/material";
 import { GridApiPremium } from "@mui/x-data-grid-premium/models/gridApiPremium";
-import {
-  ChevronRightIcon,
-  ChevronLeftIcon,
-} from "@heroicons/react/16/solid";
+import { ChevronRightIcon, ChevronLeftIcon } from "@heroicons/react/16/solid";
 import { Settings } from "@/types/Settings";
 import useTaskProducts from "@/hooks/use-task-products";
 import useTaskProductCount from "@/hooks/use-task-product-count";
 import { createWholeSaleColumns } from "../util/wholeSaleTableColumns";
-import { usePagination } from "@/hooks/use-pagination";
+import { usePaginationAndSort } from "@/hooks/use-pagination";
 
 function CustomToolbar() {
   return (
@@ -43,11 +40,8 @@ export default function WholeSaleProductsTable(props: {
 }) {
   const { className, taskId, settings } = props;
 
-  const [paginationModel, setPaginationModel] = usePagination()
-  const [sortModel, setSortModel] = useState<ProductSort>({
-    field: `none`,
-    direction: "desc",
-  });
+  const [paginationModel, setPaginationModel, sortModel, setSortModel] =
+    usePaginationAndSort();
 
   const apiRef = useGridApiRef();
 

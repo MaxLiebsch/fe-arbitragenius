@@ -1,5 +1,6 @@
 import { ModifiedProduct, Product } from "@/types/Product";
 import { Settings } from "@/types/Settings";
+import { salesQueryKey } from "@/util/queryKeys";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 
@@ -26,11 +27,7 @@ export default function useSalesProducts(
 
   const productQuery = useQuery<ModifiedProduct[]>({
     queryKey: [
-      target,
-      "sales",
-      "get",
-      pagination.page,
-      pagination.pageSize,
+      ...salesQueryKey(target, pagination.page, pagination.pageSize),
       sort?.field,
       sort?.direction,
       ...(settings ? Object.values(settings) : []),
@@ -58,11 +55,7 @@ export default function useSalesProducts(
     if (pagination.page < 10) {
       queryClient.prefetchQuery({
         queryKey: [
-          target,
-          "sales",
-          "get",
-          pagination.page + 1,
-          pagination.pageSize,
+          ...salesQueryKey(target, pagination.page + 1, pagination.pageSize),
           sort?.field,
           sort?.direction,
         ],

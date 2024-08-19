@@ -7,7 +7,7 @@ export interface BSR {
 export interface EbyCategory {
   category: string;
   id: number;
-  createdAt: string;
+  createdAt?: string;
 }
 
 export type Product = {

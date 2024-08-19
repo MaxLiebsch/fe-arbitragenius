@@ -16,7 +16,8 @@ import { Settings } from "@/types/Settings";
 import useBookMarkAdd from "@/hooks/use-bookmark-add";
 import { createColumns } from "@/util/ProductTableColumns";
 import useBookMarkRemove from "@/hooks/use-bookmark-remove";
-import { usePagination } from "@/hooks/use-pagination";
+import useAccount from "@/hooks/use-account";
+import { usePaginationAndSort } from "@/hooks/use-pagination";
 
 
 export default function ProductsTable(props: {
@@ -27,12 +28,8 @@ export default function ProductsTable(props: {
 }) {
   const { className, domain, target, settings } = props;
 
-  const [paginationModel, setPaginationModel] = usePagination();  
+  const [paginationModel, setPaginationModel,sortModel, setSortModel] = usePaginationAndSort();  
 
-  const [sortModel, setSortModel] = useState<ProductSort>({
-    field: `none`,
-    direction: "desc",
-  });
 
   const apiRef = useGridApiRef();
 
@@ -44,6 +41,9 @@ export default function ProductsTable(props: {
     target,
     settings
   );
+  const user = useAccount();
+  const userRoles = useMemo(() => user.data?.labels ?? [], [user.data?.labels]);
+
 
   const bookMarkMutation = useBookMarkAdd();
   const bookMarkDeleteMutation = useBookMarkRemove();
@@ -67,7 +67,8 @@ export default function ProductsTable(props: {
         paginationModel,
         settings,
         bookMarkMutation.mutate,
-        bookMarkDeleteMutation.mutate
+        bookMarkDeleteMutation.mutate,
+        userRoles
       ),
     [
       target,
@@ -76,6 +77,7 @@ export default function ProductsTable(props: {
       domain,
       bookMarkMutation.mutate,
       bookMarkDeleteMutation.mutate,
+      userRoles
     ]
   );
 

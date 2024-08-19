@@ -14,5 +14,6 @@ export interface Tier {
 export interface EbyTierCategory {
   id: number;
   category: string;
+  tax?: number;
   tier: Tier;
 }

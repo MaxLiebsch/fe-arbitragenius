@@ -1,5 +1,6 @@
 import { ModifiedProduct, Product } from "@/types/Product";
 import { Settings } from "@/types/Settings";
+import { productQueryKey } from "@/util/queryKeys";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 
@@ -26,13 +27,7 @@ export default function useProducts(
   const queryClient = useQueryClient();
 
   const queryKey = [
-    target,
-    "shop",
-    domain,
-    "product",
-    "get",
-    pagination.page,
-    pagination.pageSize,
+    ...productQueryKey(target, domain, pagination.page, pagination.pageSize),
     sort?.field,
     sort?.direction,
     ...(settings ? Object.values(settings) : []),
@@ -63,13 +58,12 @@ export default function useProducts(
     if (pagination.page < 10) {
       queryClient.prefetchQuery({
         queryKey: [
-          target,
-          "shop",
-          domain,
-          "product",
-          "get",
-          pagination.page + 1,
-          pagination.pageSize,
+          ...productQueryKey(
+            target,
+            domain,
+            pagination.page + 1,
+            pagination.pageSize
+          ),
           sort?.field,
           sort?.direction,
           ...(settings ? Object.values(settings) : []),

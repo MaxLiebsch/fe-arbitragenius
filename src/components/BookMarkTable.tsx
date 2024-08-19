@@ -5,15 +5,15 @@ import {
   deDE,
   useGridApiRef,
 } from "@mui/x-data-grid-premium";
-import React, { useMemo, useState } from "react";
-import { ProductPagination, ProductSort } from "@/hooks/use-products";
+import React, { useMemo } from "react";
 import Spinner from "./Spinner";
 import useBookMarkAdd from "@/hooks/use-bookmark-add";
 import useBookMarkRemove from "@/hooks/use-bookmark-remove";
 import { BookMarkProduct } from "@/types/Product";
 import { bookMarkColumns } from "@/util/BookmarkColumns";
 import { Settings } from "@/types/Settings";
-import { usePagination } from "@/hooks/use-pagination";
+import { usePaginationAndSort } from "@/hooks/use-pagination";
+import useAccount from "@/hooks/use-account";
 
 export default function BookmarkTable(props: {
   products: BookMarkProduct[];
@@ -21,16 +21,14 @@ export default function BookmarkTable(props: {
   loading: boolean;
 }) {
   const { target, loading, products } = props;
-  const [paginationModel, setPaginationModel] = usePagination(); 
-  const [sortModel, setSortModel] = useState<ProductSort>({
-    field: `none`,
-    direction: "desc",
-  });
-
+  const [paginationModel, setPaginationModel, sortModel, setSortModel] = usePaginationAndSort(); 
+  
   const apiRef = useGridApiRef();
 
   const addBookMark = useBookMarkAdd();
   const removeBookmark = useBookMarkRemove();
+  const user = useAccount();
+  const userRoles = useMemo(() => user.data?.labels ?? [], [user.data?.labels]);
 
   const handleSortModelChange = (model: GridSortModel) => {
     if (model.length) {
@@ -50,9 +48,10 @@ export default function BookmarkTable(props: {
         { netto: true } as Settings,
         paginationModel,
         addBookMark.mutate,
-        removeBookmark.mutate
+        removeBookmark.mutate,
+        userRoles,
       ),
-    [removeBookmark.mutate, addBookMark.mutate, paginationModel, target]
+    [removeBookmark.mutate, addBookMark.mutate, paginationModel, target,userRoles]
   );
 
   return (
