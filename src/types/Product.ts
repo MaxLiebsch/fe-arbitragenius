@@ -51,6 +51,9 @@ export interface ModifiedProduct extends Product {
   esin: string;
   shop?: string;
   uprc: number;
+  availUpdatedAt?: string;
+  dealEbyUpdatedAt?: string;
+  dealAznUpdatedAt?: string;
   ebyCategories: EbyCategory[];
   qty: number;
   e_qty: number;

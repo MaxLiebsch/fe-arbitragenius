@@ -56,15 +56,13 @@ const AdminEbyCorrectionForm = ({
       }}
     >
       <div className="flex flex-col gap-1 my-2 relative">
-        <div className="absolute top-0 right-20">
+        <div className="absolute top-0 right-0">
           <Form.Item
             shouldUpdate
             style={{
-              height: "32px",
               padding: "0px",
               margin: "0px",
               marginLeft: "auto",
-              width: "25%",
             }}
           >
             {() => (
@@ -72,6 +70,7 @@ const AdminEbyCorrectionForm = ({
                 <Button
                   disabled={updateProduct.isPending}
                   type="primary"
+                  className="z-50"
                   htmlType="submit"
                 >
                   <div className="flex items-center justify-center">

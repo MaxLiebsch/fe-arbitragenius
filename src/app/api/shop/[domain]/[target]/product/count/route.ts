@@ -14,7 +14,7 @@ export async function GET(
   { params }: { params: { domain: string; target: string } }
 ) {
   const { target, domain } = params;
-  const mongo = await clientPool['NEXT_MONGO'];
+  const mongo = await clientPool["NEXT_MONGO"];
   const searchParams = request.nextUrl.searchParams;
 
   const isAmazon = target === "a";
@@ -74,21 +74,58 @@ export async function GET(
       $addFields: {
         primaryBsr: {
           $cond: {
-            if: { $size: "$bsr" },
+            if: {
+              $size: {
+                $ifNull: [
+                  {
+                    $cond: {
+                      if: { $eq: [{ $type: "$bsr" }, "array"] },
+                      then: "$bsr",
+                      else: [],
+                    },
+                  },
+                  [],
+                ],
+              },
+            },
             then: { $arrayElemAt: ["$bsr", 0] },
             else: null,
           },
         },
         secondaryBsr: {
           $cond: {
-            if: { $size: "$bsr" },
+            if: {
+              $size: {
+                $ifNull: [
+                  {
+                    $cond: {
+                      if: { $eq: [{ $type: "$bsr" }, "array"] },
+                      then: "$bsr",
+                      else: [],
+                    },
+                  },
+                  [],
+                ],
+              },
+            },
             then: { $arrayElemAt: ["$bsr", 1] },
             else: null,
           },
         },
         thirdBsr: {
           $cond: {
-            if: { $size: "$bsr" },
+            if: { $size: {
+              $ifNull: [
+                {
+                  $cond: {
+                    if: { $eq: [{ $type: "$bsr" }, "array"] },
+                    then: "$bsr",
+                    else: [],
+                  },
+                },
+                [],
+              ],
+            } },
             then: { $arrayElemAt: ["$bsr", 2] },
             else: null,
           },

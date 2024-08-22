@@ -57,20 +57,19 @@ const AdminAznCorrectionForm = ({
     >
       <div className="flex flex-col gap-1 my-2 relative">
         <SharedFields target={target} />
-        <div className="absolute top-0 right-20">
+        <div className="absolute top-0 right-0">
           <Form.Item
             shouldUpdate
             style={{
-              height: "32px",
               padding: "0px",
               margin: "0px",
               marginLeft: "auto",
-              width: "25%",
             }}
           >
             {() => (
               <Tooltip title="Speichern">
                 <Button
+                  className="z-50"
                   disabled={updateProduct.isPending}
                   type="primary"
                   htmlType="submit"

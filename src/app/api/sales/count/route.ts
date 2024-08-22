@@ -10,7 +10,7 @@ import { NextRequest } from "next/server";
 */
 
 export async function GET(request: NextRequest) {
-  const mongo = await clientPool['NEXT_MONGO'];
+  const mongo = await clientPool["NEXT_MONGO"];
   const searchParams = request.nextUrl.searchParams;
   const target = searchParams.get("target") || "a";
 
@@ -71,21 +71,60 @@ export async function GET(request: NextRequest) {
       $addFields: {
         primaryBsr: {
           $cond: {
-            if: { $size: "$bsr" },
+            if: {
+              $size: {
+                $ifNull: [
+                  {
+                    $cond: {
+                      if: { $eq: [{ $type: "$bsr" }, "array"] },
+                      then: "$bsr",
+                      else: [],
+                    },
+                  },
+                  [],
+                ],
+              },
+            },
             then: { $arrayElemAt: ["$bsr", 0] },
             else: null,
           },
         },
         secondaryBsr: {
           $cond: {
-            if: { $size: "$bsr" },
+            if: {
+              $size: {
+                $ifNull: [
+                  {
+                    $cond: {
+                      if: { $eq: [{ $type: "$bsr" }, "array"] },
+                      then: "$bsr",
+                      else: [],
+                    },
+                  },
+                  [],
+                ],
+              },
+            },
             then: { $arrayElemAt: ["$bsr", 1] },
             else: null,
           },
         },
         thirdBsr: {
           $cond: {
-            if: { $size: "$bsr" },
+            if: {
+              $size: {
+                $ifNull: [
+                  {
+                    $cond: {
+                      if: { $eq: [{ $type: "$bsr" }, "array"] },
+                      then: "$bsr",
+                      else: [],
+                    },
+                  },
+                  [],
+                ],
+              },
+            },
             then: { $arrayElemAt: ["$bsr", 2] },
             else: null,
           },
@@ -242,7 +281,11 @@ export async function GET(request: NextRequest) {
 
     if (buyBox === "both") {
       findQuery.push({
-        $or: [{ buyBoxIsAmazon: true },{buyBoxIsAmazon: false}, { buyBoxIsAmazon: null }],
+        $or: [
+          { buyBoxIsAmazon: true },
+          { buyBoxIsAmazon: false },
+          { buyBoxIsAmazon: null },
+        ],
       });
     }
 
@@ -333,12 +376,14 @@ export async function GET(request: NextRequest) {
   }
 
   const res = await mongo
-  .db(process.env.NEXT_MONGO_DB)
-  .collection("sales")
-  .aggregate(aggregation)
-  .toArray();
+    .db(process.env.NEXT_MONGO_DB)
+    .collection("sales")
+    .aggregate(aggregation)
+    .toArray();
 
   return Response.json(
-    res.length && res[0]?.productCount ? res[0] : { productCount: 0, todayCount: 0 }
+    res.length && res[0]?.productCount
+      ? res[0]
+      : { productCount: 0, todayCount: 0 }
   );
 }

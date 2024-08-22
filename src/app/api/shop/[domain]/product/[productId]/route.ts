@@ -221,7 +221,6 @@ export async function POST(
   if (Object.keys(query).length === 0) {
     return Response.json({ acknowledged: true });
   }
-
   const res = await client
     .db(process.env.NEXT_MONGO_DB)
     .collection(domain)

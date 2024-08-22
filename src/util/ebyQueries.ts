@@ -30,7 +30,7 @@ export const resetEbyProductQuery = () => {
       eby_taskId: "",
       // dealeby properties
       dealEbyUpdatedAt: "",
-      dealEby_taskId: "",
+      dealEbyTaskId: "",
     },
   };
   return query;

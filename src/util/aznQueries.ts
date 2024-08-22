@@ -1,15 +1,13 @@
 import { keepaProperties } from "./keepaProperties";
 
 export const resetAznProductQuery = () => {
-  const query:{ [key: string]: any } = {
-    $set: {
-      bsr: [],
-    },
+  let query:{ [key: string]: any } = {
     $unset: {
       //standard properties
       a_pblsh: "",
       a_nm: "",
       a_lnk: "",
+      bsr: "",
       a_img: "",
       asin: "",
       a_prc: "",
@@ -33,12 +31,14 @@ export const resetAznProductQuery = () => {
       // keepa properties
       keepaUpdatedAt: "",
       keepa_lckd: "",
+      keepaEanUpdatedAt: "",
+      keepaEan_lckd: "",
       // scrape listing
       aznUpdatedAt: "",
       azn_taskId: "",
       // dealazn properties
       dealAznUpdatedAt: "",
-      dealAzn_taskId: "",
+      dealAznTaskId: "",
     },
   };
   keepaProperties.forEach((prop) => {
