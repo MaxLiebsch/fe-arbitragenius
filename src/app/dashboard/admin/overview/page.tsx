@@ -60,6 +60,7 @@ const Page = async () => {
         active: boolean;
         lastSevenDays: string;
         today: string;
+        crawlerId: string;
         task: string;
         name: string;
         ip: string;
@@ -98,6 +99,7 @@ const Page = async () => {
       acc.push({
         active: task ? true : false,
         task: task?.id ?? "",
+        crawlerId: _?.crawlerId || "",
         lastSevenDays: `${((lastSevenDays / cntDays) * 100).toFixed(2)} %`,
         today: `${totalToday.toFixed(2)} h`,
         name: _.name,
@@ -189,7 +191,7 @@ const Page = async () => {
                       {_.active ? "Active" : "Inactive"}
                     </span>
                   </p>
-                  <Terminal ip={_.ip} />
+                  <Terminal ip={_.ip} name={_.crawlerId} />
                   {_.task ? `Task: ${_.task}` : ""}
                   <div>
                     <p>Usage: </p>
@@ -211,7 +213,7 @@ const Page = async () => {
               <Card key={_.name} style={{ minWidth: 250 }}>
                 <div className="flex flex-col">
                   <p>{_.name}</p>
-                  <Terminal ip={_.ip} />
+                  <Terminal ip={_.ip} name={_.name}  />
                 </div>
               </Card>
             ))}
