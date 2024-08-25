@@ -155,6 +155,8 @@ const Page = async () => {
     (task) => task.type === "CRAWL_EAN"
   )!.progress;
 
+  const dealTasks = tasks.filter((task) => task.type.includes("DEALS"));
+
   const keepaTasks = tasks.filter(
     (task) => task.type === "KEEPA_NORMAL" || task.type === "KEEPA_EAN"
   );
@@ -223,7 +225,8 @@ const Page = async () => {
           <div className="flex flex-col">
             {keepaTotal ? (
               <p>
-                Today: {keepaTotal.total} - Yesterday: {keepaTotal.yesterday} (Usage)
+                Today: {keepaTotal.total} - Yesterday: {keepaTotal.yesterday}{" "}
+                (Usage)
               </p>
             ) : (
               <></>
@@ -259,7 +262,10 @@ const Page = async () => {
           <h3 className="text-base font-semibold leading-6 text-gray-900 flex flex-row space-x-1 items-center">
             {shops.length} Shops Crawl Shops Total: {total}
           </h3>
-          <div> Usage last 7 days: {usagePerTask("CRAWL_SHOP")} </div>
+          <div>
+            <span className="font-semibold">Usage last 7 days:</span>{" "}
+            {usagePerTask("CRAWL_SHOP")}{" "}
+          </div>
           <div className="flex gap-2">
             {shops.map((_) => (
               <Card key={_} style={{ width: 300 }}>
@@ -287,7 +293,10 @@ const Page = async () => {
           <h3 className="text-base font-semibold leading-6 text-gray-900 flex flex-row space-x-1 items-center">
             {shops.length} Daily Deals Total: {totalSales}
           </h3>
-          <div> Usage last 7 days: {usagePerTask("DAILY_SALES")} </div>
+          <div>
+            <span className="font-semibold">Usage last 7 days:</span>{" "}
+            {usagePerTask("DAILY_SALES")}{" "}
+          </div>
           <div className="flex gap-2">
             {shops.map((_) => (
               <Card key={_} style={{ width: 300 }}>
@@ -315,7 +324,11 @@ const Page = async () => {
           <h3 className="text-base font-semibold leading-6 text-gray-900 flex flex-row space-x-1 items-center">
             Match
           </h3>
-          <div> Usage last 7 days: {usagePerTask("MATCH_PRODUCTS")}</div>
+          <div>
+            {" "}
+            <span className="font-semibold">Usage last 7 days:</span>{" "}
+            {usagePerTask("MATCH_PRODUCTS")}
+          </div>
           {tasks
             .filter((task) => task.type === "MATCH_PRODUCTS")
             .map((_) => (
@@ -324,120 +337,227 @@ const Page = async () => {
               </div>
             ))}
         </li>
-        {/* CRAWL EANS */}
-        <li>
-          <h3 className="text-base font-semibold leading-6 text-gray-900 flex flex-row space-x-1 items-center">
-            Crawl Eans
-          </h3>
-          <div> Usage last 7 days: {usagePerTask("CRAWL_EAN")} </div>
-          {crawlEansProgress.length ? (
-            crawlEansProgress.map((_: any) => (
-              <div key={`crawl-eans-${_.shop}`}>
-                {_.shop}: {_.pending}
-              </div>
-            ))
-          ) : (
-            <div>All done.</div>
-          )}
-        </li>
-        {/* LOOKUP INFOS */}
-        <li>
-          <h3 className="text-base font-semibold leading-6 text-gray-900 flex flex-row space-x-1 items-center">
-            Lookup Infos
-          </h3>
-          <div> Usage last 7 days: {usagePerTask("LOOKUP_INFO")}</div>
-          {lookupInfoProgress?.length ? (
-            lookupInfoProgress.map((_: any) => (
-              <div key={`lookup-info-${_.shop}`}>
-                {_.shop}: {_.pending}
-              </div>
-            ))
-          ) : (
-            <div>All done.</div>
-          )}
-        </li>
-        {/* QUERY EANS ON EBAY */}
-        <li>
-          <h3 className="text-base font-semibold leading-6 text-gray-900 flex flex-row space-x-1 items-center">
-            Query Eans on Ebay
-          </h3>
-          <div> Usage last 7 days: {usagePerTask("QUERY_EANS_EBY")}</div>
-          {queryEansEbyProgress?.length ? (
-            queryEansEbyProgress.map((_: any) => (
-              <div key={`query-eans-on-eby-${_.shop}`}>
-                {_.shop}: {_.pending}
-              </div>
-            ))
-          ) : (
-            <div>All done.</div>
-          )}
-        </li>
-        {/* LOOKUP CATEGORY */}
-        <li>
-          <h3 className="text-base font-semibold leading-6 text-gray-900 flex flex-row space-x-1 items-center">
-            LookupCategories
-          </h3>
-          <div> Usage last 7 days: {usagePerTask("LOOKUP_CATEGORY")}</div>
-          {lookupCategoryProgress ? (
-            lookupCategoryProgress?.map((_: any) => (
-              <div key={`lookup-category-${_.shop}`}>
-                {_.shop}: {_.pending}
-              </div>
-            ))
-          ) : (
-            <div>All done.</div>
-          )}
-        </li>
-        {/* SCRAPE EBY LISTINGS */}
-        <li>
-          <h3 className="text-base font-semibold leading-6 text-gray-900 flex flex-row space-x-1 items-center">
-            Negative Margin Products - Eby
-          </h3>
-          <div> Usage last 7 days: {usagePerTask("CRAWL_EBY_LISTINGS")}</div>
-          {tasks
-            .filter((task) => task.type === "CRAWL_EBY_LISTINGS")
-            .sort((a, b) => b.progress.pending - a.progress.pending)
-            .map((_) => (
-              <div key={`crawl-eby-${_.id}`}>
-                {_?.progress &&
-                  _.progress.map(
-                    (progressPerShop: { d: string; pending: number }) => (
-                      <div key={`crawl-azn-${_.id}-${progressPerShop.d}`}>
-                        {progressPerShop.d}:{" "}
-                        {progressPerShop.pending > 0
-                          ? `${progressPerShop.pending} pending`
-                          : "no pending"}
-                      </div>
-                    )
-                  )}
-              </div>
-            ))}
-        </li>
-        {/* SCRAPE AZN LISTINGS */}
-        <li>
-          <h3 className="text-base font-semibold leading-6 text-gray-900 flex flex-row space-x-1 items-center">
-            Negative Margin Products - Azn
-          </h3>
-          <div> Usage last 7 days: {usagePerTask("CRAWL_AZN_LISTINGS")}</div>
-          {tasks
-            .filter((task) => task.type === "CRAWL_AZN_LISTINGS")
-            .sort((a, b) => b.progress.pending - a.progress.pending)
-            .map((_) => (
-              <div key={`crawl-azn-${_.id}`}>
-                {_?.progress &&
-                  _.progress.map(
-                    (progressPerShop: { d: string; pending: number }) => (
-                      <div key={`crawl-azn-${_.id}-${progressPerShop.d}`}>
-                        {progressPerShop.d}:{" "}
-                        {progressPerShop.pending > 0
-                          ? `${progressPerShop.pending} pending`
-                          : "no pending"}
-                      </div>
-                    )
-                  )}
-              </div>
-            ))}
-        </li>
+        <div className="flex flex-col md:flex-row justify-between">
+          {/* CRAWL EANS */}
+          <li>
+            <h3 className="text-base font-semibold leading-6 text-gray-900 flex flex-row space-x-1 items-center">
+              Crawl Eans
+            </h3>
+            <div>
+              {" "}
+              <span className="font-semibold">Usage last 7 days:</span>{" "}
+              {usagePerTask("CRAWL_EAN")}{" "}
+            </div>
+            {crawlEansProgress.length ? (
+              crawlEansProgress.map((_: any) => (
+                <div key={`crawl-eans-${_.shop}`}>
+                  {_.shop}: {_.pending}
+                </div>
+              ))
+            ) : (
+              <div>All done.</div>
+            )}
+          </li>
+          {/* LOOKUP INFOS */}
+          <li>
+            <h3 className="text-base font-semibold leading-6 text-gray-900 flex flex-row space-x-1 items-center">
+              Lookup Infos
+            </h3>
+            <div>
+              {" "}
+              <span className="font-semibold">Usage last 7 days:</span>{" "}
+              {usagePerTask("LOOKUP_INFO")}
+            </div>
+            {lookupInfoProgress?.length ? (
+              lookupInfoProgress.map((_: any) => (
+                <div key={`lookup-info-${_.shop}`}>
+                  {_.shop}: {_.pending}
+                </div>
+              ))
+            ) : (
+              <div>All done.</div>
+            )}
+          </li>
+          {/* QUERY EANS ON EBAY */}
+          <li>
+            <h3 className="text-base font-semibold leading-6 text-gray-900 flex flex-row space-x-1 items-center">
+              Query Eans on Ebay
+            </h3>
+            <div>
+              {" "}
+              <span className="font-semibold">Usage last 7 days:</span>{" "}
+              {usagePerTask("QUERY_EANS_EBY")}
+            </div>
+            {queryEansEbyProgress?.length ? (
+              queryEansEbyProgress.map((_: any) => (
+                <div key={`query-eans-on-eby-${_.shop}`}>
+                  {_.shop}: {_.pending}
+                </div>
+              ))
+            ) : (
+              <div>All done.</div>
+            )}
+          </li>
+          {/* LOOKUP CATEGORY */}
+          <li>
+            <h3 className="text-base font-semibold leading-6 text-gray-900 flex flex-row space-x-1 items-center">
+              LookupCategories
+            </h3>
+            <div>
+              {" "}
+              <span className="font-semibold">Usage last 7 days:</span>{" "}
+              {usagePerTask("LOOKUP_CATEGORY")}
+            </div>
+            {lookupCategoryProgress ? (
+              lookupCategoryProgress?.map((_: any) => (
+                <div key={`lookup-category-${_.shop}`}>
+                  {_.shop}: {_.pending}
+                </div>
+              ))
+            ) : (
+              <div>All done.</div>
+            )}
+          </li>
+        </div>
+        {/* DEALS */}
+        <div className="flex flex-col md:flex-row justify-between">
+          {/* SCRAPE POS LISTINGS AZN */}
+          <li>
+            <h3 className="text-base font-semibold leading-6 text-gray-900 flex flex-row space-x-1 items-center">
+              Pos. Margin - Azn
+            </h3>
+            <div>
+              {" "}
+              <span className="font-semibold">Usage last 7 days:</span>{" "}
+              {usagePerTask("DEALS_ON_AZN")}
+            </div>
+            {tasks
+              .filter((task) => task.type === "DEALS_ON_AZN")
+              .sort((a, b) => b.progress.pending - a.progress.pending)
+              .map((_) => (
+                <div key={`crawl-azn-${_.id}`}>
+                  {_?.progress &&
+                    _.progress.map(
+                      (progressPerShop: {
+                        shop: { d: string };
+                        pending: number;
+                      }) => (
+                        <div
+                          key={`crawl-azn-${_.id}-${progressPerShop.shop.d}`}
+                        >
+                          {progressPerShop.shop.d}:{" "}
+                          {progressPerShop.pending > 0
+                            ? `${progressPerShop.pending} pending`
+                            : "no pending"}
+                        </div>
+                      )
+                    )}
+                </div>
+              ))}
+          </li>
+          {/* SCRAPE AZN LISTINGS */}
+          <li>
+            <h3 className="text-base font-semibold leading-6 text-gray-900 flex flex-row space-x-1 items-center">
+              Neg. Margin - Azn
+            </h3>
+            <div>
+              {" "}
+              <span className="font-semibold">Usage last 7 days:</span>{" "}
+              {usagePerTask("CRAWL_AZN_LISTINGS")}
+            </div>
+            {tasks
+              .filter((task) => task.type === "CRAWL_AZN_LISTINGS")
+              .sort((a, b) => b.progress.pending - a.progress.pending)
+              .map((_) => (
+                <div key={`crawl-azn-${_.id}`}>
+                  {_?.progress &&
+                    _.progress.map(
+                      (progressPerShop: {
+                        shop: { d: string };
+                        pending: number;
+                      }) => (
+                        <div
+                          key={`crawl-azn-${_.id}-${progressPerShop.shop.d}`}
+                        >
+                          {progressPerShop.shop.d}:{" "}
+                          {progressPerShop.pending > 0
+                            ? `${progressPerShop.pending} pending`
+                            : "no pending"}
+                        </div>
+                      )
+                    )}
+                </div>
+              ))}
+          </li>
+          {/* SCRAPE POS LISTINGS EBY */}
+          <li>
+            <h3 className="text-base font-semibold leading-6 text-gray-900 flex flex-row space-x-1 items-center">
+              Pos. Margin - Eby
+            </h3>
+            <div>
+              {" "}
+              <span className="font-semibold">Usage last 7 days:</span>{" "}
+              {usagePerTask("DEALS_ON_EBY")}
+            </div>
+            {tasks
+              .filter((task) => task.type === "DEALS_ON_EBY")
+              .sort((a, b) => b.progress.pending - a.progress.pending)
+              .map((_) => (
+                <div key={`crawl-eby-${_.id}`}>
+                  {_?.progress &&
+                    _.progress.map(
+                      (progressPerShop: {
+                        shop: { d: string };
+                        pending: number;
+                      }) => (
+                        <div
+                          key={`crawl-azn-${_.id}-${progressPerShop.shop.d}`}
+                        >
+                          {progressPerShop.shop.d}:{" "}
+                          {progressPerShop.pending > 0
+                            ? `${progressPerShop.pending} pending`
+                            : "no pending"}
+                        </div>
+                      )
+                    )}
+                </div>
+              ))}
+          </li>
+          {/* SCRAPE EBY LISTINGS */}
+          <li>
+            <h3 className="text-base font-semibold leading-6 text-gray-900 flex flex-row space-x-1 items-center">
+              Neg. Margin - Eby
+            </h3>
+            <div>
+              {" "}
+              <span className="font-semibold">Usage last 7 days:</span>{" "}
+              {usagePerTask("CRAWL_EBY_LISTINGS")}
+            </div>
+            {tasks
+              .filter((task) => task.type === "CRAWL_EBY_LISTINGS")
+              .sort((a, b) => b.progress.pending - a.progress.pending)
+              .map((_) => (
+                <div key={`crawl-eby-${_.id}`}>
+                  {_?.progress &&
+                    _.progress.map(
+                      (progressPerShop: {
+                        shop: { d: string };
+                        pending: number;
+                      }) => (
+                        <div
+                          key={`crawl-azn-${_.id}-${progressPerShop.shop.d}`}
+                        >
+                          {progressPerShop.shop.d}:{" "}
+                          {progressPerShop.pending > 0
+                            ? `${progressPerShop.pending} pending`
+                            : "no pending"}
+                        </div>
+                      )
+                    )}
+                </div>
+              ))}
+          </li>
+        </div>
       </ul>
     </>
   );
