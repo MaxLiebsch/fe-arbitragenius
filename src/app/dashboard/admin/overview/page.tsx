@@ -155,10 +155,24 @@ const Page = async () => {
     (task) => task.type === "CRAWL_EAN"
   )!.progress;
 
+  const keepaTasks = tasks.filter(
+    (task) => task.type === "KEEPA_NORMAL" || task.type === "KEEPA_EAN"
+  );
+
+  const keepaTotal = keepaTasks.reduce((acc, task) => {
+    if (task.type === "KEEPA_NORMAL") {
+      acc = {
+        total: task.total,
+        yesterday: task.yesterday,
+      };
+    }
+    return acc;
+  }, {} as { total: number; yesterday: number });
+
   return (
     <>
-      <PasswordPrompt />
       <ul>
+        {/* SCRAPER */}
         <li>
           <h3 className="text-base font-semibold leading-6 text-gray-900 flex flex-row space-x-1 items-center">
             {scraper.length} Scraper
@@ -185,6 +199,7 @@ const Page = async () => {
             ))}
           </div>
         </li>
+        {/* INFRASTRUCTURE */}
         <li>
           <h3 className="text-base font-semibold leading-6 text-gray-900 flex flex-row space-x-1 items-center">
             {infrastructure.length} Other (Infrastructure)
@@ -200,6 +215,46 @@ const Page = async () => {
             ))}
           </div>
         </li>
+        {/* KEEPA */}
+        <li>
+          <h3 className="text-base font-semibold leading-6 text-gray-900 flex flex-row space-x-1 items-center">
+            {keepaTasks.length} Keepa Tasks
+          </h3>
+          <div className="flex flex-col">
+            {keepaTotal ? (
+              <p>
+                Today: {keepaTotal.total} - Yesterday: {keepaTotal.yesterday} (Usage)
+              </p>
+            ) : (
+              <></>
+            )}
+            <div className="flex flex-row gap-2">
+              {keepaTasks.map((_) => (
+                <Card key={_.id}>
+                  <p>
+                    {_.type === "KEEPA_NORMAL"
+                      ? "Weekly Updates"
+                      : "Ean Updates"}
+                  </p>
+                  <div key={`keepa-${_.id}`}>
+                    {_?.progress &&
+                      _.progress.map(
+                        (progressPerShop: { d: string; pending: number }) => (
+                          <div key={`crawl-azn-${_.id}-${progressPerShop.d}`}>
+                            {progressPerShop.d}:{" "}
+                            {progressPerShop.pending > 0
+                              ? `${progressPerShop.pending} pending`
+                              : "no pending"}
+                          </div>
+                        )
+                      )}
+                  </div>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </li>
+        {/* CRAWL SHOPS */}
         <li>
           <h3 className="text-base font-semibold leading-6 text-gray-900 flex flex-row space-x-1 items-center">
             {shops.length} Shops Crawl Shops Total: {total}
@@ -227,6 +282,7 @@ const Page = async () => {
             ))}
           </div>
         </li>
+        {/* DAILY SALES */}
         <li>
           <h3 className="text-base font-semibold leading-6 text-gray-900 flex flex-row space-x-1 items-center">
             {shops.length} Daily Deals Total: {totalSales}
@@ -254,6 +310,7 @@ const Page = async () => {
             ))}
           </div>
         </li>
+        {/* MATCH PRODUCTS */}
         <li>
           <h3 className="text-base font-semibold leading-6 text-gray-900 flex flex-row space-x-1 items-center">
             Match
@@ -267,6 +324,7 @@ const Page = async () => {
               </div>
             ))}
         </li>
+        {/* CRAWL EANS */}
         <li>
           <h3 className="text-base font-semibold leading-6 text-gray-900 flex flex-row space-x-1 items-center">
             Crawl Eans
@@ -282,6 +340,7 @@ const Page = async () => {
             <div>All done.</div>
           )}
         </li>
+        {/* LOOKUP INFOS */}
         <li>
           <h3 className="text-base font-semibold leading-6 text-gray-900 flex flex-row space-x-1 items-center">
             Lookup Infos
@@ -297,6 +356,7 @@ const Page = async () => {
             <div>All done.</div>
           )}
         </li>
+        {/* QUERY EANS ON EBAY */}
         <li>
           <h3 className="text-base font-semibold leading-6 text-gray-900 flex flex-row space-x-1 items-center">
             Query Eans on Ebay
@@ -312,7 +372,7 @@ const Page = async () => {
             <div>All done.</div>
           )}
         </li>
-
+        {/* LOOKUP CATEGORY */}
         <li>
           <h3 className="text-base font-semibold leading-6 text-gray-900 flex flex-row space-x-1 items-center">
             LookupCategories
@@ -328,37 +388,53 @@ const Page = async () => {
             <div>All done.</div>
           )}
         </li>
+        {/* SCRAPE EBY LISTINGS */}
         <li>
           <h3 className="text-base font-semibold leading-6 text-gray-900 flex flex-row space-x-1 items-center">
-            Crawl Azn Listings
+            Negative Margin Products - Eby
           </h3>
-          <div> Usage last 7 days: {usagePerTask("CRAWL_AZN_LISTINGS")}</div>
+          <div> Usage last 7 days: {usagePerTask("CRAWL_EBY_LISTINGS")}</div>
           {tasks
             .filter((task) => task.type === "CRAWL_EBY_LISTINGS")
             .sort((a, b) => b.progress.pending - a.progress.pending)
             .map((_) => (
-              <div key={`lookup-category-${_.id}`}>
-                {_.shopDomain}:{" "}
-                {_.progress.pending > 0
-                  ? `${_.progress.pending} pending`
-                  : "no pending"}
+              <div key={`crawl-eby-${_.id}`}>
+                {_?.progress &&
+                  _.progress.map(
+                    (progressPerShop: { d: string; pending: number }) => (
+                      <div key={`crawl-azn-${_.id}-${progressPerShop.d}`}>
+                        {progressPerShop.d}:{" "}
+                        {progressPerShop.pending > 0
+                          ? `${progressPerShop.pending} pending`
+                          : "no pending"}
+                      </div>
+                    )
+                  )}
               </div>
             ))}
         </li>
+        {/* SCRAPE AZN LISTINGS */}
         <li>
           <h3 className="text-base font-semibold leading-6 text-gray-900 flex flex-row space-x-1 items-center">
-            Crawl Eby Listings
+            Negative Margin Products - Azn
           </h3>
           <div> Usage last 7 days: {usagePerTask("CRAWL_AZN_LISTINGS")}</div>
           {tasks
             .filter((task) => task.type === "CRAWL_AZN_LISTINGS")
             .sort((a, b) => b.progress.pending - a.progress.pending)
             .map((_) => (
-              <div key={`lookup-category-${_.id}`}>
-                {_.shopDomain}:{" "}
-                {_.progress.pending > 0
-                  ? `${_.progress.pending} pending`
-                  : "no pending"}
+              <div key={`crawl-azn-${_.id}`}>
+                {_?.progress &&
+                  _.progress.map(
+                    (progressPerShop: { d: string; pending: number }) => (
+                      <div key={`crawl-azn-${_.id}-${progressPerShop.d}`}>
+                        {progressPerShop.d}:{" "}
+                        {progressPerShop.pending > 0
+                          ? `${progressPerShop.pending} pending`
+                          : "no pending"}
+                      </div>
+                    )
+                  )}
               </div>
             ))}
         </li>
