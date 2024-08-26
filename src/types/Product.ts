@@ -42,10 +42,21 @@ export type Product = {
   a_mrgn_pct: number;
 };
 
+export interface Verification {
+  vrfd?: boolean,
+  isMatch?: boolean,
+  score?: number,
+  vrfn_pending?: boolean,
+  flags?: string[],
+  flag_cnt?:  number,
+}
+
 export interface ModifiedProduct extends Product {
   bsr_1: number;
   bsr_cat_1: string;
   e_uprc: number;
+  e_vrfd?: Verification
+  a_vrfd?: Verification
   isBookmarked: boolean;
   a_uprc: number;
   esin: string;

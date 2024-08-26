@@ -8,6 +8,7 @@ import { Button, Form, Input, InputNumber, Switch, Tooltip } from "antd";
 import React from "react";
 import SharedFields, { EanAndSourceCorrect } from "./SharedFields";
 import { useParams } from "next/navigation";
+import ScoreAndMatch from "../ScoreAndMatch";
 
 const AdminAznCorrectionForm = ({
   target,
@@ -24,7 +25,7 @@ const AdminAznCorrectionForm = ({
   const updateProduct = useProductUpdate();
   const params = useParams();
   const { domain } = params;
-  const { qty, a_qty, esin, e_qty } = product;
+  const { qty, a_qty, esin, e_qty, a_vrfd } = product;
   const asin = (product.asin ?? parseAsinFromUrl(url)) || parseAsinFromUrl(url);
   return (
     <Form
@@ -56,6 +57,7 @@ const AdminAznCorrectionForm = ({
       }}
     >
       <div className="flex flex-col gap-1 my-2 relative">
+        <ScoreAndMatch {...a_vrfd} />
         <SharedFields target={target} />
         <div className="absolute top-0 right-0">
           <Form.Item

@@ -8,6 +8,7 @@ import { Button, Form, Input, InputNumber, Switch, Tooltip } from "antd";
 import React from "react";
 import SharedFields, { EanAndSourceCorrect } from "./SharedFields";
 import { useParams } from "next/navigation";
+import ScoreAndMatch from "../ScoreAndMatch";
 
 const AdminEbyCorrectionForm = ({
   target,
@@ -22,7 +23,7 @@ const AdminEbyCorrectionForm = ({
 }) => {
   const [form] = Form.useForm<ProductUpdate>();
   const updateProduct = useProductUpdate();
-  const { qty, e_qty, asin, a_qty } = product;
+  const { qty, e_qty, asin, a_qty, e_vrfd } = product;
   const params = useParams();
   const { domain } = params;
   const esin = (product.esin ?? parseEsinFromUrl(url)) || parseEsinFromUrl(url);
@@ -56,6 +57,7 @@ const AdminEbyCorrectionForm = ({
       }}
     >
       <div className="flex flex-col gap-1 my-2 relative">
+        <ScoreAndMatch {...e_vrfd}/>
         <div className="absolute top-0 right-0">
           <Form.Item
             shouldUpdate
