@@ -8,8 +8,9 @@ import { LinkWrapper } from "../LinkWrapper";
 import CopyToClipboard from "../CopyToClipboard";
 import { ProductPagination } from "@/hooks/use-products";
 import Link from "next/link";
-import { parseISO } from "date-fns";
+import { formatDistanceToNow, parseISO } from "date-fns";
 import { parseSalesRank } from "@/util/parseSalesRank";
+import { de } from "date-fns/locale";
 
 const InfoField = ({
   product,
@@ -32,6 +33,9 @@ const InfoField = ({
     categoryTree,
     keepaUpdatedAt,
     salesRanks,
+    availUpdatedAt,
+    dealAznUpdatedAt,
+    dealEbyUpdatedAt,
     bsr: initialBsr,
     monthlySold,
     qty,
@@ -42,6 +46,7 @@ const InfoField = ({
     [`${target}_qty` as "a_qty" | "e_qty"]: targetQty,
     [`${target}_img` as "a_img" | "e_img"]: targetImg,
   } = product;
+  const targetUpdatedAt = target === 'a' ? dealAznUpdatedAt : dealEbyUpdatedAt;
   let bsr = initialBsr;
   if (bsr && bsr.length) {
     if (salesRanks) {
@@ -55,10 +60,10 @@ const InfoField = ({
   return (
     <div className="flex flex-col divide-y p-1 w-full">
       <div className={`${nm?.length < 114 && "flex gap-1"}`}>
-        <div className="flex flex-row gap-2">
+        <div className="flex flex-row gap-2 w-full">
           <div>{ImageRenderer(prefixLink(img, s))}</div>
-          <div className="flex flex-col">
-            <div>
+          <div className="flex flex-col w-full">
+           
               {shop && (
                 <span className="font-semibold">
                   {shop!.slice(0, 1).toUpperCase() + shop!.slice(1)}:{" "}
@@ -68,20 +73,38 @@ const InfoField = ({
                 {LinkWrapper(lnk, nm, mnfctr)}
                 {qty > 1 && <div>({qty} Stück)</div>}
               </>
-            </div> 
+              {availUpdatedAt && (
+                <time className="ml-auto mt-auto text-gray-500 text-xs">
+                  {formatDistanceToNow(parseISO(availUpdatedAt), {
+                    locale: de,
+                    addSuffix: true
+                  })}
+                </time>
+              )}
+            
           </div>
         </div>
       </div>
       <div>
-        <div className={`${targetName?.length < 114 && "flex gap-1"}`}>
-          <div className="flex flex-row gap-2">
+        <div className={`w-full ${targetName?.length < 114 && "flex gap-1"}`}>
+          <div className="flex flex-row gap-2 w-full">
             <div>{ImageRenderer(prefixLink(targetImg, s))}</div>
+            <div className="flex flex-col w-full">
             <div>
               {LinkWrapper(targetLink, targetName)}
-
               {targetQty > 1 && (
                 <div className="inline">({targetQty} Stück)</div>
               )}
+            </div>
+            {targetUpdatedAt && (
+                <time className="ml-auto mt-auto text-gray-500 text-xs">
+                  {formatDistanceToNow(parseISO(targetUpdatedAt), {
+                    locale: de,
+                    addSuffix: true
+                  })}
+                </time>
+              )}
+
             </div>
           </div>
         </div>
