@@ -1,6 +1,6 @@
 {
   "name": "fe-arbitrage",
-  "version": "0.0.454",
+  "version": "0.0.455",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -29,6 +29,8 @@
     "clsx": "^2.1.0",
     "date-fns": "^3.6.0",
     "heroicons": "^2.1.1",
+    "jotai": "^2.9.3",
+    "jotai-devtools": "^0.10.1",
     "jsoneditor": "^10.1.0",
     "jsoneditor-react": "^3.1.2",
     "mongodb": "^6.4.0",
@@ -42,7 +44,7 @@
     "react-dom": "^18.3.1",
     "react-imported-component": "^6.5.4",
     "recharts": "^2.12.7",
-    "sharp": "^0.33.4",
+    "sharp": "^0.33.5",
     "stripe": "^14.21.0",
     "winston": "^3.13.1",
     "xlsx": "^0.18.5",

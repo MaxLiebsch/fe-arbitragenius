@@ -2,29 +2,12 @@
 import ShopsGrid from "@/components/ShopsGrid";
 import { StarIcon } from "@heroicons/react/16/solid";
 import ProductFilterForm from "@/components/forms/ProductFilterForm";
-import { createSessionClient } from "@/server/appwrite";
-import { defaultProductFilterSettings } from "@/constant/productFilterSettings";
 import TotalDeals from "@/components/TotalDeals";
 import clientPool from "@/server/mongoPool";
 
-export default async function Dashboard({
-  searchParams,
-}: {
-  searchParams: any;
-}) {
-  const { account } = await createSessionClient();
-  const prefs = (await account.getPrefs()) as any;
+export default async function Dashboard() {
 
-  let settings = defaultProductFilterSettings;
-
-  if (prefs?.settings && Object.keys(JSON.parse(prefs.settings)).length > 0) {
-    settings = {
-      ...defaultProductFilterSettings,
-      ...JSON.parse(prefs.settings),
-    };
-  }
-
-  const mongo = await clientPool['NEXT_MONGO'];
+  const mongo = await clientPool["NEXT_MONGO"];
 
   const shopCount = await mongo
     .db(process.env.NEXT_MONGO_DB)
@@ -41,13 +24,13 @@ export default async function Dashboard({
             Produktfilter
           </h3>
           <div className="flex overflow-y-auto h-[calc(100vh-130px)]">
-            <ProductFilterForm settings={settings} />
+            <ProductFilterForm  />
           </div>
         </div>
         <div className="mb-8 ml-6 col-span-3">
           <div className="flex flex-row gap-2 pb-3 items-center">
             <h3 className="flex flex-row text-base font-semibold leading-6 mb-3 text-gray-900 space-x-1 items-center">
-              <div>Shops ({shopCount-1})</div>
+              <div>Shops ({shopCount - 1})</div>
             </h3>
             <h3 className="flex flex-row text-base font-semibold leading-6 mb-3 text-gray-900 space-x-1 items-center">
               <StarIcon className="h-6 w-6" />

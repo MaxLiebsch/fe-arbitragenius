@@ -23,13 +23,9 @@ const SalesTile = ({
   const favoriteAddMutation = useFavoriteAdd();
   const favoriteRemoveMutation = useFavoriteRemove();
 
-  const { data: aCount, isFetching: aIsFetching } = useSalesCount(
-    "a",
-    settings
-  );
+  const { data: aCount, isFetching: aIsFetching } = useSalesCount("a");
   const { data: eCount, isFetching: eIsFetching } = useSalesCount(
-    "e",
-    settings
+    "e"
   );
   function handleToggleFavorite(domain: string) {
     if (favorites?.includes(domain)) {
@@ -55,10 +51,13 @@ const SalesTile = ({
       style={{ width: "100%" }}
     >
       <div className="flex flex-row gap-2 items-center">
-        <div className='w-full'>
+        <div className="w-full">
           <p className="w-full border-b border-gray-200 mb-2">Profitabel</p>
           <div className="flex flex-row gap-1">
-            <Button className="flex-grow"  href={`/app/dashboard/daily-deals?target=amazon`}>
+            <Button
+              className="flex-grow"
+              href={`/app/dashboard/daily-deals?target=amazon`}
+            >
               <p className="font-semibold flex flex-row hover:font-bold">
                 <span>Amazon: </span>
                 {aIsFetching ? (
@@ -68,7 +67,10 @@ const SalesTile = ({
                 )}
               </p>
             </Button>
-            <Button className="flex-grow"  href={`/app/dashboard/daily-deals?target=ebay`}>
+            <Button
+              className="flex-grow"
+              href={`/app/dashboard/daily-deals?target=ebay`}
+            >
               <p className="font-semibold flex flex-row hover:font-bold">
                 <span>Ebay: </span>
                 {eIsFetching ? (

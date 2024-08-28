@@ -1,3 +1,4 @@
+import { eu } from "date-fns/locale";
 import { z } from "zod";
 
 export const BuyBoxSchema = z.enum(["both", "amazon", "seller"]);
@@ -8,6 +9,9 @@ export const SettingsSchema = z.object({
   netto: z.boolean(),
   minMargin: z.number(),
   minPercentageMargin: z.number(),
+  euProgram: z.boolean(),
+  a_prepCenter: z.number(),
+  e_prepCenter: z.number(),
   maxSecondaryBsr: z.number(),
   maxPrimaryBsr: z.number(),
   productsWithNoBsr: z.boolean(),

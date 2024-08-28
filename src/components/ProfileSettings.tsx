@@ -1,21 +1,7 @@
-import React, { useEffect, useRef } from "react";
-import { defaultProductFilterSettings } from "@/constant/productFilterSettings";
+import React from "react";
 import ProductFilterForm from "./forms/ProductFilterForm";
 
-const ProfileSettings = ({ prefs }: any) => {
-
-  let settings = defaultProductFilterSettings;
-
-  if (prefs?.settings) {
-    settings = {
-      ...defaultProductFilterSettings,
-      ...JSON.parse(prefs.settings),
-    };
-  }
- 
-
-  
-
+const ProfileSettings = () => {
   return (
     <div className="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 px-4 py-6 sm:px-6 md:grid-cols-3 lg:px-8">
       <div>
@@ -26,7 +12,7 @@ const ProfileSettings = ({ prefs }: any) => {
           Hier kannst Du die Filtereinstellungen für die Produkte anpassen.
         </p>
       </div>
-      <ProductFilterForm layout="wide" settings={settings} />
+      <ProductFilterForm layout="wide"  />
     </div>
   );
 };

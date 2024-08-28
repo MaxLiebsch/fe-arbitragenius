@@ -8,6 +8,7 @@ const nextConfig = {
   experimental: {
     serverComponentsExternalPackages: ['node-appwrite'],
   },
+  transpilePackages: ['jotai-devtools'],
   images: {
     remotePatterns: [
       {

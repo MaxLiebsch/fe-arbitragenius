@@ -1,11 +1,7 @@
 "use server";
 
 import ProductsTableTabs from "@/components/ProductsTableTabs";
-import { defaultProductFilterSettings } from "@/constant/productFilterSettings";
-import {
-  createAdminClient,
-  getLoggedInUser,
-} from "@/server/appwrite";
+import { getLoggedInUser } from "@/server/appwrite";
 import clientPool from "@/server/mongoPool";
 import Title from "antd/es/typography/Title";
 import { redirect } from "next/navigation";
@@ -25,19 +21,11 @@ export default async function Shop({ params }: { params: { domain: string } }) {
   if (!user) {
     redirect("/login");
   }
-  const { users } = await createAdminClient();
-  const prefs = (await users.getPrefs(user.$id)) as any;
-
-  let settings = defaultProductFilterSettings;
-
-  if (prefs?.settings && Object.keys(JSON.parse(prefs.settings)).length > 0) {
-    settings = JSON.parse(prefs.settings);
-  }
 
   return (
     <div className="h-full flex flex-col overflow-y-hidden">
       <Title>{res.ne}</Title>
-      <ProductsTableTabs settings={settings} domain={params.domain} />
+      <ProductsTableTabs domain={params.domain} />
     </div>
   );
 }

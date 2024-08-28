@@ -6,6 +6,7 @@ import MuiXLicense from "../components/MuiXLicense";
 import Providers from "../components/provider/Providers";
 import Script from "next/script";
 import { use } from "react";
+import QueryClientProviderWrapper from "@/components/provider/QueryClientProviderWrapper";
 const sharp = require("sharp");
 
 const inter = Inter({ subsets: ["latin"] });
@@ -30,7 +31,7 @@ export default function RootLayout({
         className={`${inter.className} h-screen`}
       >
         <AntdRegistry>
-          <Providers>{children}</Providers>
+          <QueryClientProviderWrapper>{children}</QueryClientProviderWrapper>
         </AntdRegistry>
         <MuiXLicense />
         <Script id="chatwood">

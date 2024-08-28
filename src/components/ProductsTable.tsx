@@ -7,43 +7,37 @@ import {
 } from "@mui/x-data-grid-premium";
 import React, { useMemo, useState } from "react";
 import useProductCount from "@/hooks/use-product-count";
-import useProducts, {
-  ProductPagination,
-  ProductSort,
-} from "@/hooks/use-products";
+import useProducts from "@/hooks/use-products";
 import Spinner from "./Spinner";
-import { Settings } from "@/types/Settings";
 import useBookMarkAdd from "@/hooks/use-bookmark-add";
 import { createColumns } from "@/util/ProductTableColumns";
 import useBookMarkRemove from "@/hooks/use-bookmark-remove";
 import useAccount from "@/hooks/use-account";
 import { usePaginationAndSort } from "@/hooks/use-pagination";
-
+import { useUserSettings } from "@/hooks/use-settings";
 
 export default function ProductsTable(props: {
   className?: string;
   domain: string;
   target: string;
-  settings: Settings;
 }) {
-  const { className, domain, target, settings } = props;
+  const [settings, setUserSettings] = useUserSettings();
+  const { className, domain, target } = props;
 
-  const [paginationModel, setPaginationModel,sortModel, setSortModel] = usePaginationAndSort();  
-
+  const [paginationModel, setPaginationModel, sortModel, setSortModel] =
+    usePaginationAndSort();
 
   const apiRef = useGridApiRef();
 
-  const productCountQuery = useProductCount(domain, target, settings);
+  const productCountQuery = useProductCount(domain, target);
   const productQuery = useProducts(
     domain,
     paginationModel,
     sortModel,
-    target,
-    settings
+    target
   );
   const user = useAccount();
   const userRoles = useMemo(() => user.data?.labels ?? [], [user.data?.labels]);
-
 
   const bookMarkMutation = useBookMarkAdd();
   const bookMarkDeleteMutation = useBookMarkRemove();
@@ -77,7 +71,7 @@ export default function ProductsTable(props: {
       domain,
       bookMarkMutation.mutate,
       bookMarkDeleteMutation.mutate,
-      userRoles
+      userRoles,
     ]
   );
 

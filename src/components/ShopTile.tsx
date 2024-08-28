@@ -25,13 +25,11 @@ const ShopTile = ({
 
   const { data: aCount, isFetching: aIsFetching } = useProductCount(
     shop.d,
-    "a",
-    settings
+    "a"
   );
   const { data: eCount, isFetching: eIsFetching } = useProductCount(
     shop.d,
-    "e",
-    settings
+    "e"
   );
   function handleToggleFavorite(domain: string) {
     if (favorites?.includes(domain)) {
@@ -68,10 +66,13 @@ const ShopTile = ({
       style={{ width: "100%" }}
     >
       <div className="flex flex-row gap-2 items-center">
-        <div className='w-full'>
+        <div className="w-full">
           <p className="w-full border-b border-gray-200 mb-2">Profitabel</p>
           <div className="flex flex-row gap-1">
-            <Button className="flex-grow" href={`/app/dashboard/shop/${shop.d}?target=amazon`}>
+            <Button
+              className="flex-grow"
+              href={`/app/dashboard/shop/${shop.d}?target=amazon`}
+            >
               <p className=" font-semibold flex flex-row hover:font-bold justify-center">
                 <span>Amazon: </span>
                 {aIsFetching ? (
@@ -81,7 +82,10 @@ const ShopTile = ({
                 )}
               </p>
             </Button>
-            <Button className="flex-grow" href={`/app/dashboard/shop/${shop.d}?target=ebay`}>
+            <Button
+              className="flex-grow"
+              href={`/app/dashboard/shop/${shop.d}?target=ebay`}
+            >
               <p className=" font-semibold flex flex-row hover:font-bold justify-center">
                 <span>Ebay: </span>
                 {eIsFetching ? (

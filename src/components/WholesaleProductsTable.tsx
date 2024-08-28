@@ -1,7 +1,6 @@
 "use client";
 import {
   DataGridPremium,
-  GridColDef,
   GridColumnVisibilityModel,
   GridSortModel,
   GridToolbarContainer,
@@ -10,16 +9,15 @@ import {
   useGridApiRef,
 } from "@mui/x-data-grid-premium";
 import React, { MutableRefObject, useState } from "react";
-import { ProductSort } from "@/hooks/use-products";
 import Spinner from "./Spinner";
 import { Button } from "@mui/material";
 import { GridApiPremium } from "@mui/x-data-grid-premium/models/gridApiPremium";
 import { ChevronRightIcon, ChevronLeftIcon } from "@heroicons/react/16/solid";
-import { Settings } from "@/types/Settings";
 import useTaskProducts from "@/hooks/use-task-products";
 import useTaskProductCount from "@/hooks/use-task-product-count";
 import { createWholeSaleColumns } from "../util/wholeSaleTableColumns";
 import { usePaginationAndSort } from "@/hooks/use-pagination";
+import { useUserSettings } from "@/hooks/use-settings";
 
 function CustomToolbar() {
   return (
@@ -36,9 +34,9 @@ function CustomToolbar() {
 export default function WholeSaleProductsTable(props: {
   className?: string;
   taskId: string;
-  settings: Settings;
 }) {
-  const { className, taskId, settings } = props;
+  const [settings, setUserSettings] = useUserSettings()
+  const { className, taskId} = props;
 
   const [paginationModel, setPaginationModel, sortModel, setSortModel] =
     usePaginationAndSort();

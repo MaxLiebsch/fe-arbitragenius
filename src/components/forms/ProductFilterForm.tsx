@@ -1,6 +1,5 @@
 "use client";
 import React, { useContext, useEffect, useState } from "react";
-import { useFormState } from "react-dom";
 import {
   Checkbox,
   Form,
@@ -13,21 +12,23 @@ import {
 import { updateSettingsAction } from "@/server/actions/update-settings";
 import { useQueryClient } from "@tanstack/react-query";
 import { SubmitButton } from "../FormSubmitBn";
-import { Settings } from "@/types/Settings";
 import { TotalDealsContext } from "@/context/totalDealsContext";
+import { useUserSettings } from "@/hooks/use-settings";
+import { Settings } from "@/types/Settings";
+import { useForm } from "antd/es/form/Form";
 
 const ProductFilterForm = ({
-  settings,
   layout = "slim",
 }: {
-  settings: Settings;
   layout?: "slim" | "wide";
 }) => {
+  const [settings, setUserSettings] = useUserSettings();
   const { queryUpdate, setQueryUpdate } = useContext(TotalDealsContext);
   const [updateSettingsState, setUpdateSettingsState] = useState<{
     message?: string;
     fieldErrors: {};
-    error?: string
+    error?: string;
+    settings?: Settings;
   }>({
     message: "",
     fieldErrors: {},
@@ -41,17 +42,18 @@ const ProductFilterForm = ({
       if (updateSettingsState?.message) {
         await queryClient.invalidateQueries({
           queryKey: ["preferences"],
+          exact: false,
           refetchType: "all",
         });
         setQueryUpdate(new Date().getTime());
         await Promise.all([
           queryClient.invalidateQueries({
             queryKey: ["e"],
-            refetchType: "all",
+            exact: false,
           }),
           queryClient.invalidateQueries({
             queryKey: ["a"],
-            refetchType: "all",
+            exact: false,
           }),
         ]);
       }
@@ -59,6 +61,7 @@ const ProductFilterForm = ({
   }, [updateSettingsState, queryClient, setQueryUpdate]);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [form] = useForm()
 
   const onFinish = async (values: any) => {
     setUpdateSettingsState({ message: "", fieldErrors: {}, error: "" });
@@ -66,15 +69,20 @@ const ProductFilterForm = ({
     try {
       // Simulate an async operation (like an API call)
       const updateSettings = await updateSettingsAction(values);
-      setUpdateSettingsState(updateSettings)
+      const updatedSettings = updateSettings?.settings;
+      if (updatedSettings) {
+        setUserSettings(updatedSettings);
+      }
+      setUpdateSettingsState(updateSettings);
     } finally {
       setIsSubmitting(false); // Reset the submission state
-      
     }
   };
+  useEffect(() => form.resetFields(), [settings]);
 
   return (
     <Form
+      form={form}
       className="md:col-span-2"
       initialValues={settings}
       onFinish={onFinish}
@@ -112,7 +120,6 @@ const ProductFilterForm = ({
             </div>
           </div>
         )}
-        {/* Minimale Marge % */}
         <h2
           className={`${
             layout === "wide" ? "sm:col-span-6" : "hidden"
@@ -120,6 +127,32 @@ const ProductFilterForm = ({
         >
           Amazon
         </h2>
+        {/* Programm Mitteleuropa */}
+        {layout === "wide" && (
+          <div
+            className={`${
+              layout === "wide" ? "sm:col-span-6" : "sm:col-span-2"
+            }`}
+          >
+            <div className="block text-sm font-medium leading-6 text-secondary-950">
+              Teilnahme am Programm Mitteleuropa
+            </div>
+            <div className="relative flex items-start">
+              <div className="flex flex-row items-center justify-center mt-2">
+                <Form.Item
+                  style={{ marginBottom: "0px" }}
+                  valuePropName="checked"
+                  name="euProgram"
+                >
+                  <Checkbox className="rounded border-gray-300 pt-4 text-secondary-950 focus:ring-secondary-500">
+                    Programm Mitteleuropa verwenden
+                  </Checkbox>
+                </Form.Item>
+              </div>
+            </div>
+          </div>
+        )}
+        {/* Minimale Marge % */}
         <div
           className={`${layout === "wide" ? "sm:col-span-3" : "sm:col-span-2"}`}
         >
@@ -430,6 +463,7 @@ const ProductFilterForm = ({
             </Form.Item>
           </div>
         </div>
+        {/* Versandkosten */}
         {layout === "wide" && (
           <>
             {/* Versand klein */}
@@ -576,6 +610,32 @@ const ProductFilterForm = ({
                     type="number"
                     name="strg"
                     id="strg"
+                    step={0.01}
+                    min={0}
+                    max={9999}
+                    className="block w-full rounded-md border-0 bg-white/5 py-1.5 pl-1 text-secondary-950 shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
+                  />
+                </Form.Item>
+              </div>
+            </div>
+            {/* Ebay PrepCenterkosten */}
+            <div
+              className={`${
+                layout === "wide" ? "sm:col-span-2" : "sm:col-span-2"
+              }`}
+            >
+              <label
+                htmlFor="e_prepCenter"
+                className="block text-sm font-medium leading-6 text-secondary-950"
+              >
+                Prepcenter Kosten €
+              </label>
+              <div className="mt-2">
+                <Form.Item style={{ marginBottom: "0px" }} name="e_prepCenter">
+                  <Input
+                    type="number"
+                    name="e_prepCenter"
+                    id="e_prepCenter"
                     step={0.01}
                     min={0}
                     max={9999}

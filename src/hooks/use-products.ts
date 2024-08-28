@@ -3,6 +3,7 @@ import { Settings } from "@/types/Settings";
 import { productQueryKey } from "@/util/queryKeys";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
+import { useUserSettings } from "./use-settings";
 
 export type ProductPagination = {
   page: number;
@@ -21,11 +22,10 @@ export default function useProducts(
   pagination: ProductPagination,
   sort: ProductSort,
   target: string,
-  settings: Settings,
   refetchOnWindowFocus: boolean = true
 ) {
   const queryClient = useQueryClient();
-
+  const [settings, setUserSettings] = useUserSettings()
   const queryKey = [
     ...productQueryKey(target, domain, pagination.page, pagination.pageSize),
     sort?.field,

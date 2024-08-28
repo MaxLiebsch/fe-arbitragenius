@@ -1,13 +1,14 @@
 import { Settings } from "@/types/Settings";
 import { useQuery } from "@tanstack/react-query";
+import { useUserSettings } from "./use-settings";
 
 export default function useProductCount(
   domain: string,
   target: string,
-  settings: Settings,
   refetchOnWindowFocus: boolean = true
 ) {
   let settingsQuery = "";
+  const [settings, setUserSettings] = useUserSettings();
   if (settings) {
     settingsQuery = Object.keys(settings)
       .map((key) => `&${key}=${settings[key as keyof Settings]}`)

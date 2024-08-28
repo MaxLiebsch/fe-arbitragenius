@@ -129,13 +129,16 @@ const Page = () => {
           </Tab.List>
         </nav>
       </header>
+      {/* Tabs */}
       <Tab.Panels>
+        {/* Settings */}
         <Tab.Panel>
           <div className="divide-y divide-white/5">
             <h1 className="sr-only">Einstellungen</h1>
-            <ProfileSettings prefs={prefs} />
+            <ProfileSettings />
           </div>
         </Tab.Panel>
+        {/* Account */}
         <Tab.Panel>
           <div className="divide-y divide-white/5">
             <h1 className="sr-only">Account Einstellungen</h1>
@@ -570,7 +573,7 @@ const Page = () => {
             </div>
           </div>
         </Tab.Panel>
-
+        {/* Rechnungen */}
         <Tab.Panel>
           <div className="divide-y divide-white/5">
             <h1 className="sr-only">Rechnungen</h1>
@@ -584,6 +587,7 @@ const Page = () => {
             </div>
           </div>
         </Tab.Panel>
+        {/* Benachrichtigungen */}
         <Tab.Panel>
           <div className="divide-y divide-white/5">
             <h1 className="sr-only">Benachrichtigungen</h1>

@@ -2,76 +2,57 @@
 
 // We can not useState or useRef in a server component, which is why we are
 // extracting this part out into it's own file with 'use client' on top
-import { ReactNode } from "react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactNode, useEffect } from "react";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { SnackbarProvider } from "notistack";
 import MuiProvider from "@/components/provider/MuiProvider";
 import { ConfigProvider } from "antd";
-import tw from '../../../tailwind.config'
-
-function makeQueryClient() {
-  return new QueryClient({
-    defaultOptions: {
-      queries: {
-        // With SSR, we usually want to set some default staleTime
-        // above 0 to avoid refetching immediately on the client
-        staleTime: 60 * 1000,
-      },
-    },
-  });
-}
-
-let browserQueryClient: QueryClient | undefined = undefined;
-
-function getQueryClient() {
-  if (typeof window === "undefined") {
-    // Server: always make a new query client
-    return makeQueryClient();
-  } else {
-    // Browser: make a new query client if we don't already have one
-    // This is very important so we don't re-make a new client if React
-    // suspends during the initial render. This may not be needed if we
-    // have a suspense boundary BELOW the creation of the query client
-    if (!browserQueryClient) browserQueryClient = makeQueryClient();
-    return browserQueryClient;
-  }
-}
+import tw from "../../../tailwind.config";
+import { DevTools } from "jotai-devtools";
+import useAccount from "@/hooks/use-account";
+import { useUserSettings } from "@/hooks/use-settings";
+import { defaultSettings } from "@/constant/defaultSettings";
 
 export default function Providers({ children }: { children: ReactNode }) {
   // NOTE: Avoid useState when initializing the query client if you don't
   //       have a suspense boundary between this and the code that may
   //       suspend because React will throw away the client on the initial
   //       render if it suspends and there is no boundary
-  const queryClient = getQueryClient();
+  const accountQuery = useAccount();
+  const [settings, setUserSettings] = useUserSettings();
+
+  useEffect(() => {
+    const prefs = accountQuery.data?.prefs;
+    if (accountQuery.data && prefs) {
+      const settings = prefs.settings;
+      if (settings) {
+        setUserSettings({ ...defaultSettings, ...JSON.parse(settings) });
+      }
+    }
+  }, [accountQuery.data, setUserSettings]);
 
   return (
     <>
-      <QueryClientProvider client={queryClient}>
-        <SnackbarProvider />
-        <MuiProvider>
-          <ConfigProvider
-            theme={{
-              token: {
-                // Seed Token
-                //@ts-ignore
-                colorPrimary: tw.theme.extend.colors["primary"]["500"],
-    
-                borderRadius: 2,
+      <SnackbarProvider />
+      <MuiProvider>
+        <ConfigProvider
+          theme={{
+            token: {
+              // Seed Token
+              //@ts-ignore
+              colorPrimary: tw.theme.extend.colors["primary"]["500"],
 
-                // Alias Token
-  
-              },
-            }}
-          >
-            {children}
-          </ConfigProvider>
-        </MuiProvider>
-        <ReactQueryDevtools
-          initialIsOpen={false}
-          buttonPosition="bottom-left"
-        />
-      </QueryClientProvider>
+              borderRadius: 2,
+
+              // Alias Token
+            },
+          }}
+        >
+          {children}
+        </ConfigProvider>
+      </MuiProvider>
+      <DevTools />
+      <ReactQueryDevtools initialIsOpen={false} buttonPosition="bottom-left" />
     </>
   );
 }

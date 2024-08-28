@@ -2,7 +2,9 @@
 
 import { AppwriteException } from "node-appwrite";
 import { createSessionClient } from "../appwrite";
-import { SettingsSchema } from "@/types/Settings";
+import { Settings, SettingsSchema } from "@/types/Settings";
+import { useHydrateAtoms } from "jotai/utils";
+import { userSettingsAtom } from "@/atoms/userSettings";
 
 interface FieldError {
   message: string;
@@ -14,6 +16,7 @@ interface FieldErrors {
 
 interface UpdateSettingsState {
   message?: string;
+  settings?: Settings;
   fieldErrors: FieldErrors;
   error?: string;
 }
@@ -24,17 +27,20 @@ export async function updateSettingsAction(
   const parsedFormData = JSON.parse(JSON.stringify(formData));
   const form = SettingsSchema.safeParse({
     netto: parsedFormData.netto ?? true,
-    minMargin: parseInt(parsedFormData.minMargin ?? "0"),
-    minPercentageMargin: parseInt(parsedFormData.minPercentageMargin ?? "0"),
-    maxSecondaryBsr: parseInt(parsedFormData.maxSecondaryBsr ?? "0"),
-    tptSmall: parseFloat(parsedFormData.tptSmall ?? "2.95"),
-    tptMiddle: parseFloat(parsedFormData.tptMiddle ?? "4.95"),
-    tptLarge: parseFloat(parsedFormData.tptLarge ?? "6.95"),
-    tptStandard: parsedFormData.tptStandard ?? "tptMiddle",
-    maxPrimaryBsr: parseInt(parsedFormData.maxPrimaryBsr ?? "0"),
+    minMargin: parseInt(parsedFormData.minMargin || "0"),
+    a_prepCenter: parseFloat(parsedFormData.a_prepCenter || "0"),
+    euProgram: parsedFormData.euProgram,
+    e_prepCenter: parseFloat(parsedFormData.e_prepCenter || "0"),
+    minPercentageMargin: parseInt(parsedFormData.minPercentageMargin || "0"),
+    maxSecondaryBsr: parseInt(parsedFormData.maxSecondaryBsr || "0"),
+    tptSmall: parseFloat(parsedFormData.tptSmall || "2.95"),
+    tptMiddle: parseFloat(parsedFormData.tptMiddle || "4.95"),
+    tptLarge: parseFloat(parsedFormData.tptLarge || "6.95"),
+    tptStandard: parsedFormData.tptStandard || "tptMiddle",
+    maxPrimaryBsr: parseInt(parsedFormData.maxPrimaryBsr || "0"),
     productsWithNoBsr: parsedFormData.productsWithNoBsr,
-    monthlySold: parseInt(parsedFormData.monthlySold ?? "0"),
-    totalOfferCount: parseInt(parsedFormData.totalOfferCount ?? "0"),
+    monthlySold: parseInt(parsedFormData.monthlySold || "0"),
+    totalOfferCount: parseInt(parsedFormData.totalOfferCount || "0"),
     buyBox: parsedFormData.buyBox,
   });
   if (!form.success)
@@ -63,7 +69,7 @@ export async function updateSettingsAction(
       ...prefs,
       settings: JSON.stringify(form.data),
     });
-    return { message: "Filter geändert", fieldErrors: {} };
+    return { message: "Filter geändert", fieldErrors: {}, settings: form.data };
   } catch (error) {
     if (error instanceof AppwriteException) {
       return { error: error.message, fieldErrors: {} };

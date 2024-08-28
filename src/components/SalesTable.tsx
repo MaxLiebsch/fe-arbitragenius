@@ -16,13 +16,14 @@ import useSalesProducts from "@/hooks/use-sales-products";
 import { createSalesTableColumns } from "@/util/SalesTableColumns";
 import useAccount from "@/hooks/use-account";
 import { usePaginationAndSort } from "@/hooks/use-pagination";
+import { useUserSettings } from "@/hooks/use-settings";
 
 export default function SalesTable(props: {
   className?: string;
   target: string;
-  settings: Settings;
 }) {
-  const { className, target, settings } = props;
+  const { className, target,  } = props;
+  const [settings, setUserSettings] = useUserSettings()
 
   const [paginationModel, setPaginationModel,sortModel, setSortModel] = usePaginationAndSort();   
 
@@ -30,12 +31,11 @@ export default function SalesTable(props: {
   const user = useAccount();
   const userRoles = useMemo(() => user.data?.labels ?? [], [user.data?.labels]);
 
-  const productCountQuery = useSalesCount(target, settings);
+  const productCountQuery = useSalesCount(target);
   const productQuery = useSalesProducts(
     paginationModel,
     sortModel,
     target,
-    settings
   );
 
   const bookMarkMutation = useBookMarkAdd();

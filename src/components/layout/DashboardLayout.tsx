@@ -24,7 +24,6 @@ import { useFormState } from "react-dom";
 import { TotalDealsContext } from "@/context/totalDealsContext";
 import { differenceInDays } from "date-fns";
 import useSalesCount from "@/hooks/use-sales-count";
-import { Settings } from "@/types/Settings";
 import { Badge } from "antd";
 
 const navigation = [
@@ -78,13 +77,12 @@ export const DashboardLayout = ({
   };
 }>) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [settings, setSettings] = useState<Settings | undefined>();
   const accountQuery = useAccount();
 
   const router = useRouter();
   const favoriteShopsQuery = useFavoriteShops();
-  const eSalesCount = useSalesCount("e", settings);
-  const aSalesCount = useSalesCount("a", settings);
+  const eSalesCount = useSalesCount("e");
+  const aSalesCount = useSalesCount("a");
   const newDeals = Boolean(
     eSalesCount.data?.totalProductsToday || aSalesCount.data?.totalProductsToday
   );
@@ -94,14 +92,6 @@ export const DashboardLayout = ({
     message: "",
   });
   const [queryUpdate, setQueryUpdate] = useState(0);
-
-  useEffect(() => {
-    if (accountQuery.isSuccess) {
-      if (accountQuery.data.prefs?.settings) {
-        setSettings(JSON.parse(accountQuery.data.prefs.settings));
-      }
-    }
-  }, [accountQuery.data, accountQuery.isSuccess]);
 
   useEffect(() => {
     if (state.message === "success") {

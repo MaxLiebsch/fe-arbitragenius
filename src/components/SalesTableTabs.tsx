@@ -6,11 +6,7 @@ import { Settings } from "@/types/Settings";
 import SalesTable from "./SalesTable";
 import { useTargetShop } from "@/hooks/use-targetShop";
 
-const SalesTableTabs = ({
-  settings,
-}: {
-  settings: Settings;
-}) => {
+const SalesTableTabs = () => {
   const [selectedIndex, setSelectedIndex]= useTargetShop()
 
   return (
@@ -39,10 +35,10 @@ const SalesTableTabs = ({
         </div>
         <Tab.Panels className="flex h-[calc(100vh-198px)]">
           <Tab.Panel className="w-full  h-full">
-            <SalesTable target="a" settings={settings} />
+            <SalesTable target="a"  />
           </Tab.Panel>
           <Tab.Panel className="w-full h-full">
-            <SalesTable target="e" settings={settings} />
+            <SalesTable target="e"  />
           </Tab.Panel>
         </Tab.Panels>
       </Tab.Group>

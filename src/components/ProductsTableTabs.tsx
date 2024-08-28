@@ -1,17 +1,14 @@
 "use client";
 
 import { Tab } from "@headlessui/react";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import ProductsTable from "./ProductsTable";
-import { Settings } from "@/types/Settings";
 import { useTargetShop } from "@/hooks/use-targetShop";
 
 const ProductTableTabs = ({
   domain,
-  settings,
 }: {
   domain: string;
-  settings: Settings;
 }) => {
 
   const [selectedIndex, setSelectedIndex]= useTargetShop()
@@ -42,10 +39,10 @@ const ProductTableTabs = ({
         </div>
         <Tab.Panels className="flex h-[calc(100vh-198px)]">
           <Tab.Panel className="w-full  h-full">
-            <ProductsTable domain={domain} target="a" settings={settings} />
+            <ProductsTable domain={domain} target="a"  />
           </Tab.Panel>
           <Tab.Panel className="w-full h-full">
-            <ProductsTable domain={domain} target="e" settings={settings} />
+            <ProductsTable domain={domain} target="e"  />
           </Tab.Panel>
         </Tab.Panels>
       </Tab.Group>

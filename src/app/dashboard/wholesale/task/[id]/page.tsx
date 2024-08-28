@@ -1,7 +1,6 @@
 import Spinner from "@/components/Spinner";
 import WholeSaleProductsTable from "@/components/WholesaleProductsTable";
-import { defaultProductFilterSettings } from "@/constant/productFilterSettings";
-import { createAdminClient, getLoggedInUser } from "@/server/appwrite";
+import {  getLoggedInUser } from "@/server/appwrite";
 import clientPool from "@/server/mongoPool";
 import { format, parseISO } from "date-fns";
 import { ObjectId } from "mongodb";
@@ -13,17 +12,6 @@ const Page = async ({ params }: { params: { id: string } }) => {
   const user = await getLoggedInUser();
   if (!user) {
     redirect("/login");
-  }
-  const { users } = await createAdminClient();
-  const prefs = (await users.getPrefs(user.$id)) as any;
-
-  let settings = defaultProductFilterSettings;
-
-  if (prefs?.settings && Object.keys(JSON.parse(prefs.settings)).length > 0) {
-    settings = {
-      ...defaultProductFilterSettings,
-      ...JSON.parse(prefs.settings),
-    };
   }
 
   const mongo = await clientPool["NEXT_MONGO_CRAWLER_DATA_ADMIN"];
@@ -61,7 +49,7 @@ const Page = async ({ params }: { params: { id: string } }) => {
         Erstellt am: {format(parseISO(task.createdAt), "Pp")}
       </div>
       <div className="w-full h-[89%] min-h-[89%] mt-2">
-        <WholeSaleProductsTable taskId={id} settings={settings} />
+        <WholeSaleProductsTable taskId={id}  />
       </div>
     </>
   );
