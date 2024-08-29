@@ -9,12 +9,11 @@ import { ebayTier } from "@/constant/ebay";
 import { Above, EbyTierCategory, UpTo } from "@/types/EbyTierCategory";
 import { roundToTwoDecimals } from "@/util/roundToTwoDecimals";
 import { Settings } from "@/types/Settings";
+import { useUserSettings } from "@/hooks/use-settings";
 
 const ContentEbyMarge = ({
   product,
-  settings,
 }: {
-  settings: Settings;
   product: Pick<
     ModifiedProduct,
     | "ebyCategories"
@@ -31,6 +30,7 @@ const ContentEbyMarge = ({
     | "nm"
   >;
 }) => {
+  const [settings, setSettings] = useUserSettings();
   const factor = product.e_qty / product.qty;
   function findMappedCategory(categories: number[]): EbyTierCategory | null {
     let mappedCategory = null as EbyTierCategory | null;

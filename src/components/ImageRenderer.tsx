@@ -58,10 +58,7 @@ export default function ImageRenderer(imglink: string | undefined) {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  });
-
-  
-  
+  }); 
   
   if (src) {
     const regexp = /^https?:\/\/[^?#\n]+/;

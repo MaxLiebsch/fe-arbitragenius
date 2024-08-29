@@ -98,6 +98,7 @@ export default function ProductsTable(props: {
       paginationModel={paginationModel}
       onPaginationModelChange={setPaginationModel}
       paginationMode="server"
+      disableColumnMenu
       pagination={true}
       localeText={deDE.components.MuiDataGrid.defaultProps.localeText}
       getRowHeight={() => "auto"}

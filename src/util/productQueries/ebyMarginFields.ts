@@ -1,10 +1,5 @@
 import { Settings } from "@/types/Settings";
 
-export interface EbyCosts {
-  transport: number;
-  storage?: number;
-  preCenter: number;
-}
 
 export const ebyMarginFields = (settings: Settings) => {
   const { tptStandard, strg, e_prepCenter } = settings;

@@ -4,6 +4,12 @@ export function settingsFromSearchQuery(searchParams: URLSearchParams) {
   const customerSettings: Settings = {
     minMargin: Number(searchParams.get("minMargin")) || 0,
     euProgram: searchParams.get("euProgram") === "true",
+    fba: searchParams.get("fba") === "true",
+    a_tptSmall: Number(searchParams.get("a_tptSmall")) || 0,
+    a_tptMiddle: Number(searchParams.get("a_tptMiddle")) || 4.95,
+    a_tptLarge: Number(searchParams.get("a_tptLarge")) || 6.95,
+    a_strg: Number(searchParams.get("a_strg")) || 0,
+    a_tptStandard: searchParams.get("a_tptStandard") || "a_tptMiddle",
     e_prepCenter: Number(searchParams.get("e_prepCenter")) || 0,
     a_prepCenter: Number(searchParams.get("a_prepCenter")) || 0,
     minPercentageMargin: Number(searchParams.get("minPercentageMargin")) || 0,

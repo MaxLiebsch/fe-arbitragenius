@@ -1,5 +1,6 @@
 import clientPool from "@/server/mongoPool";
 import { BuyBox, Settings } from "@/types/Settings";
+import { aznMarginFields } from "@/util/productQueries/aznMarginFields";
 import { bsrAddFields } from "@/util/productQueries/bsrAddFields";
 import { buyBoxFields } from "@/util/productQueries/buyBox";
 import { ebyMarginFields } from "@/util/productQueries/ebyMarginFields";
@@ -34,6 +35,7 @@ export async function GET(request: NextRequest) {
     monthlySold,
     totalOfferCount,
     buyBox,
+    fba,
   } = customerSettings;
 
   if (netto) {
@@ -50,6 +52,9 @@ export async function GET(request: NextRequest) {
 
   if (isAmazon) {
     aggregation.push(bsrAddFields);
+    if (!fba) {
+      aggregation.push(...aznMarginFields(customerSettings));
+    }
   } else {
     aggregation.push(...ebyMarginFields(customerSettings));
   }

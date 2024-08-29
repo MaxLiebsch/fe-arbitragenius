@@ -188,7 +188,7 @@ export const bookMarkColumns: (
           params.row["costs"] && target === "a" ? (
             <ContentMarge product={params.row} />
           ) : (
-            <ContentEbyMarge product={params.row} settings={settings} />
+            <ContentEbyMarge product={params.row} />
           )
         }
         title="Margenberechnung"

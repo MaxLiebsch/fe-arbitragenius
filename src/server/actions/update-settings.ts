@@ -28,7 +28,13 @@ export async function updateSettingsAction(
   const form = SettingsSchema.safeParse({
     netto: parsedFormData.netto ?? true,
     minMargin: parseInt(parsedFormData.minMargin || "0"),
+    fba: parsedFormData.fba ?? true,
     a_prepCenter: parseFloat(parsedFormData.a_prepCenter || "0"),
+    a_tptSmall: parseFloat(parsedFormData.a_tptSmall || "2.95"),
+    a_strg: parseFloat(parsedFormData.a_strg || "0"),
+    a_tptMiddle: parseFloat(parsedFormData.a_tptMiddle || "4.95"),
+    a_tptLarge: parseFloat(parsedFormData.a_tptLarge || "6.95"),
+    a_tptStandard: parsedFormData.a_tptStandard || "a_tptMiddle",
     euProgram: parsedFormData.euProgram,
     e_prepCenter: parseFloat(parsedFormData.e_prepCenter || "0"),
     minPercentageMargin: parseInt(parsedFormData.minPercentageMargin || "0"),

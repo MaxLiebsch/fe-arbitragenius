@@ -1,7 +1,5 @@
-import ImageRenderer from "../components/ImageRenderer";
 import { appendPercentage, formatCurrency, formatter } from "@/util/formatter";
 import { GridColDef } from "@mui/x-data-grid-premium";
-import { prefixLink } from "@/util/prefixLink";
 import { Settings } from "@/types/Settings";
 import { calculationDeduction } from "@/util/calculateDeduction";
 import { KeepaGraph } from "../components/KeepaGraph";
@@ -187,7 +185,7 @@ export const createColumns: (
           params.row["costs"] && target === "a" ? (
             <ContentMarge product={params.row} />
           ) : (
-            <ContentEbyMarge product={params.row} settings={settings} />
+            <ContentEbyMarge product={params.row} />
           )
         }
         title="Margenberechnung"

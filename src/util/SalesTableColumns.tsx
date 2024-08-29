@@ -4,7 +4,7 @@ import { Settings } from "@/types/Settings";
 import { calculationDeduction } from "@/util/calculateDeduction";
 import { KeepaGraph } from "../components/KeepaGraph";
 import { ModifiedProduct } from "@/types/Product";
-import { Checkbox, Form, Popover, Tooltip } from "antd";
+import { Checkbox, Popover, Tooltip } from "antd";
 import ContentMarge from "../components/ContentMarge";
 import ContentEbyMarge from "../components/ContentEbyMarge";
 import { BookmarkDeleteSchema, BookmarkSchema } from "@/types/Bookmarks";
@@ -193,7 +193,7 @@ export const createSalesTableColumns: (
           params.row["costs"] && target === "a" ? (
             <ContentMarge product={params.row} />
           ) : (
-            <ContentEbyMarge product={params.row} settings={settings} />
+            <ContentEbyMarge product={params.row} />
           )
         }
         title="Margenberechnung"

@@ -130,7 +130,7 @@ const Page = () => {
         </nav>
       </header>
       {/* Tabs */}
-      <Tab.Panels>
+      <Tab.Panels className='h-[calc(100vh-200px)] overflow-y-auto'>
         {/* Settings */}
         <Tab.Panel>
           <div className="divide-y divide-white/5">
