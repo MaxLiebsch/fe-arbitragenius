@@ -71,7 +71,6 @@ const ProductFilterForm = ({
     try {
       // Simulate an async operation (like an API call)
       const updateSettings = await updateSettingsAction(values);
-      console.log("updateSettings:", updateSettings);
       const updatedSettings = updateSettings?.settings;
       if (updatedSettings) {
         setUserSettings(updatedSettings);
@@ -99,7 +98,6 @@ const ProductFilterForm = ({
       onFinish={onFinish}
       onValuesChange={onValuesChange}
     >
-      {" "}
       <div
         className={`grid grid-cols-1 h-full ${
           layout === "wide"
@@ -132,38 +130,6 @@ const ProductFilterForm = ({
               <Form.Item style={{ marginBottom: "0px" }} name="netto">
                 <Switch checkedChildren="netto" unCheckedChildren="brutto" />
               </Form.Item>
-            </div>
-          </div>
-        )}
-        <h2
-          className={`${
-            layout === "wide" ? "sm:col-span-6" : "hidden"
-          }  text-base font-semibold leading-7 text-secondary-950`}
-        >
-          Amazon
-        </h2>
-        {/* Programm Mitteleuropa */}
-        {layout === "wide" && (
-          <div
-            className={`${
-              layout === "wide" ? "sm:col-span-6" : "sm:col-span-2"
-            }`}
-          >
-            <div className="block text-sm font-medium leading-6 text-secondary-950">
-              Teilnahme am Programm Mitteleuropa
-            </div>
-            <div className="relative flex items-start">
-              <div className="flex flex-row items-center justify-center mt-2">
-                <Form.Item
-                  style={{ marginBottom: "0px" }}
-                  valuePropName="checked"
-                  name="euProgram"
-                >
-                  <Checkbox className="rounded border-gray-300 pt-4 text-secondary-950 focus:ring-secondary-500">
-                    Programm Mitteleuropa verwenden
-                  </Checkbox>
-                </Form.Item>
-              </div>
             </div>
           </div>
         )}
@@ -246,217 +212,45 @@ const ProductFilterForm = ({
             </Form.Item>
           </div>
         </div>
-        {/* Maximaler Primary BSR */}
-        <div
-          className={`${layout === "wide" ? "sm:col-span-3" : "sm:col-span-2"}`}
+        {/* Amazon */}
+        <h2
+          className={`${
+            layout === "wide" ? "sm:col-span-6" : "hidden"
+          }  text-base font-semibold leading-7 text-secondary-950`}
         >
-          <label
-            htmlFor="maxPrimaryBsr"
-            className="block text-sm font-medium leading-6 text-secondary-950"
+          Amazon
+        </h2>
+        {/* Programm Mitteleuropa */}
+        {layout === "wide" && (
+          <div
+            className={`${
+              layout === "wide" ? "sm:col-span-3" : "sm:col-span-2"
+            }`}
           >
-            Maximaler BSR Hauptkategorie
-          </label>
-          <div className="mt-2">
-            <Form.Item
-              style={{ marginBottom: "0px" }}
-              name="maxPrimaryBsr"
-              rules={[
-                {
-                  validator: (_, value) => {
-                    if (value === 0 || value) {
-                      return Promise.resolve();
-                    }
-                    return Promise.reject(
-                      new Error("Positive Zahl zwischen 0 und 1.000.000")
-                    );
-                  },
-                },
-              ]}
-            >
-              <InputNumber
-                type="number"
-                step={1}
-                name="maxPrimaryBsr"
-                id="maxPrimaryBsr"
-                style={{ width: "100%" }}
-                min={0}
-                max={1000000}
-                className="block w-full rounded-md border-0 bg-white/5 py-1.5 pl-1 text-secondary-950 shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
-              />
-            </Form.Item>
-          </div>
-        </div>
-        {/* Maximaler Secondary BSR */}
-        <div
-          className={`${layout === "wide" ? "sm:col-span-3" : "sm:col-span-2"}`}
-        >
-          <label
-            htmlFor="maxSecondaryBsr"
-            className="block text-sm font-medium leading-6 text-secondary-950"
-          >
-            Maximaler BSR Nebenkategorie
-          </label>
-          <div className="mt-2">
-            <Form.Item
-              style={{ marginBottom: "0px" }}
-              name="maxSecondaryBsr"
-              rules={[
-                {
-                  validator: (_, value) => {
-                    if (value === 0 || value) {
-                      return Promise.resolve();
-                    }
-                    return Promise.reject(
-                      new Error("Positive Zahl zwischen 0 und 1.000.000")
-                    );
-                  },
-                },
-              ]}
-            >
-              <InputNumber
-                type="number"
-                name="maxSecondaryBsr"
-                step={1}
-                style={{ width: "100%" }}
-                id="maxSecondaryBsr"
-                min={0}
-                max={1000000}
-                className="block w-full rounded-md border-0 bg-white/5 py-1.5 pl-1 text-secondary-950 shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
-              />
-            </Form.Item>
-          </div>
-        </div>
-        {/* Minimale monatliche Verkäufe */}
-        <div
-          className={`${layout === "wide" ? "sm:col-span-3" : "sm:col-span-2"}`}
-        >
-          <label
-            htmlFor="monthlySold"
-            className="block text-sm font-medium leading-6 text-secondary-950"
-          >
-            Minimale monatliche Verkäufe
-          </label>
-          <div className="mt-2">
-            <Form.Item
-              style={{ marginBottom: "0px" }}
-              name="monthlySold"
-              rules={[
-                {
-                  validator: (_, value) => {
-                    if (value === 0 || value) {
-                      return Promise.resolve();
-                    }
-                    return Promise.reject(
-                      new Error("Positive Zahl zwischen 0 und 9999")
-                    );
-                  },
-                },
-              ]}
-            >
-              <InputNumber
-                type="number"
-                name="monthlySold"
-                step={1}
-                style={{ width: "100%" }}
-                id="monthlySold"
-                min={0}
-                max={9999}
-                className="block w-full rounded-md border-0 bg-white/5 py-1.5 pl-1 text-secondary-950 shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
-              />
-            </Form.Item>
-          </div>
-        </div>
-        {/* Maximale Offer */}
-        <div
-          className={`${layout === "wide" ? "sm:col-span-3" : "sm:col-span-2"}`}
-        >
-          <label
-            htmlFor="totalOfferCount"
-            className="block text-sm font-medium leading-6 text-secondary-950"
-          >
-            Maximale Offer
-          </label>
-          <div className="mt-2 w-full">
-            <Form.Item
-              style={{ marginBottom: "0px" }}
-              name="totalOfferCount"
-              rules={[
-                {
-                  validator: (_, value) => {
-                    if (value === 0 || value) {
-                      return Promise.resolve();
-                    }
-                    return Promise.reject(
-                      new Error("Positive Zahl zwischen 0 und 9999")
-                    );
-                  },
-                },
-              ]}
-            >
-              <InputNumber
-                type="number"
-                name="totalOfferCount"
-                id="totalOfferCount"
-                style={{ width: "100%" }}
-                step={1}
-                min={0}
-                max={9999}
-                className="block w-full rounded-md border-0 bg-white/5 py-1.5 pl-1 text-secondary-950 shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
-              />
-            </Form.Item>
-          </div>
-        </div>
-        {/* BuyBox */}
-        <div
-          className={`${layout === "wide" ? "sm:col-span-3" : "sm:col-span-2"}`}
-        >
-          <label
-            htmlFor="buyBox"
-            className="block text-sm font-medium leading-6 text-secondary-950"
-          >
-            BuyBox
-          </label>
-          <div className="mt-2">
-            <Form.Item style={{ marginBottom: "0px" }} name="buyBox">
-              <Select
-                id="buyBox"
-                style={{ width: "100%" }}
-                options={[
-                  { value: "amazon", label: "Amazon" },
-                  { value: "seller", label: "Seller" },
-                  { value: "both", label: "Beide" },
-                ]}
-              />
-            </Form.Item>
-          </div>
-        </div>
-        {/* BSR */}
-        <div
-          className={`${layout === "wide" ? "sm:col-span-6" : "sm:col-span-2"}`}
-        >
-          <div className="block text-sm font-medium leading-6 text-secondary-950">
-            BSR (Amazon Bestseller Rang)
-          </div>
-          <div className="relative flex items-start">
-            <div className="flex flex-row items-center justify-center mt-2">
-              <Form.Item
-                style={{ marginBottom: "0px" }}
-                valuePropName="checked"
-                name="productsWithNoBsr"
-              >
-                <Checkbox className="rounded border-gray-300 pt-4 text-secondary-950 focus:ring-secondary-500">
-                  Produkte ohne BSR anzeigen
-                </Checkbox>
-              </Form.Item>
+            <div className="block text-sm font-medium leading-6 text-secondary-950">
+              Teilnahme am Programm Mitteleuropa
+            </div>
+            <div className="relative flex items-start">
+              <div className="flex flex-row items-center justify-center mt-2">
+                <Form.Item
+                  style={{ marginBottom: "0px" }}
+                  valuePropName="checked"
+                  name="euProgram"
+                >
+                  <Checkbox className="rounded border-gray-300 pt-4 text-secondary-950 focus:ring-secondary-500">
+                    Programm Mitteleuropa verwenden
+                  </Checkbox>
+                </Form.Item>
+              </div>
             </div>
           </div>
-        </div>
+        )}
         {/* FBA */}
         {layout === "wide" && (
           <>
             <div
               className={`${
-                layout === "wide" ? "sm:col-span-6" : "sm:col-span-2"
+                layout === "wide" ? "sm:col-span-3" : "sm:col-span-2"
               }`}
             >
               <div className="block text-sm font-medium leading-6 text-secondary-950">
@@ -697,6 +491,213 @@ const ProductFilterForm = ({
             )}
           </>
         )}
+
+        {/* Maximaler Primary BSR */}
+        <div
+          className={`${layout === "wide" ? "sm:col-span-3" : "sm:col-span-2"}`}
+        >
+          <label
+            htmlFor="maxPrimaryBsr"
+            className="block text-sm font-medium leading-6 text-secondary-950"
+          >
+            Maximaler BSR Hauptkategorie
+          </label>
+          <div className="mt-2">
+            <Form.Item
+              style={{ marginBottom: "0px" }}
+              name="maxPrimaryBsr"
+              rules={[
+                {
+                  validator: (_, value) => {
+                    if (value === 0 || value) {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject(
+                      new Error("Positive Zahl zwischen 0 und 1.000.000")
+                    );
+                  },
+                },
+              ]}
+            >
+              <InputNumber
+                type="number"
+                step={1}
+                name="maxPrimaryBsr"
+                id="maxPrimaryBsr"
+                style={{ width: "100%" }}
+                min={0}
+                max={1000000}
+                className="block w-full rounded-md border-0 bg-white/5 py-1.5 pl-1 text-secondary-950 shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
+              />
+            </Form.Item>
+          </div>
+        </div>
+        {/* Maximaler Secondary BSR */}
+        <div
+          className={`${layout === "wide" ? "sm:col-span-3" : "sm:col-span-2"}`}
+        >
+          <label
+            htmlFor="maxSecondaryBsr"
+            className="block text-sm font-medium leading-6 text-secondary-950"
+          >
+            Maximaler BSR Nebenkategorie
+          </label>
+          <div className="mt-2">
+            <Form.Item
+              style={{ marginBottom: "0px" }}
+              name="maxSecondaryBsr"
+              rules={[
+                {
+                  validator: (_, value) => {
+                    if (value === 0 || value) {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject(
+                      new Error("Positive Zahl zwischen 0 und 1.000.000")
+                    );
+                  },
+                },
+              ]}
+            >
+              <InputNumber
+                type="number"
+                name="maxSecondaryBsr"
+                step={1}
+                style={{ width: "100%" }}
+                id="maxSecondaryBsr"
+                min={0}
+                max={1000000}
+                className="block w-full rounded-md border-0 bg-white/5 py-1.5 pl-1 text-secondary-950 shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
+              />
+            </Form.Item>
+          </div>
+        </div>
+        {/* Minimale monatliche Verkäufe */}
+        <div
+          className={`${layout === "wide" ? "sm:col-span-3" : "sm:col-span-2"}`}
+        >
+          <label
+            htmlFor="monthlySold"
+            className="block text-sm font-medium leading-6 text-secondary-950"
+          >
+            Minimale monatliche Verkäufe
+          </label>
+          <div className="mt-2">
+            <Form.Item
+              style={{ marginBottom: "0px" }}
+              name="monthlySold"
+              rules={[
+                {
+                  validator: (_, value) => {
+                    if (value === 0 || value) {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject(
+                      new Error("Positive Zahl zwischen 0 und 9999")
+                    );
+                  },
+                },
+              ]}
+            >
+              <InputNumber
+                type="number"
+                name="monthlySold"
+                step={1}
+                style={{ width: "100%" }}
+                id="monthlySold"
+                min={0}
+                max={9999}
+                className="block w-full rounded-md border-0 bg-white/5 py-1.5 pl-1 text-secondary-950 shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
+              />
+            </Form.Item>
+          </div>
+        </div>
+        {/* Maximale Offer */}
+        <div
+          className={`${layout === "wide" ? "sm:col-span-3" : "sm:col-span-2"}`}
+        >
+          <label
+            htmlFor="totalOfferCount"
+            className="block text-sm font-medium leading-6 text-secondary-950"
+          >
+            Maximale Offer
+          </label>
+          <div className="mt-2 w-full">
+            <Form.Item
+              style={{ marginBottom: "0px" }}
+              name="totalOfferCount"
+              rules={[
+                {
+                  validator: (_, value) => {
+                    if (value === 0 || value) {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject(
+                      new Error("Positive Zahl zwischen 0 und 9999")
+                    );
+                  },
+                },
+              ]}
+            >
+              <InputNumber
+                type="number"
+                name="totalOfferCount"
+                id="totalOfferCount"
+                style={{ width: "100%" }}
+                step={1}
+                min={0}
+                max={9999}
+                className="block w-full rounded-md border-0 bg-white/5 py-1.5 pl-1 text-secondary-950 shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
+              />
+            </Form.Item>
+          </div>
+        </div>
+        {/* BuyBox */}
+        <div
+          className={`${layout === "wide" ? "sm:col-span-3" : "sm:col-span-2"}`}
+        >
+          <label
+            htmlFor="buyBox"
+            className="block text-sm font-medium leading-6 text-secondary-950"
+          >
+            BuyBox
+          </label>
+          <div className="mt-2">
+            <Form.Item style={{ marginBottom: "0px" }} name="buyBox">
+              <Select
+                id="buyBox"
+                style={{ width: "100%" }}
+                options={[
+                  { value: "amazon", label: "Amazon" },
+                  { value: "seller", label: "Seller" },
+                  { value: "both", label: "Beide" },
+                ]}
+              />
+            </Form.Item>
+          </div>
+        </div>
+        {/* BSR */}
+        <div
+          className={`${layout === "wide" ? "sm:col-span-3" : "sm:col-span-2"}`}
+        >
+          <div className="block text-sm font-medium leading-6 text-secondary-950">
+            BSR (Amazon Bestseller Rang)
+          </div>
+          <div className="relative flex items-start">
+            <div className="flex flex-row items-center justify-center mt-2">
+              <Form.Item
+                style={{ marginBottom: "0px" }}
+                valuePropName="checked"
+                name="productsWithNoBsr"
+              >
+                <Checkbox className="rounded border-gray-300 pt-4 text-secondary-950 focus:ring-secondary-500">
+                  Produkte ohne BSR anzeigen
+                </Checkbox>
+              </Form.Item>
+            </div>
+          </div>
+        </div>
+
         <h2
           className={`${
             layout === "wide" ? "sm:col-span-6" : "hidden"

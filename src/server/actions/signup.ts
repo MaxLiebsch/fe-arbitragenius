@@ -37,14 +37,51 @@ export async function signupAction(
   const { email, name, password } = form.data;
 
   try {
-    const { account } = await createWebClient();
-    await account.create(ID.unique(), email, password, name);
+    const verifyEmail = await fetch("/app/api/verify-email?email=" + email);
+    if (verifyEmail) {
+      const info = await verifyEmail.json();
+      if (info.result === "risky") {
+        return {
+          message: "",
+          formErrors: [],
+          fieldErrors: {
+            email: [
+              "Die Email ist als riskant eingestuft. Bitte eine andere Email verwenden.",
+            ],
+          },
+        };
+      }
+      if (info.result === "undeliverable") {
+        return {
+          message: "",
+          formErrors: [],
+          fieldErrors: {
+            email: [
+              "Die Email konnte nicht zugestellt werden. Bitte eine andere Email verwenden.",
+            ],
+          },
+        };
+      }
+      if (info.disposable) {
+        return {
+          message: "",
+          formErrors: [],
+          fieldErrors: {
+            email: [
+              "Die Email ist als Wegwerf-Email eingestuft. Bitte eine andere Email verwenden.",
+            ],
+          },
+        };
+      }
+    }
+    // const { account } = await createWebClient();
+    // await account.create(ID.unique(), email, password, name);
 
-    const response = await createEmailPasswordSession({ email, password });
-    await createVerification(
-      `${process.env.NEXT_PUBLIC_DOMAIN}/auth/verify/callback/${email}`
-    );
-
+    // const response = await createEmailPasswordSession({ email, password });
+    // await createVerification(
+    //   `${process.env.NEXT_PUBLIC_DOMAIN}/auth/verify/callback/${email}`
+    // );
+    const response = { message: "success" };
     const { message } = response;
     if (message !== "success") {
       return { message, formErrors: [], fieldErrors: {} };

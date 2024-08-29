@@ -10,7 +10,8 @@ export const middleware = authMiddleware(async (request) => {
     } else {
       if (
         requestPathname === "/api/sessions/email" ||
-        requestPathname.startsWith("/api/account/verification")
+        requestPathname.startsWith("/api/account/verification")||
+        requestPathname.startsWith("/api/verify-email")
       ) {
         return NextResponse.next();
       }
