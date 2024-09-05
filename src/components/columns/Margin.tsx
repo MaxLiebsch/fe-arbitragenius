@@ -1,0 +1,51 @@
+import { Settings } from "@/types/Settings";
+import { Popover } from "antd";
+import React from "react";
+import ContentMarge from "../ContentMarge";
+import ContentEbyMarge from "../ContentEbyMarge";
+import { formatCurrency } from "@/util/formatter";
+import { GridColDef } from "@mui/x-data-grid-premium";
+
+const Margin = ({
+  target,
+  settings,
+}: {
+  target: string;
+  settings: Settings;
+}): GridColDef<any> => {
+  return {
+    field: `${target}_mrgn`,
+    headerName: "Marge",
+    renderHeader: (params) => (
+      <div className="relative">
+        <div>Marge</div>
+      </div>
+    ),
+    renderCell: (params) => (
+      <Popover
+        placement="topLeft"
+        arrow={false}
+        content={
+          params.row["costs"] && target === "a" ? (
+            <ContentMarge product={params.row} />
+          ) : (
+            <ContentEbyMarge product={params.row} />
+          )
+        }
+        title="Margenberechnung"
+      >
+        <div className="flex flex-col">
+          <div
+            className={`${
+              settings.netto ? "" : "font-semibold text-green-600"
+            }`}
+          >
+            {formatCurrency(parseFloat(params.value))}
+          </div>
+        </div>
+      </Popover>
+    ),
+  };
+};
+
+export default Margin;

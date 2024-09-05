@@ -1,16 +1,16 @@
-import { appendPercentage, formatCurrency, formatter } from "@/util/formatter";
 import { GridColDef } from "@mui/x-data-grid-premium";
 import { Settings } from "@/types/Settings";
-import { calculationDeduction } from "@/util/calculateDeduction";
 import { KeepaGraph } from "../components/KeepaGraph";
 import { ModifiedProduct } from "@/types/Product";
-import { Checkbox, Popover, Tooltip } from "antd";
-import ContentMarge from "../components/ContentMarge";
-import ContentEbyMarge from "../components/ContentEbyMarge";
+import { Checkbox } from "antd";
 import { BookmarkDeleteSchema, BookmarkSchema } from "@/types/Bookmarks";
 import { UseMutateFunction } from "@tanstack/react-query";
 import { ProductPagination } from "@/hooks/use-products";
 import InfoField from "@/components/columns/InfoField";
+import Margin from "@/components/columns/Margin";
+import MarginPct from "@/components/columns/MarginPct";
+import VKPrice from "@/components/columns/VKPrice";
+import EKPrice from "@/components/columns/EKPrice";
 
 export const createColumns: (
   target: string,
@@ -70,91 +70,20 @@ export const createColumns: (
     headerName: "Info",
     flex: 0.75,
     renderCell: (params) => (
-      <InfoField userRoles={userRoles} product={params.row} target={target} pagination={pagination} />
-    ),
-  }, 
-  {
-    field: "prc",
-    headerName: `Preis`,
-    headerAlign: "left",
-    align: "left",
-    renderHeader: (params) => (
-      <div className="relative w-16 flex">
-        <Tooltip title="Einkaufspreis" placement="topLeft">
-          <div>EK</div>
-        </Tooltip>
-        <div className="absolute bottom-1 text-xs text-gray-500">
-          <span className="text-green-600">
-            {settings?.netto ? "Netto" : "Brutto"}
-          </span>
-        </div>
-      </div>
-    ),
-    renderCell: (params) => (
-      <div className="flex flex-col">
-        <div
-          className={`${settings.netto ? "" : "font-semibold text-green-600"}`}
-        >
-          {formatCurrency(parseFloat(params.value))}
-        </div>
-        {params.row.qty > 1 && (
-          <span className="text-xs">({params.row.uprc} € / Stück)</span>
-        )}
-        <div
-          className={`${settings.netto ? "font-semibold text-green-600" : ""}`}
-        >
-          {formatCurrency(calculationDeduction(parseFloat(params.value), true))}
-        </div>
-      </div>
-    ),
-    width: 120,
-  },
-  {
-    field: `${target}_prc`,
-    width: 170,
-    align: "left",
-    headerAlign: "left",
-    headerName: "Zielshoppreis",
-    renderHeader: (params) => (
-      <div className="relative w-24 flex">
-        <Tooltip title="Verkaufspreis" placement="topLeft">
-          <div>VK {target === "a" ? "(∅ 90 Tage)" : ""}</div>
-        </Tooltip>
-
-        <div className="absolute bottom-1 text-xs">
-          <span className="text-green-600">
-            {settings?.netto ? "Netto" : "Brutto"}
-          </span>
-        </div>
-      </div>
-    ),
-    renderCell: (params) => (
-      <div className="flex flex-col">
-        <div
-          className={`${settings.netto ? "" : "font-semibold text-green-600"}`}
-        >
-          <span>{formatCurrency(parseFloat(params.value))} </span>
-          <span className="">
-            {target === "a" && params.row?.avg90_ahsprcs
-              ? `(${formatter.format(params.row?.avg90_ahsprcs / 100)})`
-              : ""}
-          </span>
-        </div>
-        {params.row[`${target}_qty` as keyof ModifiedProduct] > 1 && (
-          <span className="text-xs">
-            ({params.row[`${target}_uprc` as keyof ModifiedProduct]} € / Stück)
-          </span>
-        )}
-        <div
-          className={`${settings.netto ? "font-semibold text-green-600" : ""}`}
-        >
-          {formatCurrency(calculationDeduction(parseFloat(params.value), true))}
-        </div>
-      </div>
+      <InfoField
+        userRoles={userRoles}
+        product={params.row}
+        target={target}
+        pagination={pagination}
+      />
     ),
   },
+  EKPrice({ settings }),
+  VKPrice({ target, settings }),
   {
     field: "analytics",
+    disableColumnMenu: true,
+    width: 150,
     headerName: "Preisanalyse",
     renderCell: (params) => {
       return params.row["ahstprcs"] ? (
@@ -164,44 +93,8 @@ export const createColumns: (
       );
     },
   },
-  {
-    field: `${target}_mrgn_pct`,
-    headerName: "Marge %",
-    valueFormatter: (params) => appendPercentage(params.value),
-  },
-  {
-    field: `${target}_mrgn`,
-    headerName: "Marge",
-    renderHeader: (params) => (
-      <div className="relative">
-        <div>Marge</div>
-      </div>
-    ),
-    renderCell: (params) => (
-      <Popover
-        placement="topLeft"
-        arrow={false}
-        content={
-          params.row["costs"] && target === "a" ? (
-            <ContentMarge product={params.row} />
-          ) : (
-            <ContentEbyMarge product={params.row} />
-          )
-        }
-        title="Margenberechnung"
-      >
-        <div className="flex flex-col">
-          <div
-            className={`${
-              settings.netto ? "" : "font-semibold text-green-600"
-            }`}
-          >
-            {formatCurrency(parseFloat(params.value))}
-          </div>
-        </div>
-      </Popover>
-    ),
-  },
+  MarginPct({ target, settings }),
+  Margin({ target, settings }),
   {
     field: "isBookmarked",
     headerName: "Gemerkt",

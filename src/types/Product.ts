@@ -43,20 +43,27 @@ export type Product = {
 };
 
 export interface Verification {
-  vrfd?: boolean,
-  isMatch?: boolean,
-  score?: number,
-  vrfn_pending?: boolean,
-  flags?: string[],
-  flag_cnt?:  number,
+  vrfd?: boolean;
+  isMatch?: boolean;
+  qty?: number;
+  qty_score?: number;
+  score?: number;
+  vrfn_pending?: boolean;
+  flags?: string[];
+  flag_cnt?: number;
 }
 
 export interface ModifiedProduct extends Product {
   bsr_1: number;
   bsr_cat_1: string;
+  e_pRange?: {
+    min: number;
+    max: number;
+    median: number;
+  };
   e_uprc: number;
-  e_vrfd?: Verification
-  a_vrfd?: Verification
+  e_vrfd?: Verification;
+  a_vrfd?: Verification;
   isBookmarked: boolean;
   a_uprc: number;
   esin: string;
@@ -101,7 +108,7 @@ export interface ModifiedProduct extends Product {
 }
 
 export interface BookMarkProduct extends ModifiedProduct {
-  shop:string;
+  shop: string;
 }
 
 export interface Costs {

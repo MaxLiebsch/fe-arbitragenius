@@ -21,11 +21,13 @@ const Page = async () => {
 
   const mongo = await clientPool["NEXT_MONGO_CRAWLER_DATA_ADMIN"];
 
-  const scraper = await mongo
-    .db(process.env.NEXT_MONOGO_CRAWLER_DATA)
-    .collection("metadata")
-    .find({ crawlerId: { $exists: true } })
-    .toArray();
+  const scraper = (
+    await mongo
+      .db(process.env.NEXT_MONOGO_CRAWLER_DATA)
+      .collection("metadata")
+      .find({ crawlerId: { $exists: true } })
+      .toArray()
+  ).sort((a, b) => a.name.localeCompare(b.name));
 
   const infrastructure = await mongo
     .db(process.env.NEXT_MONOGO_CRAWLER_DATA)
@@ -213,7 +215,7 @@ const Page = async () => {
               <Card key={_.name} style={{ minWidth: 250 }}>
                 <div className="flex flex-col">
                   <p>{_.name}</p>
-                  <Terminal ip={_.ip} name={_.name}  />
+                  <Terminal ip={_.ip} name={_.name} />
                 </div>
               </Card>
             ))}

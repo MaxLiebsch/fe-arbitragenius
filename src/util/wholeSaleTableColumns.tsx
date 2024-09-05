@@ -6,20 +6,16 @@ import ContentMarge from "../components/ContentMarge";
 import { Popover } from "antd";
 import { calculationDeduction } from "@/util/calculateDeduction";
 import { LinkWrapper } from "../components/LinkWrapper";
-import {
-  GridColDef,
-} from "@mui/x-data-grid-premium";
-import {
-    CheckIcon,
-    EyeSlashIcon,
-  } from "@heroicons/react/16/solid";
+import { GridColDef } from "@mui/x-data-grid-premium";
+import { CheckIcon, EyeSlashIcon } from "@heroicons/react/16/solid";
 import { appendPercentage, formatCurrency } from "./formatter";
+import MarginPct from "@/components/columns/MarginPct";
+import Margin from "@/components/columns/Margin";
 
-export const createWholeSaleColumns: (target: string, settings: Settings
-) => GridColDef[] = (
-  target,
-  settings
-) => [
+export const createWholeSaleColumns: (
+  target: string,
+  settings: Settings
+) => GridColDef[] = (target, settings) => [
   {
     field: "category",
     headerName: "Kategorie",
@@ -201,42 +197,8 @@ export const createWholeSaleColumns: (target: string, settings: Settings
     field: "asin",
     headerName: "Amazon ASIN",
   },
-  {
-    field: `${target}_mrgn_pct`,
-    headerName: "Marge %",
-    valueFormatter: (params) => appendPercentage(params.value),
-  },
-  {
-    field: `${target}_mrgn`,
-    headerName: "Marge €",
-    renderCell: (params) => (
-      <Popover
-        placement="topLeft"
-        arrow={false}
-        content={
-          params.row["costs"] ? (
-            <ContentMarge product={params.row} />
-          ) : (
-            <div>Verkaufspreis - Einkaufspreis</div>
-          )
-        }
-        title="Margenberechnung"
-      >
-        <div className="flex flex-col">
-          <div
-            className={`
-              ${
-                parseFloat(params.value) <= 0
-                  ? "text-red-600"
-                  : "text-green-600"
-              }`}
-          >
-            {formatCurrency(parseFloat(params.value))}
-          </div>
-        </div>
-      </Popover>
-    ),
-  },
+  MarginPct({ target, settings }),
+  Margin({ target, settings }),
   {
     field: `status`,
     headerName: "Status",
@@ -251,4 +213,3 @@ export const createWholeSaleColumns: (target: string, settings: Settings
     ),
   },
 ];
-
