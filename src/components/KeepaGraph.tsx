@@ -30,11 +30,10 @@ export const KeepaGraph = ({ product }: { product: ModifiedProduct }) => {
     setIsHovered(false);
   };
 
-  const { ahstprcs, anhstprcs, auhstprcs, salesRanks, categoryTree } = product;
+  const { ahstprcs, anhstprcs, auhstprcs, salesRanks, categoryTree, eanList } = product;
 
-  const hasAhstprcs = ahstprcs.length;
-  const hasAuhstprcs = auhstprcs.length;
-  const hasAnhstprcs = anhstprcs.length;
+  const hasAhstprcs = ahstprcs && ahstprcs.length;
+  const hasAnhstprcs = anhstprcs && anhstprcs.length;
   const hasSalesRanks = salesRanks && Object.keys(salesRanks).length;
 
   const parseSalesRank = useCallback(
@@ -96,20 +95,22 @@ export const KeepaGraph = ({ product }: { product: ModifiedProduct }) => {
           }
         });
       };
-      if (ahstprcs.length) {
+      if (ahstprcs) {
         addToCombinedData(ahstprcs, "amazonPrice");
       }
-      if (auhstprcs.length) {
+      if (auhstprcs) {
         addToCombinedData(auhstprcs, "usedPrice");
       }
-      if (anhstprcs.length) {
+      if (anhstprcs) {
         addToCombinedData(anhstprcs, "newPrice");
       }
-      const _salesRanks = Object.entries(salesRanks);
+      if (salesRanks) {
+        const _salesRanks = Object.entries(salesRanks);
 
-      if (_salesRanks.length) {
-        const parsedArray = _salesRanks[0][1];
-        addToCombinedData(parsedArray, "salesRank");
+        if (_salesRanks.length) {
+          const parsedArray = _salesRanks[0][1];
+          addToCombinedData(parsedArray, "salesRank");
+        }
       }
       const sorted = combinedData.sort((a, b) => a.epoch - b.epoch);
 
@@ -124,7 +125,7 @@ export const KeepaGraph = ({ product }: { product: ModifiedProduct }) => {
   );
 
   const data = useMemo(
-    () => combineData(ahstprcs, auhstprcs, anhstprcs, salesRanks),
+    () => combineData(ahstprcs, auhstprcs, anhstprcs, parsedSalesRanks),
     [parsedSalesRanks, ahstprcs, anhstprcs, auhstprcs, combineData]
   );
 

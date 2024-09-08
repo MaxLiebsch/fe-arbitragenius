@@ -85,13 +85,7 @@ export const createColumns: (
     disableColumnMenu: true,
     width: 150,
     headerName: "Preisanalyse",
-    renderCell: (params) => {
-      return params.row["ahstprcs"] ? (
-        <KeepaGraph product={params.row} />
-      ) : (
-        <></>
-      );
-    },
+    renderCell: (params) => <KeepaGraph product={params.row} />,
   },
   MarginPct({ target, settings }),
   Margin({ target, settings }),
