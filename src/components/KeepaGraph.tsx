@@ -3,7 +3,6 @@ import { ModifiedProduct } from "@/types/Product";
 import { formatter } from "@/util/formatter";
 import { format, fromUnixTime } from "date-fns";
 import { de } from "date-fns/locale";
-import { parse } from "path";
 import { useCallback, useMemo, useState } from "react";
 import {
   LineChart,
@@ -33,46 +32,15 @@ export const KeepaGraph = ({ product }: { product: ModifiedProduct }) => {
 
   const { ahstprcs, anhstprcs, auhstprcs, salesRanks, categoryTree } = product;
 
-  const hasAhstprcs = ahstprcs.length && ahstprcs[1] !== -1;
-  const hasAuhstprcs = auhstprcs.length && auhstprcs[1] !== -1;
-  const hasAnhstprcs = anhstprcs.length && anhstprcs[1] !== -1;
+  const hasAhstprcs = ahstprcs.length;
+  const hasAuhstprcs = auhstprcs.length;
+  const hasAnhstprcs = anhstprcs.length;
   const hasSalesRanks = salesRanks && Object.keys(salesRanks).length;
 
-  const parseArray = (array: number[]) => {
-    let steps = 8;
-    switch (true) {
-      case array.length / 2 < 7:
-        steps = 2;
-        break;
-      case array.length / 2 > 400:
-        steps = 24;
-        break;
-    }
-    const parsedArray: [number, number][] = [];
-    const dates: string[] = [];
-    for (let i = 0; i < array.length; i += steps) {
-      const unixTimestamp = createUnixTimeFromKeepaTime(array[i]);
-      const date = new Date(unixTimestamp * 1000);
-      const year = date.getFullYear();
-      const month = date.getMonth() + 1; // Months are zero-indexed
-      const day = date.getDate();
-      const dateStr = `${year}-${month.toString().padStart(2, "0")}-${day
-        .toString()
-        .padStart(2, "0")}`;
-      if (dates.some((_) => _ === dateStr)) {
-        continue;
-      } else {
-        dates.push(dateStr);
-        parsedArray.push([unixTimestamp, array[i + 1]]);
-      }
-    }
-    return parsedArray;
-  };
-
   const parseSalesRank = useCallback(
-    (salesRanks: { [key: string]: number[] }) => {
+    (salesRanks: { [key: string]: [number, number][] }) => {
       if (!salesRanks) return {};
-      const parsedSalesRank: { [key: string]: number[] } = {};
+      const parsedSalesRank: { [key: string]: [number, number][] } = {};
 
       if (!categoryTree) return {};
 
@@ -90,10 +58,10 @@ export const KeepaGraph = ({ product }: { product: ModifiedProduct }) => {
 
   const combineData = useCallback(
     (
-      ahstprcs: number[][],
-      auhstprcs: number[][],
-      anhstprcs: number[][],
-      salesRanks: { [key: string]: number[] }
+      ahstprcs: [number, number][],
+      auhstprcs: [number, number][],
+      anhstprcs: [number, number][],
+      salesRanks: { [key: string]: [number, number][] }
     ) => {
       const combinedData: {
         date: string;
@@ -106,7 +74,7 @@ export const KeepaGraph = ({ product }: { product: ModifiedProduct }) => {
 
       const addToCombinedData = (data: number[][], type: DataPoint) => {
         data.forEach((entry, i) => {
-          const date = entry[0]
+          const date = entry[0];
           if (entry[1] === -1) return;
 
           const value = type !== "salesRank" ? entry[1] / 100 : entry[1];
@@ -128,19 +96,19 @@ export const KeepaGraph = ({ product }: { product: ModifiedProduct }) => {
           }
         });
       };
-      if (ahstprcs.length && ahstprcs[0][1] !== -1) {
+      if (ahstprcs.length) {
         addToCombinedData(ahstprcs, "amazonPrice");
       }
-      if (auhstprcs.length && auhstprcs[0][1] !== -1) {
+      if (auhstprcs.length) {
         addToCombinedData(auhstprcs, "usedPrice");
       }
-      if (anhstprcs.length && anhstprcs[0][1] !== -1) {
+      if (anhstprcs.length) {
         addToCombinedData(anhstprcs, "newPrice");
       }
       const _salesRanks = Object.entries(salesRanks);
 
       if (_salesRanks.length) {
-        const parsedArray = parseArray(_salesRanks[0][1]);
+        const parsedArray = _salesRanks[0][1];
         addToCombinedData(parsedArray, "salesRank");
       }
       const sorted = combinedData.sort((a, b) => a.epoch - b.epoch);
@@ -156,13 +124,7 @@ export const KeepaGraph = ({ product }: { product: ModifiedProduct }) => {
   );
 
   const data = useMemo(
-    () =>
-      combineData(
-        parseArray(ahstprcs),
-        parseArray(auhstprcs),
-        parseArray(anhstprcs),
-        parsedSalesRanks
-      ),
+    () => combineData(ahstprcs, auhstprcs, anhstprcs, salesRanks),
     [parsedSalesRanks, ahstprcs, anhstprcs, auhstprcs, combineData]
   );
 

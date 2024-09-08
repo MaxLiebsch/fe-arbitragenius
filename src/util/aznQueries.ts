@@ -6,6 +6,7 @@ export const resetAznProductQuery = () => {
       //standard properties
       a_pblsh: "",
       a_nm: "",
+      a_cur: "",
       a_lnk: "",
       bsr: "",
       a_img: "",

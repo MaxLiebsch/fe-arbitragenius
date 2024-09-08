@@ -57,7 +57,7 @@ const VKPrice = ({
           <div className={`${netto ? "font-semibold text-green-600" : ""}`}>
             {formatCurrency(calculationDeduction(parseFloat(value), true))}
           </div>
-          {target === "e" && min && max && min !== max ? (
+          {target === "e" && min && max ? (
             <>
               <div className="text-xs text-gray-500">
                 <span>Min: {formatter.format(min)}</span>

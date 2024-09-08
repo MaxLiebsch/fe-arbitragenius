@@ -89,9 +89,9 @@ export interface ModifiedProduct extends Product {
   categoryTree: CategoryTree[];
   salesRanks: SalesRanks;
   monthlySold: any;
-  ahstprcs: number[];
-  anhstprcs: number[];
-  auhstprcs: number[];
+  ahstprcs: [number, number][];
+  anhstprcs: [number, number][];
+  auhstprcs: [number, number][];
   curr_salesRank: number;
   curr_ahsprcs: number;
   curr_ansprcs: number;
@@ -125,5 +125,5 @@ export interface CategoryTree {
 }
 
 export interface SalesRanks {
-  [key: string]: number[];
+  [key: string]: [number, number][];
 }
