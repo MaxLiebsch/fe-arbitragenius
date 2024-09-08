@@ -1,9 +1,8 @@
-import { createUnixTimeFromKeepaTime } from "@/components/KeepaGraph";
-import { BSR, CategoryTree } from "@/types/Product";
+import { BSR, CategoryTree, SalesRanks } from "@/types/Product";
 import { fromUnixTime } from "date-fns";
 
 export const parseSalesRank = (
-  salesRanks: { [key: string]: number[] },
+  salesRanks: SalesRanks,
   categoryTree: CategoryTree[]
 ) => {
   const parsedSalesRank: BSR[] = [];
@@ -17,15 +16,10 @@ export const parseSalesRank = (
       (category) => category.catId === parseInt(key)
     );
     if (!categoryName) return;
-    const rank =
-      value[value.length - 1] != -1
-        ? value[value.length - 1]
-        : value[value.length - 3];
+    const rank = value[0][1];
     bsr.number = rank;
     bsr.category = categoryName.name;
-    bsr.createdAt = fromUnixTime(
-      createUnixTimeFromKeepaTime(value[value.length - 2])
-    ).toISOString();
+    bsr.createdAt = fromUnixTime(value[0][0]).toISOString();
     parsedSalesRank.push(bsr);
   });
   return parsedSalesRank;
