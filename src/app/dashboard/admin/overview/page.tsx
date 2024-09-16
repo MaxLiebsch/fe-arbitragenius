@@ -27,10 +27,7 @@ const Page = async () => {
       .collection("metadata")
       .find({ crawlerId: { $exists: true } })
       .toArray()
-  ).sort((a, b) => {
-    console.log(a);
-    return a.name.localeCompare(b.name);
-  });
+  ).sort((a, b) => a.name.localeCompare(b.name));
 
   const infrastructure = await mongo
     .db(process.env.NEXT_MONOGO_CRAWLER_DATA)
