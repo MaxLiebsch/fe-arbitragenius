@@ -27,7 +27,10 @@ const Page = async () => {
       .collection("metadata")
       .find({ crawlerId: { $exists: true } })
       .toArray()
-  ).sort((a, b) => a.name.localeCompare(b.name));
+  ).sort((a, b) => {
+    console.log(a);
+    return a.name.localeCompare(b.name);
+  });
 
   const infrastructure = await mongo
     .db(process.env.NEXT_MONOGO_CRAWLER_DATA)
@@ -337,7 +340,7 @@ const Page = async () => {
             .filter((task) => task.type === "MATCH_PRODUCTS")
             .map((_) => (
               <div key={`match-products-${_.id}`}>
-                {_.shopDomain}: {_.progress.pending}
+                {_.shopDomain.d}: {_.progress.pending}
               </div>
             ))}
         </li>
@@ -355,7 +358,7 @@ const Page = async () => {
             {crawlEansProgress.length ? (
               crawlEansProgress.map((_: any) => (
                 <div key={`crawl-eans-${_.shop}`}>
-                  {_.shop}: {_.pending}
+                  {_.shop.d}: {_.pending}
                 </div>
               ))
             ) : (
@@ -375,7 +378,7 @@ const Page = async () => {
             {lookupInfoProgress?.length ? (
               lookupInfoProgress.map((_: any) => (
                 <div key={`lookup-info-${_.shop}`}>
-                  {_.shop}: {_.pending}
+                  {_.shop.d}: {_.pending}
                 </div>
               ))
             ) : (
@@ -395,7 +398,7 @@ const Page = async () => {
             {queryEansEbyProgress?.length ? (
               queryEansEbyProgress.map((_: any) => (
                 <div key={`query-eans-on-eby-${_.shop}`}>
-                  {_.shop}: {_.pending}
+                  {_.shop.d}: {_.pending}
                 </div>
               ))
             ) : (
@@ -415,7 +418,7 @@ const Page = async () => {
             {lookupCategoryProgress ? (
               lookupCategoryProgress?.map((_: any) => (
                 <div key={`lookup-category-${_.shop}`}>
-                  {_.shop}: {_.pending}
+                  {_.shop.d}: {_.pending}
                 </div>
               ))
             ) : (
