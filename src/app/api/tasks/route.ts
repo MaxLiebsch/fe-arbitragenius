@@ -55,11 +55,13 @@ export async function POST(request: NextRequest) {
     });
   }
   const mongo = await clientPool["NEXT_MONGO_CRAWLER_DATA_ADMIN"];
+  const spotter = await clientPool["NEXT_MONGO_ADMIN"];
   const taskCollection = mongo
     .db(process.env.NEXT_MONOGO_CRAWLER_DATA)
     .collection(process.env.NEXT_MONGO_TASKS ?? "");
-  const wholsaleCollection = mongo
-    .db(process.env.NEXT_MONOGO_CRAWLER_DATA)
+
+  const wholsaleCollection = spotter
+    .db(process.env.NEXT_MONGO_DB)
     .collection(process.env.NEXT_MONGO_WHOLESALE ?? "");
 
   const res = await taskCollection.countDocuments({
@@ -89,7 +91,7 @@ export async function POST(request: NextRequest) {
   const newTask: WholeSaleTask = {
     type: "WHOLESALE_SEARCH",
     id: "wholesale_search",
-    browserConcurrency: 6,
+    browserConcurrency: process.env.NODE_ENV === "development" ? 3 : 6,
     concurrency: 1,
     recurrent: false,
     startedAt: "",

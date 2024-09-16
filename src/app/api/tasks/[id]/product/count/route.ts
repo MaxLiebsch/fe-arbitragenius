@@ -14,10 +14,10 @@ export async function GET(
     });
   }
 
-  const mongo = await clientPool['NEXT_MONGO_CRAWLER_DATA_ADMIN'];
+  const mongo = await clientPool['NEXT_MONGO_ADMIN'];
 
   const res = await mongo
-    .db(process.env.NEXT_MONGO_CRAWLER_DATA ?? "")
+    .db(process.env.NEXT_MONGO_DB ?? "")
     .collection(process.env.NEXT_MONGO_WHOLESALE ?? "wholesale")
     .countDocuments({
       taskId: params.id,

@@ -33,9 +33,9 @@ export async function GET(
     });
   const aggregation = [];
 
-  const mongo = await clientPool["NEXT_MONGO_CRAWLER_DATA_ADMIN"];
+  const mongo = await clientPool['NEXT_MONGO_ADMIN'];
   const wholsaleCollection = mongo
-    .db(process.env.NEXT_MONOGO_CRAWLER_DATA ?? "")
+    .db(process.env.NEXT_MONGO_DB ?? "")
     .collection(process.env.NEXT_MONGO_WHOLESALE ?? "wholesale");
 
   const sort: {

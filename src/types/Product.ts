@@ -13,7 +13,6 @@ export interface EbyCategory {
 export type Product = {
   ean: string;
   _id: string;
-  pblsh: boolean;
   bsr: BSR[];
   keepaUpdatedAt: string;
   s: string;
@@ -53,14 +52,17 @@ export interface Verification {
   flag_cnt?: number;
 }
 
+export type Prange = {
+  min: number;
+  max: number;
+  median: number;
+
+}
+
 export interface ModifiedProduct extends Product {
   bsr_1: number;
   bsr_cat_1: string;
-  e_pRange?: {
-    min: number;
-    max: number;
-    median: number;
-  };
+  e_pRange?: Prange
   e_uprc: number;
   e_vrfd?: Verification;
   a_vrfd?: Verification;

@@ -19,7 +19,7 @@ jobs:
           passphrase: ${{ secrets.PASSPHRASE }}
           command_timeout: 30m
           script: |
-            docker image prune -a -f
+            docker builder prune -f
             git --work-tree=/etc/docker/container/staging --git-dir=/etc/docker/container/staging/.git pull
             cd /etc/docker/container/staging
             docker compose -f docker-compose.staging.yml up --build -d
@@ -37,7 +37,7 @@ jobs:
           key: ${{ secrets.DEPLOY_FE_PK }}
           passphrase: ${{ secrets.PASSPHRASE }}
           script: |
-            docker image prune -a -f
+            docker builder prune -f
             git --work-tree=/etc/docker/container/live --git-dir=/etc/docker/container/live/.git pull
             cd /etc/docker/container/live
             docker compose -f docker-compose.live.yml up --build -d 
