@@ -12,7 +12,7 @@ const RetrieveEsin = (
   target: string,
   pagination: ProductPagination
 ) => {
-  const { eanList } = product;
+  const { eanList, e_totalOfferCount } = product;
   const esin = (product.esin ?? parseEsinFromUrl(url)) || parseEsinFromUrl(url);
   const isAdmin = userRoles.includes("admin");
 
@@ -40,9 +40,24 @@ const RetrieveEsin = (
           ) : (
             <></>
           )}
+
           <div>
             <span className="font-semibold">ESIN: </span>
             <CopyToClipboard text={esin} />
+          </div>
+          <div>
+            {e_totalOfferCount && (
+              <span>
+                <span>
+                  <span className="font-semibold"> Listings:</span>
+                  {e_totalOfferCount ? (
+                    <span className=""> {e_totalOfferCount}</span>
+                  ) : (
+                    "0"
+                  )}
+                </span>
+              </span>
+            )}
           </div>
         </div>
       </div>

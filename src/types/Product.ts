@@ -66,6 +66,7 @@ export interface ModifiedProduct extends Product {
   e_uprc: number;
   e_vrfd?: Verification;
   a_vrfd?: Verification;
+  e_totalOfferCount?: number;
   isBookmarked: boolean;
   a_uprc: number;
   esin: string;
