@@ -1,8 +1,8 @@
 "use client";
-import React, { RefAttributes, useEffect, useRef } from "react";
+import React, { RefAttributes, useEffect, useRef, useState } from "react";
 import { InboxOutlined } from "@ant-design/icons";
 import type { UploadFile, UploadProps } from "antd";
-import { message, Space, Upload } from "antd";
+import { message, Radio, Space, Upload } from "antd";
 import useTasks from "@/hooks/use-tasks";
 import { UploadChangeParam } from "antd/es/upload";
 import Papa from "papaparse";
@@ -18,6 +18,7 @@ import useCreateTask from "@/hooks/use-task-create";
 import Spinner from "@/components/Spinner";
 import TaskCard from "@/components/TaskCard";
 import * as XLSX from "xlsx";
+import { WholeSaleTarget } from "@/types/tasks";
 
 const { Dragger } = Upload;
 
@@ -171,6 +172,7 @@ function getCaseInsensitiveProperty(obj: any, properties: string[]) {
 const Page = () => {
   const tasks = useTasks();
   const createTaskMutation = useCreateTask();
+  const [target, setTarget] = useState<WholeSaleTarget[]>(["a"]);
   const [rows, setRows] = React.useState<ProductRow[]>([]);
   const ref = useRef<any | null>(null);
 
@@ -239,7 +241,7 @@ const Page = () => {
             );
           },
         });
-      } 
+      }
       if (originFileObj?.type === xlsType || originFileObj?.type === xlsxType) {
         const workbook = XLSX.read(await originFileObj.arrayBuffer(), {
           type: "binary",
@@ -259,7 +261,10 @@ const Page = () => {
             message.info(`Maximum von ${cnt - 1} Produkten überschritten.`);
             break;
           }
-          const price = getCaseInsensitiveProperty(row, translations.price).toString();
+          const price = getCaseInsensitiveProperty(
+            row,
+            translations.price
+          ).toString();
           const testRow: ProductRow = {
             id: 0,
             ean: getCaseInsensitiveProperty(row, translations.ean).toString(),
@@ -268,7 +273,10 @@ const Page = () => {
             prc: parseInt(price)
               ? parsePrice(getPrice(price ? price.replace(/\s+/g, "") : ""))
               : "",
-            reference: getCaseInsensitiveProperty(row, translations.reference).toString(),
+            reference: getCaseInsensitiveProperty(
+              row,
+              translations.reference
+            ).toString(),
           };
           const res = productSchema.safeParse(testRow);
           if (!res.success) {
@@ -283,7 +291,7 @@ const Page = () => {
             parsedRows.push(res.data); // Push parsed row into array
           }
         }
-        if(parsedRows.length > 0) {
+        if (parsedRows.length > 0) {
           setRows(
             parsedRows.map((row, i) => {
               return {
@@ -305,7 +313,7 @@ const Page = () => {
   };
 
   const handleStartTask = async () => {
-    createTaskMutation.mutate({ body: rows });
+    createTaskMutation.mutate({ products: rows, target });
   };
 
   useEffect(() => {
@@ -355,19 +363,37 @@ const Page = () => {
             </p>
           </Dragger>
           <div>
-            <Button
-              disabled={createTaskMutation.isPending || !rows.length}
-              onClick={() => handleStartTask()}
-              className="mb-3 min-w-32"
-            >
-              {createTaskMutation.isPending ? (
-                <div className="w-full flex justify-center">
-                  <Spinner size={"!w-6"} />
-                </div>
-              ) : (
-                <>Start Analyse</>
-              )}
-            </Button>
+            <div className="flex flex-row gap-2 mb-1 mt-2">
+              <div>
+                <h4 className="font-display font-semibold  leading-7 text-slate-900">
+                  Wholesale Ziel
+                </h4>
+                <Radio.Group
+                  size="large"
+                  onChange={(e) => setTarget(e.target.value.split(","))}
+                  value={target.join(",")}
+                >
+                  <Radio value={"a"}>Amazon</Radio>
+                  <Radio value={"e"}>Ebay</Radio>
+                  <Radio value={"a,e"}>Beide</Radio>
+                </Radio.Group>
+              </div>
+              <div className="mt-3">
+                <Button
+                  disabled={createTaskMutation.isPending || !rows.length}
+                  onClick={() => handleStartTask()}
+                  className="min-w-32"
+                >
+                  {createTaskMutation.isPending ? (
+                    <div className="w-full flex justify-center">
+                      <Spinner size={"!w-6"} />
+                    </div>
+                  ) : (
+                    <>Start Analyse</>
+                  )}
+                </Button>
+              </div>
+            </div>
             {rows.length ? (
               <>
                 <DataGridPremium

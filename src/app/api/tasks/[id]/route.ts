@@ -47,14 +47,16 @@ export async function DELETE(
       status: 401,
     });
   }
-
+  
+  const target = request.nextUrl.searchParams.get("target");
+  
   const mongo = await clientPool["NEXT_MONGO_CRAWLER_DATA_ADMIN"];
 
   const taskCollection = mongo
     .db(process.env.NEXT_MONGO_CRAWLER_DATA ?? "")
     .collection(process.env.NEXT_MONGO_TASKS ?? "wholesale");
   const wholesaleCollection = mongo
-    .db(process.env.NEXT_MONGO_CRAWLER_DATA ?? "")
+    .db(process.env.NEXT_MONGO_DB ?? "")
     .collection(process.env.NEXT_MONGO_WHOLESALE ?? "wholesale");
 
   const taskFinished = await taskCollection.findOne({
@@ -72,7 +74,7 @@ export async function DELETE(
   }
 
   const deleteProducts = await wholesaleCollection.deleteMany({
-    taskId: params.id,
+    taskIds: params.id,
   });
 
   if (!deleteProducts.acknowledged) {

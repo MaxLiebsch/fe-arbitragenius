@@ -47,7 +47,7 @@ const VKPrice = ({
             <span>{formatCurrency(parseFloat(params.value))} </span>
             {target === "a" && avg30_ahsprcs ? (
               <span>{`(${formatter.format(avg30_ahsprcs / 100)})`} </span>
-            ) : median ? (
+            ) : median && target === 'e' ? (
               <span>{`(${formatter.format(median)})`} </span>
             ) : null}
           </div>

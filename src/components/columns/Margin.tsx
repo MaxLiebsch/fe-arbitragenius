@@ -21,30 +21,35 @@ const Margin = ({
         <div>Marge</div>
       </div>
     ),
-    renderCell: (params) => (
-      <Popover
-        placement="topLeft"
-        arrow={false}
-        content={
-          params.row["costs"] && target === "a" ? (
-            <ContentMarge product={params.row} />
-          ) : (
-            <ContentEbyMarge product={params.row} />
-          )
-        }
-        title="Margenberechnung"
-      >
-        <div className="flex flex-col">
-          <div
-            className={`${
-              settings.netto ? "" : "font-semibold text-green-600"
-            }`}
-          >
-            {formatCurrency(parseFloat(params.value))}
+    renderCell: (params) => {
+      const margin = parseFloat(params.value)
+      return (
+        <Popover
+          placement="topLeft"
+          arrow={false}
+          content={
+            params.row["costs"] && target === "a" ? (
+              <ContentMarge product={params.row} />
+            ) : (
+              <ContentEbyMarge product={params.row} />
+            )
+          }
+          title="Margenberechnung"
+        >
+          <div className="flex flex-col">
+            <div
+              className={`${
+                settings.netto ? "" : "font-semibold text-green-600"
+              }
+              ${margin < 0 ? "text-red-600" : ""}
+              `}
+            >
+              {formatCurrency(margin)}
+            </div>
           </div>
-        </div>
-      </Popover>
-    ),
+        </Popover>
+      );
+    },
   };
 };
 

@@ -9,8 +9,11 @@ import useDeleteTask from "@/hooks/use-task-delete";
 
 const TaskCard = ({ task }: { task: DbTask }) => {
   const inProgress = task.executing;
-  const progress = ((Number((task.progress.completed / task.progress.total))) * 100).toFixed(0)
-  const deleteTask = useDeleteTask({ taskId: task._id.toString() });
+  const target = task.type === "WHOLESALE_EBY_SEARCH" ? "e" : "a";
+  const progress = (
+    Number(task.progress.completed / task.progress.total) * 100
+  ).toFixed(0);
+  const deleteTask = useDeleteTask({ taskId: task._id.toString(),target });
 
   useEffect(() => {
     if (deleteTask.isSuccess) {
@@ -37,6 +40,9 @@ const TaskCard = ({ task }: { task: DbTask }) => {
       style={{ width: 400 }}
     >
       <div className="flex flex-col">
+        <div>
+          Ziel: {task.type === "WHOLESALE_EBY_SEARCH" ? "Ebay" : "Amazon"}
+        </div>
         <div className="flex flex-row gap-1" key={task._id.toString()}>
           <span>Status:</span>
           {task.progress.completed === task.progress.total ? (
@@ -50,9 +56,7 @@ const TaskCard = ({ task }: { task: DbTask }) => {
             "In Warteschlange"
           )}
         </div>
-        <div>
-          Fortschritt: {progress} %
-        </div>
+        <div>Fortschritt: {progress} %</div>
         <div>Anzahl Produkte: {task.progress.total}</div>
         <div className="text-xs text-seconadary-400">
           Erstellt am: {format(parseISO(task.createdAt), "Pp")}

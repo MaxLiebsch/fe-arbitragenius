@@ -12,7 +12,7 @@ const MarginPct = ({
 }): GridColDef<any> => {
   return {
     field: `${target}_mrgn_pct`,
-    headerAlign: 'left',
+    headerAlign: "left",
     headerName: "Marge %",
     renderHeader: (params) => (
       <div className="relative flex flex-col !leading-tight ">
@@ -22,14 +22,15 @@ const MarginPct = ({
     ),
     renderCell: (params) => {
       const { row } = params;
-      const netPrice = params.row["prc"] / (1 + (row?.tax ? row.tax : 19) / 100);
-
+      const netPrice =
+        params.row["prc"] / (1 + (row?.tax ? row.tax : 19) / 100);
+      const margin = params.row[`${target}_mrgn`];
       return (
         <div className="flex flex-col">
           <div>{appendPercentage(params.value)}</div>
-          <div>{`(${roundToTwoDecimals(
-            (params.row[`${target}_mrgn`] / netPrice) * 100
-          )}%)`}</div>
+          {margin && (
+            <div>{`(${roundToTwoDecimals((margin / netPrice) * 100)}%)`}</div>
+          )}
         </div>
       );
     },

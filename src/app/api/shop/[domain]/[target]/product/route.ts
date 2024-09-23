@@ -106,7 +106,7 @@ export async function GET(
     }
   } else {
     if (query.field === "none") {
-      sort["e_mrgn_pct"] = -1;
+      sort[`${target}_mrgn_pct`] = -1;
     } else if (query.field) {
       sort[query.field] = query.order === "asc" ? 1 : -1;
     }

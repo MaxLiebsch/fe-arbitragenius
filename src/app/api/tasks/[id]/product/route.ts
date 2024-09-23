@@ -1,5 +1,10 @@
 import { getLoggedInUser } from "@/server/appwrite";
 import clientPool from "@/server/mongoPool";
+import { Settings } from "@/types/Settings";
+import { aznMarginFields } from "@/util/productQueries/aznMarginFields";
+import { bsrAddFields } from "@/util/productQueries/bsrAddFields";
+import { ebyMarginFields } from "@/util/productQueries/ebyMarginFields";
+import { settingsFromSearchQuery } from "@/util/productQueries/settingsFromSearchQuery";
 import { SortDirection } from "mongodb";
 import { NextRequest } from "next/server";
 
@@ -15,23 +20,47 @@ export async function GET(
     });
   }
   const searchParams = request.nextUrl.searchParams;
+  const target = searchParams.get('target');
+  const isAmazon = target === "a";
+
+  const customerSettings: Settings = settingsFromSearchQuery(searchParams);
+
+  let {
+    minMargin,
+    minPercentageMargin,
+    productsWithNoBsr,
+    netto,
+    monthlySold,
+    totalOfferCount,
+    buyBox,
+    fba,
+  } = customerSettings;
+  
   const query = {
     page: Number(searchParams.get("page")) || 0,
     size: Number(searchParams.get("size")) || 10,
     field: searchParams.get("sortby"),
     order: searchParams.get("sortorder"),
   };
-
+  
   if (query.page < 0)
     return new Response("page must be at least 0", {
       status: 400,
     });
-
-  if (query.size < 1)
-    return new Response("size must be at least 1", {
-      status: 400,
-    });
+    
+    if (query.size < 1)
+      return new Response("size must be at least 1", {
+    status: 400,
+  });
   const aggregation = [];
+  
+  if (isAmazon) {
+    if (!fba) {
+      aggregation.push(...aznMarginFields(customerSettings));
+    }
+  } else {
+    aggregation.push(...ebyMarginFields(customerSettings));
+  }
 
   const mongo = await clientPool['NEXT_MONGO_ADMIN'];
   const wholsaleCollection = mongo
@@ -45,7 +74,7 @@ export async function GET(
   sort["status"] = 1;
 
   if (query.field === "none") {
-    sort["a_mrgn_pct"] = -1;
+    sort[`${target}_mrgn_pct`] = -1;
   } else if (query.field) {
     sort[query.field] = query.order === "asc" ? 1 : -1;
   }
@@ -53,7 +82,7 @@ export async function GET(
   aggregation.push(
     {
       $match: {
-        taskId: params.id,
+        taskIds: params.id,
       },
     },
     {

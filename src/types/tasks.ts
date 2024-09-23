@@ -1,6 +1,14 @@
 import { ObjectId } from "mongodb";
 import Ajv, { JSONSchemaType } from "ajv";
+import { ProductRow } from "./wholesaleProduct";
 const ajv = new Ajv();
+
+export type WholeSaleTarget = "a" | "e";
+
+export interface MutateTaskRequest {
+  target: WholeSaleTarget[];
+  products: ProductRow[];
+}
 
 export interface Task {
   type: string;
@@ -32,6 +40,21 @@ export interface WholeSaleTask extends Task {
   userId: string;
   browserConcurrency: number;
   progress: Progress;
+}
+
+export interface WholeSaleEbyTask extends Task{
+  userId: string;
+  progress: Progress;
+  browserConfig: { 
+    queryEansOnEby: {
+      concurrency: number;
+      productLimit: number;
+    };
+    lookupCategory: {
+      concurrency: number;
+      productLimit: number;
+    };
+  }
 }
 
 export interface CrawlTask extends Task {
@@ -76,7 +99,7 @@ export const taskSchema: JSONSchemaType<CrawlTask> = {
       required: [],
     },
     concurrency: { type: "integer" },
-    recurrent: { type: "boolean",  },
+    recurrent: { type: "boolean" },
     startedAt: { type: "string" },
     createdAt: { type: "string" },
     completedAt: { type: "string" },

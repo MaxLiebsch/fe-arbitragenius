@@ -20,7 +20,7 @@ export async function GET(
     .db(process.env.NEXT_MONGO_DB ?? "")
     .collection(process.env.NEXT_MONGO_WHOLESALE ?? "wholesale")
     .countDocuments({
-      taskId: params.id,
+      taskIds: params.id,
     });
 
   return Response.json(res);

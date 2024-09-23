@@ -1,7 +1,12 @@
 import { getLoggedInUser } from "@/server/appwrite";
 import clientPool from "@/server/mongoPool";
-import { WholeSaleTask } from "@/types/tasks";
+import {
+  MutateTaskRequest,
+  WholeSaleEbyTask,
+  WholeSaleTask,
+} from "@/types/tasks";
 import { WholeSaleProduct } from "@/types/wholesaleProduct";
+import { ObjectId } from "mongodb";
 import { NextRequest } from "next/server";
 import { z } from "zod";
 
@@ -35,15 +40,18 @@ export async function GET(request: NextRequest) {
   }
 }
 
-const newTaskBodySchema = z.array(
-  z.object({
-    ean: z.string(),
-    name: z.string().optional(),
-    category: z.string().optional(),
-    prc: z.number(),
-    reference: z.string().optional(),
-  })
-);
+const newTaskBodySchema = z.object({
+  products: z.array(
+    z.object({
+      ean: z.string(),
+      name: z.string().optional(),
+      category: z.string().optional(),
+      prc: z.number(),
+      reference: z.string().optional(),
+    })
+  ),
+  target: z.array(z.string()),
+});
 
 // start new task
 export async function POST(request: NextRequest) {
@@ -78,7 +86,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const body = await request.json();
+  const body = (await request.json()) as MutateTaskRequest;
 
   const parsedBody = newTaskBodySchema.safeParse(body);
 
@@ -87,53 +95,170 @@ export async function POST(request: NextRequest) {
       status: 400,
     });
   }
+  const taskIds: string[] = [];
+  if (body.target.includes("e") && body.target.includes("a")) {
+    const wholeSaleTask: WholeSaleTask = {
+      type: "WHOLESALE_SEARCH",
+      id: "wholesale_search",
+      browserConcurrency: process.env.NODE_ENV === "development" ? 3 : 6,
+      concurrency: 1,
+      recurrent: false,
+      startedAt: "",
+      completedAt: "",
+      createdAt: new Date().toISOString(),
+      errored: false,
+      maintenance: false,
+      lastCrawler: [],
+      productLimit: body.products.length <= 500 ? body.products.length : 500,
+      userId: user.$id,
+      executing: false,
+      progress: {
+        completed: 0,
+        pending: body.products.length,
+        total: body.products.length,
+      },
+    };
 
-  const newTask: WholeSaleTask = {
-    type: "WHOLESALE_SEARCH",
-    id: "wholesale_search",
-    browserConcurrency: process.env.NODE_ENV === "development" ? 3 : 6,
-    concurrency: 1,
-    recurrent: false,
-    startedAt: "",
-    completedAt: "",
-    createdAt: new Date().toISOString(),
-    errored: false,
-    maintenance: true,
-    lastCrawler: [],
-    productLimit: body.length <= 500 ? body.length : 500,
-    userId: user.$id,
-    executing: false,
-    progress: {
-      completed: 0,
-      pending: body.length,
-      total: body.length,
-    },
-  };
+    const wholeSaleTaskCreated = await taskCollection.insertOne(wholeSaleTask);
+    if (!wholeSaleTaskCreated.acknowledged)
+      return new Response("Task konnte nicht erstellt werden", {
+        status: 500,
+      });
+    taskIds.push(wholeSaleTaskCreated.insertedId.toString());
 
-  const taskcreated = await taskCollection.insertOne(newTask);
+    const wholeSaleEbyTask: WholeSaleEbyTask = {
+      type: "WHOLESALE_EBY_SEARCH",
+      id: "wholesale_eby_search",
+      concurrency: 4,
+      recurrent: false,
+      startedAt: "",
+      completedAt: "",
+      createdAt: new Date().toISOString(),
+      errored: false,
+      maintenance: false,
+      browserConfig: {
+        queryEansOnEby: {
+          concurrency: 4,
+          productLimit: 20,
+        },
+        lookupCategory: {
+          concurrency: 4,
+          productLimit: 20,
+        },
+      },
+      lastCrawler: [],
+      productLimit: body.products.length <= 500 ? body.products.length : 500,
+      userId: user.$id,
+      executing: false,
+      progress: {
+        completed: 0,
+        pending: body.products.length,
+        total: body.products.length,
+      },
+    };
 
-  if (!taskcreated.acknowledged)
-    return new Response("Task konnte nicht erstellt werden", {
-      status: 500,
-    });
+    const wholeSaleEbyTaskCreated = await taskCollection.insertOne(
+      wholeSaleEbyTask
+    );
+    if (!wholeSaleTaskCreated.acknowledged)
+      return new Response("Task konnte nicht erstellt werden", {
+        status: 500,
+      });
+    taskIds.push(wholeSaleEbyTaskCreated.insertedId.toString());
+  } else {
+    if (body.target.includes("a")) {
+      const newTask: WholeSaleTask = {
+        type: "WHOLESALE_SEARCH",
+        id: "wholesale_search",
+        browserConcurrency: process.env.NODE_ENV === "development" ? 3 : 6,
+        concurrency: 1,
+        recurrent: false,
+        startedAt: "",
+        completedAt: "",
+        createdAt: new Date().toISOString(),
+        errored: false,
+        maintenance: true,
+        lastCrawler: [],
+        productLimit: body.products.length <= 500 ? body.products.length : 500,
+        userId: user.$id,
+        executing: false,
+        progress: {
+          completed: 0,
+          pending: body.products.length,
+          total: body.products.length,
+        },
+      };
+
+      const taskcreated = await taskCollection.insertOne(newTask);
+      if (!taskcreated.acknowledged)
+        return new Response("Task konnte nicht erstellt werden", {
+          status: 500,
+        });
+      taskIds.push(taskcreated.insertedId.toString());
+    }
+    if (body.target.includes("e")) {
+      const newTask: WholeSaleEbyTask = {
+        type: "WHOLESALE_EBY_SEARCH",
+        id: "wholesale_eby_search",
+        concurrency: 4,
+        recurrent: false,
+        startedAt: "",
+        completedAt: "",
+        createdAt: new Date().toISOString(),
+        errored: false,
+        maintenance: true,
+        browserConfig: {
+          queryEansOnEby: {
+            concurrency: 4,
+            productLimit: 20,
+          },
+          lookupCategory: {
+            concurrency: 4,
+            productLimit: 20,
+          },
+        },
+        lastCrawler: [],
+        productLimit: body.products.length <= 500 ? body.products.length : 500,
+        userId: user.$id,
+        executing: false,
+        progress: {
+          completed: 0,
+          pending: body.products.length,
+          total: body.products.length,
+        },
+      };
+
+      const taskcreated = await taskCollection.insertOne(newTask);
+      if (!taskcreated.acknowledged)
+        return new Response("Task konnte nicht erstellt werden", {
+          status: 500,
+        });
+      taskIds.push(taskcreated.insertedId.toString());
+    }
+  }
 
   const productsCreated = await wholsaleCollection.insertMany(
-    parsedBody.data.map((item) => {
+    parsedBody.data.products.map((item) => {
       const newItem: WholeSaleProduct = {
         ean: item.ean,
         eanList: [item.ean],
         nm: item.name ?? "",
+        s_hash: item.ean,
+        target: body.target,
         prc: item.prc,
+        qty: 1,
         reference: item.reference ?? "",
         category: item.category ?? "",
-        taskId: taskcreated.insertedId.toHexString(),
-        clrName: "",
-        locked: false,
-        lookup_pending: true,
+        taskIds: taskIds,
+        clrName: [],
         shop: "",
-        status: "",
         createdAt: new Date().toISOString(),
       };
+      body.target.forEach((target) => {
+        newItem[`${target}_locked`] = false;
+        newItem[`${target}_status`] = ''
+        newItem[`${target}_lookup_pending`] = true;
+      });
       return newItem;
     })
   );
@@ -142,13 +267,14 @@ export async function POST(request: NextRequest) {
     return new Response("Wholesale Produkte konnten nicht angelegt werden.", {
       status: 500,
     });
-
-  await taskCollection.updateOne(
-    { _id: taskcreated.insertedId },
-    {
-      $set: { maintenance: false },
-    }
-  );
+  taskIds.forEach(async (taskId) => {
+    await taskCollection.updateOne(
+      { _id: new ObjectId(taskId) },
+      {
+        $set: { maintenance: false },
+      }
+    );
+  });
 
   return new Response("Task erstellt.", {
     status: 201,

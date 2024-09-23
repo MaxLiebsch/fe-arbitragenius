@@ -18,6 +18,7 @@ import useTaskProductCount from "@/hooks/use-task-product-count";
 import { createWholeSaleColumns } from "../util/wholeSaleTableColumns";
 import { usePaginationAndSort } from "@/hooks/use-pagination";
 import { useUserSettings } from "@/hooks/use-settings";
+import { WholeSaleTarget } from "@/types/tasks";
 
 function CustomToolbar() {
   return (
@@ -34,9 +35,10 @@ function CustomToolbar() {
 export default function WholeSaleProductsTable(props: {
   className?: string;
   taskId: string;
+  target: WholeSaleTarget;
 }) {
-  const [settings, setUserSettings] = useUserSettings()
-  const { className, taskId} = props;
+  const [settings, setUserSettings] = useUserSettings();
+  const { className, taskId, target } = props;
 
   const [paginationModel, setPaginationModel, sortModel, setSortModel] =
     usePaginationAndSort();
@@ -44,7 +46,12 @@ export default function WholeSaleProductsTable(props: {
   const apiRef = useGridApiRef();
 
   const productCountQuery = useTaskProductCount(taskId);
-  const productQuery = useTaskProducts(taskId, paginationModel, sortModel);
+  const productQuery = useTaskProducts(
+    taskId,
+    paginationModel,
+    sortModel,
+    target
+  );
 
   const handleSortModelChange = (model: GridSortModel) => {
     if (model.length) {
@@ -65,7 +72,6 @@ export default function WholeSaleProductsTable(props: {
         columns: {
           columnVisibilityModel: {
             bsr_1: false,
-            [`a_lnk`]: false,
             bsr_cat_1: false,
             bsr_2: false,
             bsr_cat_2: false,
@@ -78,7 +84,7 @@ export default function WholeSaleProductsTable(props: {
       sortingOrder={["desc", "asc"]}
       localeText={deDE.components.MuiDataGrid.defaultProps.localeText}
       getRowId={(row) => row._id}
-      columns={createWholeSaleColumns("a", settings)}
+      columns={createWholeSaleColumns(target, settings)}
       rows={productQuery.data ?? []}
       rowCount={productCountQuery.data ?? 0}
       loading={productQuery.isLoading}

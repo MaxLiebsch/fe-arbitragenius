@@ -1,6 +1,9 @@
 import { ModifiedProduct, Product } from "@/types/Product";
+import { WholeSaleTarget } from "@/types/tasks";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
+import { useUserSettings } from "./use-settings";
+import { Settings } from "@/types/Settings";
 
 export type ProductPagination = {
   page: number;
@@ -23,13 +26,21 @@ export default function useTaskProducts(
   taskId: string,
   pagination: ProductPagination,
   sort: ProductSort,
+  target: WholeSaleTarget,
   refetchOnWindowFocus: boolean = true
 ) {
   const queryClient = useQueryClient();
-
+  let settingsQuery = "";
+  const [settings, setUserSettings] = useUserSettings();
+  if (settings) {
+    settingsQuery = Object.keys(settings)
+      .map((key) => `&${key}=${settings[key as keyof Settings]}`)
+      .join("");
+  }
   const productQuery = useQuery<ModifiedProduct[]>({
     queryKey: [
       "tasks",
+      target,
       taskId,
       "product",
       pagination.page,
@@ -40,10 +51,10 @@ export default function useTaskProducts(
     refetchOnWindowFocus,
     queryFn: async () => {
       let sortQuery = "";
-      let settingsQuery = "";
+
       if (sort) sortQuery = `&sortby=${sort.field}&sortorder=${sort.direction}`;
       return fetch(
-        `/app/api/tasks/${taskId}/product?page=${pagination.page}&size=${pagination.pageSize}${sortQuery}${settingsQuery}`
+        `/app/api/tasks/${taskId}/product?page=${pagination.page}&size=${pagination.pageSize}${sortQuery}&target=${target}&${settingsQuery}`
       ).then((resp) => resp.json());
     },
     select: (data): ModifiedProduct[] => {
@@ -87,9 +98,7 @@ export default function useTaskProducts(
           if (sort)
             sortQuery = `&sortby=${sort.field}&sortorder=${sort.direction}`;
           return fetch(
-            `/app/api/tasks/${taskId}/product?page=${
-              pagination.page + 1
-            }&size=${pagination.pageSize}${sortQuery}`
+            `/app/api/tasks/${taskId}/product?page=${pagination.page}&size=${pagination.pageSize}${sortQuery}&target=${target}&${settingsQuery}`
           ).then((resp) => resp.json());
         },
       });
@@ -97,6 +106,7 @@ export default function useTaskProducts(
   }, [
     productQuery.data,
     pagination.page,
+    settingsQuery,
     pagination.pageSize,
     sort,
     taskId,

@@ -1,6 +1,6 @@
 import Spinner from "@/components/Spinner";
 import WholeSaleProductsTable from "@/components/WholesaleProductsTable";
-import {  getLoggedInUser } from "@/server/appwrite";
+import { getLoggedInUser } from "@/server/appwrite";
 import clientPool from "@/server/mongoPool";
 import { format, parseISO } from "date-fns";
 import { ObjectId } from "mongodb";
@@ -26,11 +26,16 @@ const Page = async ({ params }: { params: { id: string } }) => {
 
   if (!task) redirect("/dashboard/wholesale");
 
+  const isWholeSaleEbyTask = task.type === "WHOLESALE_EBY_SEARCH";
+
   const inProgress = task.executing;
   const progress =
     Number((task.progress.completed / task.progress.total).toFixed(2)) * 100;
   return (
     <>
+      <div>
+        Ziel: {task.type === "WHOLESALE_EBY_SEARCH" ? "Ebay" : "Amazon"}
+      </div>
       <div>Fortschritt: {progress} %</div>
       <div key={task._id.toString()}>
         Status:{" "}
@@ -49,7 +54,10 @@ const Page = async ({ params }: { params: { id: string } }) => {
         Erstellt am: {format(parseISO(task.createdAt), "Pp")}
       </div>
       <div className="w-full h-[89%] min-h-[89%] mt-2">
-        <WholeSaleProductsTable taskId={id}  />
+        <WholeSaleProductsTable
+          target={isWholeSaleEbyTask ? "e" : "a"}
+          taskId={id}
+        />
       </div>
     </>
   );
