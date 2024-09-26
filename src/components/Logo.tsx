@@ -4,7 +4,7 @@ import Link from "next/link";
 export function Logo() {
   return (
     <Link href="https://www.arbispotter.com">
-      <Image src={logoPrimary} alt="Arbispotter" height={70} width={150} />
+      <Image src={logoPrimary} priority={true} alt="Arbispotter" style={{ width: '100%', height: 'auto' }} />
     </Link>
     // <svg aria-hidden="true" viewBox="0 0 109 40" {...props}>
     //   <path

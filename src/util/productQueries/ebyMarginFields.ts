@@ -1,16 +1,20 @@
 import { Settings } from "@/types/Settings";
 
-
 export const ebyMarginFields = (settings: Settings) => {
-  const { tptStandard, strg, e_prepCenter } = settings;
+  const { tptStandard, strg, e_prepCenter, e_cats } = settings;
   const transport = settings[tptStandard as "tptSmall"];
+  const match: any = {
+    e_pblsh: true,
+    e_prc: { $gt: 0 },
+    e_uprc: { $gt: 0 },
+  };
+
+  if (e_cats.length > 0 && e_cats[0] !== 0) {
+    match["ebyCategories.id"] = { $in: e_cats };
+  }
   return [
     {
-      $match: {
-        e_pblsh: true,
-        e_prc: { $gt: 0 },
-        e_uprc: { $gt: 0 },
-      },
+      $match: match,
     },
     {
       $addFields: {

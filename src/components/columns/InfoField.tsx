@@ -11,6 +11,7 @@ import Link from "next/link";
 import { formatDistanceToNow, parseISO } from "date-fns";
 import { parseSalesRank } from "@/util/parseSalesRank";
 import { de } from "date-fns/locale";
+import { aznCategoryMapping } from "@/constant/constant";
 
 const InfoField = ({
   product,
@@ -29,7 +30,7 @@ const InfoField = ({
     lnk,
     nm,
     mnfctr,
-    eanList,
+    asin,
     categoryTree,
     keepaUpdatedAt,
     salesRanks,
@@ -47,7 +48,9 @@ const InfoField = ({
     [`${target}_img` as "a_img" | "e_img"]: targetImg,
   } = product;
   const targetUpdatedAt = target === "a" ? dealAznUpdatedAt : dealEbyUpdatedAt;
+
   let bsr = initialBsr;
+  let aznCategory = null;
   if (bsr && bsr.length) {
     if (salesRanks) {
       const bsrLastUpdate = parseISO(bsr[0].createdAt).getTime();
@@ -55,6 +58,11 @@ const InfoField = ({
       if (bsrLastUpdate < salesRanksLastUpdate && categoryTree) {
         bsr = parseSalesRank(salesRanks, categoryTree);
       }
+    }
+    if (categoryTree && categoryTree.length) {
+      aznCategory = aznCategoryMapping.find(
+        (cat) => cat.value === categoryTree[0].catId
+      );
     }
   }
   return (
@@ -154,6 +162,12 @@ const InfoField = ({
                 );
               })}
             </span>
+            <span className="font-semibold">Kategorie:</span>
+            {aznCategory && (
+              <span className="mx-1" key={aznCategory.label + asin}>
+                {aznCategory.label}
+              </span>
+            )}
           </div>
         ) : (
           <></>

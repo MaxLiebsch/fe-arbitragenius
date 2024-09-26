@@ -48,7 +48,7 @@ export default function useTaskProducts(
       sort?.field,
       sort?.direction,
     ],
-    refetchOnWindowFocus,
+    refetchOnWindowFocus: false,
     queryFn: async () => {
       let sortQuery = "";
 
@@ -105,6 +105,7 @@ export default function useTaskProducts(
     }
   }, [
     productQuery.data,
+    target,
     pagination.page,
     settingsQuery,
     pagination.pageSize,

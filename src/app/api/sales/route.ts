@@ -56,16 +56,12 @@ export async function GET(
   const findQuery: any[] = [];
   if (isAmazon) {
     aggregation.push(bsrAddFields);
-    if (!fba) {
-      aggregation.push(...aznMarginFields(customerSettings));
-    }
+    aggregation.push(...aznMarginFields(customerSettings));
   } else {
-    aggregation.push(
-      ...ebyMarginFields(customerSettings)
-    );
+    aggregation.push(...ebyMarginFields(customerSettings));
   }
 
-  findQuery.push(marginFields({target, settings: customerSettings }));
+  findQuery.push(marginFields({ target, settings: customerSettings }));
   targetVerification(findQuery, target, targetVerificationPending);
 
   if (isAmazon) {

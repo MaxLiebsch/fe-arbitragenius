@@ -1,7 +1,4 @@
 "use client";
-
-// We can not useState or useRef in a server component, which is why we are
-// extracting this part out into it's own file with 'use client' on top
 import { ReactNode, useEffect } from "react";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { SnackbarProvider } from "notistack";
@@ -26,7 +23,11 @@ export default function Providers({ children }: { children: ReactNode }) {
     if (accountQuery.data && prefs) {
       const settings = prefs.settings;
       if (settings) {
-        setUserSettings({ ...defaultSettings, ...JSON.parse(settings) });
+        setUserSettings({
+          ...defaultSettings,
+          ...JSON.parse(settings),
+          loaded: true,
+        });
       }
     }
   }, [accountQuery.data, setUserSettings]);
@@ -41,10 +42,7 @@ export default function Providers({ children }: { children: ReactNode }) {
               // Seed Token
               //@ts-ignore
               colorPrimary: tw.theme.extend.colors["primary"]["500"],
-
               borderRadius: 2,
-
-              // Alias Token
             },
           }}
         >

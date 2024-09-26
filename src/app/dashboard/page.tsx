@@ -1,20 +1,12 @@
-"use server";
+"use client";
 import ShopsGrid from "@/components/ShopsGrid";
 import { StarIcon } from "@heroicons/react/16/solid";
 import ProductFilterForm from "@/components/forms/ProductFilterForm";
 import TotalDeals from "@/components/TotalDeals";
-import clientPool from "@/server/mongoPool";
+import useShopCount from "@/hooks/use-shop-count";
 
-export default async function Dashboard() {
-
-  const mongo = await clientPool["NEXT_MONGO"];
-
-  const shopCount = await mongo
-    .db(process.env.NEXT_MONGO_DB)
-    .collection(process.env.NEXT_MONGO_SHOPS ?? "shops")
-    .countDocuments({
-      active: { $eq: true },
-    });
+export default function Dashboard() {
+  const shopCount = useShopCount();
 
   return (
     <main className="h-full flex flex-col relative">
@@ -24,20 +16,20 @@ export default async function Dashboard() {
             Produktfilter
           </h3>
           <div className="flex overflow-y-auto h-[calc(100vh-130px)]">
-            <ProductFilterForm  />
+            <ProductFilterForm />
           </div>
         </div>
         <div className="mb-8 ml-6 col-span-3">
-          <div className="flex flex-row gap-2 pb-3 items-center">
-            <h3 className="flex flex-row text-base font-semibold leading-6 mb-3 text-gray-900 space-x-1 items-center">
-              <div>Shops ({shopCount - 1})</div>
-            </h3>
-            <h3 className="flex flex-row text-base font-semibold leading-6 mb-3 text-gray-900 space-x-1 items-center">
-              <StarIcon className="h-6 w-6" />
-              <div>Favoriten</div>
-            </h3>
-          </div>
-          <TotalDeals />
+          {!shopCount.isLoading && (
+            <>
+              <div className="flex flex-row gap-2 pb-3 items-center">
+                <h3 className="flex flex-row text-base font-semibold leading-6 mb-3 text-gray-900 space-x-1 items-center">
+                  <div>Shops ({(shopCount.data || 12) - 1})</div>
+                </h3> 
+              </div>
+              <TotalDeals />
+            </>
+          )}
           <div className="text-sm text-end text-gray-700 absolute top-0 right-4">
             Anzahl profitabler Produkte auf Grundlage deiner Einstellungen
           </div>

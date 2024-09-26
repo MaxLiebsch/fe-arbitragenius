@@ -1,8 +1,7 @@
-
 import { GridColDef } from "@mui/x-data-grid-premium";
 import { Settings } from "@/types/Settings";
 import { KeepaGraph } from "../components/KeepaGraph";
-import { BookMarkProduct} from "@/types/Product";
+import { BookMarkProduct } from "@/types/Product";
 import { Checkbox } from "antd";
 import { BookmarkDeleteSchema, BookmarkSchema } from "@/types/Bookmarks";
 import { UseMutateFunction } from "@tanstack/react-query";
@@ -46,26 +45,8 @@ export const bookMarkColumns: (
   userRoles
 ) => [
   {
-    field: "ctgry",
-    flex: 0.15,
-    headerName: "Kategorie",
-    renderCell: (params) => {
-      if (typeof params.row.ctgry === "string") {
-        return <>{params.row.ctgry}</>;
-      } else if (Array.isArray(params.row.ctgry)) {
-        return (
-          <div className="flex flex-col">
-            {params.row.ctgry.map((ctgry: string, i: number) => (
-              <div key={ctgry + i}>{ctgry}</div>
-            ))}
-          </div>
-        );
-      }
-    },
-  },
-  {
     field: "nm",
-    headerName: "Info",
+    headerName: "Produkte",
     flex: 0.75,
     renderCell: (params) => (
       <InfoField
@@ -80,7 +61,7 @@ export const bookMarkColumns: (
   {
     field: "analytics",
     disableColumnMenu: true,
-     width: 150,
+    width: 150,
     headerName: "Preisanalyse",
     renderCell: (params) => {
       return params.row["ahstprcs"] ? (

@@ -66,7 +66,7 @@ export const createSalesTableColumns: (
   },
   {
     field: "nm",
-    headerName: "Info",
+    headerName: "Produkte",
     disableColumnMenu: true,
     flex: 1,
     renderCell: (params) => (

@@ -23,9 +23,7 @@ export default function useProductCount(
       "count",
       ...(settings ? Object.values(settings) : []),
     ],
-    staleTime: 1000 * 60 * 5,
     enabled: !!domain && !!target && !!settings,
-    refetchOnWindowFocus,
     queryFn: () =>
       fetch(
         `/app/api/shop/${domain}/${target}/product/count?${settingsQuery}`

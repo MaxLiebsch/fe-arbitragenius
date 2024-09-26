@@ -1,22 +1,21 @@
 "use client";
 import { useState } from "react";
 import useShops, { ShopPagination } from "@/hooks/use-shops";
-import useFavorites from "@/hooks/use-favorites";
 import Spinner from "./Spinner";
 import ShopTile from "./ShopTile";
-import usePreferences from "@/hooks/use-preferences";
 import SalesTile from "./SalesTile";
+import { useUserSettings } from "@/hooks/use-settings";
 
 export default function ShopsGrid() {
   const [paginationModel, setPaginationModel] = useState<ShopPagination>({
     page: 0,
     pageSize: 100,
   });
-  const { data: settings } = usePreferences("settings");
-  const shopQuery = useShops(paginationModel);
-  const favorites = useFavorites();
 
-  if (shopQuery.isLoading)
+  const shopQuery = useShops(paginationModel);
+  const [settings] = useUserSettings();
+
+  if (shopQuery.isLoading || settings.loaded === false)
     return (
       <div className="h-full flex items-center justify-center w-full">
         <Spinner />
@@ -37,19 +36,15 @@ export default function ShopsGrid() {
           if (shop.d === "sales") {
             return (
               <SalesTile
-                settings={settings}
                 key={shop.d}
                 shop={shop}
-                favorites={favorites.data}
               />
             );
           }
           return (
-            <ShopTile
-              settings={settings}
+            <ShopTile 
               key={shop.d}
               shop={shop}
-              favorites={favorites.data}
             />
           );
         })}

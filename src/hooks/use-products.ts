@@ -36,7 +36,6 @@ export default function useProducts(
   const productQuery = useQuery<ModifiedProduct[]>({
     queryKey,
     enabled: !!domain && !!target && !!settings,
-    refetchOnWindowFocus,
     queryFn: async () => {
       const { page, pageSize } = pagination;
       let sortQuery = "";

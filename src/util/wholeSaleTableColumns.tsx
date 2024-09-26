@@ -44,7 +44,7 @@ export const createWholeSaleColumns: (
   },
   {
     field: "name",
-    headerName: "Info",
+    headerName: "Produkte",
     flex: 1,
     renderCell: (params) => {
       return (

@@ -20,49 +20,38 @@ export async function GET(
     });
   }
   const searchParams = request.nextUrl.searchParams;
-  const target = searchParams.get('target');
+  const target = searchParams.get("target");
   const isAmazon = target === "a";
 
   const customerSettings: Settings = settingsFromSearchQuery(searchParams);
 
-  let {
-    minMargin,
-    minPercentageMargin,
-    productsWithNoBsr,
-    netto,
-    monthlySold,
-    totalOfferCount,
-    buyBox,
-    fba,
-  } = customerSettings;
-  
+  let { fba } = customerSettings;
+
   const query = {
     page: Number(searchParams.get("page")) || 0,
     size: Number(searchParams.get("size")) || 10,
     field: searchParams.get("sortby"),
     order: searchParams.get("sortorder"),
   };
-  
+
   if (query.page < 0)
     return new Response("page must be at least 0", {
       status: 400,
     });
-    
-    if (query.size < 1)
-      return new Response("size must be at least 1", {
-    status: 400,
-  });
+
+  if (query.size < 1)
+    return new Response("size must be at least 1", {
+      status: 400,
+    });
   const aggregation = [];
-  
+
   if (isAmazon) {
-    if (!fba) {
-      aggregation.push(...aznMarginFields(customerSettings));
-    }
+    aggregation.push(...aznMarginFields(customerSettings));
   } else {
     aggregation.push(...ebyMarginFields(customerSettings));
   }
 
-  const mongo = await clientPool['NEXT_MONGO_ADMIN'];
+  const mongo = await clientPool["NEXT_MONGO_ADMIN"];
   const wholsaleCollection = mongo
     .db(process.env.NEXT_MONGO_DB ?? "")
     .collection(process.env.NEXT_MONGO_WHOLESALE ?? "wholesale");

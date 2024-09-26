@@ -5,11 +5,13 @@ export const BuyBoxSchema = z.enum(["both", "amazon", "seller"]);
 export type BuyBox = z.infer<typeof BuyBoxSchema>;
 
 export const SettingsSchema = z.object({
+  loaded: z.boolean().optional(),
   netto: z.boolean(),
   minMargin: z.number(),
   minPercentageMargin: z.number(),
   fba: z.boolean(),
   a_strg: z.number(),
+  a_cats: z.array(z.number()),
   a_tptStandard: z.string(),
   a_tptSmall: z.number(),
   a_tptMiddle: z.number(),
@@ -17,6 +19,7 @@ export const SettingsSchema = z.object({
   euProgram: z.boolean(),
   a_prepCenter: z.number(),
   e_prepCenter: z.number(),
+  e_cats: z.array(z.number()),
   maxSecondaryBsr: z.number(),
   maxPrimaryBsr: z.number(),
   productsWithNoBsr: z.boolean(),

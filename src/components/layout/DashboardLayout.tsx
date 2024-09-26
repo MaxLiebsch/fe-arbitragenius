@@ -14,17 +14,16 @@ import {
   SparklesIcon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
-import useFavoriteShops from "@/hooks/use-favorite-shops";
-import useAccount from "@/hooks/use-account";
+
 import { logoutAction } from "@/server/actions/logout";
 import { Logo } from "../Logo";
 import { usePathname, useRouter } from "next/navigation";
-import Spinner from "../Spinner";
 import { useFormState } from "react-dom";
 import { TotalDealsContext } from "@/context/totalDealsContext";
 import { differenceInDays } from "date-fns";
 import useSalesCount from "@/hooks/use-sales-count";
 import { Badge } from "antd";
+import useAccount from "@/hooks/use-account";
 
 const navigation = [
   {
@@ -77,10 +76,10 @@ export const DashboardLayout = ({
   };
 }>) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const accountQuery = useAccount();
+
 
   const router = useRouter();
-  const favoriteShopsQuery = useFavoriteShops();
+  const accountQuery = useAccount();
   const eSalesCount = useSalesCount("e");
   const aSalesCount = useSalesCount("a");
   const newDeals = Boolean(
@@ -190,7 +189,7 @@ export const DashboardLayout = ({
                             ))}
                           </ul>
                         </li>
-                        <li>
+                        {/* <li>
                           <div className="text-xs font-semibold leading-6 text-gray-400">
                             Deine Favoriten{" "}
                             {favoriteShopsQuery.isLoading && (
@@ -226,7 +225,7 @@ export const DashboardLayout = ({
                               </li>
                             ))}
                           </ul>
-                        </li>
+                        </li> */}
                       </ul>
                     </nav>
                     <div className="absolute left-[0.25rem] bottom-0">
@@ -286,43 +285,6 @@ export const DashboardLayout = ({
                             {item.name}
                           </Link>
                         </Badge.Ribbon>
-                      </li>
-                    ))}
-                  </ul>
-                </li>
-                <li>
-                  <div className="text-xs font-semibold leading-6 text-gray-400">
-                    Deine Favoriten{" "}
-                    {favoriteShopsQuery.isLoading && (
-                      <div className="w-full flex justify-center">
-                        <Spinner />
-                      </div>
-                    )}
-                  </div>
-                  <ul role="list" className="-mx-2 mt-2 space-y-1">
-                    {favoriteShopsQuery.data?.map((shop) => (
-                      <li key={shop.ne}>
-                        <Link
-                          href={`/dashboard/shop/${shop.d}`}
-                          className={classNames(
-                            pathname.includes(shop.d)
-                              ? "bg-gray-50 text-secondary-900"
-                              : "text-gray-700 hover:text-secondary-900 hover:bg-gray-50",
-                            "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
-                          )}
-                        >
-                          <span
-                            className={classNames(
-                              pathname.includes(shop.d)
-                                ? "text-secondary-900 border-secondary-900"
-                                : "text-gray-400 border-gray-200 group-hover:border-secondary-900 group-hover:text-secondary-900",
-                              "flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border text-[0.625rem] font-medium bg-white"
-                            )}
-                          >
-                            {shop.d.substring(0, 2).toLocaleUpperCase()}
-                          </span>
-                          <span className="truncate">{shop.ne}</span>
-                        </Link>
                       </li>
                     ))}
                   </ul>
@@ -407,7 +369,7 @@ export const DashboardLayout = ({
                           {accountQuery.isSuccess ? (
                             accountQuery.data.name
                           ) : (
-                            <>Loading ...</>
+                            <></>
                           )}
                         </span>
                         <ChevronDownIcon

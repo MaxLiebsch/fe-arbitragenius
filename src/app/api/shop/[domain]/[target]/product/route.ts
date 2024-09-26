@@ -56,9 +56,7 @@ export async function GET(
   const findQuery: any[] = [];
   if (isAmazon) {
     aggregation.push(bsrAddFields);
-    if (!fba) {
-      aggregation.push(...aznMarginFields(customerSettings));
-    }
+    aggregation.push(...aznMarginFields(customerSettings));
   } else {
     aggregation.push(...ebyMarginFields(customerSettings));
   }

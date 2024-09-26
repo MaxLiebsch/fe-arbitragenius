@@ -3,8 +3,6 @@
 import { AppwriteException } from "node-appwrite";
 import { createSessionClient } from "../appwrite";
 import { Settings, SettingsSchema } from "@/types/Settings";
-import { useHydrateAtoms } from "jotai/utils";
-import { userSettingsAtom } from "@/atoms/userSettings";
 
 interface FieldError {
   message: string;
@@ -24,7 +22,7 @@ interface UpdateSettingsState {
 export async function updateSettingsAction(
   formData: FormData
 ): Promise<UpdateSettingsState> {
-  const parsedFormData = JSON.parse(JSON.stringify(formData));
+  const parsedFormData = JSON.parse(JSON.stringify(formData)); 
   const form = SettingsSchema.safeParse({
     netto: parsedFormData.netto ?? true,
     minMargin: parseInt(parsedFormData.minMargin || "0"),
@@ -35,8 +33,10 @@ export async function updateSettingsAction(
     a_tptMiddle: parseFloat(parsedFormData.a_tptMiddle || "4.95"),
     a_tptLarge: parseFloat(parsedFormData.a_tptLarge || "6.95"),
     a_tptStandard: parsedFormData.a_tptStandard || "a_tptMiddle",
+    a_cats: parsedFormData.a_cats,
     euProgram: parsedFormData.euProgram,
     e_prepCenter: parseFloat(parsedFormData.e_prepCenter || "0"),
+    e_cats: parsedFormData.e_cats,
     minPercentageMargin: parseInt(parsedFormData.minPercentageMargin || "0"),
     maxSecondaryBsr: parseInt(parsedFormData.maxSecondaryBsr || "0"),
     tptSmall: parseFloat(parsedFormData.tptSmall || "2.95"),

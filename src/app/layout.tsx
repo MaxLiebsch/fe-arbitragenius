@@ -3,9 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
 import MuiXLicense from "../components/MuiXLicense";
-import Providers from "../components/provider/Providers";
 import Script from "next/script";
-import { use } from "react";
 import QueryClientProviderWrapper from "@/components/provider/QueryClientProviderWrapper";
 const sharp = require("sharp");
 

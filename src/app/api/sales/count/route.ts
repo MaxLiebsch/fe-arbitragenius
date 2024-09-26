@@ -52,9 +52,7 @@ export async function GET(request: NextRequest) {
 
   if (isAmazon) {
     aggregation.push(bsrAddFields);
-    if (!fba) {
-      aggregation.push(...aznMarginFields(customerSettings));
-    }
+    aggregation.push(...aznMarginFields(customerSettings));
   } else {
     aggregation.push(...ebyMarginFields(customerSettings));
   }

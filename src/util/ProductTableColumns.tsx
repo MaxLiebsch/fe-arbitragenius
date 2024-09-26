@@ -48,26 +48,8 @@ export const createColumns: (
   userRoles
 ) => [
   {
-    field: "ctgry",
-    flex: 0.15,
-    headerName: "Kategorie",
-    renderCell: (params) => {
-      if (typeof params.row.ctgry === "string") {
-        return <>{params.row.ctgry}</>;
-      } else if (Array.isArray(params.row.ctgry)) {
-        return (
-          <div className="flex flex-col">
-            {params.row.ctgry.map((ctgry: string, i: number) => (
-              <div key={ctgry + i}>{ctgry}</div>
-            ))}
-          </div>
-        );
-      }
-    },
-  },
-  {
     field: "nm",
-    headerName: "Info",
+    headerName: "Produkte",
     flex: 0.75,
     renderCell: (params) => (
       <InfoField

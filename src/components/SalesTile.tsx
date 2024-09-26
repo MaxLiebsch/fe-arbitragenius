@@ -1,39 +1,22 @@
 "use client";
 
-import Link from "next/link";
-import { Button, Card, Spin } from "antd";
-import { StarIcon } from "@heroicons/react/16/solid";
-import { StarIcon as StarIconOutline } from "@heroicons/react/24/outline";
-import useFavoriteAdd from "@/hooks/use-favorite-add";
-import useFavoriteRemove from "@/hooks/use-favorite-remove";
+import { Button, Card } from "antd"
 import { Shop } from "@/hooks/use-shop";
-import { Settings } from "@/types/Settings";
 import Spinner from "./Spinner";
 import useSalesCount from "@/hooks/use-sales-count";
 
 const SalesTile = ({
   shop,
-  favorites,
-  settings,
 }: {
-  favorites: any;
   shop: Shop;
-  settings: Settings;
 }) => {
-  const favoriteAddMutation = useFavoriteAdd();
-  const favoriteRemoveMutation = useFavoriteRemove();
+ 
+
 
   const { data: aCount, isFetching: aIsFetching } = useSalesCount("a");
   const { data: eCount, isFetching: eIsFetching } = useSalesCount(
     "e"
   );
-  function handleToggleFavorite(domain: string) {
-    if (favorites?.includes(domain)) {
-      favoriteRemoveMutation.mutate(domain);
-    } else {
-      favoriteAddMutation.mutate(domain);
-    }
-  }
   return (
     <Card
       key={shop.d}

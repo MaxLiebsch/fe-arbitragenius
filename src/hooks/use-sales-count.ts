@@ -19,9 +19,7 @@ export default function useSalesCount(
       ...countQueryKey(target, 'sales') ,
       ...(settings ? Object.values(settings) : []),
     ],
-    staleTime: 1000 * 60 * 5,
-    enabled: !!target && !!settings,
-    refetchOnWindowFocus,
+    enabled: !!settings?.loaded,
     queryFn: () =>
       fetch(`/app/api/sales/count?target=${target}${settingsQuery}`).then((resp) =>
         resp.json()

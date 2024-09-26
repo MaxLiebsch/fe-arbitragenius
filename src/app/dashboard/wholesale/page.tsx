@@ -73,7 +73,7 @@ const columns: GridColDef<ProductRow>[] = [
   },
   {
     field: "nm",
-    headerName: "Info",
+    headerName: "Produkte",
     flex: 0.3,
     maxWidth: 600,
     renderCell: (params) => {
@@ -366,7 +366,7 @@ const Page = () => {
             <div className="flex flex-row gap-2 mb-1 mt-2">
               <div>
                 <h4 className="font-display font-semibold  leading-7 text-slate-900">
-                  Wholesale Ziel
+                  Wholesale Analyse mit
                 </h4>
                 <Radio.Group
                   size="large"
