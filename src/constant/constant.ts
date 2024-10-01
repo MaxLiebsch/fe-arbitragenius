@@ -1,6 +1,10 @@
 export const keepaTimeSummand = 21564000;
 export const STALETIME = 1000 * 60 * 10;
 export const GCTIME = 10000 * 60 * 24;
+export const PRODUCT_COL = 'products';
+export const WHOLESALE_COL = 'wholesale';
+export const TASK_COL = 'tasks';
+export const SALES_COL = 'sales';
 
 export const aznCategoryMapping = [
   { label: "Alle Kategorien", value: 0 },

@@ -5,9 +5,11 @@ export interface WholeSaleProduct {
   ean: string;
   eanList: string[];
   nm: string;
+  lnk: string;
   prc: number;
   qty?: number;
   target: WholeSaleTarget[];
+  sdmn: string;
   category: string;
   taskIds: string[];
   reference: string;

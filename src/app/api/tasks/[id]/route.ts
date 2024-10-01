@@ -1,3 +1,4 @@
+import { PRODUCT_COL, TASK_COL, WHOLESALE_COL } from "@/constant/constant";
 import { getLoggedInUser } from "@/server/appwrite";
 import clientPool from "@/server/mongoPool";
 import { ObjectId } from "mongodb";
@@ -47,17 +48,18 @@ export async function DELETE(
       status: 401,
     });
   }
-  
+
   const target = request.nextUrl.searchParams.get("target");
-  
+
   const mongo = await clientPool["NEXT_MONGO_CRAWLER_DATA_ADMIN"];
 
   const taskCollection = mongo
     .db(process.env.NEXT_MONGO_CRAWLER_DATA ?? "")
-    .collection(process.env.NEXT_MONGO_TASKS ?? "wholesale");
-  const wholesaleCollection = mongo
+    .collection(TASK_COL);
+    
+  const productCol = mongo
     .db(process.env.NEXT_MONGO_DB ?? "")
-    .collection(process.env.NEXT_MONGO_WHOLESALE ?? "wholesale");
+    .collection(PRODUCT_COL);
 
   const taskFinished = await taskCollection.findOne({
     _id: new ObjectId(params.id),
@@ -73,7 +75,7 @@ export async function DELETE(
     );
   }
 
-  const deleteProducts = await wholesaleCollection.deleteMany({
+  const deleteProducts = await productCol.deleteMany({
     taskIds: params.id,
   });
 

@@ -1,6 +1,6 @@
 import { Settings } from "@/types/Settings";
 
-export const ebyMarginFields = (settings: Settings) => {
+export const ebyMarginFields = (settings: Settings, isWholeSale?: boolean) => {
   const { tptStandard, strg, e_prepCenter, e_cats } = settings;
   const transport = settings[tptStandard as "tptSmall"];
   const match: any = {
@@ -12,10 +12,15 @@ export const ebyMarginFields = (settings: Settings) => {
   if (e_cats.length > 0 && e_cats[0] !== 0) {
     match["ebyCategories.id"] = { $in: e_cats };
   }
-  return [
-    {
+
+  const query: any = [];
+
+  if (!isWholeSale) {
+    query.push({
       $match: match,
-    },
+    });
+  }
+  query.push(
     {
       $addFields: {
         e_mrgn: {
@@ -68,6 +73,8 @@ export const ebyMarginFields = (settings: Settings) => {
           ],
         },
       },
-    },
-  ];
+    }
+  );
+
+  return query;
 };

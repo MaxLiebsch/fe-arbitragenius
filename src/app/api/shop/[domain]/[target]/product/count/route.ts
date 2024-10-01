@@ -1,3 +1,4 @@
+import { PRODUCT_COL } from "@/constant/constant";
 import clientPool from "@/server/mongoPool";
 import { BuyBox, Settings } from "@/types/Settings";
 import { aznMarginFields } from "@/util/productQueries/aznMarginFields";
@@ -72,6 +73,7 @@ export async function GET(
   aggregation.push(
     {
       $match: {
+        sdmn: domain,
         [pblshKey]: true,
         $and: findQuery,
       },
@@ -92,12 +94,10 @@ export async function GET(
       },
     });
   }
-
-  const res = await mongo
+  const productCol = mongo
     .db(process.env.NEXT_MONGO_DB)
-    .collection(domain)
-    .aggregate(aggregation)
-    .toArray();
+    .collection(PRODUCT_COL);
+  const res = await productCol.aggregate(aggregation).toArray();
 
   return Response.json(res.length ? res[0] : { productCount: 0 });
 }

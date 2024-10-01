@@ -1,6 +1,6 @@
 import { Settings } from "@/types/Settings";
 
-export const aznMarginFields = (settings: Settings) => {
+export const aznMarginFields = (settings: Settings, isWholesale?: boolean) => {
   const { a_tptStandard, a_strg, a_prepCenter, fba, euProgram } = settings;
   const transport = settings[a_tptStandard as "a_tptSmall"];
 
@@ -14,12 +14,15 @@ export const aznMarginFields = (settings: Settings) => {
     match["categoryTree.catId"] = { $in: settings.a_cats };
   }
 
-  const query: any = [
-    {
+  const query: any = [];
+
+  if (!isWholesale) {
+    query.push({
       $match: match,
-    },
-  ];
-  const isEuProgram = !euProgram ? '_p': ''
+    });
+  }
+
+  const isEuProgram = !euProgram ? "_p" : "";
 
   if (!fba) {
     // If the user does not use Azn FBA, then the margin is calculated,

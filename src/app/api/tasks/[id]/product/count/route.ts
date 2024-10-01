@@ -1,3 +1,4 @@
+import { PRODUCT_COL } from "@/constant/constant";
 import { getLoggedInUser } from "@/server/appwrite";
 import clientPool from "@/server/mongoPool";
 import { NextRequest } from "next/server";
@@ -18,7 +19,7 @@ export async function GET(
 
   const res = await mongo
     .db(process.env.NEXT_MONGO_DB ?? "")
-    .collection(process.env.NEXT_MONGO_WHOLESALE ?? "wholesale")
+    .collection(PRODUCT_COL)
     .countDocuments({
       taskIds: params.id,
     });

@@ -1,3 +1,4 @@
+import { PRODUCT_COL } from "@/constant/constant";
 import { getLoggedInUser } from "@/server/appwrite";
 import clientPool from "@/server/mongoPool";
 import { BuyBox, Settings } from "@/types/Settings";
@@ -113,6 +114,7 @@ export async function GET(
   aggregation.push(
     {
       $match: {
+        sdmn: domain,
         [pblshKey]: true,
         $and: findQuery,
       },
@@ -170,11 +172,11 @@ export async function GET(
     }
   );
   const mongo = await clientPool["NEXT_MONGO"];
-  const res = await mongo
+  const productCol = mongo
     .db(process.env.NEXT_MONGO_DB)
-    .collection(domain)
-    .aggregate(aggregation)
-    .toArray();
+    .collection(PRODUCT_COL);
+    
+  const res = await productCol.aggregate(aggregation).toArray();
 
   return Response.json(res);
 }

@@ -1,3 +1,4 @@
+import { PRODUCT_COL, WHOLESALE_COL } from "@/constant/constant";
 import { getLoggedInUser } from "@/server/appwrite";
 import clientPool from "@/server/mongoPool";
 import {
@@ -6,6 +7,7 @@ import {
   WholeSaleTask,
 } from "@/types/tasks";
 import { WholeSaleProduct } from "@/types/wholesaleProduct";
+import { randomUUID } from "crypto";
 import { ObjectId } from "mongodb";
 import { NextRequest } from "next/server";
 import { z } from "zod";
@@ -68,9 +70,9 @@ export async function POST(request: NextRequest) {
     .db(process.env.NEXT_MONOGO_CRAWLER_DATA)
     .collection(process.env.NEXT_MONGO_TASKS ?? "");
 
-  const wholsaleCollection = spotter
+  const productCol = spotter
     .db(process.env.NEXT_MONGO_DB)
-    .collection(process.env.NEXT_MONGO_WHOLESALE ?? "");
+    .collection(PRODUCT_COL);
 
   const res = await taskCollection.countDocuments({
     userId: user.$id,
@@ -237,13 +239,15 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  const productsCreated = await wholsaleCollection.insertMany(
+  const productsCreated = await productCol.insertMany(
     parsedBody.data.products.map((item) => {
       const newItem: WholeSaleProduct = {
         ean: item.ean,
+        lnk: randomUUID(),
         eanList: [item.ean],
         nm: item.name ?? "",
         s_hash: item.ean,
+        sdmn: WHOLESALE_COL,
         target: body.target,
         prc: item.prc,
         qty: 1,
@@ -256,7 +260,7 @@ export async function POST(request: NextRequest) {
       };
       body.target.forEach((target) => {
         newItem[`${target}_locked`] = false;
-        newItem[`${target}_status`] = ''
+        newItem[`${target}_status`] = "";
         newItem[`${target}_lookup_pending`] = true;
       });
       return newItem;

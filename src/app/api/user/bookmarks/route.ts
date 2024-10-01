@@ -1,3 +1,4 @@
+import { PRODUCT_COL } from "@/constant/constant";
 import { getLoggedInUser } from "@/server/appwrite";
 import clientPool from "@/server/mongoPool";
 import {
@@ -16,6 +17,7 @@ export async function GET(request: NextRequest) {
   const mongo = await clientPool["NEXT_MONGO_ADMIN"];
   const spotterDb = mongo.db(process.env.NEXT_MONGO_DB ?? "");
   const users = spotterDb.collection("users");
+  const productCol = spotterDb.collection(PRODUCT_COL);
 
   /*
     Aggregagte bookmarks in chunks of 10
@@ -54,8 +56,7 @@ export async function GET(request: NextRequest) {
     async (accPromise, [target, shops]) => {
       const acc = await accPromise;
       const products = Object.entries(shops).map(async ([shop, productIds]) => {
-        const collection = spotterDb.collection(shop);
-        const products = await collection
+        const products = await productCol
           .find({
             _id: { $in: productIds },
           })
