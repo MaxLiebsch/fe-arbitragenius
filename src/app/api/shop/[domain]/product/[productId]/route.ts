@@ -1,3 +1,4 @@
+import { PRODUCT_COL } from "@/constant/constant";
 import { getLoggedInUser } from "@/server/appwrite";
 import clientPool from "@/server/mongoPool";
 import { ProductUpdateSchema } from "@/types/ProductUpdate";
@@ -34,7 +35,7 @@ export async function POST(
 
   const product = await client
     .db(process.env.NEXT_MONGO_DB)
-    .collection(domain)
+    .collection(PRODUCT_COL)
     .findOne({ _id: new ObjectId(productId) });
 
   if (product === null) {
@@ -223,7 +224,7 @@ export async function POST(
   }
   const res = await client
     .db(process.env.NEXT_MONGO_DB)
-    .collection(domain)
+    .collection(PRODUCT_COL)
     .updateOne({ _id: new ObjectId(productId) }, query);
 
   return Response.json(res);
@@ -243,7 +244,7 @@ export async function DELETE(
 
   const res = await client
     .db(process.env.NEXT_MONGO_DB)
-    .collection(domain)
+    .collection(PRODUCT_COL)
     .deleteOne({ _id: new ObjectId(productId) });
 
   return Response.json(res);
