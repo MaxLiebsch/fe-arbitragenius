@@ -27,6 +27,7 @@ const InfoField = ({
   const {
     img,
     s,
+    sdmn,
     lnk,
     nm,
     mnfctr,
@@ -47,6 +48,9 @@ const InfoField = ({
     [`${target}_qty` as "a_qty" | "e_qty"]: targetQty,
     [`${target}_img` as "a_img" | "e_img"]: targetImg,
   } = product;
+
+  const shopDomain = sdmn !== "sales" ? sdmn : shop !== undefined ? s : "";
+
   const targetUpdatedAt = target === "a" ? dealAznUpdatedAt : dealEbyUpdatedAt;
 
   let bsr = initialBsr;
@@ -70,7 +74,7 @@ const InfoField = ({
       {nm && (
         <div className={`${nm?.length < 114 && "flex gap-1"}`}>
           <div className="flex flex-row gap-2 w-full">
-            <div>{ImageRenderer(prefixLink(img, s))}</div>
+            <div>{ImageRenderer(prefixLink(img, shopDomain))}</div>
             <div className="flex flex-col w-full">
               {shop && (
                 <span className="font-semibold">

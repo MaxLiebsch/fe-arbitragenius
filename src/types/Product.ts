@@ -79,6 +79,7 @@ export interface ModifiedProduct extends Product {
   qty: number;
   e_qty: number;
   a_qty: number;
+  sdmn: string;
   bsr_2: number;
   tax: number;
   bsr_cat_2: string;

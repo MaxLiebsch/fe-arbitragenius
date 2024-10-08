@@ -1,6 +1,5 @@
 "use client";
 import ShopsGrid from "@/components/ShopsGrid";
-import { StarIcon } from "@heroicons/react/16/solid";
 import ProductFilterForm from "@/components/forms/ProductFilterForm";
 import TotalDeals from "@/components/TotalDeals";
 import useShopCount from "@/hooks/use-shop-count";
@@ -23,9 +22,11 @@ export default function Dashboard() {
           {!shopCount.isLoading && (
             <>
               <div className="flex flex-row gap-2 pb-3 items-center">
-                <h3 className="flex flex-row text-base font-semibold leading-6 mb-3 text-gray-900 space-x-1 items-center">
-                  <div>Shops ({(shopCount.data || 12) - 1})</div>
-                </h3> 
+                {shopCount.data && (
+                  <h3 className="flex flex-row text-base font-semibold leading-6 mb-3 text-gray-900 space-x-1 items-center">
+                    <div>Shops ({shopCount.data - 1})</div>
+                  </h3>
+                )}
               </div>
               <TotalDeals />
             </>
