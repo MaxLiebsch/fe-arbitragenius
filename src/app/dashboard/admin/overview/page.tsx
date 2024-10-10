@@ -1,9 +1,13 @@
+"use server";
+import DailySalesStats from "@/components/DailySalesStats";
 import PasswordPrompt from "@/components/PasswordPrompt";
+import ScrapeShopStatsWeek from "@/components/ScrapeShopStatsWeek";
 import Terminal from "@/components/Terminal";
 import { getLoggedInUser } from "@/server/appwrite";
 import clientPool from "@/server/mongoPool";
-import { Button, Card } from "antd";
-import { format } from "date-fns";
+import { Task } from "@/types/tasks";
+import { Card } from "antd";
+import { format, parseISO } from "date-fns";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import React from "react";
@@ -159,11 +163,30 @@ const Page = async () => {
     (task) => task.type === "CRAWL_EAN"
   )!.progress;
 
-  const dealTasks = tasks.filter((task) => task.type.includes("DEALS"));
-
   const keepaTasks = tasks.filter(
     (task) => task.type === "KEEPA_NORMAL" || task.type === "KEEPA_EAN"
   );
+  const plainTasks = tasks.reduce<Task[]>((acc, task) => {
+    if (task.type === "CRAWL_SHOP") {
+      //@ts-ignore  
+      task._id = task._id.toString();
+      acc.push(task as unknown as Task);
+    }
+    return acc;
+  }, []);
+  
+  const dailySalesPlainTasks = tasks.reduce<Task[]>((acc, task) => {
+    if (task.type === "DAILY_SALES") {
+      //@ts-ignore  
+      task._id = task._id.toString();
+      task.progress = []
+      acc.push(task as unknown as Task);
+    }
+    return acc;
+  }, []);
+
+
+
 
   const keepaTotal = keepaTasks.reduce((acc, task) => {
     if (task.type === "KEEPA_NORMAL") {
@@ -291,7 +314,9 @@ const Page = async () => {
               </Card>
             ))}
           </div>
+          <ScrapeShopStatsWeek tasks={plainTasks} />
         </li>
+
         {/* DAILY SALES */}
         <li>
           <h3 className="text-base font-semibold leading-6 text-gray-900 flex flex-row space-x-1 items-center">
@@ -322,6 +347,7 @@ const Page = async () => {
               </Card>
             ))}
           </div>
+          <DailySalesStats tasks={dailySalesPlainTasks} />
         </li>
         {/* MATCH PRODUCTS */}
         <li>
@@ -354,7 +380,7 @@ const Page = async () => {
             </div>
             {crawlEansProgress.length ? (
               crawlEansProgress.map((_: any) => (
-                <div key={`crawl-eans-${_.shop}`}>
+                <div key={`crawl-eans-${_.shop._id}`}>
                   {_.shop.d}: {_.pending}
                 </div>
               ))
@@ -374,7 +400,7 @@ const Page = async () => {
             </div>
             {lookupInfoProgress?.length ? (
               lookupInfoProgress.map((_: any) => (
-                <div key={`lookup-info-${_.shop}`}>
+                <div key={`lookup-info-${_.shop._id}`}>
                   {_.shop.d}: {_.pending}
                 </div>
               ))
@@ -394,7 +420,7 @@ const Page = async () => {
             </div>
             {queryEansEbyProgress?.length ? (
               queryEansEbyProgress.map((_: any) => (
-                <div key={`query-eans-on-eby-${_.shop}`}>
+                <div key={`query-eans-on-eby-${_.shop._id}`}>
                   {_.shop.d}: {_.pending}
                 </div>
               ))

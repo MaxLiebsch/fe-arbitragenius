@@ -1,4 +1,4 @@
-import { amazonTransportFee } from '@/constants';
+import { amazonTransportFee } from '@/constant/constant';
 import { roundToTwoDecimals } from './roundToTwoDecimals';
 
 interface Costs {
