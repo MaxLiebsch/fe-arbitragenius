@@ -29,7 +29,7 @@ export const aznCategoryMapping = [
   { label: "Lebensmittel & Getränke", value: 340846031 },
   { label: "Musikinstrumente & DJ-Equipment", value: 340849031 },
   { label: "Schmuck", value: 10459505031 },
-  { label: "Schuhe & Handtaschen", value: 11961464031 },
+  // { label: "Schuhe & Handtaschen", value: 11961464031 },
   { label: "Spielzeug", value: 12950651 },
   { label: "Sport & Freizeit", value: 16435051 },
   { label: "Uhren", value: 10084739031 },

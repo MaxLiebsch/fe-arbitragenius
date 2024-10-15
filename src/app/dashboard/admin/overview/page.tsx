@@ -168,25 +168,70 @@ const Page = async () => {
   );
   const plainTasks = tasks.reduce<Task[]>((acc, task) => {
     if (task.type === "CRAWL_SHOP") {
-      //@ts-ignore  
+      //@ts-ignore
       task._id = task._id.toString();
       acc.push(task as unknown as Task);
     }
     return acc;
   }, []);
-  
+
   const dailySalesPlainTasks = tasks.reduce<Task[]>((acc, task) => {
     if (task.type === "DAILY_SALES") {
-      //@ts-ignore  
+      //@ts-ignore
       task._id = task._id.toString();
-      task.progress = []
+      task.progress = [];
       acc.push(task as unknown as Task);
     }
     return acc;
   }, []);
 
+  const totalLookupInfos = lookupInfoProgress.reduce(
+    (acc: any, _: any) => acc + _.pending,
+    0
+  );
+  const totalQueryEansEby = queryEansEbyProgress.reduce(
+    (acc: any, _: any) => acc + _.pending,
+    0
+  );
+  const totalCrawlEans = crawlEansProgress.reduce(
+    (acc: any, _: any) => acc + _.pending,
+    0
+  );
+  const totalLookupCategory = lookupCategoryProgress.reduce(
+    (acc: any, _: any) => acc + _.pending,
+    0
+  );
+  const totalDealsOnAzn = tasks
+    .filter((task) => task.type === "DEALS_ON_AZN")
+    .reduce(
+      (acc: any, _: any) =>
+        acc + _.progress.reduce((acc: any, _: any) => acc + _.pending, 0),
+      0
+    );
 
+  const totalDealsOnEby = tasks
+    .filter((task) => task.type === "DEALS_ON_EBY")
+    .reduce(
+      (acc: any, _: any) =>
+        acc + _.progress.reduce((acc: any, _: any) => acc + _.pending, 0),
+      0
+    );
 
+  const totalNegEbyDeals = tasks
+    .filter((task) => task.type === "CRAWL_EBY_LISTINGS")
+    .reduce(
+      (acc: any, _: any) =>
+        acc + _.progress.reduce((acc: any, _: any) => acc + _.pending, 0),
+      0
+    );
+
+  const totalNegAznDeals = tasks
+    .filter((task) => task.type === "CRAWL_AZN_LISTINGS")
+    .reduce(
+      (acc: any, _: any) =>
+        acc + _.progress.reduce((acc: any, _: any) => acc + _.pending, 0),
+      0
+    );
 
   const keepaTotal = keepaTasks.reduce((acc, task) => {
     if (task.type === "KEEPA_NORMAL") {
@@ -373,6 +418,7 @@ const Page = async () => {
             <h3 className="text-base font-semibold leading-6 text-gray-900 flex flex-row space-x-1 items-center">
               Crawl Eans
             </h3>
+            <div>{totalCrawlEans} pending</div>
             <div>
               {" "}
               <span className="font-semibold">Usage last 7 days:</span>{" "}
@@ -393,6 +439,7 @@ const Page = async () => {
             <h3 className="text-base font-semibold leading-6 text-gray-900 flex flex-row space-x-1 items-center">
               Lookup Infos
             </h3>
+            <div>{totalLookupInfos} pending</div>
             <div>
               {" "}
               <span className="font-semibold">Usage last 7 days:</span>{" "}
@@ -413,6 +460,7 @@ const Page = async () => {
             <h3 className="text-base font-semibold leading-6 text-gray-900 flex flex-row space-x-1 items-center">
               Query Eans on Ebay
             </h3>
+            <div>{totalQueryEansEby} pending</div>
             <div>
               {" "}
               <span className="font-semibold">Usage last 7 days:</span>{" "}
@@ -433,6 +481,7 @@ const Page = async () => {
             <h3 className="text-base font-semibold leading-6 text-gray-900 flex flex-row space-x-1 items-center">
               LookupCategories
             </h3>
+            <div>{totalLookupCategory} pending</div>
             <div>
               {" "}
               <span className="font-semibold">Usage last 7 days:</span>{" "}
@@ -456,6 +505,7 @@ const Page = async () => {
             <h3 className="text-base font-semibold leading-6 text-gray-900 flex flex-row space-x-1 items-center">
               Pos. Margin - Azn
             </h3>
+            <div>{totalDealsOnAzn} pending</div>
             <div>
               {" "}
               <span className="font-semibold">Usage last 7 days:</span>{" "}
@@ -491,6 +541,9 @@ const Page = async () => {
               Neg. Margin - Azn
             </h3>
             <div>
+              {totalNegAznDeals} pending
+            </div>
+            <div>
               {" "}
               <span className="font-semibold">Usage last 7 days:</span>{" "}
               {usagePerTask("CRAWL_AZN_LISTINGS")}
@@ -524,6 +577,7 @@ const Page = async () => {
             <h3 className="text-base font-semibold leading-6 text-gray-900 flex flex-row space-x-1 items-center">
               Pos. Margin - Eby
             </h3>
+            <div>{totalDealsOnEby} pending</div>
             <div>
               {" "}
               <span className="font-semibold">Usage last 7 days:</span>{" "}
@@ -558,6 +612,7 @@ const Page = async () => {
             <h3 className="text-base font-semibold leading-6 text-gray-900 flex flex-row space-x-1 items-center">
               Neg. Margin - Eby
             </h3>
+            <div>{totalNegEbyDeals} pending</div>
             <div>
               {" "}
               <span className="font-semibold">Usage last 7 days:</span>{" "}

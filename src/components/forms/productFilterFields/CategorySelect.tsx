@@ -79,6 +79,7 @@ const CategorySelect = ({
         }
         return total;
       }, 0);
+      console.log('category.value:', category.value)
       return {
         label: category.label,
         value: category.value,
@@ -126,7 +127,7 @@ const CategorySelect = ({
           <Select
             mode="multiple"
             allowClear
-            style={{ width: "100%" }}
+            style={{ width: "100%", position: "relative" }}
             placeholder="Please select"
             options={options}
           />
