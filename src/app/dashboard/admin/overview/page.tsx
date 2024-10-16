@@ -251,22 +251,37 @@ const Page = async () => {
           <h3 className="text-base font-semibold leading-6 text-gray-900 flex flex-row space-x-1 items-center">
             {scraper.length} Scraper
           </h3>
-          <div className="flex gap-2 w-full md:w-[calc(100vw-400px)] overflow-x-auto">
-            {activeCrawler.map((_) => (
-              <Card key={_.name} style={{ minWidth: 250 }}>
+          <div className="grid grid-cols-4 gap-2 w-full md:w-[calc(100vw-400px)] overflow-x-auto">
+            {activeCrawler.sort((a: any, b: any) => a.task.localeCompare(b.task)).map((_) => (
+              <Card
+                styles={{ body: { paddingLeft: 10, paddingRight: 10, paddingBottom: 10} }}
+                key={_.name}
+                style={{ minWidth: 250, position: "relative" }}
+              >
+                <span className="font-semibold absolute left-2 top-2">
+                  {_.active ? (
+                    <span className="text-green-500">Active</span>
+                  ) : (
+                    <span className="text-red-500">Inactive</span>
+                  )}
+                </span>
                 <div className="flex flex-col">
-                  <p>
-                    {_.name}:{" "}
-                    <span className="font-semibold">
-                      {_.active ? "Active" : "Inactive"}
-                    </span>
-                  </p>
-                  <Terminal ip={_.ip} name={_.crawlerId} />
-                  {_.task ? `Task: ${_.task}` : ""}
-                  <div>
+                  <div className="flex flex-row items-center">
+                    <h3 className="text-md">{_.name}</h3>
+                  </div>
+                  <p></p>
+                  <div className="absolute top-2 right-2">
+                    <Terminal ip={_.ip} name={_.crawlerId} />
+                  </div>
+                  <div className="text-lg">
+                    {_.task ? `${_.task}` : ""}
+                  </div>
+                  <div className="grid grid-cols-4">
                     <p>Usage: </p>
-                    <p>Last 7 days: {_.lastSevenDays}</p>
-                    <p>Today: {_.today}</p>
+                    <div className="col-span-3">
+                      <p>Last 7 days: {_.lastSevenDays}</p>
+                      <p>Today: {_.today}</p>
+                    </div>
                   </div>
                 </div>
               </Card>
@@ -278,7 +293,7 @@ const Page = async () => {
           <h3 className="text-base font-semibold leading-6 text-gray-900 flex flex-row space-x-1 items-center">
             {infrastructure.length} Other (Infrastructure)
           </h3>
-          <div className="flex gap-2 w-full md:w-[calc(100vw-400px)] overflow-x-auto">
+          <div className="grid grid-cols-4 gap-2 w-full md:w-[calc(100vw-400px)] overflow-x-auto">
             {infrastructure.map((_) => (
               <Card key={_.name} style={{ minWidth: 250 }}>
                 <div className="flex flex-col">
@@ -303,28 +318,32 @@ const Page = async () => {
             ) : (
               <></>
             )}
-            <div className="flex flex-row gap-2">
+            <div className="grid grid-cols-2">
               {keepaTasks.map((_) => (
-                <Card key={_.id}>
+                <div key={_.id}>
                   <p>
                     {_.type === "KEEPA_NORMAL"
                       ? "Weekly Updates"
                       : "Ean Updates"}
                   </p>
-                  <div key={`keepa-${_.id}`}>
+                  <div key={`keepa-${_.id}`} className="grid grid-cols-3 gap-2">
                     {_?.progress &&
-                      _.progress.map(
-                        (progressPerShop: { d: string; pending: number }) => (
-                          <div key={`crawl-azn-${_.id}-${progressPerShop.d}`}>
-                            {progressPerShop.d}:{" "}
-                            {progressPerShop.pending > 0
-                              ? `${progressPerShop.pending} pending`
-                              : "no pending"}
-                          </div>
-                        )
-                      )}
+                      _.progress
+                        .sort((a: any, b: any) => a.d.localeCompare(a.d))
+                        .map(
+                          (progressPerShop: { d: string; pending: number }) => (
+                            <div key={`crawl-azn-${_.id}-${progressPerShop.d}`}>
+                              <span>{progressPerShop.d}: </span>
+                              <span>
+                                {progressPerShop.pending > 0
+                                  ? `${progressPerShop.pending} pending`
+                                  : "no pending"}
+                              </span>
+                            </div>
+                          )
+                        )}
                   </div>
-                </Card>
+                </div>
               ))}
             </div>
           </div>
@@ -338,25 +357,23 @@ const Page = async () => {
             <span className="font-semibold">Usage last 7 days:</span>{" "}
             {usagePerTask("CRAWL_SHOP")}{" "}
           </div>
-          <div className="flex gap-2">
+          <div className="grid grid-cols-6 gap-1">
             {shops.map((_) => (
-              <Card key={_} style={{ width: 300 }}>
-                <Link href={`/dashboard/admin/overview/${_}`}>
-                  <>
-                    <p>{_}</p>
-                    <p>
-                      {tasks
-                        .filter(
-                          (task) =>
-                            task.shopDomain === _ &&
-                            task.type === "CRAWL_SHOP" &&
-                            !task.maintenance
-                        )
-                        .reduce((acc, _) => acc + _.productLimit, 0)}
-                    </p>
-                  </>
-                </Link>
-              </Card>
+              <Link key={_} href={`/dashboard/admin/overview/${_}`}>
+                <>
+                  <p>{_}</p>
+                  <p>
+                    {tasks
+                      .filter(
+                        (task) =>
+                          task.shopDomain === _ &&
+                          task.type === "CRAWL_SHOP" &&
+                          !task.maintenance
+                      )
+                      .reduce((acc, _) => acc + _.productLimit, 0)}
+                  </p>
+                </>
+              </Link>
             ))}
           </div>
           <ScrapeShopStatsWeek tasks={plainTasks} />
@@ -370,27 +387,6 @@ const Page = async () => {
           <div>
             <span className="font-semibold">Usage last 7 days:</span>{" "}
             {usagePerTask("DAILY_SALES")}{" "}
-          </div>
-          <div className="flex gap-2">
-            {shops.map((_) => (
-              <Card key={_} style={{ width: 300 }}>
-                <Link href={`/dashboard/admin/overview/${_}`}>
-                  <>
-                    <p>{_}</p>
-                    <p>
-                      {tasks
-                        .filter(
-                          (task) =>
-                            task.shopDomain === _ &&
-                            task.type === "DAILY_SALES" &&
-                            !task.maintenance
-                        )
-                        .reduce((acc, _) => acc + _.productLimit, 0)}
-                    </p>
-                  </>
-                </Link>
-              </Card>
-            ))}
           </div>
           <DailySalesStats tasks={dailySalesPlainTasks} />
         </li>
@@ -540,9 +536,7 @@ const Page = async () => {
             <h3 className="text-base font-semibold leading-6 text-gray-900 flex flex-row space-x-1 items-center">
               Neg. Margin - Azn
             </h3>
-            <div>
-              {totalNegAznDeals} pending
-            </div>
+            <div>{totalNegAznDeals} pending</div>
             <div>
               {" "}
               <span className="font-semibold">Usage last 7 days:</span>{" "}

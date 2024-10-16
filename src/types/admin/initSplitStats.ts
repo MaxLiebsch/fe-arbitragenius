@@ -1,6 +1,15 @@
 export type SplitStats = {
-  [key: number]: {
+  [key: string]: {
     total: number;
-    tasks: { completedAt: string; id: string; shopDomain: string }[];
+    tasks: {
+      completedAt: string;
+      executing: boolean;
+      id: string;
+      shopDomain: string;
+      lastCrawler: string[]
+      lastTotal: number;
+      estimatedProducts: number;
+      productLimit: number;
+    }[];
   };
 };
