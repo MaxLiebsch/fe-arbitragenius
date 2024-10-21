@@ -74,6 +74,9 @@ export interface ModifiedProduct extends Product {
   uprc: number;
   availUpdatedAt?: string;
   dealEbyUpdatedAt?: string;
+  a_rating?: number;
+  a_reviewcnt?: number;
+  a_useCurrPrice?: boolean;
   dealAznUpdatedAt?: string;
   ebyCategories: EbyCategory[];
   qty: number;

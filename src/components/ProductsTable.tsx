@@ -5,7 +5,7 @@ import {
   deDE,
   useGridApiRef,
 } from "@mui/x-data-grid-premium";
-import React, { useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import useProductCount from "@/hooks/use-product-count";
 import useProducts from "@/hooks/use-products";
 import Spinner from "./Spinner";

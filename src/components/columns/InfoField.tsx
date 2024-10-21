@@ -58,7 +58,9 @@ const InfoField = ({
   if (bsr && bsr.length) {
     if (salesRanks) {
       const bsrLastUpdate = parseISO(bsr[0].createdAt).getTime();
-      const salesRanksLastUpdate = parseISO(keepaUpdatedAt).getTime();
+      const salesRanksLastUpdate = keepaUpdatedAt
+        ? parseISO(keepaUpdatedAt).getTime()
+        : new Date().getTime();
       if (bsrLastUpdate < salesRanksLastUpdate && categoryTree) {
         bsr = parseSalesRank(salesRanks, categoryTree);
       }

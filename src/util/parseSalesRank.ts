@@ -17,9 +17,11 @@ export const parseSalesRank = (
     );
     if (!categoryName) return;
     const rank = value[0][1];
-    bsr.number = rank;
+    const date = value[0][0];
+
+    bsr.number = rank || 10000000;
     bsr.category = categoryName.name;
-    bsr.createdAt = fromUnixTime(value[0][0]).toISOString();
+    bsr.createdAt = date ?fromUnixTime(date).toISOString(): new Date().toISOString();
     parsedSalesRank.push(bsr);
   });
   return parsedSalesRank;

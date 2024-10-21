@@ -1,9 +1,6 @@
-import useProductUpdate from "@/hooks/use-product-update";
 import { ProductPagination } from "@/hooks/use-products";
 import { ModifiedProduct } from "@/types/Product";
-import { ProductUpdate } from "@/types/ProductUpdate";
 import { parseAsinFromUrl } from "@/util/parseAsin";
-import { Form } from "antd";
 import React from "react";
 import AdminAznCorrectionForm from "../forms/AdminAznCorrectionForm";
 import CopyToClipboard from "../CopyToClipboard";
@@ -15,7 +12,8 @@ const RetrieveAsin = (
   target: string,
   pagination: ProductPagination
 ) => {
-  const { buyBoxIsAmazon, totalOfferCount, eanList } = product;
+  const { buyBoxIsAmazon, totalOfferCount, eanList, a_rating, a_reviewcnt } =
+    product;
   const asin = (product.asin ?? parseAsinFromUrl(url)) || parseAsinFromUrl(url);
   const isAdmin = userRoles.includes("admin");
 
@@ -48,7 +46,6 @@ const RetrieveAsin = (
             <CopyToClipboard text={asin} />
           </div>
         </div>
-
         {buyBoxIsAmazon !== undefined && (
           <span>
             {buyBoxIsAmazon ? (
@@ -73,6 +70,14 @@ const RetrieveAsin = (
               ) : (
                 "0"
               )}
+            </span>
+          </span>
+        )}
+        {a_rating && a_reviewcnt && (
+          <span className='ml-1'>
+            <span className="font-semibold">Rating:{" "}</span>
+            <span>
+              {a_rating} ({a_reviewcnt})
             </span>
           </span>
         )}

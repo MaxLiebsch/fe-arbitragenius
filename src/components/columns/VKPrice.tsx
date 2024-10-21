@@ -2,9 +2,11 @@ import { ModifiedProduct } from "@/types/Product";
 import { Settings } from "@/types/Settings";
 import { calculationDeduction } from "@/util/calculateDeduction";
 import { formatCurrency, formatter } from "@/util/formatter";
+import { roundToTwoDecimals } from "@/util/roundToTwoDecimals";
 import { GridColDef } from "@mui/x-data-grid-premium";
 import { Tooltip } from "antd";
 import React from "react";
+import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
 
 const VKPrice = ({
   target,
@@ -35,7 +37,16 @@ const VKPrice = ({
     },
     renderCell: (params) => {
       const { row: product, value } = params;
-      const avg30_ahsprcs = product["avg30_ahsprcs"];
+      const { avg30_ahsprcs, a_useCurrPrice, a_prc } = product;
+
+      let dumping = false;
+
+      if (avg30_ahsprcs && avg30_ahsprcs > -1 && a_prc) {
+        const avg = roundToTwoDecimals(avg30_ahsprcs / 100);
+        if (avg - a_prc > 3 || avg / a_prc > 1.03) {
+          dumping = true;
+        }
+      }
       const median = product["e_pRange"]?.median;
       const min = product["e_pRange"]?.min;
       const max = product["e_pRange"]?.max;
@@ -43,11 +54,21 @@ const VKPrice = ({
       const targetUprc = product[`${target}_uprc` as keyof ModifiedProduct];
       return (
         <div className="flex flex-col">
+          {dumping ? (
+            <div className="text-blue-600  flex flex-row items-center gap-1">
+              <span className="h-6 w-6">
+                <ExclamationCircleIcon />
+              </span>
+              <span>Preis-Dumping</span>
+            </div>
+          ) : (
+            <></>
+          )}
           <div className={`${netto ? "" : "font-semibold text-green-600"}`}>
             <span>{formatCurrency(parseFloat(params.value))} </span>
-            {target === "a" && avg30_ahsprcs ? (
+            {target === "a" && avg30_ahsprcs && avg30_ahsprcs > 1 ? (
               <span>{`(${formatter.format(avg30_ahsprcs / 100)})`} </span>
-            ) : median && target === 'e' ? (
+            ) : median && target === "e" ? (
               <span>{`(${formatter.format(median)})`} </span>
             ) : null}
           </div>
