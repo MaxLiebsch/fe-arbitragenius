@@ -7,6 +7,7 @@ import React, { useState } from "react";
 import CopyToClipboard from "./CopyToClipboard";
 import { roundToTwoDecimals } from "@/util/roundToTwoDecimals";
 import { useUserSettings } from "@/hooks/use-settings";
+import { endOfMonth, isWithinInterval, startOfYear } from "date-fns";
 
 const ContentMarge = ({
   product,
@@ -21,9 +22,18 @@ const ContentMarge = ({
     | "nm"
     | "eanList"
     | "a_qty"
+    | 'a_avg_prc'
     | "qty"
   >;
 }) => {
+  
+  const { prc, a_prc, a_avg_prc } = product;
+
+  const isFlip = a_avg_prc !== undefined;
+  const initBuyPrice = isFlip ? a_prc : prc;
+  const initSellPrice = isFlip ? a_avg_prc : a_prc;
+
+  
   const [settings, setSettings] = useUserSettings();
   const [transport, setTransportCosts] = useState(
     settings[settings.a_tptStandard as "a_tptSmall"]
@@ -34,25 +44,31 @@ const ContentMarge = ({
   const [costs, setCosts] = useState(product["costs"]);
   const factor = product.a_qty / product.qty;
   const [buyPrice, setBuyPrice] = useState(
-    roundToTwoDecimals((product["prc"] / 1.19) * factor)
+    roundToTwoDecimals((initBuyPrice / 1.19) * factor)
   );
-  const [price, setPrice] = useState(product["a_prc"]);
-  const [qty, setQty] = useState(1);
-  const [period, setPeriod] = useState<"strg_1_hy" | "strg_2_hy">("strg_1_hy");
 
-  const multiplier = product.a_prc / product["costs"].azn;
-  const tax = roundToTwoDecimals(price - price / (1 + product.tax / 100));
+  const strg_1_hy = isWithinInterval(new Date(), {
+    start: startOfYear(new Date()),
+    end: endOfMonth(new Date(new Date().getFullYear(), 8)),
+  });
+  const [sellPrice, setSellPrice] = useState(initSellPrice);
+  const [qty, setQty] = useState(1);
+  const [period, setPeriod] = useState<"strg_1_hy" | "strg_2_hy">(strg_1_hy?"strg_1_hy": "strg_2_hy");
+
+  const multiplier = initSellPrice / product["costs"].azn;
+
+  const tax = roundToTwoDecimals(sellPrice - sellPrice / (1 + product.tax / 100));
 
   const externalCosts = fba
     ? costs.tpt + costs[period]
     : storageCosts + prepCenterCosts + transport;
 
   const earning =
-    (price - costs.azn - costs.varc - externalCosts - tax - buyPrice) * qty;
+    (sellPrice - costs.azn - costs.varc - externalCosts - tax - buyPrice) * qty;
   // VK - Kosten - Steuern - EK / VK * 100
   const margin =
-    ((price - costs.azn - costs.varc - externalCosts - tax - buyPrice) /
-      price) *
+    ((sellPrice - costs.azn - costs.varc - externalCosts - tax - buyPrice) /
+      sellPrice) *
     100;
 
   return (
@@ -83,9 +99,9 @@ const ContentMarge = ({
       )}
       <Input
         classNames={{ input: "!text-right" }}
-        value={price}
+        value={sellPrice}
         onChange={(e) => {
-          setPrice(Number(e.target.value));
+          setSellPrice(Number(e.target.value));
           setCosts({ ...costs, azn: Number(e.target.value) / multiplier });
         }}
         type="number"
@@ -124,7 +140,7 @@ const ContentMarge = ({
           <Switch
             checkedChildren="Januar-September"
             unCheckedChildren="Oktober-Dezember"
-            defaultChecked
+            defaultChecked={strg_1_hy}
             onChange={(checked) => {
               if (checked) {
                 setPeriod("strg_1_hy");

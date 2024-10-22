@@ -7,6 +7,7 @@ import { buyBoxFields } from "@/util/productQueries/buyBox";
 import { ebyMarginFields } from "@/util/productQueries/ebyMarginFields";
 import { marginFields } from "@/util/productQueries/marginFields";
 import { monthlySoldField } from "@/util/productQueries/monthlySoldField";
+import { primaryBsrExistsField } from "@/util/productQueries/primaryBsrExistsField";
 import { productWithBsrFields } from "@/util/productQueries/productWithBsrFields";
 import { settingsFromSearchQuery } from "@/util/productQueries/settingsFromSearchQuery";
 import { targetVerification } from "@/util/productQueries/targetVerfication";
@@ -80,20 +81,7 @@ export async function GET(
     },
     { $count: "productCount" }
   );
-
-  if (isAmazon && productsWithNoBsr) {
-    aggregation.splice(2, 0, {
-      $addFields: {
-        primaryBsrExists: {
-          $cond: {
-            if: { $ifNull: ["$primaryBsr", false] },
-            then: true,
-            else: false,
-          },
-        },
-      },
-    });
-  }
+  primaryBsrExistsField(aggregation, isAmazon, productsWithNoBsr);
   const productCol = mongo
     .db(process.env.NEXT_MONGO_DB)
     .collection(PRODUCT_COL);

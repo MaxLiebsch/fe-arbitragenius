@@ -16,11 +16,13 @@ import { aznCategoryMapping } from "@/constant/constant";
 const InfoField = ({
   product,
   target,
+  flip,
   userRoles,
   pagination,
 }: {
   product: ModifiedProduct;
   target: string;
+  flip?: boolean;
   pagination: ProductPagination;
   userRoles: string[];
 }) => {
@@ -73,7 +75,7 @@ const InfoField = ({
   }
   return (
     <div className="flex flex-col divide-y p-1 w-full">
-      {nm && (
+      {nm && !flip && (
         <div className={`${nm?.length < 114 && "flex gap-1"}`}>
           <div className="flex flex-row gap-2 w-full">
             <div>{ImageRenderer(prefixLink(img, shopDomain))}</div>

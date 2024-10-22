@@ -79,7 +79,6 @@ const CategorySelect = ({
         }
         return total;
       }, 0);
-      console.log('category.value:', category.value)
       return {
         label: category.label,
         value: category.value,

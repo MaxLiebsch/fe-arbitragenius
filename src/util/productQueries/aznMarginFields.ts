@@ -89,7 +89,7 @@ export const aznMarginFields = (settings: Settings, isWholesale?: boolean) => {
               {
                 $multiply: [
                   {
-                    $divide: ["$a_mrgn", "$a_prc"],
+                    $divide: [`a${isEuProgram}_mrgn`, "$a_prc"],
                   },
                   100,
                 ],

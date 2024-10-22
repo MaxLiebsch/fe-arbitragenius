@@ -46,55 +46,67 @@ export const createColumns: (
   addBookmark,
   removeBookmark,
   userRoles
-) => [
-  {
-    field: "nm",
-    headerName: "Produkte",
-    flex: 0.75,
-    renderCell: (params) => (
-      <InfoField
-        userRoles={userRoles}
-        product={params.row}
-        target={target}
-        pagination={pagination}
-      />
-    ),
-  },
-  EKPrice({ settings }),
-  VKPrice({ target, settings }),
-  {
-    field: "analytics",
-    disableColumnMenu: true,
-    width: 150,
-    headerName: "Preisanalyse",
-    renderCell: (params) => <KeepaGraph product={params.row} />,
-  },
-  MarginPct({ target, settings }),
-  Margin({ target, settings }),
-  {
-    field: "isBookmarked",
-    headerName: "Gemerkt",
-    headerAlign: "center",
-    align: "center",
-    renderCell: (params) => (
-      <Checkbox
-        checked={params.row.isBookmarked}
-        onChange={(e) => {
-          if (e.target.checked) {
-            addBookmark({
-              body: { target: target, shop: domain, productId: params.row._id },
-              page: pagination.page,
-              pageSize: pagination.pageSize,
-            });
-          } else {
-            removeBookmark({
-              body: { target: target, shop: domain, productId: params.row._id },
-              page: pagination.page,
-              pageSize: pagination.pageSize,
-            });
-          }
-        }}
-      />
-    ),
-  },
-];
+) => {
+  const flip = domain === "flip";
+  return [
+    {
+      field: "nm",
+      headerName: "Produkte",
+      flex: 0.75,
+      renderCell: (params) => (
+        <InfoField
+          flip={flip}
+          userRoles={userRoles}
+          product={params.row}
+          target={target}
+          pagination={pagination}
+        />
+      ),
+    },
+    EKPrice({ settings, flip }),
+    VKPrice({ target, settings, flip }),
+    {
+      field: "analytics",
+      disableColumnMenu: true,
+      width: 150,
+      headerName: "Preisanalyse",
+      renderCell: (params) => <KeepaGraph product={params.row} />,
+    },
+    MarginPct({ target, settings, flip }),
+    Margin({ target, settings, flip }),
+    {
+      field: "isBookmarked",
+      headerName: "Gemerkt",
+      headerAlign: "center",
+      align: "center",
+      renderCell: (params) => (
+        <Checkbox
+          checked={params.row.isBookmarked}
+          onChange={(e) => {
+            if (e.target.checked) {
+              addBookmark({
+                body: {
+                  target: target,
+                  shop: domain,
+                  productId: params.row._id,
+                },
+                page: pagination.page,
+                pageSize: pagination.pageSize,
+              });
+            } else {
+              removeBookmark({
+                body: {
+                  target: target,
+                  shop: domain,
+                  productId: params.row._id,
+                },
+                page: pagination.page,
+                pageSize: pagination.pageSize,
+              });
+            }
+          }}
+        />
+      ),
+    },
+  ];
+};

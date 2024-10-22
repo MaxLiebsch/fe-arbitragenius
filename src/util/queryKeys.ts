@@ -6,6 +6,10 @@ export const salesQueryKey = (
   return [target, "shop", "sales", "product", "get", page, pageSize];
 };
 
+export const aznFlipsQueryKey = (page: number, pageSize: number) => {
+  return ["flips", "shop", "product", "get", page, pageSize];
+};
+
 export const productQueryKey = (
   target: string,
   shop: string,

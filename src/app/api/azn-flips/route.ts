@@ -1,7 +1,8 @@
-import { PRODUCT_COL } from "@/constant/constant";
+import { PRODUCT_COL, SALES_COL } from "@/constant/constant";
 import { getLoggedInUser } from "@/server/appwrite";
 import clientPool from "@/server/mongoPool";
 import { BuyBox, Settings } from "@/types/Settings";
+import { aznFlipMarginFields } from "@/util/productQueries/aznFlipMarginFields";
 import { aznMarginFields } from "@/util/productQueries/aznMarginFields";
 import { bsrAddFields } from "@/util/productQueries/bsrAddFields";
 import { buyBoxFields } from "@/util/productQueries/buyBox";
@@ -29,7 +30,7 @@ export async function GET(
     });
   }
   const searchParams = request.nextUrl.searchParams;
-  const { domain, target } = params;
+  const target = searchParams.get("target") || "a";
 
   const isAmazon = target === "a";
 
@@ -61,7 +62,7 @@ export async function GET(
   const findQuery: any[] = [];
   if (isAmazon) {
     aggregation.push(bsrAddFields);
-    aggregation.push(...aznMarginFields(customerSettings));
+    aggregation.push(...aznFlipMarginFields(customerSettings));
   } else {
     aggregation.push(...ebyMarginFields(customerSettings));
   }
@@ -96,13 +97,11 @@ export async function GET(
   const sort: {
     [key: string]: SortDirection;
   } = {};
-  
   sortingField(isAmazon, query, sort,euProgram);
   const pblshKey = isAmazon ? "a_pblsh" : "e_pblsh";
   aggregation.push(
     {
       $match: {
-        sdmn: domain,
         [pblshKey]: true,
         $and: findQuery,
       },
@@ -118,12 +117,12 @@ export async function GET(
     }
   );
   primaryBsrExistsField(aggregation, isAmazon, productsWithNoBsr);
+  
   lookupUserId(aggregation, user, target);
   const mongo = await clientPool["NEXT_MONGO"];
   const productCol = mongo
     .db(process.env.NEXT_MONGO_DB)
     .collection(PRODUCT_COL);
-    
   const res = await productCol.aggregate(aggregation).toArray();
 
   return Response.json(res);

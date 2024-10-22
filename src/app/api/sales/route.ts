@@ -6,13 +6,16 @@ import { aznMarginFields } from "@/util/productQueries/aznMarginFields";
 import { bsrAddFields } from "@/util/productQueries/bsrAddFields";
 import { buyBoxFields } from "@/util/productQueries/buyBox";
 import { ebyMarginFields } from "@/util/productQueries/ebyMarginFields";
+import { lookupUserId } from "@/util/productQueries/lookupUserId";
 import { marginFields } from "@/util/productQueries/marginFields";
 import { monthlySoldField } from "@/util/productQueries/monthlySoldField";
+import { primaryBsrExistsField } from "@/util/productQueries/primaryBsrExistsField";
 import { productWithBsrFields } from "@/util/productQueries/productWithBsrFields";
 import { settingsFromSearchQuery } from "@/util/productQueries/settingsFromSearchQuery";
+import { sortingField } from "@/util/productQueries/sortingField";
 import { targetVerification } from "@/util/productQueries/targetVerfication";
 import { totalOffersCountField } from "@/util/productQueries/totalOffersCountField";
-import { ObjectId, SortDirection } from "mongodb";
+import { SortDirection } from "mongodb";
 import { NextRequest } from "next/server";
 
 export async function GET(
@@ -42,6 +45,7 @@ export async function GET(
     productsWithNoBsr,
     netto,
     monthlySold,
+    euProgram,
     totalOfferCount,
     buyBox,
     fba,
@@ -92,24 +96,7 @@ export async function GET(
   const sort: {
     [key: string]: SortDirection;
   } = {};
-
-  if (isAmazon) {
-    if (query.field === "none") {
-      sort["primaryBsrExists"] = -1;
-      sort["primaryBsr.number"] = 1;
-      sort["secondaryBsr.number"] = 1;
-      sort["thirdBsr.number"] = 1;
-      sort["a_mrgn_pct"] = -1;
-    } else if (query.field) {
-      sort[query.field] = query.order === "asc" ? 1 : -1;
-    }
-  } else {
-    if (query.field === "none") {
-      sort["e_mrgn_pct"] = -1;
-    } else if (query.field) {
-      sort[query.field] = query.order === "asc" ? 1 : -1;
-    }
-  }
+  sortingField(isAmazon, query, sort,euProgram);
   const pblshKey = isAmazon ? "a_pblsh" : "e_pblsh";
   aggregation.push(
     {
@@ -129,48 +116,9 @@ export async function GET(
       $limit: query.size,
     }
   );
-  if (isAmazon && productsWithNoBsr) {
-    aggregation.splice(2, 0, {
-      $addFields: {
-        primaryBsrExists: {
-          $cond: {
-            if: { $ifNull: ["$primaryBsr", false] },
-            then: true,
-            else: false,
-          },
-        },
-      },
-    });
-  }
-  aggregation.push(
-    {
-      $lookup: {
-        from: "users",
-        let: { productId: "$_id", target },
-        pipeline: [
-          { $match: { userId: user.$id } },
-          { $unwind: "$bookmarks" },
-          {
-            $match: {
-              $expr: {
-                $and: [
-                  { $eq: ["$bookmarks.productId", "$$productId"] },
-                  { $eq: ["$bookmarks.target", "$$target"] },
-                ],
-              },
-            },
-          },
-          { $project: { _id: 1 } },
-        ],
-        as: "isBookmarked",
-      },
-    },
-    {
-      $addFields: {
-        isBookmarked: { $gt: [{ $size: "$isBookmarked" }, 0] },
-      },
-    }
-  );
+  primaryBsrExistsField(aggregation, isAmazon, productsWithNoBsr);
+  
+  lookupUserId(aggregation, user, target);
   const mongo = await clientPool["NEXT_MONGO"];
   const productCol = mongo
     .db(process.env.NEXT_MONGO_DB)

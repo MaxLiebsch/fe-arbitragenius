@@ -12,6 +12,7 @@ import {
   BookmarkIcon,
   XMarkIcon,
   SparklesIcon,
+  ArrowsUpDownIcon
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
 
@@ -43,6 +44,13 @@ const navigation = [
     href: "/dashboard/my-deals",
     icon: BookmarkIcon,
     current: false,
+  },
+  {
+    name: "Amazon Flips",
+    icon: ArrowsUpDownIcon,
+    href: "/dashboard/amazon-flips",
+    current: false,
+    
   },
   {
     name: "Wholesale Analyse",

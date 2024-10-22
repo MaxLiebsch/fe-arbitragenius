@@ -1,7 +1,7 @@
 import { keepaProperties } from "./keepaProperties";
 
 export const resetAznProductQuery = () => {
-  let query:{ [key: string]: any } = {
+  let query: { [key: string]: any } = {
     $unset: {
       //standard properties
       a_pblsh: "",
@@ -16,6 +16,8 @@ export const resetAznProductQuery = () => {
       a_uprc: "",
       a_qty: "",
       a_orgn: "",
+      a_rating: "",
+      a_reviewcnt: "",
       a_hash: "",
       tax: "",
       a_mrgn: "",
@@ -25,7 +27,7 @@ export const resetAznProductQuery = () => {
       a_p_w_mrgn: "",
       a_p_w_mrgn_pct: "",
       a_p_mrgn: "",
-      a_vrfd: '',
+      a_vrfd: "",
       a_p_mrgn_pct: "",
       // lockup info
       info_prop: "",

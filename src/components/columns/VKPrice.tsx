@@ -11,8 +11,10 @@ import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
 const VKPrice = ({
   target,
   settings,
+  flip,
 }: {
   target: string;
+  flip?: boolean;
   settings: Settings;
 }): GridColDef<any> => {
   const { netto } = settings;
@@ -27,7 +29,7 @@ const VKPrice = ({
       return (
         <div className="relative w-32 flex flex-col !leading-tight">
           <Tooltip title="Verkaufspreis" placement="topLeft">
-            <div>VK {target === "a" ? "(∅ 30 Tage)" : "(Median)"}</div>
+            <div>VK {target === "a" ? !flip ?"(∅ 30 Tage)": "" : "(Median)"}</div>
           </Tooltip>
           <div className="text-xs">
             <span className="text-green-600">{netto ? "Netto" : "Brutto"}</span>
@@ -37,13 +39,18 @@ const VKPrice = ({
     },
     renderCell: (params) => {
       const { row: product, value } = params;
-      const { avg30_ahsprcs, a_useCurrPrice, a_prc } = product;
+      const { avg30_ahsprcs, avg30_ansprcs, a_prc, a_avg_prc,e_prc } = product;
+
+      const price = flip ? a_avg_prc : target === 'a' ? a_prc: e_prc;
+
+      const avg = roundToTwoDecimals(
+        (avg30_ahsprcs ? avg30_ahsprcs : avg30_ansprcs) / 100
+      );
 
       let dumping = false;
 
-      if (avg30_ahsprcs && avg30_ahsprcs > -1 && a_prc) {
-        const avg = roundToTwoDecimals(avg30_ahsprcs / 100);
-        if (avg - a_prc > 3 || avg / a_prc > 1.03) {
+      if (avg && avg > -1 && price) {
+        if (avg - price > 3 || avg / price > 1.03) {
           dumping = true;
         }
       }
@@ -54,7 +61,7 @@ const VKPrice = ({
       const targetUprc = product[`${target}_uprc` as keyof ModifiedProduct];
       return (
         <div className="flex flex-col">
-          {dumping ? (
+          {dumping && !flip ? (
             <div className="text-blue-600  flex flex-row items-center gap-1">
               <span className="h-6 w-6">
                 <ExclamationCircleIcon />
@@ -65,18 +72,18 @@ const VKPrice = ({
             <></>
           )}
           <div className={`${netto ? "" : "font-semibold text-green-600"}`}>
-            <span>{formatCurrency(parseFloat(params.value))} </span>
-            {target === "a" && avg30_ahsprcs && avg30_ahsprcs > 1 ? (
-              <span>{`(${formatter.format(avg30_ahsprcs / 100)})`} </span>
+            <span>{formatCurrency(parseFloat(price))} </span>
+            {!flip ? (target === "a" && avg && avg > 1 ? (
+              <span>{`(${formatter.format(avg)})`} </span>
             ) : median && target === "e" ? (
               <span>{`(${formatter.format(median)})`} </span>
-            ) : null}
+            ) : null):null}
           </div>
           {targetQty > 1 && (
             <span className="text-xs">({targetUprc} € / Stück)</span>
           )}
           <div className={`${netto ? "font-semibold text-green-600" : ""}`}>
-            {formatCurrency(calculationDeduction(parseFloat(value), true))}
+            {formatCurrency(calculationDeduction(parseFloat(price), true))}
           </div>
           {target === "e" && min && max ? (
             <>
