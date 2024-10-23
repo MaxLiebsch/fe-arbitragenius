@@ -10,6 +10,7 @@ import InfoField from "@/components/columns/InfoField";
 import MarginPct from "@/components/columns/MarginPct";
 import Margin from "@/components/columns/Margin";
 import VKPrice from "@/components/columns/VKPrice";
+import EKPrice from "@/components/columns/EKPrice";
 
 export const bookMarkColumns: (
   target: string,
@@ -43,68 +44,71 @@ export const bookMarkColumns: (
   addBookmark,
   removeBookmark,
   userRoles
-) => [
-  {
-    field: "nm",
-    headerName: "Produkte",
-    flex: 0.75,
-    renderCell: (params) => (
-      <InfoField
-        product={params.row}
-        target={target}
-        pagination={pagination}
-        userRoles={userRoles}
-      />
-    ),
-  },
-  VKPrice({ target, settings }),
-  {
-    field: "analytics",
-    disableColumnMenu: true,
-    width: 150,
-    headerName: "Preisanalyse",
-    renderCell: (params) => {
-      return params.row["ahstprcs"] ? (
-        <KeepaGraph product={params.row} />
-      ) : (
-        <></>
-      );
+) => {
+  return [
+    {
+      field: "nm",
+      headerName: "Produkte",
+      flex: 0.75,
+      renderCell: (params) => (
+        <InfoField
+          product={params.row}
+          target={target}
+          pagination={pagination}
+          userRoles={userRoles}
+        />
+      ),
     },
-  },
-  MarginPct({ target, settings }),
-  Margin({ target, settings }),
-  {
-    field: "isBookmarked",
-    headerName: "Gemerkt",
-    headerAlign: "center",
-    align: "center",
-    renderCell: (params) => (
-      <Checkbox
-        checked={params.row.isBookmarked}
-        onChange={(e) => {
-          if (e.target.checked) {
-            addBookmark({
-              body: {
-                target: target,
-                shop: params.row.shop,
-                productId: params.row._id,
-              },
-              page: pagination.page,
-              pageSize: pagination.pageSize,
-            });
-          } else {
-            removeBookmark({
-              body: {
-                target: target,
-                shop: params.row.shop,
-                productId: params.row._id,
-              },
-              page: pagination.page,
-              pageSize: pagination.pageSize,
-            });
-          }
-        }}
-      />
-    ),
-  },
-];
+    EKPrice({ settings }),
+    VKPrice({ target, settings }),
+    {
+      field: "analytics",
+      disableColumnMenu: true,
+      width: 150,
+      headerName: "Preisanalyse",
+      renderCell: (params) => {
+        return params.row["ahstprcs"] ? (
+          <KeepaGraph product={params.row} />
+        ) : (
+          <></>
+        );
+      },
+    },
+    MarginPct({ target, settings }),
+    Margin({ target, settings }),
+    {
+      field: "isBookmarked",
+      headerName: "Gemerkt",
+      headerAlign: "center",
+      align: "center",
+      renderCell: (params) => (
+        <Checkbox
+          checked={params.row.isBookmarked}
+          onChange={(e) => {
+            if (e.target.checked) {
+              addBookmark({
+                body: {
+                  target: target,
+                  shop: params.row.shop,
+                  productId: params.row._id,
+                },
+                page: pagination.page,
+                pageSize: pagination.pageSize,
+              });
+            } else {
+              removeBookmark({
+                body: {
+                  target: target,
+                  shop: params.row.shop,
+                  productId: params.row._id,
+                },
+                page: pagination.page,
+                pageSize: pagination.pageSize,
+              });
+            }
+          }}
+        />
+      ),
+    },
+  ];
+};

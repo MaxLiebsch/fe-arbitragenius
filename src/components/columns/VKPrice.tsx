@@ -2,11 +2,11 @@ import { ModifiedProduct } from "@/types/Product";
 import { Settings } from "@/types/Settings";
 import { calculationDeduction } from "@/util/calculateDeduction";
 import { formatCurrency, formatter } from "@/util/formatter";
-import { roundToTwoDecimals } from "@/util/roundToTwoDecimals";
 import { GridColDef } from "@mui/x-data-grid-premium";
 import { Tooltip } from "antd";
 import React from "react";
 import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
+import { getAvgPrice } from "@/util/getAvgPrice";
 
 const VKPrice = ({
   target,
@@ -29,7 +29,9 @@ const VKPrice = ({
       return (
         <div className="relative w-32 flex flex-col !leading-tight">
           <Tooltip title="Verkaufspreis" placement="topLeft">
-            <div>VK {target === "a" ? !flip ?"(∅ 30 Tage)": "" : "(Median)"}</div>
+            <div>
+              VK {target === "a" ? (!flip ? "(∅ 30 Tage)" : "") : "(Median)"}
+            </div>
           </Tooltip>
           <div className="text-xs">
             <span className="text-green-600">{netto ? "Netto" : "Brutto"}</span>
@@ -38,19 +40,30 @@ const VKPrice = ({
       );
     },
     renderCell: (params) => {
-      const { row: product, value } = params;
-      const { avg30_ahsprcs, avg30_ansprcs, a_prc, a_avg_prc,e_prc } = product;
+      const { row: product } = params;
+      const {
+        a_prc,
+        a_avg_prc,
+        e_prc,
+        shop,
+        a_useCurrPrice,
+      } = product;
+      let avgPrice = 0;
+      if (!a_useCurrPrice) {
+        avgPrice = getAvgPrice(product as ModifiedProduct);
+      } else {
+        avgPrice = a_avg_prc;
+      }
 
-      const price = flip ? a_avg_prc : target === 'a' ? a_prc: e_prc;
-
-      const avg = roundToTwoDecimals(
-        (avg30_ahsprcs ? avg30_ahsprcs : avg30_ansprcs) / 100
-      );
-
+      const price =
+      flip || shop === "flip" || !a_useCurrPrice
+      ? avgPrice
+      : a_prc
+    
       let dumping = false;
 
-      if (avg && avg > -1 && price) {
-        if (avg - price > 3 || avg / price > 1.03) {
+      if (avgPrice && avgPrice > -1 && price) {
+        if (avgPrice - price > 3 || avgPrice / price > 1.03) {
           dumping = true;
         }
       }
@@ -72,18 +85,20 @@ const VKPrice = ({
             <></>
           )}
           <div className={`${netto ? "" : "font-semibold text-green-600"}`}>
-            <span>{formatCurrency(parseFloat(price))} </span>
-            {!flip ? (target === "a" && avg && avg > 1 ? (
-              <span>{`(${formatter.format(avg)})`} </span>
-            ) : median && target === "e" ? (
-              <span>{`(${formatter.format(median)})`} </span>
-            ) : null):null}
+            <span>{formatCurrency(parseFloat(target === 'a'?price: e_prc))} </span>
+            {!flip || !a_useCurrPrice ? (
+              target === "a" && avgPrice && avgPrice > 1 ? (
+                <span>{`(${formatter.format(avgPrice)})`} </span>
+              ) : median && target === "e" ? (
+                <span>{`(${formatter.format(median)})`} </span>
+              ) : null
+            ) : null}
           </div>
           {targetQty > 1 && (
             <span className="text-xs">({targetUprc} € / Stück)</span>
           )}
           <div className={`${netto ? "font-semibold text-green-600" : ""}`}>
-            {formatCurrency(calculationDeduction(parseFloat(price), true))}
+            {formatCurrency(calculationDeduction(parseFloat(target === 'a'?price: e_prc), true))}
           </div>
           {target === "e" && min && max ? (
             <>

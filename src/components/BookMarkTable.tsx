@@ -20,6 +20,7 @@ export default function BookmarkTable(props: {
   target: string;
   loading: boolean;
 }) {
+  
   const { target, loading, products } = props;
   const [paginationModel, setPaginationModel, sortModel, setSortModel] = usePaginationAndSort(); 
   

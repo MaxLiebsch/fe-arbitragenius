@@ -1,6 +1,10 @@
 import { BookmarkSchema, Variables } from "@/types/Bookmarks";
 import { ModifiedProduct } from "@/types/Product";
-import { productQueryKey, salesQueryKey } from "@/util/queryKeys";
+import {
+  aznFlipsQueryKey,
+  productQueryKey,
+  salesQueryKey,
+} from "@/util/queryKeys";
 import {
   QueryClient,
   useMutation,
@@ -14,7 +18,7 @@ const invalidateProductQueries = async (
   const { body, page, pageSize } = variables;
   const { target, shop } = body;
   const queryKey = productQueryKey(target, shop, page, pageSize);
-  
+
   await queryClient.cancelQueries({ queryKey, exact: false });
   const previousQuery = queryClient.getQueriesData({
     queryKey,
@@ -68,6 +72,33 @@ const invalidateSalesQueries = async (
   }
 };
 
+const invalidateFlipQueries = async (
+  variables: Variables,
+  queryClient: QueryClient
+) => {
+  const queryKey = aznFlipsQueryKey(variables.page, variables.pageSize);
+  await queryClient.cancelQueries({ queryKey, exact: false });
+  const previousQuery = queryClient.getQueriesData({
+    queryKey,
+    exact: false,
+  });
+  if (previousQuery.length) {
+    const previousQueryData = previousQuery[0];
+    const products = (previousQueryData[1] as ModifiedProduct[]).map(
+      (product) => {
+        if (product._id === variables.body.productId) {
+          return {
+            ...product,
+            isBookmarked: true,
+          };
+        }
+        return product;
+      }
+    );
+    queryClient.setQueryData(previousQueryData[0], products);
+  }
+};
+
 export const invalidateProductQueriesOnSettled = async (
   variables: Variables,
   queryClient: QueryClient
@@ -84,6 +115,18 @@ export const invalidateProductQueriesOnSettled = async (
     exact: false,
   });
   queryClient.invalidateQueries({ queryKey: ["bookmarks"] });
+};
+
+export const invalidateAznFlipsQueriesOnSettled = async (
+  variables: Variables,
+  queryClient: QueryClient
+) => {
+  const queryKey = aznFlipsQueryKey(variables.page, variables.pageSize);
+  queryClient.invalidateQueries({
+    queryKey,
+    exact: false,
+  });
+  queryClient.invalidateQueries({ queryKey: ["flips"], exact: false });
 };
 
 export const invalidateSalesQueriesOnSettled = async (
@@ -122,6 +165,8 @@ export default function useBookMarkAdd() {
     onMutate: async (variables) => {
       if (variables.body.shop === "sales") {
         await invalidateSalesQueries(variables, queryClient);
+      } else if (variables.body.shop === "flip") {
+        await invalidateFlipQueries(variables, queryClient);
       } else {
         await invalidateProductQueries(variables, queryClient);
       }
@@ -129,6 +174,8 @@ export default function useBookMarkAdd() {
     onSettled: (data, error, variables, context) => {
       if (variables.body.shop === "sales") {
         invalidateSalesQueriesOnSettled(variables, queryClient);
+      } else if (variables.body.shop === "flip") {
+        invalidateAznFlipsQueriesOnSettled(variables, queryClient);
       } else {
         invalidateProductQueriesOnSettled(variables, queryClient);
       }

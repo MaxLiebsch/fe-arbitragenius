@@ -22,15 +22,17 @@ export const aznMarginFields = (settings: Settings, isWholesale?: boolean) => {
     });
   }
 
-  const isEuProgram = !euProgram ? "_p" : "";
 
+  const isEuProgram = !euProgram ? "_p" : "";
+  const isSommer = new Date().getMonth() < 9;
+  const winter = isSommer ? "" : "_w";
   if (!fba) {
     // If the user does not use Azn FBA, then the margin is calculated,
     // based on there settings for transport, storage, and preparation center
     query.push(
       {
         $addFields: {
-          [`a${isEuProgram}_mrgn`]: {
+          [`a${isEuProgram}${winter}_mrgn`]: {
             $round: [
               {
                 $subtract: [
@@ -84,12 +86,12 @@ export const aznMarginFields = (settings: Settings, isWholesale?: boolean) => {
       },
       {
         $addFields: {
-          [`a${isEuProgram}_mrgn_pct`]: {
+          [`a${isEuProgram}${winter}_mrgn_pct`]: {
             $round: [
               {
                 $multiply: [
                   {
-                    $divide: [`a${isEuProgram}_mrgn`, "$a_prc"],
+                    $divide: [`a${isEuProgram}${winter}_mrgn`, "$a_prc"],
                   },
                   100,
                 ],

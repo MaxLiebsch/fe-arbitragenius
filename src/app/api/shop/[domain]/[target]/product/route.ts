@@ -11,6 +11,7 @@ import { marginFields } from "@/util/productQueries/marginFields";
 import { monthlySoldField } from "@/util/productQueries/monthlySoldField";
 import { primaryBsrExistsField } from "@/util/productQueries/primaryBsrExistsField";
 import { productWithBsrFields } from "@/util/productQueries/productWithBsrFields";
+import { projectField } from "@/util/productQueries/projectField";
 import { settingsFromSearchQuery } from "@/util/productQueries/settingsFromSearchQuery";
 import { sortingField } from "@/util/productQueries/sortingField";
 import { targetVerification } from "@/util/productQueries/targetVerfication";
@@ -96,8 +97,8 @@ export async function GET(
   const sort: {
     [key: string]: SortDirection;
   } = {};
-  
-  sortingField(isAmazon, query, sort,euProgram);
+
+  sortingField(isAmazon, query, sort, euProgram);
   const pblshKey = isAmazon ? "a_pblsh" : "e_pblsh";
   aggregation.push(
     {
@@ -107,6 +108,7 @@ export async function GET(
         $and: findQuery,
       },
     },
+    projectField(target),
     {
       $sort: sort,
     },
@@ -123,7 +125,7 @@ export async function GET(
   const productCol = mongo
     .db(process.env.NEXT_MONGO_DB)
     .collection(PRODUCT_COL);
-    
+
   const res = await productCol.aggregate(aggregation).toArray();
 
   return Response.json(res);

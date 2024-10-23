@@ -5,7 +5,13 @@ import { GridColDef } from "@mui/x-data-grid-premium";
 import { Tooltip } from "antd";
 import React from "react";
 
-const EKPrice = ({ settings, flip }: { settings: Settings, flip?: boolean }): GridColDef<any> => {
+const EKPrice = ({
+  settings,
+  flip,
+}: {
+  settings: Settings;
+  flip?: boolean;
+}): GridColDef<any> => {
   const { netto } = settings;
   return {
     field: "prc",
@@ -25,9 +31,9 @@ const EKPrice = ({ settings, flip }: { settings: Settings, flip?: boolean }): Gr
     ),
     renderCell: (params) => {
       const { row: product, value } = params;
-      const { qty, uprc, a_prc, a_uprc } = product;
-      const price = flip ? a_prc : value;
-      const uprice = flip ? a_uprc : uprc;
+      const { qty, uprc, a_prc, a_uprc, shop } = product;
+      const price = flip || shop === "flip" ? a_prc : value;
+      const uprice = flip || shop === "flip" ? a_uprc : uprc;
       return (
         <div className="flex flex-col">
           <div className={`${netto ? "" : "font-semibold text-green-600"}`}>
@@ -35,9 +41,7 @@ const EKPrice = ({ settings, flip }: { settings: Settings, flip?: boolean }): Gr
           </div>
           {qty > 1 && <span className="text-xs">({uprice} € / Stück)</span>}
           <div className={`${netto ? "font-semibold text-green-600" : ""}`}>
-            {formatCurrency(
-              calculationDeduction(parseFloat(price), true)
-            )}
+            {formatCurrency(calculationDeduction(parseFloat(price), true))}
           </div>
         </div>
       );

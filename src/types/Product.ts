@@ -21,6 +21,7 @@ export type Product = {
   ctgry: string[] | string;
   mnfctr: string;
   nm: string;
+  sdmn: string;
   asin: string;
   e_prc: number;
   a_prc: number;
@@ -56,13 +57,12 @@ export type Prange = {
   min: number;
   max: number;
   median: number;
-
-}
+};
 
 export interface ModifiedProduct extends Product {
   bsr_1: number;
   bsr_cat_1: string;
-  e_pRange?: Prange
+  e_pRange?: Prange;
   e_uprc: number;
   e_vrfd?: Verification;
   a_vrfd?: Verification;
@@ -84,6 +84,8 @@ export interface ModifiedProduct extends Product {
   e_qty: number;
   a_qty: number;
   sdmn: string;
+  avg30_ahsprcs?: number;
+  avg30_ansprcs?: number;
   bsr_2: number;
   tax: number;
   bsr_cat_2: string;

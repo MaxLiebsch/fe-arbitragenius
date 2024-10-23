@@ -1,5 +1,4 @@
 import { Settings } from "@/types/Settings";
-import { endOfMonth, isWithinInterval, startOfYear } from "date-fns";
 
 export const aznFlipMarginFields = (
   settings: Settings,
@@ -7,11 +6,6 @@ export const aznFlipMarginFields = (
 ) => {
   const { a_tptStandard, a_strg, a_prepCenter, fba, euProgram } = settings;
   const transport = settings[a_tptStandard as "a_tptSmall"];
-
-  const strg_1_hy = isWithinInterval(new Date(), {
-    start: startOfYear(new Date()),
-    end: endOfMonth(new Date(new Date().getFullYear(), 8)),
-  });
 
   const match: any = {
     a_pblsh: true,
@@ -39,6 +33,8 @@ export const aznFlipMarginFields = (
   }
 
   const isEuProgram = !euProgram ? "_p" : "";
+  const isSommer = new Date().getMonth() < 9;
+  const winter = isSommer ? "" : "_w";
 
   query.push(
     {
@@ -211,7 +207,7 @@ export const aznFlipMarginFields = (
                       },
                       "$costs.tpt",
                       "$costs.varc",
-                      strg_1_hy ? "$costs.strg_1_hy" : "$costs.strg_2_hy",
+                      isSommer ? "$costs.strg_1_hy" : "$costs.strg_2_hy",
                       "$costs.azn",
                     ],
                   },

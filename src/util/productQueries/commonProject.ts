@@ -1,0 +1,17 @@
+export const commonProjectFields = {
+  prc: 1,
+  lnk: 1,
+  nm: 1,
+  eanList: 1,
+  s: 1,
+  ean: 1,
+  availUpdatedAt: 1,
+  qty:1,
+  createdAt: 1,
+  updatedAt: 1,
+  tax: 1,
+  shop:1,
+  _id: 1,
+  mnfctr: 1,
+  sdmn: 1,
+};

@@ -38,6 +38,7 @@ const InfoField = ({
     keepaUpdatedAt,
     salesRanks,
     availUpdatedAt,
+    updatedAt,
     dealAznUpdatedAt,
     dealEbyUpdatedAt,
     bsr: initialBsr,
@@ -53,7 +54,8 @@ const InfoField = ({
 
   const shopDomain = sdmn !== "sales" ? sdmn : shop !== undefined ? s : "";
 
-  const targetUpdatedAt = target === "a" ? dealAznUpdatedAt : dealEbyUpdatedAt;
+  const targetUpdatedAt = target === "a" ? dealAznUpdatedAt || updatedAt : dealEbyUpdatedAt || updatedAt;
+  const lastUpdated = availUpdatedAt || updatedAt;
 
   let bsr = initialBsr;
   let aznCategory = null;
@@ -73,9 +75,10 @@ const InfoField = ({
       );
     }
   }
+  const isFlip = shop === 'flip'
   return (
     <div className="flex flex-col divide-y p-1 w-full">
-      {nm && !flip && (
+      {nm && !flip && !isFlip && (
         <div className={`${nm?.length < 114 && "flex gap-1"}`}>
           <div className="flex flex-row gap-2 w-full">
             <div>{ImageRenderer(prefixLink(img, shopDomain))}</div>
@@ -89,9 +92,9 @@ const InfoField = ({
                 {LinkWrapper(lnk, nm, mnfctr)}
                 {qty > 1 && <div>({qty} Stück)</div>}
               </>
-              {availUpdatedAt && (
+              {lastUpdated && (
                 <time className="ml-auto mt-auto text-gray-500 text-xs">
-                  {formatDistanceToNow(parseISO(availUpdatedAt), {
+                  {formatDistanceToNow(parseISO(lastUpdated), {
                     locale: de,
                     addSuffix: true,
                   })}

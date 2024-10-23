@@ -37,3 +37,26 @@ export const resetEbyProductQuery = () => {
   };
   return query;
 };
+
+export const ebyProjectFields = {
+  e_pblsh: 1,
+  e_nm: 1,
+  e_lnk: 1,
+  e_cur: 1,
+  e_img: 1,
+  esin: 1,
+  dealEbyUpdatedAt: 1,
+  e_prc: 1,
+  e_uprc: 1,
+  e_qty: 1,
+  e_orgn: 1,
+  e_pRange: 1,
+  e_mrgn: 1,
+  e_mrgn_pct: 1,
+  e_ns_costs: 1,
+  e_ns_mrgn: 1,
+  e_ns_mrgn_pct: 1,
+  e_tax: 1,
+  ebyCategories: 1,
+  e_vrfd: 1,
+};

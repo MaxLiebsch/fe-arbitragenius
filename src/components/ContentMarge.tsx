@@ -3,11 +3,11 @@
 import { ModifiedProduct } from "@/types/Product";
 import { formatter } from "@/util/formatter";
 import { Input, Switch } from "antd";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import CopyToClipboard from "./CopyToClipboard";
 import { roundToTwoDecimals } from "@/util/roundToTwoDecimals";
 import { useUserSettings } from "@/hooks/use-settings";
-import { endOfMonth, isWithinInterval, startOfYear } from "date-fns";
+import { getAvgPrice } from "@/util/getAvgPrice";
 
 const ContentMarge = ({
   product,
@@ -19,21 +19,40 @@ const ContentMarge = ({
     | "a_prc"
     | "tax"
     | "mnfctr"
+    | "shop"
     | "nm"
     | "eanList"
+    | "a_useCurrPrice"
     | "a_qty"
-    | 'a_avg_prc'
+    | "avg90_ahsprcs"
+    | "avg90_ansprcs"
+    | "avg30_ahsprcs"
+    | "avg30_ansprcs"
+    | "qty"
+    | "a_avg_prc"
     | "qty"
   >;
 }) => {
-  
-  const { prc, a_prc, a_avg_prc } = product;
+  const {
+    prc,
+    a_prc,
+    a_avg_prc,
+    a_qty,
+    qty: buyQty,
+    a_useCurrPrice,
+  } = product;
+
+  let avgPrice = 0;
+  const useAvgPrice = a_useCurrPrice !== undefined && a_useCurrPrice === false;
+
+  if (useAvgPrice) {
+    avgPrice = getAvgPrice(product as ModifiedProduct);
+  }
 
   const isFlip = a_avg_prc !== undefined;
   const initBuyPrice = isFlip ? a_prc : prc;
-  const initSellPrice = isFlip ? a_avg_prc : a_prc;
+  const initSellPrice = isFlip || useAvgPrice ? avgPrice : a_prc;
 
-  
   const [settings, setSettings] = useUserSettings();
   const [transport, setTransportCosts] = useState(
     settings[settings.a_tptStandard as "a_tptSmall"]
@@ -42,29 +61,41 @@ const ContentMarge = ({
   const [prepCenterCosts, setPrepCenterCosts] = useState(settings.a_prepCenter);
   const [storageCosts, setStorageCosts] = useState(settings.a_strg ?? 0);
   const [costs, setCosts] = useState(product["costs"]);
-  const factor = product.a_qty / product.qty;
+  const factor = a_qty / buyQty;
   const [buyPrice, setBuyPrice] = useState(
     roundToTwoDecimals((initBuyPrice / 1.19) * factor)
   );
 
-  const strg_1_hy = isWithinInterval(new Date(), {
-    start: startOfYear(new Date()),
-    end: endOfMonth(new Date(new Date().getFullYear(), 8)),
-  });
+  const strg_1_hy = new Date().getMonth() < 9;
   const [sellPrice, setSellPrice] = useState(initSellPrice);
   const [qty, setQty] = useState(1);
-  const [period, setPeriod] = useState<"strg_1_hy" | "strg_2_hy">(strg_1_hy?"strg_1_hy": "strg_2_hy");
-
+  const [period, setPeriod] = useState<"strg_1_hy" | "strg_2_hy">(
+    strg_1_hy ? "strg_1_hy" : "strg_2_hy"
+  );
   const multiplier = initSellPrice / product["costs"].azn;
 
-  const tax = roundToTwoDecimals(sellPrice - sellPrice / (1 + product.tax / 100));
+  const tax = roundToTwoDecimals(
+    sellPrice - sellPrice / (1 + product.tax / 100)
+  );
+
+
+  useEffect(() => {
+    if (!isFlip && useAvgPrice) {
+      const provison = product["costs"].azn / a_prc;
+      setCosts({
+        ...product["costs"],
+        azn: roundToTwoDecimals(sellPrice * provison),
+      });
+    }
+  }, [product, isFlip, useAvgPrice, sellPrice, a_prc]);
 
   const externalCosts = fba
     ? costs.tpt + costs[period]
     : storageCosts + prepCenterCosts + transport;
 
   const earning =
-    (sellPrice - costs.azn - costs.varc - externalCosts - tax - buyPrice) * qty;
+    (sellPrice - costs.azn - costs.varc - externalCosts - tax - buyPrice) *
+    buyQty;
   // VK - Kosten - Steuern - EK / VK * 100
   const margin =
     ((sellPrice - costs.azn - costs.varc - externalCosts - tax - buyPrice) /
@@ -212,7 +243,7 @@ const ContentMarge = ({
         />
         <Input
           classNames={{ input: "!text-right" }}
-          value={qty}
+          value={buyQty}
           step={1}
           min={1}
           onChange={(e) => {

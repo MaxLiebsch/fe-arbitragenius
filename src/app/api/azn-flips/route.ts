@@ -12,6 +12,7 @@ import { marginFields } from "@/util/productQueries/marginFields";
 import { monthlySoldField } from "@/util/productQueries/monthlySoldField";
 import { primaryBsrExistsField } from "@/util/productQueries/primaryBsrExistsField";
 import { productWithBsrFields } from "@/util/productQueries/productWithBsrFields";
+import { projectField } from "@/util/productQueries/projectField";
 import { settingsFromSearchQuery } from "@/util/productQueries/settingsFromSearchQuery";
 import { sortingField } from "@/util/productQueries/sortingField";
 import { targetVerification } from "@/util/productQueries/targetVerfication";
@@ -106,6 +107,7 @@ export async function GET(
         $and: findQuery,
       },
     },
+    projectField('a'),
     {
       $sort: sort,
     },

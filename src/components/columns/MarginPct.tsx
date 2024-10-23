@@ -3,7 +3,6 @@ import { appendPercentage } from "@/util/formatter";
 import { roundToTwoDecimals } from "@/util/roundToTwoDecimals";
 import { GridColDef } from "@mui/x-data-grid-premium";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
-import { endOfMonth, isWithinInterval, startOfYear } from "date-fns";
 
 const MarginPct = ({
   target,
@@ -14,14 +13,12 @@ const MarginPct = ({
   flip?: boolean;
   settings: Settings;
 }): GridColDef<any> => {
-  const strg_1_hy = isWithinInterval(new Date(), {
-    start: startOfYear(new Date()),
-    end: endOfMonth(new Date(new Date().getFullYear(), 8)),
-  });
+  const strg_1_hy = new Date().getMonth() < 9
   const isWinter = strg_1_hy ? "" : "_w";
+  const isEurogram = !settings.euProgram ? "_p" : "";
   const isAzn = target === "a";
   return {
-    field: `${target}${isAzn && !flip ? isWinter : ""}_mrgn_pct`,
+    field: `${target}${isEurogram}${isAzn && !flip ? isWinter : ""}_mrgn_pct`,
     headerAlign: "left",
     width: 140,
     headerName: "Marge %",
@@ -33,14 +30,14 @@ const MarginPct = ({
     ),
     renderCell: (params) => {
       const { row: product } = params;
-      const { prc,a_prc, tax, a_useCurrPrice } = product;
+      const { prc,a_prc, tax, a_useCurrPrice,shop } = product;
       const price  = flip ? a_prc : prc;
       const netPrice = price / (1 + (tax ? tax : 19) / 100);
-      const margin = product[`${target}${isAzn && !flip ? isWinter : ""}_mrgn`];
-
+      const isFlip = shop === "flip";
+      const margin = product[`${target}${isEurogram}${isAzn && !flip && !isFlip ? isWinter : ""}_mrgn`];
       return (
         <div className="flex flex-col">
-          {a_useCurrPrice === false && !flip ? (
+          {a_useCurrPrice === false && !flip && !isFlip ? (
             <div className="flex flex-row gap-1 items-center justify-center text-amber-600">
               <span>
                 <ExclamationTriangleIcon className="h-6 w-6" />
