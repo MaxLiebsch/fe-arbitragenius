@@ -1,6 +1,7 @@
 export const commonProjectFields = {
   prc: 1,
   lnk: 1,
+  img: 1,
   nm: 1,
   eanList: 1,
   s: 1,
