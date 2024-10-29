@@ -1,4 +1,4 @@
-import { ModifiedProduct, Product } from "@/types/Product";
+import { ModifiedProduct} from "@/types/Product";
 import { Settings } from "@/types/Settings";
 import { productQueryKey } from "@/util/queryKeys";
 import { useQuery, useQueryClient } from "@tanstack/react-query";

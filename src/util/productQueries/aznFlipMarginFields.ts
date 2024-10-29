@@ -90,7 +90,7 @@ export const aznFlipMarginFields = (
     query.push(
       {
         $addFields: {
-          [`a${isEuProgram}_mrgn`]: {
+          [`a${isEuProgram}${winter}_mrgn`]: {
             $round: [
               {
                 $subtract: [
@@ -100,12 +100,7 @@ export const aznFlipMarginFields = (
                       // EK * (VK qty/ EK qty)  * divide (1 + MwSt) Steuern EK
                       {
                         $divide: [
-                          {
-                            $multiply: [
-                              "$a_prc",
-                              { $divide: ["$a_qty", "$qty"] },
-                            ],
-                          },
+                          "$a_prc",
                           {
                             $add: [
                               1,
@@ -146,12 +141,12 @@ export const aznFlipMarginFields = (
       },
       {
         $addFields: {
-          [`a${isEuProgram}_mrgn_pct`]: {
+          [`a${isEuProgram}${winter}_mrgn_pct`]: {
             $round: [
               {
                 $multiply: [
                   {
-                    $divide: [`$a${isEuProgram}_mrgn`, "$a_avg_prc"],
+                    $divide: [`$a${isEuProgram}${winter}_mrgn`, "$a_avg_prc"],
                   },
                   100,
                 ],
@@ -166,7 +161,7 @@ export const aznFlipMarginFields = (
     query.push(
       {
         $addFields: {
-          [`a${isEuProgram}_mrgn`]: {
+          [`a${isEuProgram}${winter}_mrgn`]: {
             $round: [
               {
                 $subtract: [
@@ -175,12 +170,7 @@ export const aznFlipMarginFields = (
                     $add: [
                       {
                         $divide: [
-                          {
-                            $multiply: [
-                              "$a_prc",
-                              { $divide: ["$a_qty", "$qty"] },
-                            ],
-                          },
+                          "$a_prc",
                           {
                             $add: [
                               1,
@@ -220,12 +210,12 @@ export const aznFlipMarginFields = (
       },
       {
         $addFields: {
-          [`a${isEuProgram}_mrgn_pct`]: {
+          [`a${isEuProgram}${winter}_mrgn_pct`]: {
             $round: [
               {
                 $multiply: [
                   {
-                    $divide: [`$a${isEuProgram}_mrgn`, "$a_avg_prc"],
+                    $divide: [`$a${isEuProgram}${winter}_mrgn`, "$a_avg_prc"],
                   },
                   100,
                 ],

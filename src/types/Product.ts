@@ -11,7 +11,6 @@ export interface EbyCategory {
 }
 
 export type Product = {
-  ean: string;
   _id: string;
   bsr: BSR[];
   keepaUpdatedAt: string;

@@ -1,13 +1,15 @@
 "use server";
 import DailySalesStats from "@/components/DailySalesStats";
-import PasswordPrompt from "@/components/PasswordPrompt";
+import KeepaTasks from "@/components/KeepaTasks";
+import ProcessStats from "@/components/ProcessStats";
 import ScrapeShopStatsWeek from "@/components/ScrapeShopStatsWeek";
 import Terminal from "@/components/Terminal";
 import { getLoggedInUser } from "@/server/appwrite";
 import clientPool from "@/server/mongoPool";
+import { IProcessStats } from "@/types/ProcessStats";
 import { Task } from "@/types/tasks";
 import { Card } from "antd";
-import { format, parseISO } from "date-fns";
+import { format } from "date-fns";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import React from "react";
@@ -38,6 +40,12 @@ const Page = async () => {
     .collection("metadata")
     .find({ crawlerId: { $exists: false } })
     .toArray();
+
+  const processStats = (await mongo
+    .db(process.env.NEXT_MONOGO_CRAWLER_DATA)
+    .collection("stats")
+    .aggregate([{ $match: { name: "processStats" } }, { $project: { _id: 0 } }])
+    .toArray()) as IProcessStats[];
 
   const tasks = await mongo
     .db(process.env.NEXT_MONOGO_CRAWLER_DATA)
@@ -163,9 +171,15 @@ const Page = async () => {
     (task) => task.type === "CRAWL_EAN"
   )!.progress;
 
-  const keepaTasks = tasks.filter(
-    (task) => task.type === "KEEPA_NORMAL" || task.type === "KEEPA_EAN"
-  );
+  const keepaTasks = tasks
+    .filter((task) => task.type === "KEEPA_NORMAL" || task.type === "KEEPA_EAN")
+    .reduce<any[]>((acc, task) => {
+      //@ts-ignore
+      task._id = task._id.toString();
+      acc.push(task as unknown as Task);
+
+      return acc;
+    }, []);
   const plainTasks = tasks.reduce<Task[]>((acc, task) => {
     if (task.type === "CRAWL_SHOP") {
       //@ts-ignore
@@ -252,42 +266,50 @@ const Page = async () => {
             {scraper.length} Scraper
           </h3>
           <div className="grid grid-cols-4 gap-2 w-full md:w-[calc(100vw-400px)] overflow-x-auto">
-            {activeCrawler.sort((a: any, b: any) => a.task.localeCompare(b.task)).map((_) => (
-              <Card
-                styles={{ body: { paddingLeft: 10, paddingRight: 10, paddingBottom: 10} }}
-                key={_.name}
-                style={{ minWidth: 250, position: "relative" }}
-              >
-                <span className="font-semibold absolute left-2 top-2">
-                  {_.active ? (
-                    <span className="text-green-500">Active</span>
-                  ) : (
-                    <span className="text-red-500">Inactive</span>
-                  )}
-                </span>
-                <div className="flex flex-col">
-                  <div className="flex flex-row items-center">
-                    <h3 className="text-md">{_.name}</h3>
-                  </div>
-                  <p></p>
-                  <div className="absolute top-2 right-2">
-                    <Terminal ip={_.ip} name={_.crawlerId} />
-                  </div>
-                  <div className="text-lg">
-                    {_.task ? `${_.task}` : ""}
-                  </div>
-                  <div className="grid grid-cols-4">
-                    <p>Usage: </p>
-                    <div className="col-span-3">
-                      <p>Last 7 days: {_.lastSevenDays}</p>
-                      <p>Today: {_.today}</p>
+            {activeCrawler
+              .sort((a: any, b: any) => a.task.localeCompare(b.task))
+              .map((_) => (
+                <Card
+                  styles={{
+                    body: {
+                      paddingLeft: 10,
+                      paddingRight: 10,
+                      paddingBottom: 10,
+                    },
+                  }}
+                  key={_.name}
+                  style={{ minWidth: 250, position: "relative" }}
+                >
+                  <span className="font-semibold absolute left-2 top-2">
+                    {_.active ? (
+                      <span className="text-green-500">Active</span>
+                    ) : (
+                      <span className="text-red-500">Inactive</span>
+                    )}
+                  </span>
+                  <div className="flex flex-col">
+                    <div className="flex flex-row items-center">
+                      <h3 className="text-md">{_.name}</h3>
+                    </div>
+                    <p></p>
+                    <div className="absolute top-2 right-2">
+                      <Terminal ip={_.ip} name={_.crawlerId} />
+                    </div>
+                    <div className="text-lg">{_.task ? `${_.task}` : ""}</div>
+                    <div className="grid grid-cols-4">
+                      <p>Usage: </p>
+                      <div className="col-span-3">
+                        <p>Last 7 days: {_.lastSevenDays}</p>
+                        <p>Today: {_.today}</p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </Card>
-            ))}
+                </Card>
+              ))}
           </div>
         </li>
+        {/* PROCESS STATS */}
+        <ProcessStats processStats={processStats[0]} />
         {/* INFRASTRUCTURE */}
         <li>
           <h3 className="text-base font-semibold leading-6 text-gray-900 flex flex-row space-x-1 items-center">
@@ -318,34 +340,7 @@ const Page = async () => {
             ) : (
               <></>
             )}
-            <div className="grid grid-cols-2">
-              {keepaTasks.map((_) => (
-                <div key={_.id}>
-                  <p>
-                    {_.type === "KEEPA_NORMAL"
-                      ? "Weekly Updates"
-                      : "Ean Updates"}
-                  </p>
-                  <div key={`keepa-${_.id}`} className="grid grid-cols-3 gap-2">
-                    {_?.progress &&
-                      _.progress
-                        .sort((a: any, b: any) => a.d.localeCompare(a.d))
-                        .map(
-                          (progressPerShop: { d: string; pending: number }) => (
-                            <div key={`crawl-azn-${_.id}-${progressPerShop.d}`}>
-                              <span>{progressPerShop.d}: </span>
-                              <span>
-                                {progressPerShop.pending > 0
-                                  ? `${progressPerShop.pending} pending`
-                                  : "no pending"}
-                              </span>
-                            </div>
-                          )
-                        )}
-                  </div>
-                </div>
-              ))}
-            </div>
+            <KeepaTasks keepaTasks={keepaTasks} />
           </div>
         </li>
         {/* CRAWL SHOPS */}
