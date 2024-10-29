@@ -6,6 +6,7 @@ export interface IProcessStats {
   lookupInfo: LookupInfo;
   queryEansOnEby: QueryEansOnEby;
   scrapeEan: ScrapeEan;
+  updatedAt: string;
 }
 
 export interface Last24hStats {
