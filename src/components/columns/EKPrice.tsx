@@ -31,15 +31,21 @@ const EKPrice = ({
     ),
     renderCell: (params) => {
       const { row: product, value } = params;
-      const { qty, uprc, a_prc, a_uprc, shop } = product;
+      const { qty, a_qty, uprc, a_prc, a_uprc, shop } = product;
       const price = flip || shop === "flip" ? a_prc : value;
       const uprice = flip || shop === "flip" ? a_uprc : uprc;
+      const currQty = flip || shop === "flip" ? a_qty : qty;
       return (
         <div className="flex flex-col">
           <div className={`${netto ? "" : "font-semibold text-green-600"}`}>
             {formatCurrency(parseFloat(price))}
           </div>
-          {qty > 1 && <span className="text-xs">({uprice} € / Stück)</span>}
+          {currQty > 1 && (
+            <>
+            <span className="text-xs">({formatCurrency(uprice)} / Stück)</span>
+            <span className="text-xs">{currQty} Stück</span>
+            </>
+          )}
           <div className={`${netto ? "font-semibold text-green-600" : ""}`}>
             {formatCurrency(calculationDeduction(parseFloat(price), true))}
           </div>

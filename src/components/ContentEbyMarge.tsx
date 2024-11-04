@@ -92,8 +92,7 @@ const ContentEbyMarge = ({
     settings[settings.tptStandard as keyof Settings] as number
   );
   const earning =
-    (sellPrice - costs - storageCosts - transportCosts - taxCosts - buyPrice) *
-    qty;
+    (sellPrice - costs - storageCosts - transportCosts - taxCosts - buyPrice)
   const margin =
     ((sellPrice - costs - storageCosts - transportCosts - taxCosts - buyPrice) /
       sellPrice) *
@@ -258,7 +257,7 @@ const ContentEbyMarge = ({
           type="number"
           addonBefore="Einkaufspreis € (Netto)"
         />
-        <Input
+        {/* <Input
           classNames={{ input: "!text-right" }}
           value={qty}
           step={1}
@@ -268,7 +267,7 @@ const ContentEbyMarge = ({
           }}
           type="number"
           addonBefore="Geschätzter Umsatz"
-        />
+        /> */}
       </div>
       <div>
         <h3 className="font-semibold leading-6 mt-2 mb-1 text-gray-900 flex flex-row space-x-1 items-center">

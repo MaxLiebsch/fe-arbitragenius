@@ -66,6 +66,8 @@ export interface ModifiedProduct extends Product {
   e_vrfd?: Verification;
   a_vrfd?: Verification;
   e_totalOfferCount?: number;
+  drops30?:number,
+  drops90?:number,
   isBookmarked: boolean;
   a_avg_prc?: number;
   a_uprc: number;

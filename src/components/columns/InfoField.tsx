@@ -42,6 +42,8 @@ const InfoField = ({
     dealAznUpdatedAt,
     dealEbyUpdatedAt,
     bsr: initialBsr,
+    drops30,
+    drops90,
     monthlySold,
     qty,
     shop,
@@ -54,7 +56,10 @@ const InfoField = ({
 
   const shopDomain = sdmn !== "sales" ? sdmn : shop !== undefined ? s : "";
 
-  const targetUpdatedAt = target === "a" ? dealAznUpdatedAt || updatedAt : dealEbyUpdatedAt || updatedAt;
+  const targetUpdatedAt =
+    target === "a"
+      ? dealAznUpdatedAt || updatedAt
+      : dealEbyUpdatedAt || updatedAt;
   const lastUpdated = availUpdatedAt || updatedAt;
 
   let bsr = initialBsr;
@@ -75,7 +80,7 @@ const InfoField = ({
       );
     }
   }
-  const isFlip = shop === 'flip'
+  const isFlip = shop === "flip";
   return (
     <div className="flex flex-col divide-y p-1 w-full">
       {nm && !flip && !isFlip && (
@@ -88,10 +93,7 @@ const InfoField = ({
                   {shop!.slice(0, 1).toUpperCase() + shop!.slice(1)}:{" "}
                 </span>
               )}
-              <>
-                {LinkWrapper(lnk, nm, mnfctr)}
-                {qty > 1 && <div>({qty} Stück)</div>}
-              </>
+              <>{LinkWrapper(lnk, nm, mnfctr)}</>
               {lastUpdated && (
                 <time className="ml-auto mt-auto text-gray-500 text-xs">
                   {formatDistanceToNow(parseISO(lastUpdated), {
@@ -109,12 +111,7 @@ const InfoField = ({
           <div className="flex flex-row gap-2 w-full">
             <div>{ImageRenderer(prefixLink(targetImg, s))}</div>
             <div className="flex flex-col w-full">
-              <div>
-                {LinkWrapper(targetLink, targetName)}
-                {targetQty > 1 && (
-                  <div className="inline">({targetQty} Stück)</div>
-                )}
-              </div>
+              <div>{LinkWrapper(targetLink, targetName)}</div>
               {targetUpdatedAt && (
                 <time className="ml-auto mt-auto text-gray-500 text-xs">
                   {formatDistanceToNow(parseISO(targetUpdatedAt), {
@@ -183,19 +180,26 @@ const InfoField = ({
         ) : (
           <></>
         )}
-        {target === "a" && monthlySold && (
+        {target === "a" && (monthlySold || drops30 || drops90) && (
           <div className="flex flex-row gap-2">
-            {/* eigene Reihe */}
-            <span>
-              {monthlySold ? (
-                <span>
-                  <span className="font-semibold">Monatliche Sales:</span>
-                  <span className="text-md"> {monthlySold}</span>
-                </span>
-              ) : (
-                "Keine Sales verfügbar"
-              )}
-            </span>
+            {monthlySold && (
+              <span>
+                <span className="font-semibold">Monatliche Sales:</span>
+                <span className="text-md"> {monthlySold}</span>
+              </span>
+            )}
+            {drops30 && (
+              <span>
+                <span className="font-semibold">Keepa Drops (30):</span>
+                <span className="text-md"> {drops30}</span>
+              </span>
+            )}
+            {drops90 && (
+              <span>
+                <span className="font-semibold">Keepa Drops (90):</span>
+                <span className="text-md"> {drops90}</span>
+              </span>
+            )}
           </div>
         )}
       </>

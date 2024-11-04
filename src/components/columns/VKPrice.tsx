@@ -88,14 +88,17 @@ const VKPrice = ({
             <span>{formatCurrency(parseFloat(target === 'a'?price: e_prc))} </span>
             {!flip || !a_useCurrPrice ? (
               target === "a" && avgPrice && avgPrice > 1 ? (
-                <span>{`(${formatter.format(avgPrice)})`} </span>
+                <span>{`(∅ ${formatter.format(avgPrice)})`} </span>
               ) : median && target === "e" ? (
                 <span>{`(${formatter.format(median)})`} </span>
               ) : null
             ) : null}
           </div>
-          {targetQty > 1 && (
-            <span className="text-xs">({targetUprc} € / Stück)</span>
+          {targetQty > 1 && ( 
+            <>
+            <span className="text-xs">({formatCurrency(targetUprc)} / Stück)</span>
+            <span className='text-xs'>{targetQty} Stück</span>
+            </>
           )}
           <div className={`${netto ? "font-semibold text-green-600" : ""}`}>
             {formatCurrency(calculationDeduction(parseFloat(target === 'a'?price: e_prc), true))}

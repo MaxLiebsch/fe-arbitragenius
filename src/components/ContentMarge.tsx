@@ -33,14 +33,7 @@ const ContentMarge = ({
     | "qty"
   >;
 }) => {
-  const {
-    prc,
-    a_prc,
-    a_avg_prc,
-    a_qty,
-    qty: buyQty,
-    a_useCurrPrice,
-  } = product;
+  const { prc, a_prc, a_avg_prc, a_qty, qty: buyQty, a_useCurrPrice } = product;
 
   let avgPrice = 0;
   const useAvgPrice = a_useCurrPrice !== undefined && a_useCurrPrice === false;
@@ -75,9 +68,8 @@ const ContentMarge = ({
   const multiplier = initSellPrice / product["costs"].azn;
 
   const tax = roundToTwoDecimals(
-    sellPrice - sellPrice / (1 + product.tax / 100)
+    sellPrice - sellPrice / (1 + (product.tax || 19) / 100)
   );
-
 
   useEffect(() => {
     if (!isFlip && useAvgPrice) {
@@ -94,8 +86,7 @@ const ContentMarge = ({
     : storageCosts + prepCenterCosts + transport;
 
   const earning =
-    (sellPrice - costs.azn - costs.varc - externalCosts - tax - buyPrice) *
-    buyQty;
+    (sellPrice - costs.azn - costs.varc - externalCosts - tax - buyPrice) 
   // VK - Kosten - Steuern - EK / VK * 100
   const margin =
     ((sellPrice - costs.azn - costs.varc - externalCosts - tax - buyPrice) /
@@ -241,9 +232,9 @@ const ContentMarge = ({
           type="number"
           addonBefore="Einkaufspreis € (Netto)"
         />
-        <Input
+        {/* <Input
           classNames={{ input: "!text-right" }}
-          value={buyQty}
+          value={qty}
           step={1}
           min={1}
           onChange={(e) => {
@@ -251,7 +242,7 @@ const ContentMarge = ({
           }}
           type="number"
           addonBefore="Geschätzter Umsatz"
-        />
+        /> */}
       </div>
       <div>
         <h3 className="font-semibold leading-6 mt-2 mb-1 text-gray-900 flex flex-row space-x-1 items-center">

@@ -77,6 +77,8 @@ export const aznProjectFields = {
   a_p_mrgn: 1,
   a_vrfd: 1,
   a_p_mrgn_pct: 1,
+  drops30: 1,
+  drops90: 1,
   categories: 1,
   numberOfItems: 1,
   availabilityAmazon: 1,

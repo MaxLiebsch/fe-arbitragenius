@@ -3,10 +3,8 @@ import { getLoggedInUser } from "@/server/appwrite";
 import clientPool from "@/server/mongoPool";
 import { Settings } from "@/types/Settings";
 import { aznMarginFields } from "@/util/productQueries/aznMarginFields";
-import { bsrAddFields } from "@/util/productQueries/bsrAddFields";
 import { ebyMarginFields } from "@/util/productQueries/ebyMarginFields";
 import { settingsFromSearchQuery } from "@/util/productQueries/settingsFromSearchQuery";
-import { log } from "console";
 import { SortDirection } from "mongodb";
 import { NextRequest } from "next/server";
 
