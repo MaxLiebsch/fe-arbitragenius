@@ -31,12 +31,10 @@ export type Product = {
   qty_v?: number;
   createdAt: string;
   updatedAt: string;
-  e_lnk: string;
   e_img: string;
   e_nm: string;
   e_mrgn: number;
   e_mrgn_pct: number;
-  a_lnk: string;
   a_img: string;
   a_nm: string;
   a_mrgn: number;

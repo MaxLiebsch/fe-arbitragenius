@@ -27,13 +27,11 @@ export interface WholeSaleProduct {
 
 export interface ProcessedProduct extends WholeSaleProduct {
   a_img?: any;
-  a_lnk?: string;
   a_mrgn?: number;
   a_mrgn_pct?: number;
   a_nm?: string;
   a_prc?: number;
   e_img?: any;
-  e_lnk?: string;
   e_mrgn?: number;
   e_mrgn_pct?: number;
   e_nm?: string;
@@ -47,5 +45,5 @@ export interface ProcessedProduct extends WholeSaleProduct {
 
 export type ProductRow = Pick<
   ProcessedProduct,
-  "ean" | "nm" | "prc" | "category" | "a_lnk" | "a_nm"
+  "ean" | "nm" | "prc" | "category" | "a_nm"
 > & { id: number; reference?: string };

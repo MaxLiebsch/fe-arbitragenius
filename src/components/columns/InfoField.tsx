@@ -12,6 +12,7 @@ import { formatDistanceToNow, parseISO } from "date-fns";
 import { parseSalesRank } from "@/util/parseSalesRank";
 import { de } from "date-fns/locale";
 import { aznCategoryMapping } from "@/constant/constant";
+import { targetLinkBuilder } from "@/util/targetLinkBuilder";
 
 const InfoField = ({
   product,
@@ -49,10 +50,10 @@ const InfoField = ({
     shop,
     ebyCategories,
     [`${target}_nm` as "a_nm" | "e_nm"]: targetName,
-    [`${target}_lnk` as "a_lnk" | "e_lnk"]: targetLink,
-    [`${target}_qty` as "a_qty" | "e_qty"]: targetQty,
     [`${target}_img` as "a_img" | "e_img"]: targetImg,
   } = product;
+
+  const targetLink = targetLinkBuilder(target, product)
 
   const shopDomain = sdmn !== "sales" ? sdmn : shop !== undefined ? s : "";
 

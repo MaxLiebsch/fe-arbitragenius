@@ -4,7 +4,6 @@ export const resetEbyProductQuery = () => {
       //standard properties
       e_pblsh: "",
       e_nm: "",
-      e_lnk: "",
       e_cur: "",
       e_img: "",
       esin: "",
@@ -41,7 +40,6 @@ export const resetEbyProductQuery = () => {
 export const ebyProjectFields = {
   e_pblsh: 1,
   e_nm: 1,
-  e_lnk: 1,
   e_cur: 1,
   e_img: 1,
   esin: 1,

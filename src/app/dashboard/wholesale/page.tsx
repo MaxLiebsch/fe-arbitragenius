@@ -19,6 +19,7 @@ import Spinner from "@/components/Spinner";
 import TaskCard from "@/components/TaskCard";
 import * as XLSX from "xlsx";
 import { WholeSaleTarget } from "@/types/tasks";
+import { targetLinkBuilder } from "@/util/targetLinkBuilder";
 
 const { Dragger } = Upload;
 
@@ -81,7 +82,7 @@ const columns: GridColDef<ProductRow>[] = [
         <div className="flex flex-col divide-y p-1">
           <div>{LinkWrapper("https://arbispotter.com", params.row.nm, "")}</div>
           Zielshop:
-          {LinkWrapper(params.row[`a_lnk`], params.row[`a_nm`])}
+          {LinkWrapper(targetLinkBuilder("a", params.row), params.row[`a_nm`])}
           {/* {target === "a" && params.row["bsr"] && params.row["bsr"].length ? (
             <div className="">
               <span className="font-semibold">BSR:</span>
