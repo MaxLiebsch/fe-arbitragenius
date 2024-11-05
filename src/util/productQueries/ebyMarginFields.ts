@@ -1,6 +1,10 @@
 import { Settings } from "@/types/Settings";
 
-export const ebyMarginFields = (settings: Settings, isWholeSale?: boolean) => {
+export const ebyMarginFields = (
+  settings: Settings,
+  sdmn?: string,
+  isWholeSale?: boolean
+) => {
   const { tptStandard, strg, e_prepCenter, e_cats } = settings;
   const transport = settings[tptStandard as "tptSmall"];
   const match: any = {
@@ -8,6 +12,10 @@ export const ebyMarginFields = (settings: Settings, isWholeSale?: boolean) => {
     e_prc: { $gt: 0 },
     e_uprc: { $gt: 0 },
   };
+
+  if (sdmn) {
+    match.sdmn = sdmn;
+  }
 
   if (e_cats.length > 0 && e_cats[0] !== 0) {
     match["ebyCategories.id"] = { $in: e_cats };

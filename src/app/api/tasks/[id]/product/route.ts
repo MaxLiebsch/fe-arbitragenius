@@ -44,9 +44,9 @@ export async function GET(
   const aggregation = [];
 
   if (isAmazon) {
-    aggregation.push(...aznMarginFields(customerSettings, true));
+    aggregation.push(...aznMarginFields(customerSettings, WHOLESALE_COL, true));
   } else {
-    aggregation.push(...ebyMarginFields(customerSettings, true));
+    aggregation.push(...ebyMarginFields(customerSettings, WHOLESALE_COL, true));
   }
 
   const mongo = await clientPool["NEXT_MONGO_ADMIN"];

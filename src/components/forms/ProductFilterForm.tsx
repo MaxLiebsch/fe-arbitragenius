@@ -23,7 +23,6 @@ import BuyBox from "./productFilterFields/BuyBox";
 import ShowProductsWithBsr from "./productFilterFields/ShowProductsWithBsr";
 import EbyTransport from "./productFilterFields/EbyTransport";
 import CategorySelect from "./productFilterFields/CategorySelect";
-import Spinner from "../Spinner";
 
 const ProductFilterForm = ({ layout = "slim" }: { layout?: Layout }) => {
   const [settings, setUserSettings] = useUserSettings();

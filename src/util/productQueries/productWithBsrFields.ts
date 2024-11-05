@@ -4,34 +4,19 @@ export function productWithBsrFields(
   findQuery: any[],
   customerSettings: Settings
 ) {
-  const {productsWithNoBsr, maxPrimaryBsr, maxSecondaryBsr} = customerSettings;
+  const { productsWithNoBsr, maxPrimaryBsr } = customerSettings;
   if (productsWithNoBsr) {
-    findQuery.push(
-      {
-        $or: [
-          { primaryBsr: { $eq: null } },
-          { "primaryBsr.number": { $lte: maxPrimaryBsr } },
-        ],
-      },
-      {
-        $or: [
-          { secondaryBsr: { $eq: null } },
-          { "secondaryBsr.number": { $lte: maxSecondaryBsr } },
-        ],
-      }
-    );
+    findQuery.push({
+      $or: [{ bsr: { $size: 0 } }, { "bsr.number": { $lte: maxPrimaryBsr } }],
+    });
   } else {
-    findQuery.push(
-      {
-        $expr: { $gt: [{ $size: "$bsr" }, 0] },
-      },
-      { "primaryBsr.number": { $lte: maxPrimaryBsr } },
-      {
-        $or: [
-          { "secondaryBsr.number": { $exists: false } },
-          { "secondaryBsr.number": { $lte: maxSecondaryBsr } },
-        ],
-      }
-    );
+    findQuery.push({
+      $and: [
+        {
+          bsr: { $size: 1 },
+        },
+        { "bsr.number": { $lte: maxPrimaryBsr } },
+      ],
+    });
   }
 }

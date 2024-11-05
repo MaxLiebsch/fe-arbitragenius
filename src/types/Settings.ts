@@ -20,7 +20,6 @@ export const SettingsSchema = z.object({
   a_prepCenter: z.number(),
   e_prepCenter: z.number(),
   e_cats: z.array(z.number()),
-  maxSecondaryBsr: z.number(),
   maxPrimaryBsr: z.number(),
   productsWithNoBsr: z.boolean(),
   tptSmall: z.number(),

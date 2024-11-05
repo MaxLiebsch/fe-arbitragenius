@@ -57,7 +57,7 @@ const AdminEbyCorrectionForm = ({
       }}
     >
       <div className="flex flex-col gap-1 my-2 relative">
-        <ScoreAndMatch {...e_vrfd}/>
+        <ScoreAndMatch vrfd={e_vrfd} nmV={product.nm_v} qtyV={product.qty_v} />
         <div className="absolute top-0 right-0">
           <Form.Item
             shouldUpdate

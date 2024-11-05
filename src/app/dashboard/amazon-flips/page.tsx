@@ -29,6 +29,7 @@ const Page = () => {
 
   const productCountQuery = useAznFlipsCount(target);
   const productQuery = useAznFlipsProducts(paginationModel, sortModel, target);
+  console.log('productQuery:', productQuery?.data)
 
   const bookMarkMutation = useBookMarkAdd();
   const bookMarkDeleteMutation = useBookMarkRemove();

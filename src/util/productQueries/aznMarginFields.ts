@@ -1,10 +1,15 @@
 import { Settings } from "@/types/Settings";
 
-export const aznMarginFields = (settings: Settings, isWholesale?: boolean) => {
+export const aznMarginFields = (
+  settings: Settings,
+  sdmn: string,
+  isWholesale?: boolean
+) => {
   const { a_tptStandard, a_strg, a_prepCenter, fba, euProgram } = settings;
   const transport = settings[a_tptStandard as "a_tptSmall"];
 
   const match: any = {
+    sdmn, // shop domain
     a_pblsh: true,
     a_prc: { $gt: 0 },
     a_uprc: { $gt: 0 },
@@ -21,7 +26,6 @@ export const aznMarginFields = (settings: Settings, isWholesale?: boolean) => {
       $match: match,
     });
   }
-
 
   const isEuProgram = !euProgram ? "_p" : "";
   const isSommer = new Date().getMonth() < 9;

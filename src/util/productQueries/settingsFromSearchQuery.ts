@@ -21,7 +21,6 @@ export function settingsFromSearchQuery(searchParams: URLSearchParams) {
     tptLarge: Number(searchParams.get("tptLarge")) || 6.95,
     strg: Number(searchParams.get("strg")) || 0,
     tptStandard: searchParams.get("tptStandard") || "tptMiddle",
-    maxSecondaryBsr: Number(searchParams.get("maxSecondaryBsr")) || 1000000,
     productsWithNoBsr: searchParams.get("productsWithNoBsr") === "true",
     netto: searchParams.get("netto") === "true",
     monthlySold: Number(searchParams.get("monthlySold")) || 0,

@@ -1,16 +1,16 @@
-import { PRODUCT_COL, SALES_COL } from "@/constant/constant";
+import { PRODUCT_COL } from "@/constant/constant";
 import { getLoggedInUser } from "@/server/appwrite";
+import { getProductCol } from "@/server/mongo";
 import clientPool from "@/server/mongoPool";
-import { BuyBox, Settings } from "@/types/Settings";
+import { Settings } from "@/types/Settings";
 import { aznFlipMarginFields } from "@/util/productQueries/aznFlipMarginFields";
-import { aznMarginFields } from "@/util/productQueries/aznMarginFields";
-import { bsrAddFields } from "@/util/productQueries/bsrAddFields";
+
 import { buyBoxFields } from "@/util/productQueries/buyBox";
 import { ebyMarginFields } from "@/util/productQueries/ebyMarginFields";
 import { lookupUserId } from "@/util/productQueries/lookupUserId";
 import { marginFields } from "@/util/productQueries/marginFields";
 import { monthlySoldField } from "@/util/productQueries/monthlySoldField";
-import { primaryBsrExistsField } from "@/util/productQueries/primaryBsrExistsField";
+
 import { productWithBsrFields } from "@/util/productQueries/productWithBsrFields";
 import { projectField } from "@/util/productQueries/projectField";
 import { settingsFromSearchQuery } from "@/util/productQueries/settingsFromSearchQuery";
@@ -62,7 +62,6 @@ export async function GET(
 
   const findQuery: any[] = [];
   if (isAmazon) {
-    aggregation.push(bsrAddFields);
     aggregation.push(...aznFlipMarginFields(customerSettings));
   } else {
     aggregation.push(...ebyMarginFields(customerSettings));
@@ -98,7 +97,7 @@ export async function GET(
   const sort: {
     [key: string]: SortDirection;
   } = {};
-  sortingField(isAmazon, query, sort,euProgram);
+  sortingField(isAmazon, query, sort, euProgram);
   const pblshKey = isAmazon ? "a_pblsh" : "e_pblsh";
   aggregation.push(
     {
@@ -107,7 +106,19 @@ export async function GET(
         $and: findQuery,
       },
     },
-    projectField('a'),
+    projectField("a"),
+    {
+      $group: {
+        _id: {
+          field1: "$eanList",
+          field2: "$asin"
+        },
+        document: { $first: "$$ROOT" }
+      }
+    },
+    {
+      $replaceRoot: { newRoot: "$document" }
+    },
     {
       $sort: sort,
     },
@@ -118,13 +129,9 @@ export async function GET(
       $limit: query.size,
     }
   );
-  primaryBsrExistsField(aggregation, isAmazon, productsWithNoBsr);
-  
+
   lookupUserId(aggregation, user, target);
-  const mongo = await clientPool["NEXT_MONGO"];
-  const productCol = mongo
-    .db(process.env.NEXT_MONGO_DB)
-    .collection(PRODUCT_COL);
+  const productCol = await getProductCol();
   const res = await productCol.aggregate(aggregation).toArray();
 
   return Response.json(res);

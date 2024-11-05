@@ -6,6 +6,8 @@ export const commonProjectFields = {
   nm: 1,
   eanList: 1,
   s: 1,
+  qty_v: 1,
+  nm_v: 1,
   ean: 1,
   availUpdatedAt: 1,
   qty:1,

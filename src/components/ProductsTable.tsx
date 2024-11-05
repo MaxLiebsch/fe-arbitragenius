@@ -36,7 +36,6 @@ export default function ProductsTable(props: {
     sortModel,
     target
   );
-  console.log('productQuery:', productQuery.data)
   const user = useAccount();
   const userRoles = useMemo(() => user.data?.labels ?? [], [user.data?.labels]);
 

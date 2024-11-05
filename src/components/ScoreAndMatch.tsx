@@ -1,12 +1,25 @@
 import { Verification } from "@/types/Product";
 import React from "react";
 
-const ScoreAndMatch = ({ score, isMatch, qty, qty_score }: Verification) => {
+
+type ScoreAndMatchProps = {
+  vrfd?: Verification;
+  nmV?: string;
+  qtyV?: number;
+}
+
+const ScoreAndMatch = (props: ScoreAndMatchProps) => {
+  const { vrfd, nmV, qtyV } = props; 
+  if (!vrfd) {
+    return null;
+  }
+  const { score, isMatch, qty_score, qty } = vrfd;
   return (
     <div className="text-lg flex flex-row gap-2">
       {score && (
         <div>
           Match-Score: <span className="font-semibold">{score * 100} %</span>
+          <span className="text-xs"> ({nmV})</span>
         </div>
       )}
       {score && (
@@ -21,6 +34,7 @@ const ScoreAndMatch = ({ score, isMatch, qty, qty_score }: Verification) => {
       {qty_score && (
         <div>
           Quantity-Score: <span className="font-semibold">{qty_score * 100} %</span>
+          <span className="text-xs"> ({qtyV})</span>
         </div>
       )}
       {

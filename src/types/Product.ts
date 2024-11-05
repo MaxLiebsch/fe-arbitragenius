@@ -27,6 +27,8 @@ export type Product = {
   img: string;
   lnk: string;
   prc: number;
+  nm_v?: string;
+  qty_v?: number;
   createdAt: string;
   updatedAt: string;
   e_lnk: string;

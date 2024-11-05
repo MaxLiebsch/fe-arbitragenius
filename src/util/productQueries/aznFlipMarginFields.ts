@@ -1,4 +1,5 @@
 import { Settings } from "@/types/Settings";
+import { aznMrgnFieldName, aznMrgnPctFieldName } from "./mrgnProps";
 
 export const aznFlipMarginFields = (
   settings: Settings,
@@ -10,7 +11,7 @@ export const aznFlipMarginFields = (
   const match: any = {
     a_pblsh: true,
     a_prc: { $gt: 0 },
-    costs: { $exists: true },
+    "costs.azn": { $exists: true },
     aznUpdatedAt: { $gt: new Date(Date.now() - 96 * 60 * 1000).toISOString() },
     $or: [
       { avg30_ahsprcs: { $exists: true, $gt: 0 } },
@@ -32,9 +33,9 @@ export const aznFlipMarginFields = (
     });
   }
 
-  const isEuProgram = !euProgram ? "_p" : "";
   const isSommer = new Date().getMonth() < 9;
-  const winter = isSommer ? "" : "_w";
+  const aznMrgn = aznMrgnFieldName(euProgram);
+  const aznMrgnPct = aznMrgnPctFieldName(euProgram);
 
   query.push(
     {
@@ -90,7 +91,7 @@ export const aznFlipMarginFields = (
     query.push(
       {
         $addFields: {
-          [`a${isEuProgram}${winter}_mrgn`]: {
+          [aznMrgn]: {
             $round: [
               {
                 $subtract: [
@@ -141,12 +142,12 @@ export const aznFlipMarginFields = (
       },
       {
         $addFields: {
-          [`a${isEuProgram}${winter}_mrgn_pct`]: {
+          [aznMrgnPct]: {
             $round: [
               {
                 $multiply: [
                   {
-                    $divide: [`$a${isEuProgram}${winter}_mrgn`, "$a_avg_prc"],
+                    $divide: [`$${aznMrgn}`, "$a_avg_prc"],
                   },
                   100,
                 ],
@@ -161,7 +162,7 @@ export const aznFlipMarginFields = (
     query.push(
       {
         $addFields: {
-          [`a${isEuProgram}${winter}_mrgn`]: {
+          [aznMrgn]: {
             $round: [
               {
                 $subtract: [
@@ -210,12 +211,12 @@ export const aznFlipMarginFields = (
       },
       {
         $addFields: {
-          [`a${isEuProgram}${winter}_mrgn_pct`]: {
+          [aznMrgnPct]: {
             $round: [
               {
                 $multiply: [
                   {
-                    $divide: [`$a${isEuProgram}${winter}_mrgn`, "$a_avg_prc"],
+                    $divide: [`$${aznMrgn}`, "$a_avg_prc"],
                   },
                   100,
                 ],

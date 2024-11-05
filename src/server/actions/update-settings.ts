@@ -38,7 +38,6 @@ export async function updateSettingsAction(
     e_prepCenter: parseFloat(parsedFormData.e_prepCenter || "0"),
     e_cats: parsedFormData.e_cats,
     minPercentageMargin: parseInt(parsedFormData.minPercentageMargin || "0"),
-    maxSecondaryBsr: parseInt(parsedFormData.maxSecondaryBsr || "0"),
     tptSmall: parseFloat(parsedFormData.tptSmall || "2.95"),
     tptMiddle: parseFloat(parsedFormData.tptMiddle || "4.95"),
     tptLarge: parseFloat(parsedFormData.tptLarge || "6.95"),

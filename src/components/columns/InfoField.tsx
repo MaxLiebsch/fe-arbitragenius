@@ -188,18 +188,14 @@ const InfoField = ({
                 <span className="text-md"> {monthlySold}</span>
               </span>
             )}
-            {drops30 && (
-              <span>
-                <span className="font-semibold">Keepa Drops (30):</span>
-                <span className="text-md"> {drops30}</span>
-              </span>
-            )}
-            {drops90 && (
-              <span>
-                <span className="font-semibold">Keepa Drops (90):</span>
-                <span className="text-md"> {drops90}</span>
-              </span>
-            )}
+            <span>
+              <span className="font-semibold">Keepa Drops (30):</span>
+              <span className="text-md"> {drops30 ? drops30 : 0}</span>
+            </span>
+            <span>
+              <span className="font-semibold">Keepa Drops (90):</span>
+              <span className="text-md"> {drops90 ? drops90 : 0}</span>
+            </span>
           </div>
         )}
       </>

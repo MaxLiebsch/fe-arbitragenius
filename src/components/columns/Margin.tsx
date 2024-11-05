@@ -20,7 +20,7 @@ const Margin = ({
   const isWinter = strg_1_hy ? "" : "_w";
   const isAzn = target === "a";
   return {
-    field: `${target}${isEurogram}${isAzn && !flip ? isWinter : ""}_mrgn`,
+    field: `${target}${isEurogram}${isAzn ? isWinter : ""}_mrgn`,
     headerName: "Marge",
     renderHeader: (params) => (
       <div className="relative">

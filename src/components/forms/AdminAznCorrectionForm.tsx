@@ -57,7 +57,7 @@ const AdminAznCorrectionForm = ({
       }}
     >
       <div className="flex flex-col gap-1 my-2 relative">
-        <ScoreAndMatch {...a_vrfd} />
+        <ScoreAndMatch vrfd={a_vrfd} nmV={product.nm_v} qtyV={product.qty_v}  />
         <SharedFields target={target} />
         <div className="absolute top-0 right-0">
           <Form.Item

@@ -18,7 +18,7 @@ const MarginPct = ({
   const isEurogram = !settings.euProgram ? "_p" : "";
   const isAzn = target === "a";
   return {
-    field: `${target}${isEurogram}${isAzn && !flip ? isWinter : ""}_mrgn_pct`,
+    field: `${target}${isEurogram}${isAzn ? isWinter : ""}_mrgn_pct`,
     headerAlign: "left",
     width: 140,
     headerName: "Marge %",

@@ -1,14 +1,10 @@
-import { PRODUCT_COL, SALES_COL } from "@/constant/constant";
-import clientPool from "@/server/mongoPool";
-import { BuyBox, Settings } from "@/types/Settings";
+import { getProductCol } from "@/server/mongo";
+import { Settings } from "@/types/Settings";
 import { aznFlipMarginFields } from "@/util/productQueries/aznFlipMarginFields";
-import { aznMarginFields } from "@/util/productQueries/aznMarginFields";
-import { bsrAddFields } from "@/util/productQueries/bsrAddFields";
 import { buyBoxFields } from "@/util/productQueries/buyBox";
 import { ebyMarginFields } from "@/util/productQueries/ebyMarginFields";
 import { marginFields } from "@/util/productQueries/marginFields";
 import { monthlySoldField } from "@/util/productQueries/monthlySoldField";
-import { primaryBsrExistsField } from "@/util/productQueries/primaryBsrExistsField";
 import { productWithBsrFields } from "@/util/productQueries/productWithBsrFields";
 import { settingsFromSearchQuery } from "@/util/productQueries/settingsFromSearchQuery";
 import { targetVerification } from "@/util/productQueries/targetVerfication";
@@ -16,7 +12,6 @@ import { totalOffersCountField } from "@/util/productQueries/totalOffersCountFie
 import { NextRequest } from "next/server";
 
 export async function GET(request: NextRequest) {
-  const mongo = await clientPool["NEXT_MONGO"];
   const searchParams = request.nextUrl.searchParams;
   const target = searchParams.get("target") || "a";
 
@@ -26,7 +21,6 @@ export async function GET(request: NextRequest) {
   let {
     minMargin,
     minPercentageMargin,
-    productsWithNoBsr,
     netto,
     monthlySold,
     totalOfferCount,
@@ -46,7 +40,6 @@ export async function GET(request: NextRequest) {
   const findQuery: any[] = [];
 
   if (isAmazon) {
-    aggregation.push(bsrAddFields);
     aggregation.push(...aznFlipMarginFields(customerSettings));
   } else {
     aggregation.push(...ebyMarginFields(customerSettings));
@@ -73,12 +66,21 @@ export async function GET(request: NextRequest) {
         $and: findQuery,
       },
     },
+    {
+      $group: {
+        _id: {
+          field1: "$eanList",
+          field2: "$asin",
+        },
+        document: { $first: "$$ROOT" },
+      },
+    },
+    {
+      $replaceRoot: { newRoot: "$document" },
+    },
     { $count: "productCount" }
   );
-  primaryBsrExistsField(aggregation, isAmazon, productsWithNoBsr);
-  const productCol = mongo
-    .db(process.env.NEXT_MONGO_DB)
-    .collection(PRODUCT_COL);
+  const productCol = await getProductCol();
 
   const res = await productCol.aggregate(aggregation).toArray();
 

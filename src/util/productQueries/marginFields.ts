@@ -1,4 +1,5 @@
 import { Settings } from "@/types/Settings";
+import { aznMrgnFieldName, aznMrgnPctFieldName } from "./mrgnProps";
 
 export interface MarrginFields {
   target: string;
@@ -7,16 +8,19 @@ export interface MarrginFields {
 
 export const marginFields = ({ target, settings }: MarrginFields) => {
   const { minMargin, minPercentageMargin, euProgram } = settings;
-  const sommer = new Date().getMonth()  < 8 ? "" : "_w";
-  if (target === "a" && !euProgram) {
+  if (target === "a") {
     return {
       $and: [
         { [`${target}_prc`]: { $gt: 0 } },
-        { [`${target}_p${sommer}_mrgn`]: { $gt: minMargin } },
-        { [`${target}_p${sommer}_mrgn_pct`]: { $gt: minPercentageMargin } },
+        { [aznMrgnFieldName(euProgram)]: { $gt: minMargin } },
+        {
+          [aznMrgnPctFieldName(euProgram)]: {
+            $gt: minPercentageMargin,
+          },
+        },
       ],
     };
-  } else {
+  } else if (target === "e") {
     return {
       $and: [
         { [`${target}_prc`]: { $gt: 0 } },

@@ -21,7 +21,6 @@ export const defaultSettings: Settings = {
   strg: 0,
   tptStandard: "tptMiddle",
   netto: true,
-  maxSecondaryBsr: 1000000,
   maxPrimaryBsr: 1000000,
   productsWithNoBsr: true,
   monthlySold: 0,
