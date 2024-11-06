@@ -23,6 +23,7 @@ export interface Task {
   lastCrawler: any[];
   productLimit: number;
   executing: boolean;
+  cooldown: string;
 }
 
 export interface Progress {

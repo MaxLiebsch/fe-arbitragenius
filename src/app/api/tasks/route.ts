@@ -111,6 +111,7 @@ export async function POST(request: NextRequest) {
       errored: false,
       maintenance: false,
       lastCrawler: [],
+      cooldown: new Date().toISOString(),
       productLimit: body.products.length <= 500 ? body.products.length : 500,
       userId: user.$id,
       executing: false,
@@ -137,6 +138,7 @@ export async function POST(request: NextRequest) {
       completedAt: "",
       createdAt: new Date().toISOString(),
       errored: false,
+      cooldown: new Date().toISOString(),
       maintenance: false,
       browserConfig: {
         queryEansOnEby: {
@@ -184,6 +186,7 @@ export async function POST(request: NextRequest) {
         productLimit: body.products.length <= 500 ? body.products.length : 500,
         userId: user.$id,
         executing: false,
+        cooldown: new Date().toISOString(),
         progress: {
           completed: 0,
           pending: body.products.length,
@@ -205,6 +208,7 @@ export async function POST(request: NextRequest) {
         concurrency: 4,
         recurrent: false,
         startedAt: "",
+        cooldown: new Date().toISOString(),
         completedAt: "",
         createdAt: new Date().toISOString(),
         errored: false,
