@@ -1,4 +1,5 @@
 import { Settings } from "@/types/Settings";
+import { mrgnFieldName, mrgnPctFieldName } from "./mrgnProps";
 
 export const aznMarginFields = (
   settings: Settings,
@@ -26,17 +27,13 @@ export const aznMarginFields = (
       $match: match,
     });
   }
-
-  const isEuProgram = !euProgram ? "_p" : "";
-  const isSommer = new Date().getMonth() < 9;
-  const winter = isSommer ? "" : "_w";
   if (!fba) {
     // If the user does not use Azn FBA, then the margin is calculated,
     // based on there settings for transport, storage, and preparation center
     query.push(
       {
         $addFields: {
-          [`a${isEuProgram}${winter}_mrgn`]: {
+          [mrgnFieldName("a", euProgram)]: {
             $round: [
               {
                 $subtract: [
@@ -90,12 +87,12 @@ export const aznMarginFields = (
       },
       {
         $addFields: {
-          [`a${isEuProgram}${winter}_mrgn_pct`]: {
+          [mrgnPctFieldName("a", euProgram)]: {
             $round: [
               {
                 $multiply: [
                   {
-                    $divide: [`a${isEuProgram}${winter}_mrgn`, "$a_prc"],
+                    $divide: [`$${mrgnFieldName("a", euProgram)}`, "$a_prc"],
                   },
                   100,
                 ],

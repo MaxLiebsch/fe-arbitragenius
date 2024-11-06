@@ -1,4 +1,5 @@
 import { Settings } from "@/types/Settings";
+import { mrgnFieldName, mrgnPctFieldName } from "./mrgnProps";
 
 export const ebyMarginFields = (
   settings: Settings,
@@ -31,7 +32,7 @@ export const ebyMarginFields = (
   query.push(
     {
       $addFields: {
-        e_mrgn: {
+        [mrgnFieldName("e", false)]: {
           $round: [
             {
               $subtract: [
@@ -67,12 +68,12 @@ export const ebyMarginFields = (
     },
     {
       $addFields: {
-        e_mrgn_pct: {
+        [mrgnPctFieldName("e", false)]: {
           $round: [
             {
               $multiply: [
                 {
-                  $divide: ["$e_mrgn", "$e_prc"],
+                  $divide: [`$${mrgnFieldName("e", false)}`, "$e_prc"],
                 },
                 100,
               ],

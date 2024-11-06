@@ -1,5 +1,5 @@
 import { Settings } from "@/types/Settings";
-import { aznMrgnFieldName, aznMrgnPctFieldName } from "./mrgnProps";
+import { mrgnFieldName, mrgnPctFieldName } from "./mrgnProps";
 
 export interface MarrginFields {
   target: string;
@@ -8,25 +8,15 @@ export interface MarrginFields {
 
 export const marginFields = ({ target, settings }: MarrginFields) => {
   const { minMargin, minPercentageMargin, euProgram } = settings;
-  if (target === "a") {
-    return {
-      $and: [
-        { [`${target}_prc`]: { $gt: 0 } },
-        { [aznMrgnFieldName(euProgram)]: { $gt: minMargin } },
-        {
-          [aznMrgnPctFieldName(euProgram)]: {
-            $gt: minPercentageMargin,
-          },
+  return {
+    $and: [
+      { [`${target}_prc`]: { $gt: 0 } },
+      { [mrgnFieldName(target, euProgram)]: { $gt: minMargin } },
+      {
+        [mrgnPctFieldName(target, euProgram)]: {
+          $gt: minPercentageMargin,
         },
-      ],
-    };
-  } else if (target === "e") {
-    return {
-      $and: [
-        { [`${target}_prc`]: { $gt: 0 } },
-        { [`${target}_mrgn`]: { $gt: minMargin } },
-        { [`${target}_mrgn_pct`]: { $gt: minPercentageMargin } },
-      ],
-    };
-  }
+      },
+    ],
+  };
 };

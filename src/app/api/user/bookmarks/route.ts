@@ -8,6 +8,10 @@ import {
   BookmarkSchema,
 } from "@/types/Bookmarks";
 import { Settings } from "@/types/Settings";
+import {
+  mrgnFieldName,
+  mrgnPctFieldName,
+} from "@/util/productQueries/mrgnProps";
 import { settingsFromSearchQuery } from "@/util/productQueries/settingsFromSearchQuery";
 import { roundToTwoDecimals } from "@/util/roundToTwoDecimals";
 import { ObjectId, WithId } from "mongodb";
@@ -22,7 +26,7 @@ export async function GET(request: NextRequest) {
   const { fba, a_prepCenter, a_strg, a_tptStandard, euProgram } =
     customerSettings;
   const isEuProgram = !euProgram ? "_p" : "";
-  const strg_1_hy = new Date().getMonth() < 9
+  const strg_1_hy = new Date().getMonth() < 9;
   const mongo = await clientPool["NEXT_MONGO_ADMIN"];
   const spotterDb = mongo.db(process.env.NEXT_MONGO_DB ?? "");
   const users = spotterDb.collection("users");
@@ -79,7 +83,6 @@ export async function GET(request: NextRequest) {
               avg30_ahsprcs,
               avg90_ahsprcs,
               avg90_ansprcs,
-              a_uprc,
               a_qty,
               a_prc,
               qty,
@@ -109,7 +112,6 @@ export async function GET(request: NextRequest) {
                 a_prepCenter +
                 customerSettings[a_tptStandard as "a_tptSmall"];
 
-
             const earning =
               (avgPrice -
                 costs.azn -
@@ -133,10 +135,8 @@ export async function GET(request: NextRequest) {
             return {
               ...product,
               a_avg_prc: avgPrice,
-              [`a${isEuProgram}${strg_1_hy ? "" : "_w"}_mrgn`]:
-                roundToTwoDecimals(earning),
-              [`a${isEuProgram}${strg_1_hy ? "" : "_w"}_mrgn_pct`]:
-                roundToTwoDecimals(margin),
+              [mrgnFieldName("a", euProgram)]: roundToTwoDecimals(earning),
+              [mrgnPctFieldName("a", euProgram)]: roundToTwoDecimals(margin),
               isBookmarked: true,
               shop,
             };

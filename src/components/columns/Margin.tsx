@@ -5,6 +5,7 @@ import ContentMarge from "../ContentMarge";
 import ContentEbyMarge from "../ContentEbyMarge";
 import { formatCurrency } from "@/util/formatter";
 import { GridColDef } from "@mui/x-data-grid-premium";
+import { mrgnFieldName } from "@/util/productQueries/mrgnProps";
 
 const Margin = ({
   target,
@@ -15,12 +16,8 @@ const Margin = ({
   flip?: boolean;
   settings: Settings;
 }): GridColDef<any> => {
-  const strg_1_hy = new Date().getMonth() < 9
-  const isEurogram = !settings.euProgram ? "_p" : "";
-  const isWinter = strg_1_hy ? "" : "_w";
-  const isAzn = target === "a";
   return {
-    field: `${target}${isEurogram}${isAzn ? isWinter : ""}_mrgn`,
+    field: mrgnFieldName(target, settings.euProgram),
     headerName: "Marge",
     renderHeader: (params) => (
       <div className="relative">

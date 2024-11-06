@@ -3,6 +3,7 @@ import { appendPercentage } from "@/util/formatter";
 import { roundToTwoDecimals } from "@/util/roundToTwoDecimals";
 import { GridColDef } from "@mui/x-data-grid-premium";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
+import { mrgnFieldName, mrgnPctFieldName } from "@/util/productQueries/mrgnProps";
 
 const MarginPct = ({
   target,
@@ -13,12 +14,8 @@ const MarginPct = ({
   flip?: boolean;
   settings: Settings;
 }): GridColDef<any> => {
-  const strg_1_hy = new Date().getMonth() < 9
-  const isWinter = strg_1_hy ? "" : "_w";
-  const isEurogram = !settings.euProgram ? "_p" : "";
-  const isAzn = target === "a";
   return {
-    field: `${target}${isEurogram}${isAzn ? isWinter : ""}_mrgn_pct`,
+    field: mrgnPctFieldName(target, settings.euProgram),
     headerAlign: "left",
     width: 140,
     headerName: "Marge %",
@@ -34,7 +31,7 @@ const MarginPct = ({
       const price  = flip ? a_prc : prc;
       const netPrice = price / (1 + (tax ? tax : 19) / 100);
       const isFlip = shop === "flip";
-      const margin = product[`${target}${isEurogram}${isAzn && !flip && !isFlip ? isWinter : ""}_mrgn`];
+      const margin = product[mrgnFieldName(target, settings.euProgram)];
       return (
         <div className="flex flex-col">
           {a_useCurrPrice === false && !flip && !isFlip ? (

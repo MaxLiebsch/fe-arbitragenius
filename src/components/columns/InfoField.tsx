@@ -46,7 +46,6 @@ const InfoField = ({
     drops30,
     drops90,
     monthlySold,
-    qty,
     shop,
     ebyCategories,
     [`${target}_nm` as "a_nm" | "e_nm"]: targetName,

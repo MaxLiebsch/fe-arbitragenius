@@ -110,7 +110,6 @@ export async function GET(
     {
       $group: {
         _id: {
-          field1: "$eanList",
           field2: "$asin"
         },
         document: { $first: "$$ROOT" }

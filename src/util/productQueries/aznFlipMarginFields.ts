@@ -1,5 +1,5 @@
 import { Settings } from "@/types/Settings";
-import { aznMrgnFieldName, aznMrgnPctFieldName } from "./mrgnProps";
+import { mrgnFieldName, mrgnPctFieldName } from "./mrgnProps";
 
 export const aznFlipMarginFields = (
   settings: Settings,
@@ -34,8 +34,8 @@ export const aznFlipMarginFields = (
   }
 
   const isSommer = new Date().getMonth() < 9;
-  const aznMrgn = aznMrgnFieldName(euProgram);
-  const aznMrgnPct = aznMrgnPctFieldName(euProgram);
+  const aznMrgn = mrgnFieldName("a", euProgram);
+  const aznMrgnPct = mrgnPctFieldName("a", euProgram);
 
   query.push(
     {
