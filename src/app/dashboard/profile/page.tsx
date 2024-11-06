@@ -11,11 +11,12 @@ import { useFormState } from "react-dom";
 import { deleteAccountAction } from "@/server/actions/delete-account";
 import ProfileSettings from "@/components/ProfileSettings";
 import { useQueryClient } from "@tanstack/react-query";
+import SubscriptionAndInvoices from "@/components/SubscriptionAndInvoices";
 
 const secondaryNavigation = [
   { name: "Einstellungen", href: "#", current: false },
   { name: "Account", href: "#", current: true },
-  { name: "Rechungen", href: "#", current: false },
+  { name: "Subscription & Rechungen", href: "#", current: false },
   { name: "Benachrichtigungen", href: "#", current: false },
 ];
 
@@ -130,7 +131,7 @@ const Page = () => {
         </nav>
       </header>
       {/* Tabs */}
-      <Tab.Panels className='h-[calc(100vh-200px)] overflow-y-auto'>
+      <Tab.Panels className="h-[calc(100vh-200px)] overflow-y-auto">
         {/* Settings */}
         <Tab.Panel>
           <div className="divide-y divide-white/5">
@@ -576,14 +577,9 @@ const Page = () => {
         {/* Rechnungen */}
         <Tab.Panel>
           <div className="divide-y divide-white/5">
-            <h1 className="sr-only">Rechnungen</h1>
-            <div className="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 px-4 py-6 sm:px-6 md:grid-cols-3 lg:px-8">
-              <div>
-                <h2 className="text-base font-semibold leading-7 text-secondary-950">
-                  Rechnungen
-                </h2>
-                <p>Wir schicken Dir die deine Rechnung zum Monatsanfang zu.</p>
-              </div>
+            <h1 className="sr-only">Subscriptions und Rechnungen</h1>
+            <div className="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 px-4 py-6 sm:px-6 md:grid-cols-1 lg:px-8">      
+                <SubscriptionAndInvoices />
             </div>
           </div>
         </Tab.Panel>

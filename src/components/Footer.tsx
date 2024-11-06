@@ -15,7 +15,7 @@ export function Footer() {
               <NavLink href="https://www.arbispotter.com/imprint">
                 Impressum
               </NavLink>
-              <NavLink href="https://www.arbispotter.com/dataprotection">
+              <NavLink href="https://www.arbispotter.com/privacy">
                 Datenschutz
               </NavLink>
               <NavLink href="https://www.arbispotter.com/terms">AGB</NavLink>

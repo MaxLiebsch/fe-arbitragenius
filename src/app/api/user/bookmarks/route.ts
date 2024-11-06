@@ -25,7 +25,6 @@ export async function GET(request: NextRequest) {
 
   const { fba, a_prepCenter, a_strg, a_tptStandard, euProgram } =
     customerSettings;
-  const isEuProgram = !euProgram ? "_p" : "";
   const strg_1_hy = new Date().getMonth() < 9;
   const mongo = await clientPool["NEXT_MONGO_ADMIN"];
   const spotterDb = mongo.db(process.env.NEXT_MONGO_DB ?? "");

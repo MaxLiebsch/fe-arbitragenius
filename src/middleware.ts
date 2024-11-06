@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
-import {authMiddleware,getSubscriptions } from "./server/appwrite/middleware";
+import {authMiddleware } from "./server/appwrite/middleware";
 import { getStripeSubscriptions } from "./server/stripe/middleware";
+import { getSubscriptions } from "./server/appwrite/getSubscription";
 
 export const middleware = authMiddleware(async (request) => {
   const requestPathname = request.nextUrl.pathname;

@@ -120,7 +120,7 @@ const SignUp = () => {
                       und dem{" "}
                       <NavLink
                         target="_blank"
-                        href="https://www.arbispotter.com/dataprotection"
+                        href="https://www.arbispotter.com/privacy"
                       >
                         Datenschutz
                       </NavLink>

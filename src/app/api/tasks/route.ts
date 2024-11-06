@@ -102,7 +102,7 @@ export async function POST(request: NextRequest) {
     const wholeSaleTask: WholeSaleTask = {
       type: "WHOLESALE_SEARCH",
       id: "wholesale_search",
-      browserConcurrency: process.env.NODE_ENV === "development" ? 3 : 6,
+      browserConcurrency: process.env.NODE_ENV === "development" ? 3 : 5,
       concurrency: 1,
       recurrent: false,
       startedAt: "",
