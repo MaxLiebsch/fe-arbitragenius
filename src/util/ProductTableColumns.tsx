@@ -15,6 +15,7 @@ import { Button } from "@/components/Button";
 import Image from "next/image";
 import arbitrageOne from "@/images/arbitrageone.png";
 import { arbitrageOneUrlBuilder } from "./arbitrageOneUrlBuilder";
+import OptionField from "@/components/columns/OptionField";
 
 export const createColumns: (
   target: string,
@@ -78,72 +79,13 @@ export const createColumns: (
     },
     MarginPct({ target, settings, flip }),
     Margin({ target, settings, flip }),
-    {
-      field: "isBookmarked",
-      headerName: "Optionen",
-      headerAlign: "center",
-      sortable: false,
-      width: 150,
-      align: "center",
-      renderCell: (params) => {
-        const product = params.row;
-        const { asin, a_prc, lnk, prc, tax } = product;
-        return (
-          <div className="flex flex-col justify-center gap-2">
-            <Checkbox
-              checked={params.row.isBookmarked}
-              onChange={(e) => {
-                if (e.target.checked) {
-                  addBookmark({
-                    body: {
-                      target: target,
-                      shop: domain,
-                      productId: params.row._id,
-                    },
-                    page: pagination.page,
-                    pageSize: pagination.pageSize,
-                  });
-                } else {
-                  removeBookmark({
-                    body: {
-                      target: target,
-                      shop: domain,
-                      productId: params.row._id,
-                    },
-                    page: pagination.page,
-                    pageSize: pagination.pageSize,
-                  });
-                }
-              }}
-            >
-              Mein Deal
-            </Checkbox>
-            {asin && (
-              <>
-                <Tooltip
-                  color={"#11848d"}
-                  destroyTooltipOnHide
-                  title="Zu ArbitrageOne exportieren"
-                >
-                  <Button
-                    variant="outline"
-                    target="_blank"
-                    href={arbitrageOneUrlBuilder({
-                      asin,
-                      sell_price: a_prc,
-                      source_price: prc,
-                      source_url: lnk,
-                      target_marketplace: "de",
-                    })}
-                  >
-                    <Image alt="ArbitrageOne logo" src={arbitrageOne} />
-                  </Button>
-                </Tooltip>
-              </>
-            )}
-          </div>
-        );
-      },
-    },
+    OptionField({
+      addBookmark,
+      removeBookmark,
+      pagination,
+      target,
+      domain,
+      flip,
+    }),
   ];
 };

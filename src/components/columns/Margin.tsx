@@ -28,7 +28,7 @@ const Margin = ({
       const margin = parseFloat(params.value);
       return (
         <Popover
-          placement="topLeft"
+          placement="left"
           arrow={false}
           content={
             params.row["costs"] && target === "a" ? (

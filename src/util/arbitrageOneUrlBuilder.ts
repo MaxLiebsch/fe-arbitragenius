@@ -5,6 +5,7 @@ type arbitrageOneUrlBuilderParams = {
   estimated_sales?: number;
   target_marketplace: string;
   source_url: string;
+  source_price_calculated_net: number;
 };
 
 export function arbitrageOneUrlBuilder({
@@ -14,6 +15,7 @@ export function arbitrageOneUrlBuilder({
   estimated_sales,
   target_marketplace = "de",
   source_url,
+  source_price_calculated_net = 0, // default value 0 brutto price 1 netto price
 }: arbitrageOneUrlBuilderParams) {
   const url = new URL(process.env.NEXT_PUBLIC_ARBITRAGE_ONE_URL + "/analyze");
 
@@ -21,7 +23,7 @@ export function arbitrageOneUrlBuilder({
   url.searchParams.append("via", "arbispotter");
   url.searchParams.append("sell_price", sell_price.toString());
   url.searchParams.append("source_price", source_price.toString());
-  url.searchParams.append("source_price_calculated_net", "0");
+  url.searchParams.append("source_price_calculated_net", source_price_calculated_net.toString());
   url.searchParams.append("target_marketplace", target_marketplace);
   url.searchParams.append("source_url", source_url);
 

@@ -124,6 +124,7 @@ export interface BookMarkProduct extends ModifiedProduct {
 
 export interface Costs {
   tpt: number;
+  prvsn?: number;
   varc: number;
   azn: number;
   strg_1_hy: number;

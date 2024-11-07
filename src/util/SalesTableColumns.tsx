@@ -14,6 +14,7 @@ import MarginPct from "@/components/columns/MarginPct";
 import Margin from "@/components/columns/Margin";
 import VKPrice from "@/components/columns/VKPrice";
 import EKPrice from "@/components/columns/EKPrice";
+import OptionField from "@/components/columns/OptionField";
 
 export const createSalesTableColumns: (
   target: string,
@@ -95,39 +96,12 @@ export const createSalesTableColumns: (
   },
   MarginPct({ target, settings }),
   Margin({ target, settings }),
-  {
-    field: "isBookmarked",
-    headerName: "Gemerkt",
-    disableColumnMenu: true,
-    headerAlign: "center",
-    align: "center",
-    renderCell: (params) => (
-      <Checkbox
-        checked={params.row.isBookmarked}
-        onChange={(e) => {
-          if (e.target.checked) {
-            addBookmark({
-              body: {
-                target: target,
-                shop: "sales",
-                productId: params.row._id,
-              },
-              page: pagination.page,
-              pageSize: pagination.pageSize,
-            });
-          } else {
-            removeBookmark({
-              body: {
-                target: target,
-                shop: "sales",
-                productId: params.row._id,
-              },
-              page: pagination.page,
-              pageSize: pagination.pageSize,
-            });
-          }
-        }}
-      />
-    ),
-  },
+  OptionField({
+    addBookmark,
+    removeBookmark,
+    pagination,
+    target,
+    domain: "sales",
+    flip: false,
+  }),
 ];

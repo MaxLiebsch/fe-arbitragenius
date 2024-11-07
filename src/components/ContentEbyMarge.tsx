@@ -1,8 +1,8 @@
 "use client";
 
 import { ModifiedProduct } from "@/types/Product";
-import { formatter } from "@/util/formatter";
-import { Input, Popover, Switch } from "antd";
+import { appendPercentage, formatter } from "@/util/formatter";
+import { Input, InputNumber, Popover, Switch } from "antd";
 import React, { useMemo, useState } from "react";
 import CopyToClipboard from "./CopyToClipboard";
 import { ebayTier } from "@/constant/ebay";
@@ -68,7 +68,7 @@ const ContentEbyMarge = ({
     [product.ebyCategories]
   ) as EbyTierCategory | null;
 
-  const [sellPrice, setSellPrice] = useState(product["e_uprc"]);
+  const [sellPrice, setSellPrice] = useState(product["e_prc"]);
   const [ebyShop, setEbyshop] = useState<"shop" | "no_shop">("shop");
   const taxCosts = useMemo(
     () =>
@@ -82,21 +82,22 @@ const ContentEbyMarge = ({
     else return calculateFee(sellPrice, ebyShop, mappedCategory);
   }, [sellPrice, ebyShop, mappedCategory]);
 
-  const [buyPrice, setBuyPrice] = useState(
+  const [netBuyPrice, setBuyPrice] = useState(
     roundToTwoDecimals((product["prc"] / 1.19) * factor)
   );
-  const [qty, setQty] = useState(1);
   const [storageCosts, setStorageCosts] = useState(settings.strg ?? 0);
 
   const [transportCosts, setTransportCosts] = useState(
     settings[settings.tptStandard as keyof Settings] as number
   );
   const earning =
-    (sellPrice - costs - storageCosts - transportCosts - taxCosts - buyPrice)
+    sellPrice - costs - storageCosts - transportCosts - taxCosts - netBuyPrice;
   const margin =
-    ((sellPrice - costs - storageCosts - transportCosts - taxCosts - buyPrice) /
+    ((sellPrice - costs - storageCosts - transportCosts - taxCosts - netBuyPrice) /
       sellPrice) *
     100;
+
+  const roi = roundToTwoDecimals((earning / netBuyPrice) * 100);
 
   const createSellprovisionStr = (tier: Above | UpTo) => {
     if ("above" in tier) {
@@ -115,185 +116,202 @@ const ContentEbyMarge = ({
   };
 
   return (
-    <div className="w-72 relative">
-      <div className="font-light">
-        <span>{product?.mnfctr ? product.mnfctr : ""} </span>
-        {product.nm}
-      </div>
-      {product.eanList && product.eanList.length ? (
-        <div className="mb-1">
-          EAN: <CopyToClipboard text={product.eanList[0]} />
+    <div className="w-96 relative">
+      <div className="px-10">
+        <div className="font-light">
+          <span>{product?.mnfctr ? product.mnfctr : ""} </span>
+          {product.nm}
         </div>
-      ) : (
-        <></>
-      )}
-      <div className="-top-8 right-0 absolute">
-        <Switch
-          checkedChildren="Mit Shop"
-          unCheckedChildren="Ohne Shop"
-          defaultChecked
-          onChange={(checked) => {
-            if (checked) {
-              setEbyshop("shop");
-            } else {
-              setEbyshop("no_shop");
-            }
-          }}
-        />
-      </div>
-      <Input
-        classNames={{ input: "!text-right" }}
-        value={sellPrice}
-        onChange={(e) => {
-          setSellPrice(Number(e.target.value));
-        }}
-        type="number"
-        addonBefore="Verkaufspreis € (Brutto)"
-      />
-      <h3 className="font-semibold leading-6 mb-1 text-gray-900 flex flex-row space-x-1 items-center">
-        <div className="flex flex-row w-full mt-3">
-          <p>Ebay Gebühren:</p>
-          <Popover
-            placement="top"
-            arrow={false}
-            content={() => {
-              if (mappedCategory === null) {
-                return <div></div>;
+        {product.eanList && product.eanList.length ? (
+          <div className="mb-1">
+            EAN: <CopyToClipboard text={product.eanList[0]} />
+          </div>
+        ) : (
+          <></>
+        )}
+        <div className="-top-8 right-0 absolute">
+          <Switch
+            checkedChildren="Mit Shop"
+            unCheckedChildren="Ohne Shop"
+            defaultChecked
+            onChange={(checked) => {
+              if (checked) {
+                setEbyshop("shop");
               } else {
-                const withShopAbove = mappedCategory.tier.shop.find(
-                  (t) => "above" in t
-                ) as { above: number; percentage: number };
-                const withShopUpTo = mappedCategory.tier.shop.find(
-                  (t) => "up_to" in t
-                ) as { up_to: number; percentage: number };
-                const withoutShopAbove = mappedCategory.tier.no_shop.find(
-                  (t) => "above" in t
-                ) as { above: number; percentage: number };
-                const withoutShopUpTo = mappedCategory.tier.no_shop.find(
-                  (t) => "up_to" in t
-                ) as { up_to: number; percentage: number };
-                return (
-                  <div>
-                    <div>
-                      <span className="font-semibold">Kategorie:</span>
-                      <span>
-                        {product.ebyCategories.map((category: any) => {
-                          return (
-                            <span
-                              className="mx-1"
-                              key={category.number + category.category}
-                            >
-                              {category.category}
-                              <span className="font-semibold"> ID: </span>
-                              <CopyToClipboard text={category.id} />
-                            </span>
-                          );
-                        })}
-                      </span>
-                    </div>
-                    {ebyShop === "shop" ? (
-                      <>
-                        <h2 className="font-semibold">Mit Shop:</h2>
-                        <div>{createSellprovisionStr(withShopUpTo)}</div>
-                        <div>{createSellprovisionStr(withShopAbove)}</div>
-                      </>
-                    ) : (
-                      <>
-                        <h2 className="font-semibold">Ohne Shop:</h2>
-                        <div>{createSellprovisionStr(withoutShopUpTo)}</div>
-                        <div>{createSellprovisionStr(withoutShopAbove)}</div>
-                      </>
-                    )}
-                  </div>
-                );
+                setEbyshop("no_shop");
               }
             }}
-          >
-            <p className="ml-auto cursor-pointer">{formatter.format(costs)}</p>
-          </Popover>
+          />
         </div>
-      </h3>
-      <h3 className="font-semibold leading-6 mt-2 mb-1 text-gray-900 flex flex-row space-x-1 items-center">
-        <Input
-          classNames={{ input: "!text-right" }}
-          value={transportCosts}
+        <InputNumber
+          stringMode
+          value={sellPrice}
           onChange={(e) => {
-            setTransportCosts(Number(e.target.value));
+            if (e) {
+              const parsed = parseFloat(e.toString().replaceAll(",", "."));
+              setSellPrice(parsed);
+            }
           }}
-          type="number"
-          step={0.01}
-          addonBefore="Versandkosten €"
+          addonBefore="Verkaufspreis € (Brutto)"
+          decimalSeparator=","
         />
-      </h3>
-      <h3 className="font-semibold leading-6 mb-1 text-gray-900 flex flex-row space-x-1 items-center">
-        <Input
-          classNames={{ input: "!text-right" }}
-          value={storageCosts}
-          onChange={(e) => {
-            setStorageCosts(Number(e.target.value));
-          }}
-          type="number"
-          step={0.01}
-          addonBefore="Lagerkosten €"
-        />
-      </h3>
-      <h3 className="font-semibold leading-6 mt-2 mb-1 text-gray-900 flex flex-row space-x-1 items-center">
-        <div className="flex flex-row w-full">
-          <p>Sonstige Kosten:</p>
-          <p className="ml-auto">{formatter.format(taxCosts + buyPrice)}</p>
-        </div>
-      </h3>
-      <div className="grid grid-rows-2 gap-1">
-        <div className="flex flex-row">
-          <p>Geschätze Umsatzsteuer ({product.tax ?? 19} %):</p>
-          <p className="ml-auto">{formatter.format(Number(taxCosts))}</p>
-        </div>
-        <Input
-          classNames={{ input: "!text-right" }}
-          value={buyPrice}
-          onChange={(e) => {
-            setBuyPrice(Number(e.target.value) * factor);
-          }}
-          type="number"
-          addonBefore="Einkaufspreis € (Netto)"
-        />
-        {/* <Input
-          classNames={{ input: "!text-right" }}
-          value={qty}
-          step={1}
-          min={1}
-          onChange={(e) => {
-            setQty(Number(e.target.value));
-          }}
-          type="number"
-          addonBefore="Geschätzter Umsatz"
-        /> */}
-      </div>
-      <div>
-        <h3 className="font-semibold leading-6 mt-2 mb-1 text-gray-900 flex flex-row space-x-1 items-center">
-          <div className="flex flex-row w-full">
-            <p>Nettogewinn:</p>
-            <p
-              className={`ml-auto ${
-                earning < 0 ? "text-red-600" : "text-green-600"
-              }`}
+        <h3 className="font-semibold leading-6 mb-1 text-gray-900 flex flex-row space-x-1 items-center">
+          <div className="flex flex-row w-full mt-3">
+            <p>Ebay Gebühren:</p>
+            <Popover
+              placement="top"
+              arrow={false}
+              content={() => {
+                if (mappedCategory === null) {
+                  return <div></div>;
+                } else {
+                  const withShopAbove = mappedCategory.tier.shop.find(
+                    (t) => "above" in t
+                  ) as { above: number; percentage: number };
+                  const withShopUpTo = mappedCategory.tier.shop.find(
+                    (t) => "up_to" in t
+                  ) as { up_to: number; percentage: number };
+                  const withoutShopAbove = mappedCategory.tier.no_shop.find(
+                    (t) => "above" in t
+                  ) as { above: number; percentage: number };
+                  const withoutShopUpTo = mappedCategory.tier.no_shop.find(
+                    (t) => "up_to" in t
+                  ) as { up_to: number; percentage: number };
+                  return (
+                    <div>
+                      <div>
+                        <span className="font-semibold">Kategorie:</span>
+                        <span>
+                          {product.ebyCategories.map((category: any) => {
+                            return (
+                              <span
+                                className="mx-1"
+                                key={category.number + category.category}
+                              >
+                                {category.category}
+                                <span className="font-semibold"> ID: </span>
+                                <CopyToClipboard text={category.id} />
+                              </span>
+                            );
+                          })}
+                        </span>
+                      </div>
+                      {ebyShop === "shop" ? (
+                        <>
+                          <h2 className="font-semibold">Mit Shop:</h2>
+                          <div>{createSellprovisionStr(withShopUpTo)}</div>
+                          <div>{createSellprovisionStr(withShopAbove)}</div>
+                        </>
+                      ) : (
+                        <>
+                          <h2 className="font-semibold">Ohne Shop:</h2>
+                          <div>{createSellprovisionStr(withoutShopUpTo)}</div>
+                          <div>{createSellprovisionStr(withoutShopAbove)}</div>
+                        </>
+                      )}
+                    </div>
+                  );
+                }
+              }}
             >
-              {formatter.format(earning)}
-            </p>
+              <p className="ml-auto cursor-pointer">
+                {formatter.format(costs)}
+              </p>
+            </Popover>
           </div>
+        </h3>
+        <h3 className="font-semibold leading-6 mt-2 mb-1 text-gray-900 flex flex-row space-x-1 items-center">
+          <InputNumber
+            stringMode
+            value={transportCosts}
+            onChange={(e) => {
+              if (e) {
+                const parsed = parseFloat(e.toString().replaceAll(",", "."));
+                setTransportCosts(parsed);
+              }
+            }}
+            step={0.01}
+            addonBefore="Versandkosten €"
+            decimalSeparator=","
+          />
         </h3>
         <h3 className="font-semibold leading-6 mb-1 text-gray-900 flex flex-row space-x-1 items-center">
+          <InputNumber
+            stringMode
+            value={storageCosts}
+            onChange={(e) => {
+              if (e) {
+                const parsed = parseFloat(e.toString().replaceAll(",", "."));
+                setStorageCosts(parsed);
+              }
+            }}
+            step={0.01}
+            addonBefore="Lagerkosten €"
+            decimalSeparator=","
+          />
+        </h3>
+        <h3 className="font-semibold leading-6 mt-2 mb-1 text-gray-900 flex flex-row space-x-1 items-center">
           <div className="flex flex-row w-full">
-            <p>Nettospanne:</p>
-            <p
-              className={`ml-auto ${
-                earning < 0 ? "text-red-600" : "text-green-600"
-              }`}
-            >
-              {roundToTwoDecimals(margin)} %
-            </p>
+            <p>Sonstige Kosten:</p>
+            <p className="ml-auto">{formatter.format(taxCosts + netBuyPrice)}</p>
           </div>
         </h3>
+        <div className="grid grid-rows-2 gap-1">
+          <div className="flex flex-row">
+            <p>Geschätze Umsatzsteuer ({product.tax ?? 19} %):</p>
+            <p className="ml-auto">{formatter.format(Number(taxCosts))}</p>
+          </div>
+          <InputNumber
+            stringMode
+            value={netBuyPrice}
+            onChange={(e) => {
+              if (e) {
+                const parsed = parseFloat(e.toString().replaceAll(",", "."));
+                setBuyPrice(parsed * factor);
+              }
+            }}
+            addonBefore="Einkaufspreis € (Netto)"
+            decimalSeparator=","
+          />
+        </div>
+        <div>
+          <h3 className="font-semibold leading-6 mt-2 mb-1 text-gray-900 flex flex-row space-x-1 items-center">
+            <div className="flex flex-row w-full">
+              <p>Nettogewinn:</p>
+              <p
+                className={`ml-auto ${
+                  earning < 0 ? "text-red-600" : "text-green-600"
+                }`}
+              >
+                {formatter.format(earning)}
+              </p>
+            </div>
+          </h3>
+          <h3 className="font-semibold leading-6 mt-2 mb-1 text-gray-900 flex flex-row space-x-1 items-center">
+            <div className="flex flex-row w-full">
+              <p>ROI:</p>
+              <p
+                className={`ml-auto ${
+                  roi < 0 ? "text-red-600" : "text-green-600"
+                }`}
+              >
+                {appendPercentage(roi.toString())}
+              </p>
+            </div>
+          </h3>
+          <h3 className="font-semibold leading-6 mb-1 text-gray-900 flex flex-row space-x-1 items-center">
+            <div className="flex flex-row w-full">
+              <p>Nettospanne:</p>
+              <p
+                className={`ml-auto ${
+                  earning < 0 ? "text-red-600" : "text-green-600"
+                }`}
+              >
+                {roundToTwoDecimals(margin)} %
+              </p>
+            </div>
+          </h3>
+        </div>
       </div>
     </div>
   );

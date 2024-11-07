@@ -32,6 +32,7 @@ const MarginPct = ({
       const netPrice = price / (1 + (tax ? tax : 19) / 100);
       const isFlip = shop === "flip";
       const margin = product[mrgnFieldName(target, settings.euProgram)];
+      const roi = roundToTwoDecimals((margin / netPrice) * 100)
       return (
         <div className="flex flex-col">
           {a_useCurrPrice === false && !flip && !isFlip ? (
@@ -44,7 +45,7 @@ const MarginPct = ({
           ) : null}
           <div>{appendPercentage(params.value)}</div>
           {margin && (
-            <div>{`(${roundToTwoDecimals((margin / netPrice) * 100)}%)`}</div>
+            <div>{`(${roi}%)`}</div>
           )}
         </div>
       );

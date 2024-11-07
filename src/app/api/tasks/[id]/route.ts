@@ -56,7 +56,7 @@ export async function DELETE(
   const taskCollection = mongo
     .db(process.env.NEXT_MONGO_CRAWLER_DATA ?? "")
     .collection(TASK_COL);
-    
+
   const productCol = mongo
     .db(process.env.NEXT_MONGO_DB ?? "")
     .collection(PRODUCT_COL);
@@ -75,14 +75,19 @@ export async function DELETE(
     );
   }
 
-  const deleteProducts = await productCol.deleteMany({
-    taskIds: params.id,
-  });
-
-  if (!deleteProducts.acknowledged) {
-    return new Response("Produkte aus Analyse konnten nicht gelöscht werden", {
-      status: 500,
+  if (params.id) {
+    const deleteProducts = await productCol.deleteMany({
+      taskIds: params.id,
     });
+
+    if (!deleteProducts.acknowledged) {
+      return new Response(
+        "Produkte aus Analyse konnten nicht gelöscht werden",
+        {
+          status: 500,
+        }
+      );
+    }
   }
 
   const task = await taskCollection.deleteOne({ _id: new ObjectId(params.id) });
