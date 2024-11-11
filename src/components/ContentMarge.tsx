@@ -75,7 +75,6 @@ const ContentMarge = ({
 
   const strg_1_hy = new Date().getMonth() < 9;
   const [sellPrice, setSellPrice] = useState(initSellPrice);
-  const [qty, setQty] = useState(1);
   const [period, setPeriod] = useState<"strg_1_hy" | "strg_2_hy">(
     strg_1_hy ? "strg_1_hy" : "strg_2_hy"
   );
@@ -101,7 +100,7 @@ const ContentMarge = ({
     ((sellPrice - costs.azn - costs.varc - externalCosts - tax - netBuyPrice) /
       sellPrice) *
     100;
-  const roi = roundToTwoDecimals((earning / netBuyPrice) * 100);
+  const roi = (earning / netBuyPrice) * 100;
 
   return (
     <div className="w-96 relative">
@@ -284,7 +283,7 @@ const ContentMarge = ({
               </p>
             </div>
           </h3>
-          <h3 className="font-semibold leading-6 mt-2 mb-1 text-gray-900 flex flex-row space-x-1 items-center">
+          <h3 className="font-semibold leading-6 mb-1 text-gray-900 flex flex-row space-x-1 items-center">
             <div className="flex flex-row w-full">
               <p>ROI:</p>
               <p
@@ -292,7 +291,7 @@ const ContentMarge = ({
                   roi < 0 ? "text-red-600" : "text-green-600"
                 }`}
               >
-                {appendPercentage(roi.toString())}
+                {appendPercentage(roi)}
               </p>
             </div>
           </h3>
@@ -304,7 +303,7 @@ const ContentMarge = ({
                   earning < 0 ? "text-red-600" : "text-green-600"
                 }`}
               >
-                {margin.toFixed(2)} %
+                {appendPercentage(margin)}
               </p>
             </div>
           </h3>

@@ -97,7 +97,7 @@ const ContentEbyMarge = ({
       sellPrice) *
     100;
 
-  const roi = roundToTwoDecimals((earning / netBuyPrice) * 100);
+  const roi = (roundToTwoDecimals(earning) / netBuyPrice) * 100
 
   const createSellprovisionStr = (tier: Above | UpTo) => {
     if ("above" in tier) {
@@ -287,7 +287,7 @@ const ContentEbyMarge = ({
               </p>
             </div>
           </h3>
-          <h3 className="font-semibold leading-6 mt-2 mb-1 text-gray-900 flex flex-row space-x-1 items-center">
+          <h3 className="font-semibold leading-6 mb-1 text-gray-900 flex flex-row space-x-1 items-center">
             <div className="flex flex-row w-full">
               <p>ROI:</p>
               <p
@@ -295,7 +295,7 @@ const ContentEbyMarge = ({
                   roi < 0 ? "text-red-600" : "text-green-600"
                 }`}
               >
-                {appendPercentage(roi.toString())}
+                {appendPercentage(roi)}
               </p>
             </div>
           </h3>
@@ -307,7 +307,7 @@ const ContentEbyMarge = ({
                   earning < 0 ? "text-red-600" : "text-green-600"
                 }`}
               >
-                {roundToTwoDecimals(margin)} %
+                {appendPercentage(margin)}
               </p>
             </div>
           </h3>

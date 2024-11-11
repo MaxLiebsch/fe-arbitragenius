@@ -3,7 +3,11 @@ import { appendPercentage } from "@/util/formatter";
 import { roundToTwoDecimals } from "@/util/roundToTwoDecimals";
 import { GridColDef } from "@mui/x-data-grid-premium";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
-import { mrgnFieldName, mrgnPctFieldName } from "@/util/productQueries/mrgnProps";
+import {
+  mrgnFieldName,
+  mrgnPctFieldName,
+} from "@/util/productQueries/mrgnProps";
+import { calculateNetPrice } from "@/util/calculateNetPrice";
 
 const MarginPct = ({
   target,
@@ -27,12 +31,14 @@ const MarginPct = ({
     ),
     renderCell: (params) => {
       const { row: product } = params;
-      const { prc,a_prc, tax, a_useCurrPrice,shop } = product;
-      const price  = flip ? a_prc : prc;
-      const netPrice = price / (1 + (tax ? tax : 19) / 100);
+      const { prc, a_prc, tax, a_useCurrPrice, shop, a_qty, qty } =
+        product;
+      const price = flip ? a_prc : prc;
+      const factor = a_qty / qty;
+      const netPrice = calculateNetPrice(price, tax) * factor;
       const isFlip = shop === "flip";
       const margin = product[mrgnFieldName(target, settings.euProgram)];
-      const roi = roundToTwoDecimals((margin / netPrice) * 100)
+      const roi = appendPercentage((margin / (netPrice)) * 100);
       return (
         <div className="flex flex-col">
           {a_useCurrPrice === false && !flip && !isFlip ? (
@@ -44,9 +50,7 @@ const MarginPct = ({
             </div>
           ) : null}
           <div>{appendPercentage(params.value)}</div>
-          {margin && (
-            <div>{`(${roi}%)`}</div>
-          )}
+          {margin && <div>{`(${roi})`}</div>}
         </div>
       );
     },
