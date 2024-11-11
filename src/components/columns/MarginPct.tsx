@@ -31,14 +31,14 @@ const MarginPct = ({
     ),
     renderCell: (params) => {
       const { row: product } = params;
-      const { prc, a_prc, tax, a_useCurrPrice, shop, a_qty, qty } =
+      const { prc, a_prc, tax, a_useCurrPrice, shop, a_qty, e_qty, qty } =
         product;
       const price = flip ? a_prc : prc;
-      const factor = a_qty / qty;
+      const factor = (target === "a" ? a_qty : e_qty) / qty;
       const netPrice = calculateNetPrice(price, tax) * factor;
       const isFlip = shop === "flip";
       const margin = product[mrgnFieldName(target, settings.euProgram)];
-      const roi = appendPercentage((margin / (netPrice)) * 100);
+      const roi = appendPercentage((margin / netPrice) * 100);
       return (
         <div className="flex flex-col">
           {a_useCurrPrice === false && !flip && !isFlip ? (
