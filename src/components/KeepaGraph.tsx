@@ -1,6 +1,7 @@
 import { keepaTimeSummand } from "@/constant/constant";
 import { ModifiedProduct } from "@/types/Product";
 import { formatter } from "@/util/formatter";
+import { getLatestBsr } from "@/util/getLatestBsr";
 import { format, fromUnixTime } from "date-fns";
 import { de } from "date-fns/locale";
 import { useCallback, useMemo, useState } from "react";
@@ -19,18 +20,26 @@ type DataPoint = "amazonPrice" | "usedPrice" | "newPrice" | "salesRank";
 export const createUnixTimeFromKeepaTime = (timestamp: number) =>
   (timestamp + keepaTimeSummand) * 60;
 
-export const KeepaGraph = ({ product }: { product: ModifiedProduct }) => {
-  const [isHovered, setIsHovered] = useState<boolean>(false);
+export const KeepaGraph = ({
+  product,
+  open,
+}: {
+  product: ModifiedProduct;
+  open: boolean;
+}) => {
+  const {
+    ahstprcs,
+    avg90_ausprcs,
+    avg90_ansprcs,
+    curr_salesRank,
+    anhstprcs,
+    auhstprcs,
+    salesRanks,
+    categoryTree,
+    avg90_ahsprcs,
+  } = product;
 
-  const handleMouseEnter = () => {
-    setIsHovered(true);
-  };
-
-  const handleMouseLeave = () => {
-    setIsHovered(false);
-  };
-
-  const { ahstprcs, anhstprcs, auhstprcs, salesRanks, categoryTree, eanList } = product;
+  const { bsr, aznCategory } = getLatestBsr(product);
 
   const hasAhstprcs = ahstprcs && ahstprcs.length;
   const hasAnhstprcs = anhstprcs && anhstprcs.length;
@@ -131,8 +140,6 @@ export const KeepaGraph = ({ product }: { product: ModifiedProduct }) => {
 
   const CustomLegend = (props: any) => {
     const { payload } = props;
-    if (product.curr_salesRank === -1) {
-    }
     return (
       <>
         <ul style={{ listStyleType: "none", padding: 0 }}>
@@ -140,25 +147,23 @@ export const KeepaGraph = ({ product }: { product: ModifiedProduct }) => {
             switch (entry.dataKey) {
               case "amazonPrice":
                 entry.value = `Amazon ${formatter.format(
-                  product.avg90_ahsprcs / 100
+                  avg90_ahsprcs / 100
                 )} *`;
                 entry.color = "#FFA500";
                 break;
               case "usedPrice":
                 entry.value = `Gebraucht ${formatter.format(
-                  product.avg90_ausprcs / 100
+                  avg90_ausprcs / 100
                 )} *`;
                 entry.color = "#444444";
                 break;
               case "newPrice":
-                entry.value = `Neu ${formatter.format(
-                  product.avg90_ansprcs / 100
-                )} *`;
+                entry.value = `Neu ${formatter.format(avg90_ansprcs / 100)} *`;
                 entry.color = "#8888dd";
                 break;
               case "salesRank":
                 entry.value = `Bestseller Rang #${
-                  product.curr_salesRank === -1 ? "N/A" : product.curr_salesRank
+                  bsr && bsr.length ? bsr[0].number : curr_salesRank
                 }`;
                 entry.color = "#3a883a";
                 break;
@@ -219,94 +224,81 @@ export const KeepaGraph = ({ product }: { product: ModifiedProduct }) => {
   };
 
   return (
-    <div
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      className={`cursor:pointer relative h-full w-full`}
+    <LineChart
+      style={{ pointerEvents: open ? "auto" : "none" }}
+      width={open ? 870 : 100}
+      height={open ? 500 : 50}
+      data={data}
+      margin={
+        open
+          ? { top: 20, right: 5, left: 20, bottom: 5 }
+          : {
+              top: 5,
+              right: 5,
+              left: 5,
+              bottom: 5,
+            }
+      }
     >
-      <div
-        className={`${
-          isHovered
-            ? "absolute z-[5000] bg-white top-0 right-0"
-            : "flex items-center h-full"
-        }`}
-      >
-        <LineChart
-          width={isHovered ? 870 : 100}
-          height={isHovered ? 500 : 50}
-          data={data}
-          margin={
-            isHovered
-              ? { top: 20, right: 5, left: 20, bottom: 5 }
-              : {
-                  top: 5,
-                  right: 5,
-                  left: 5,
-                  bottom: 5,
-                }
-          }
-        >
-          {isHovered && (
-            <>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="date" scale={"auto"} />
-              <YAxis
-                yAxisId="left"
-                tickFormatter={(value) =>
-                  formatter.format(
-                    Math.round(Number(Math.round(value).toFixed(0)))
-                  )
-                }
-                type="number"
-                domain={["auto", "auto"]}
-              />
-              <YAxis />
-              <YAxis
-                yAxisId="right"
-                tickFormatter={(value) => `#${Math.round(value).toFixed(0)}`}
-                orientation="right"
-                type="number"
-                domain={["auto", "auto"]}
-              />
-              <YAxis />
-              <Legend
-                layout="vertical"
-                verticalAlign="top"
-                align="right"
-                content={<CustomLegend />}
-              />
-            </>
-          )}
+      {open && (
+        <>
+          <Legend
+            layout="vertical"
+            verticalAlign="top"
+            align="right"
+            content={<CustomLegend />}
+          />
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="date" scale={"auto"} />
+          <YAxis
+            yAxisId="left"
+            tickFormatter={(value) =>
+              formatter.format(Math.round(Number(Math.round(value).toFixed(0))))
+            }
+            type="number"
+            domain={["auto", "auto"]}
+          />
+          <YAxis />
+          <YAxis
+            yAxisId="right"
+            tickFormatter={(value) => `#${Math.round(value).toFixed(0)}`}
+            orientation="right"
+            type="number"
+            domain={["auto", "auto"]}
+          />
+          <YAxis />
           <Tooltip content={<CustomTooltip />} />
-          {hasSalesRanks && (
-            <Line
-              yAxisId="right"
-              dot={false}
-              connectNulls
-              type="monotone"
-              dataKey="salesRank"
-              stroke="#3a883a"
-            />
-          )}
-          {isHovered && hasAhstprcs && (
-            <Line
-              yAxisId="left"
-              type="step"
-              dataKey="amazonPrice"
-              connectNulls
-              stroke="#ff9900"
-            />
-          )}
-          {isHovered && hasAnhstprcs && (
-            <Line
-              yAxisId="left"
-              type="step"
-              connectNulls
-              dataKey="newPrice"
-              stroke="#8888dd"
-            />
-          )}
-          {/* {isHovered && hasAuhstprcs && (
+        </>
+      )}
+      {hasSalesRanks && (
+        <Line
+          yAxisId="right"
+          dot={false}
+          connectNulls
+          type="monotone"
+          dataKey="salesRank"
+          stroke="#3a883a"
+        />
+      )}
+      {open && hasAhstprcs && (
+        <Line
+          yAxisId="left"
+          type="step"
+          dataKey="amazonPrice"
+          connectNulls
+          stroke="#ff9900"
+        />
+      )}
+      {open && hasAnhstprcs && (
+        <Line
+          yAxisId="left"
+          type="step"
+          connectNulls
+          dataKey="newPrice"
+          stroke="#8888dd"
+        />
+      )}
+      {/* {isHovered && hasAuhstprcs && (
               <Line
                 yAxisId="left"
                 type="step"
@@ -315,8 +307,6 @@ export const KeepaGraph = ({ product }: { product: ModifiedProduct }) => {
                 stroke="#444444"
               />
             )} */}
-        </LineChart>
-      </div>
-    </div>
+    </LineChart>
   );
 };

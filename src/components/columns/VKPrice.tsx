@@ -41,29 +41,24 @@ const VKPrice = ({
     },
     renderCell: (params) => {
       const { row: product } = params;
-      const {
-        a_prc,
-        a_avg_prc,
-        e_prc,
-        shop,
-        a_useCurrPrice,
-      } = product;
+      const { a_prc, a_avg_prc, e_prc, shop, a_useCurrPrice } = product;
       let avgPrice = 0;
-      if (!a_useCurrPrice) {
+      if (a_useCurrPrice === false) {
         avgPrice = getAvgPrice(product as ModifiedProduct);
       } else {
         avgPrice = a_avg_prc;
       }
 
-      const price =
-      flip || shop === "flip" || !a_useCurrPrice
-      ? avgPrice
-      : a_prc
-    
+      const priceForCalculation =
+        flip || shop === "flip" || a_useCurrPrice === false ? avgPrice : a_prc;
+
       let dumping = false;
 
-      if (avgPrice && avgPrice > -1 && price) {
-        if (avgPrice - price > 3 || avgPrice / price > 1.03) {
+      if (avgPrice && avgPrice > -1 && priceForCalculation) {
+        if (
+          avgPrice - priceForCalculation > 3 ||
+          avgPrice / priceForCalculation > 1.03
+        ) {
           dumping = true;
         }
       }
@@ -85,7 +80,11 @@ const VKPrice = ({
             <></>
           )}
           <div className={`${netto ? "" : "font-semibold text-green-600"}`}>
-            <span>{formatCurrency(parseFloat(target === 'a'?price: e_prc))} </span>
+            <span>
+              {formatCurrency(
+                parseFloat(flip || shop === "flip" ?avgPrice :params.value)
+              )}{" "}
+            </span>
             {!flip || !a_useCurrPrice ? (
               target === "a" && avgPrice && avgPrice > 1 ? (
                 <span>{`(∅ ${formatter.format(avgPrice)})`} </span>
@@ -94,14 +93,21 @@ const VKPrice = ({
               ) : null
             ) : null}
           </div>
-          {targetQty > 1 && ( 
+          {targetQty > 1 && (
             <>
-            <span className="text-xs">({formatCurrency(targetUprc)} / Stück)</span>
-            <span className='text-xs'>{targetQty} Stück</span>
+              <span className="text-xs">
+                ({formatCurrency(targetUprc)} / Stück)
+              </span>
+              <span className="text-xs">{targetQty} Stück</span>
             </>
           )}
           <div className={`${netto ? "font-semibold text-green-600" : ""}`}>
-            {formatCurrency(calculationDeduction(parseFloat(target === 'a'?price: e_prc), true))}
+            {formatCurrency(
+              calculationDeduction(
+                parseFloat(target === "a" ? priceForCalculation : e_prc),
+                true
+              )
+            )}
           </div>
           {target === "e" && min && max ? (
             <>

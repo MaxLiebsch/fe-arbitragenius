@@ -38,7 +38,7 @@ const EKPrice = ({
       return (
         <div className="flex flex-col">
           <div className={`${netto ? "" : "font-semibold text-green-600"}`}>
-            {formatCurrency(parseFloat(price))}
+            {formatCurrency(price)}
           </div>
           {currQty > 1 && (
             <>
@@ -47,7 +47,7 @@ const EKPrice = ({
             </>
           )}
           <div className={`${netto ? "font-semibold text-green-600" : ""}`}>
-            {formatCurrency(calculationDeduction(parseFloat(price), true))}
+            {formatCurrency(calculationDeduction(price, true))}
           </div>
         </div>
       );

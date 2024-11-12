@@ -40,12 +40,12 @@ const MarginPct = ({
       const isFlip = shop === "flip";
       const margin = product[mrgnFieldName(target, settings.euProgram)];
       const roi = appendPercentage(roundToFourDecimals(margin / netPrice) * 100);
-      if (product.asin === "B0831SJ2K9"){
-        console.log('mrgn field factor:', factor)
-        console.log('db earnings:', margin)
-        console.log("margin / netPrice:", margin / netPrice);
-        console.log("mrgn field roi:", roi);
-      }
+      // if (product.asin === "B01K7SHKCK"){
+      //   console.log('mrgn field factor:', factor)
+      //   console.log('db earnings:', margin)
+      //   console.log("margin / netPrice:", margin / netPrice);
+      //   console.log("mrgn field roi:", roi);
+      // }
       return (
         <div className="flex flex-col">
           {a_useCurrPrice === false && !flip && !isFlip ? (

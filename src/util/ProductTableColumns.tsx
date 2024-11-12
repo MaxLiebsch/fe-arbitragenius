@@ -16,6 +16,7 @@ import Image from "next/image";
 import arbitrageOne from "@/images/arbitrageone.png";
 import { arbitrageOneUrlBuilder } from "./arbitrageOneUrlBuilder";
 import OptionField from "@/components/columns/OptionField";
+import PriceAnalysis from "@/components/columns/PriceAnalysis";
 
 export const createColumns: (
   target: string,
@@ -70,13 +71,7 @@ export const createColumns: (
     },
     EKPrice({ settings, flip }),
     VKPrice({ target, settings, flip }),
-    {
-      field: "analytics",
-      disableColumnMenu: true,
-      width: 150,
-      headerName: "Preisanalyse",
-      renderCell: (params) => <KeepaGraph product={params.row} />,
-    },
+    PriceAnalysis(),
     MarginPct({ target, settings, flip }),
     Margin({ target, settings, flip }),
     OptionField({

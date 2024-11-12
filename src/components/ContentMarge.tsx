@@ -1,9 +1,8 @@
 "use client";
-
 import { ModifiedProduct } from "@/types/Product";
 import { appendPercentage, formatter } from "@/util/formatter";
 import { InputNumber, Switch } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import CopyToClipboard from "./CopyToClipboard";
 import {
   roundToFourDecimals,
@@ -13,8 +12,8 @@ import { useUserSettings } from "@/hooks/use-settings";
 import { getAvgPrice } from "@/util/getAvgPrice";
 import { calculateTax } from "@/util/calculateTax";
 import { calculateNetPrice } from "@/util/calculateNetPrice";
-import { calcAznCosts } from "@/util/calcAznCosts";
 import ArbitrageOneExportBtn from "./ArbitrageOneExportBtn";
+import { addCosts } from "@/util/addCosts";
 
 const ContentMarge = ({
   product,
@@ -75,7 +74,7 @@ const ContentMarge = ({
   const [costs, setCosts] = useState(product["costs"]);
   const factor = a_qty / flipQty;
   const [netBuyPrice, setNetBuyPrice] = useState(
-    calculateNetPrice(initBuyPrice, product.tax) * factor
+    roundToTwoDecimals(calculateNetPrice(initBuyPrice, product.tax) * factor)
   );
 
   const strg_1_hy = new Date().getMonth() < 9;
@@ -91,19 +90,26 @@ const ContentMarge = ({
     ? costs.tpt + costs[period]
     : storageCosts + prepCenterCosts + transport;
 
-  const totalCosts = costs.azn + costs.varc + externalCosts + tax + netBuyPrice;
+  const totalCosts = addCosts([
+    costs.azn,
+    costs.varc,
+    externalCosts,
+    tax,
+    netBuyPrice,
+  ]);
   const earning = sellPrice - totalCosts;
-  // VK - Kosten - Steuern - EK / VK * 100
   const margin = roundToFourDecimals(earning / sellPrice) * 100;
   const roi = roundToFourDecimals(earning / netBuyPrice) * 100;
-  if (product.asin === "B0831SJ2K9") {
-    console.log('totalCosts:', totalCosts)
-    console.log("netBuyPrice:", netBuyPrice);
-    console.log("sellPrice:", sellPrice);
-    console.log("content window factor:", factor);
-    console.log("cal earning:", earning, "ist", product["a_w_mrgn"]);
-    console.log("content window roi:", roi);
-  }
+
+  // if (product.asin === "B01K7SHKCK") {
+  //   console.log("totalCosts:", totalCosts);
+  //   console.log("netBuyPrice:", netBuyPrice);
+  //   console.log("sellPrice:", sellPrice);
+  //   console.log("content window factor:", factor);
+  //   console.log("cal earning:", earning, "ist", product["a_w_mrgn"]);
+  //   console.log("content window roi:", roi);
+  // }
+
 
   return (
     <div className="w-96 relative">

@@ -15,6 +15,7 @@ import Margin from "@/components/columns/Margin";
 import VKPrice from "@/components/columns/VKPrice";
 import EKPrice from "@/components/columns/EKPrice";
 import OptionField from "@/components/columns/OptionField";
+import PriceAnalysis from "@/components/columns/PriceAnalysis";
 
 export const createSalesTableColumns: (
   target: string,
@@ -81,19 +82,7 @@ export const createSalesTableColumns: (
   },
   EKPrice({ settings }),
   VKPrice({ target, settings }),
-  {
-    field: "analytics",
-    width: 150,
-    headerName: "Preisanalyse",
-    disableColumnMenu: true,
-    renderCell: (params) => {
-      return params.row["ahstprcs"] ? (
-        <KeepaGraph product={params.row} />
-      ) : (
-        <></>
-      );
-    },
-  },
+  PriceAnalysis(),
   MarginPct({ target, settings }),
   Margin({ target, settings }),
   OptionField({

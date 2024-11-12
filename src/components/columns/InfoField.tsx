@@ -13,6 +13,7 @@ import { parseSalesRank } from "@/util/parseSalesRank";
 import { de } from "date-fns/locale";
 import { aznCategoryMapping } from "@/constant/constant";
 import { targetLinkBuilder } from "@/util/targetLinkBuilder";
+import { getLatestBsr } from "@/util/getLatestBsr";
 
 const InfoField = ({
   product,
@@ -52,7 +53,7 @@ const InfoField = ({
     [`${target}_img` as "a_img" | "e_img"]: targetImg,
   } = product;
 
-  const targetLink = targetLinkBuilder(target, product)
+  const targetLink = targetLinkBuilder(target, product);
 
   const shopDomain = sdmn !== "sales" ? sdmn : shop !== undefined ? s : "";
 
@@ -62,24 +63,7 @@ const InfoField = ({
       : dealEbyUpdatedAt || updatedAt;
   const lastUpdated = availUpdatedAt || updatedAt;
 
-  let bsr = initialBsr;
-  let aznCategory = null;
-  if (bsr && bsr.length) {
-    if (salesRanks) {
-      const bsrLastUpdate = parseISO(bsr[0].createdAt).getTime();
-      const salesRanksLastUpdate = keepaUpdatedAt
-        ? parseISO(keepaUpdatedAt).getTime()
-        : new Date().getTime();
-      if (bsrLastUpdate < salesRanksLastUpdate && categoryTree) {
-        bsr = parseSalesRank(salesRanks, categoryTree);
-      }
-    }
-    if (categoryTree && categoryTree.length) {
-      aznCategory = aznCategoryMapping.find(
-        (cat) => cat.value === categoryTree[0].catId
-      );
-    }
-  }
+  const { bsr, aznCategory } = getLatestBsr(product);
   const isFlip = shop === "flip";
   return (
     <div className="flex flex-col divide-y p-1 w-full">

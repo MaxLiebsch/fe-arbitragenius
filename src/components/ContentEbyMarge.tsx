@@ -2,7 +2,7 @@
 
 import { ModifiedProduct } from "@/types/Product";
 import { appendPercentage, formatter } from "@/util/formatter";
-import { Input, InputNumber, Popover, Switch } from "antd";
+import {  InputNumber, Popover, Switch } from "antd";
 import React, { useMemo, useState } from "react";
 import CopyToClipboard from "./CopyToClipboard";
 import { ebayTier } from "@/constant/ebay";
@@ -13,6 +13,8 @@ import {
 } from "@/util/roundToTwoDecimals";
 import { Settings } from "@/types/Settings";
 import { useUserSettings } from "@/hooks/use-settings";
+import { addCosts } from "@/util/addCosts";
+import { calculateNetPrice } from "@/util/calculateNetPrice";
 
 const ContentEbyMarge = ({
   product,
@@ -86,18 +88,22 @@ const ContentEbyMarge = ({
   }, [sellPrice, ebyShop, mappedCategory]);
 
   const [netBuyPrice, setBuyPrice] = useState(
-    roundToTwoDecimals((product["prc"] / 1.19) * factor)
+    roundToTwoDecimals(calculateNetPrice(product["prc"], product.tax) * factor)
   );
   const [storageCosts, setStorageCosts] = useState(settings.strg ?? 0);
 
   const [transportCosts, setTransportCosts] = useState(
     settings[settings.tptStandard as keyof Settings] as number
   );
-  const totalCosts =
-    costs + storageCosts + transportCosts + taxCosts + netBuyPrice;
+  const totalCosts = addCosts([
+    costs,
+    storageCosts,
+    transportCosts,
+    taxCosts,
+    netBuyPrice,
+  ]);
   const earning = sellPrice - totalCosts;
   const margin = roundToFourDecimals(earning / sellPrice) * 100;
-
   const roi = roundToFourDecimals(earning / netBuyPrice) * 100;
 
   const createSellprovisionStr = (tier: Above | UpTo) => {
