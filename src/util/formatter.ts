@@ -6,7 +6,6 @@ export const formatter = new Intl.NumberFormat("de-DE", {
 
 export const percentFormatter = new Intl.NumberFormat("de-DE", {
   style: "percent",
-  roundingPriority: "auto",
   maximumFractionDigits: 2,
   minimumFractionDigits: 2,
 });
