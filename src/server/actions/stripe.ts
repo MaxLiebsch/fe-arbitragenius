@@ -27,11 +27,12 @@ export async function createCheckoutSession(
       mode: "subscription",
       payment_method_types: ["card", "paypal"],
       customer_email: userEmail,
+      allow_promotion_codes: true,
       line_items: [
         {
           quantity: 1,
           tax_rates: [taxRate.id],
-
+          
           price_data: {
             currency: "EUR",
             product_data: {

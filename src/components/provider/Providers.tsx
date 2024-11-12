@@ -9,7 +9,7 @@ import { DevTools } from "jotai-devtools";
 import useAccount from "@/hooks/use-account";
 import { useUserSettings } from "@/hooks/use-settings";
 import { defaultSettings } from "@/constant/defaultSettings";
-import { text } from "stream/consumers";
+import { differenceInDays } from "date-fns";
 
 export default function Providers({ children }: { children: ReactNode }) {
   // NOTE: Avoid useState when initializing the query client if you don't
@@ -29,6 +29,15 @@ export default function Providers({ children }: { children: ReactNode }) {
           ...JSON.parse(settings),
           loaded: true,
         });
+      } else {
+        const today = Date.now();
+        const registrationDate = new Date(accountQuery.data.registration);
+        if (differenceInDays(today, registrationDate) < 7) {
+          setUserSettings({
+            ...defaultSettings,
+            loaded: true,
+          });
+        }
       }
     }
   }, [accountQuery.data, setUserSettings]);

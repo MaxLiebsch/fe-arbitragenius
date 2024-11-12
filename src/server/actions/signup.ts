@@ -38,6 +38,7 @@ export async function signupAction(
 
   try {
     const verifyEmail = await fetch("/app/api/verify-email?email=" + email);
+    console.log("verifyEmail:", verifyEmail);
     if (verifyEmail) {
       const info = await verifyEmail.json();
       if (info.result === "risky") {
@@ -74,14 +75,13 @@ export async function signupAction(
         };
       }
     }
-    // const { account } = await createWebClient();
-    // await account.create(ID.unique(), email, password, name);
+    const { account } = await createWebClient();
+    await account.create(ID.unique(), email, password, name);
 
-    // const response = await createEmailPasswordSession({ email, password });
-    // await createVerification(
-    //   `${process.env.NEXT_PUBLIC_DOMAIN}/auth/verify/callback/${email}`
-    // );
-    const response = { message: "success" };
+    const response = await createEmailPasswordSession({ email, password });
+    await createVerification(
+      `${process.env.NEXT_PUBLIC_DOMAIN}/auth/verify/callback/${email}`
+    );
     const { message } = response;
     if (message !== "success") {
       return { message, formErrors: [], fieldErrors: {} };

@@ -1,6 +1,6 @@
 import { Settings } from "@/types/Settings";
 import { appendPercentage } from "@/util/formatter";
-import { roundToTwoDecimals } from "@/util/roundToTwoDecimals";
+import { roundToFourDecimals, roundToTwoDecimals } from "@/util/roundToTwoDecimals";
 import { GridColDef } from "@mui/x-data-grid-premium";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import {
@@ -34,11 +34,18 @@ const MarginPct = ({
       const { prc, a_prc, tax, a_useCurrPrice, shop, a_qty, e_qty, qty } =
         product;
       const price = flip ? a_prc : prc;
-      const factor = (target === "a" ? a_qty : e_qty) / qty;
+      const flipQty = flip ? a_qty : qty;
+      const factor = (target === "a" ? a_qty : e_qty) / flipQty;
       const netPrice = calculateNetPrice(price, tax) * factor;
       const isFlip = shop === "flip";
       const margin = product[mrgnFieldName(target, settings.euProgram)];
-      const roi = appendPercentage((margin / netPrice) * 100);
+      const roi = appendPercentage(roundToFourDecimals(margin / netPrice) * 100);
+      if (product.asin === "B0831SJ2K9"){
+        console.log('mrgn field factor:', factor)
+        console.log('db earnings:', margin)
+        console.log("margin / netPrice:", margin / netPrice);
+        console.log("mrgn field roi:", roi);
+      }
       return (
         <div className="flex flex-col">
           {a_useCurrPrice === false && !flip && !isFlip ? (

@@ -7,7 +7,10 @@ import React, { useMemo, useState } from "react";
 import CopyToClipboard from "./CopyToClipboard";
 import { ebayTier } from "@/constant/ebay";
 import { Above, EbyTierCategory, UpTo } from "@/types/EbyTierCategory";
-import { roundToTwoDecimals } from "@/util/roundToTwoDecimals";
+import {
+  roundToFourDecimals,
+  roundToTwoDecimals,
+} from "@/util/roundToTwoDecimals";
 import { Settings } from "@/types/Settings";
 import { useUserSettings } from "@/hooks/use-settings";
 
@@ -90,14 +93,12 @@ const ContentEbyMarge = ({
   const [transportCosts, setTransportCosts] = useState(
     settings[settings.tptStandard as keyof Settings] as number
   );
-  const earning =
-    sellPrice - costs - storageCosts - transportCosts - taxCosts - netBuyPrice;
-  const margin =
-    ((sellPrice - costs - storageCosts - transportCosts - taxCosts - netBuyPrice) /
-      sellPrice) *
-    100;
+  const totalCosts =
+    costs + storageCosts + transportCosts + taxCosts + netBuyPrice;
+  const earning = sellPrice - totalCosts;
+  const margin = roundToFourDecimals(earning / sellPrice) * 100;
 
-  const roi = (roundToTwoDecimals(earning) / netBuyPrice) * 100
+  const roi = roundToFourDecimals(earning / netBuyPrice) * 100;
 
   const createSellprovisionStr = (tier: Above | UpTo) => {
     if ("above" in tier) {
@@ -253,7 +254,9 @@ const ContentEbyMarge = ({
         <h3 className="font-semibold leading-6 mt-2 mb-1 text-gray-900 flex flex-row space-x-1 items-center">
           <div className="flex flex-row w-full">
             <p>Sonstige Kosten:</p>
-            <p className="ml-auto">{formatter.format(taxCosts + netBuyPrice)}</p>
+            <p className="ml-auto">
+              {formatter.format(taxCosts + netBuyPrice)}
+            </p>
           </div>
         </h3>
         <div className="grid grid-rows-2 gap-1">

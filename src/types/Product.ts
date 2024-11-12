@@ -72,6 +72,7 @@ export interface ModifiedProduct extends Product {
   a_avg_prc?: number;
   a_uprc: number;
   esin: string;
+  a_w_mrgn?: number;
   shop?: string;
   uprc: number;
   availUpdatedAt?: string;

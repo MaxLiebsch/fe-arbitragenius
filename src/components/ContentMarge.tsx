@@ -5,7 +5,10 @@ import { appendPercentage, formatter } from "@/util/formatter";
 import { InputNumber, Switch } from "antd";
 import React, { useEffect, useState } from "react";
 import CopyToClipboard from "./CopyToClipboard";
-import { roundToTwoDecimals } from "@/util/roundToTwoDecimals";
+import {
+  roundToFourDecimals,
+  roundToTwoDecimals,
+} from "@/util/roundToTwoDecimals";
 import { useUserSettings } from "@/hooks/use-settings";
 import { getAvgPrice } from "@/util/getAvgPrice";
 import { calculateTax } from "@/util/calculateTax";
@@ -27,6 +30,7 @@ const ContentMarge = ({
     | "shop"
     | "asin"
     | "nm"
+    | "a_w_mrgn"
     | "eanList"
     | "a_useCurrPrice"
     | "a_qty"
@@ -58,6 +62,7 @@ const ContentMarge = ({
 
   const isFlip = a_avg_prc !== undefined;
   const initBuyPrice = isFlip ? a_prc : prc;
+  const flipQty = isFlip ? a_qty : buyQty;
   const initSellPrice = isFlip || useAvgPrice ? avgPrice : a_prc;
 
   const [settings, setSettings] = useUserSettings();
@@ -68,7 +73,7 @@ const ContentMarge = ({
   const [prepCenterCosts, setPrepCenterCosts] = useState(settings.a_prepCenter);
   const [storageCosts, setStorageCosts] = useState(settings.a_strg ?? 0);
   const [costs, setCosts] = useState(product["costs"]);
-  const factor = a_qty / buyQty;
+  const factor = a_qty / flipQty;
   const [netBuyPrice, setNetBuyPrice] = useState(
     calculateNetPrice(initBuyPrice, product.tax) * factor
   );
@@ -82,25 +87,23 @@ const ContentMarge = ({
 
   const tax = calculateTax(sellPrice, product.tax);
 
-  useEffect(() => {
-    setCosts({
-      ...product["costs"],
-      azn: calcAznCosts(product["costs"], a_prc, sellPrice),
-    });
-  }, [product, isFlip, useAvgPrice, sellPrice, a_prc]);
-
   const externalCosts = fba
     ? costs.tpt + costs[period]
     : storageCosts + prepCenterCosts + transport;
 
-  const earning =
-    sellPrice - costs.azn - costs.varc - externalCosts - tax - netBuyPrice;
+  const totalCosts = costs.azn + costs.varc + externalCosts + tax + netBuyPrice;
+  const earning = sellPrice - totalCosts;
   // VK - Kosten - Steuern - EK / VK * 100
-  const margin =
-    ((sellPrice - costs.azn - costs.varc - externalCosts - tax - netBuyPrice) /
-      sellPrice) *
-    100;
-  const roi = (earning / netBuyPrice) * 100;
+  const margin = roundToFourDecimals(earning / sellPrice) * 100;
+  const roi = roundToFourDecimals(earning / netBuyPrice) * 100;
+  if (product.asin === "B0831SJ2K9") {
+    console.log('totalCosts:', totalCosts)
+    console.log("netBuyPrice:", netBuyPrice);
+    console.log("sellPrice:", sellPrice);
+    console.log("content window factor:", factor);
+    console.log("cal earning:", earning, "ist", product["a_w_mrgn"]);
+    console.log("content window roi:", roi);
+  }
 
   return (
     <div className="w-96 relative">
@@ -270,7 +273,7 @@ const ContentMarge = ({
             addonBefore="Einkaufspreis € (Netto)"
           />
         </div>
-        <div className='w-full flex flex-col'>
+        <div className="w-full flex flex-col">
           <h3 className="font-semibold leading-6 mt-2 mb-1 text-gray-900 flex flex-row space-x-1 items-center">
             <div className="flex flex-row w-full">
               <p>Nettogewinn:</p>
