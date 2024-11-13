@@ -17,8 +17,9 @@ const Page = () => {
           {[
             { name: "Amazon", domain: "amazon.de" },
             { name: "Ebay", domain: "ebay.de" },
+            { name: "Kaufland (Coming soon)", domain: "kaufland.de" },
           ].map((item) => (
-            <Tab key={item.name}>
+            <Tab key={item.name} disabled={item.domain === "kaufland.de"}>
               {({ selected }) => (
                 <div
                   key={item.name}

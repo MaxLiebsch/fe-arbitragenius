@@ -33,6 +33,7 @@ const Page = async ({ params }: { params: { id: string } }) => {
     Number((task.progress.completed / task.progress.total).toFixed(2)) * 100;
   return (
     <>
+      <div>{task?.name || "Task"} </div>
       <div>
         Ziel: {task.type === "WHOLESALE_EBY_SEARCH" ? "Ebay" : "Amazon"}
       </div>

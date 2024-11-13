@@ -1,11 +1,12 @@
 import { DbTask } from "@/types/tasks";
-import { Button, Card, Tooltip, message } from "antd";
+import { Button, Card, Tooltip, Typography, message } from "antd";
 import React, { useEffect } from "react";
 import { format, parseISO } from "date-fns";
 import Link from "next/link";
 import Spinner from "./Spinner";
 import { ArrowPathIcon, TrashIcon } from "@heroicons/react/16/solid";
 import useDeleteTask from "@/hooks/use-task-delete";
+import useUpdateTask from "@/hooks/use-task-update";
 
 const TaskCard = ({ task }: { task: DbTask }) => {
   const inProgress = task.executing;
@@ -13,8 +14,8 @@ const TaskCard = ({ task }: { task: DbTask }) => {
   const progress = (
     Number(task.progress.completed / task.progress.total) * 100
   ).toFixed(0);
-  const deleteTask = useDeleteTask({ taskId: task._id.toString(),target });
-
+  const deleteTask = useDeleteTask({ taskId: task._id.toString(), target });
+  const updateTask = useUpdateTask();
   useEffect(() => {
     if (deleteTask.isSuccess) {
       deleteTask.reset();
@@ -36,7 +37,25 @@ const TaskCard = ({ task }: { task: DbTask }) => {
           Analyse öffnen
         </Link>
       }
-      title={<div className="flex flex-row gap-10">{`Task ${task._id}`}</div>}
+      title={
+        <Typography.Text
+          editable={{
+            onChange: (newName) => {
+              if (newName === task.name) return;
+              if (newName.length < 1) {
+                message.error("Name darf nicht leer sein");
+                return;
+              }
+              updateTask.mutate({
+                taskId: task._id.toString(),
+                body: { name: newName },
+              });
+            },
+          }}
+        >
+          {`${task?.name || "Task"}`}
+        </Typography.Text>
+      }
       style={{ width: 400 }}
     >
       <div className="flex flex-col">

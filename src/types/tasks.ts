@@ -22,6 +22,7 @@ export interface Task {
   maintenance: boolean;
   lastCrawler: any[];
   productLimit: number;
+  name: string;
   executing: boolean;
   cooldown: string;
 }
@@ -43,10 +44,10 @@ export interface WholeSaleTask extends Task {
   progress: Progress;
 }
 
-export interface WholeSaleEbyTask extends Task{
+export interface WholeSaleEbyTask extends Task {
   userId: string;
   progress: Progress;
-  browserConfig: { 
+  browserConfig: {
     queryEansOnEby: {
       concurrency: number;
       productLimit: number;
@@ -55,7 +56,7 @@ export interface WholeSaleEbyTask extends Task{
       concurrency: number;
       productLimit: number;
     };
-  }
+  };
 }
 
 export interface CrawlTask extends Task {
@@ -87,6 +88,7 @@ export const taskSchema: JSONSchemaType<CrawlTask> = {
     type: { type: "string" },
     shopDomain: { type: "string" },
     retry: { type: "integer" },
+    name: { type: "string" },
     id: { type: "string" },
     visitedPages: { type: "array", items: { type: "string" } },
     weekday: { type: "integer" },
