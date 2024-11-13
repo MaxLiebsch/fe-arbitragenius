@@ -3,6 +3,8 @@
 import { createSessionClient } from "../appwrite";
 import { z } from "zod";
 import { AppwriteException } from "node-appwrite";
+import { updateCustomerInformation } from "../stripe/middleware";
+import { getSubscriptions } from "../appwrite/getSubscription";
 
 const changePasswordSchema = z.object({
   name: z.string(),
@@ -27,6 +29,15 @@ export async function updateNameAction(
   const { account } = await createSessionClient();
 
   try {
+    const user = await account.get();
+    if (user.$id) {
+      const subscription = await getSubscriptions(user.$id);
+      if (subscription.documents[0].customer) {
+        await updateCustomerInformation(subscription.documents[0].customer, {
+          name,
+        });
+      }
+    }
     await account.updateName(name);
     return { message: "Name geändert" };
   } catch (error) {

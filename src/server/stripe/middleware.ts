@@ -1,3 +1,4 @@
+import axios, { AxiosError } from "axios";
 import Stripe from "stripe";
 
 export async function getStripeSubscriptions(
@@ -70,4 +71,31 @@ export async function getStripeSubscription(
 
   if (response.ok) return response.json();
   else return {} as any;
+}
+
+interface Address {
+  line1: string;
+  city: string;
+  country: string;
+  line2: string;
+  postal_code: string;
+  state: string;
+}
+
+interface CustomerData {
+  name?: string;
+  address?: Address;
+  shipping?: {
+    name: string;
+    address: Address;
+  };
+}
+
+export async function updateCustomerInformation(
+  customer: string,
+  data: CustomerData
+): Promise<Stripe.Response<Stripe.Customer>> {
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+  const response = await stripe.customers.update(customer, data);
+  return response;
 }

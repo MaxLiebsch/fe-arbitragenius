@@ -3,6 +3,8 @@
 import { createSessionClient } from "../appwrite";
 import { ZodIssue, z } from "zod";
 import { AppwriteException } from "node-appwrite";
+import { getSubscriptions } from "../appwrite/getSubscription";
+import { updateCustomerInformation } from "../stripe/middleware";
 
 const updateBusinessInfoSchema = z.object({
   business: z.string().min(10),
@@ -43,10 +45,13 @@ export async function updateBusinessInfoAction(
   if (!form.success)
     return {
       fieldErrors: form.error.errors.reduce((errorList, error) => {
-        const {message} = error
+        const { message } = error;
         const path = error.path[0] as string;
         errorList[path] = {
-          message: message === 'Expected string, received null'?"wird benötigt": message,
+          message:
+            message === "Expected string, received null"
+              ? "wird benötigt"
+              : message,
         };
         return errorList;
       }, {} as FieldErrors),
@@ -57,6 +62,33 @@ export async function updateBusinessInfoAction(
   const prefs = await account.getPrefs();
 
   try {
+    const user = await account.get();
+    if (user.$id) {
+      const subscription = await getSubscriptions(user.$id);
+      if (subscription.documents[0].customer) {
+        await updateCustomerInformation(subscription.documents[0].customer, {
+          shipping: {
+            name: business,
+            address: {
+              line1: "",
+              city,
+              country: "DE",
+              line2: `${street} ${houseNumber}`,
+              postal_code: code,
+              state: "",
+            },
+          },
+          address: {
+            line1: business,
+            city,
+            country: "DE",
+            line2: `${street} ${houseNumber}`,
+            postal_code: code,
+            state: "",
+          },
+        });
+      }
+    }
     await account.updatePrefs({
       ...prefs,
       address: JSON.stringify({

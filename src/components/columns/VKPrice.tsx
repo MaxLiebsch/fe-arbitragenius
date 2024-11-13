@@ -6,7 +6,7 @@ import { GridColDef } from "@mui/x-data-grid-premium";
 import { Tooltip } from "antd";
 import React from "react";
 import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
-import { getAvgPrice } from "@/util/getAvgPrice";
+import { getAvg30Price, getAvgPrice } from "@/util/getAvgPrice";
 
 const VKPrice = ({
   target,
@@ -30,7 +30,7 @@ const VKPrice = ({
         <div className="relative w-32 flex flex-col !leading-tight">
           <Tooltip title="Verkaufspreis" placement="topLeft">
             <div>
-              VK {target === "a" ? (!flip ? "(∅ 30 Tage)" : "") : "(Median)"}
+              VK {target === "a" ? (!flip ? "(∅ 30 Tage)" : "") : "(M Median)"}
             </div>
           </Tooltip>
           <div className="text-xs">
@@ -43,7 +43,7 @@ const VKPrice = ({
       const { row: product } = params;
       const { a_prc, a_avg_prc, e_prc, shop, a_useCurrPrice, avg30_ahsprcs } =
         product;
-      const displayAvgPrice = getAvgPrice(product as ModifiedProduct);
+      const displayAvgPrice = getAvg30Price(product as ModifiedProduct);
       let avgPrice = 0;
       if (a_useCurrPrice === false) {
         avgPrice = getAvgPrice(product as ModifiedProduct);
@@ -87,15 +87,15 @@ const VKPrice = ({
                 parseFloat(flip || shop === "flip" ? avgPrice : params.value)
               )}{" "}
             </span>
-            {!flip || a_useCurrPrice === false ? (
-              target === "a" && avgPrice && avgPrice > 1 ? (
+            {(target === "a" && !flip) || a_useCurrPrice === false ? (
+              avgPrice && avgPrice > 1 ? (
                 <span>{`(∅ ${formatter.format(avgPrice)})`} </span>
               ) : (
                 <span>{`(∅ ${formatter.format(displayAvgPrice)})`} </span>
               )
             ) : null}
             {median && target === "e" ? (
-              <span>{`(${formatter.format(median)})`} </span>
+              <span>{`(M ${formatter.format(median)})`} </span>
             ) : null}
           </div>
           {targetQty > 1 && (

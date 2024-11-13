@@ -18,3 +18,16 @@ export const getAvgPrice = (product: ModifiedProduct) => {
   avgPrice = roundToTwoDecimals(avgPrice / 100);
   return avgPrice;
 };
+
+export const getAvg30Price = (product: ModifiedProduct) => {
+  let avgPrice = 0;
+  const { avg30_ansprcs, avg30_ahsprcs } = product;
+  if (avg30_ahsprcs && avg30_ahsprcs > 0) {
+    avgPrice = avg30_ahsprcs;
+  } else if (avg30_ansprcs && avg30_ansprcs > 0) {
+    avgPrice = avg30_ansprcs;
+  }
+
+  avgPrice = roundToTwoDecimals(avgPrice / 100);
+  return avgPrice;
+};
