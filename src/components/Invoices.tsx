@@ -2,7 +2,7 @@ import React from "react";
 import Stripe from "stripe";
 import { Button } from "./Button";
 import { format, fromUnixTime } from "date-fns";
-import { formatCurrency } from "@/util/formatter";
+import { formatCurrency, formatter } from "@/util/formatter";
 
 const PaymentStati: { [key in Stripe.Invoice.Status]: string } = {
   draft: "Entwurf",
@@ -42,7 +42,7 @@ const Invoices = ({ invoices }: { invoices: Stripe.Invoice[] }) => {
             <div>
               <div className="flex items-start gap-x-3">Rechungsbetrag</div>
               <p className="text-sm/5 font-medium text-gray-900">
-                {formatCurrency(total / 100)}
+                {total ? formatCurrency(total / 100) : formatter.format(0)}
               </p>
             </div>
             {invoice_pdf && (
