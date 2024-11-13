@@ -17,7 +17,7 @@ const TotalDeals = () => {
   const [amazonPrevTotal, setAmazonPrevTotal] = React.useState(0);
   const { queryUpdate } = useContext(TotalDealsContext);
   useEffect(() => {
-    if(settings.loaded === false) return;
+    if (settings.loaded === false) return;
     setEbayTotal(0);
     setEbayPrevTotal(0);
     setAmazonPrevTotal(0);
@@ -52,12 +52,12 @@ const TotalDeals = () => {
         });
       }
     });
-  }, [queryUpdate,settings]);
+  }, [queryUpdate, settings]);
 
   return (
     <div className="flex flex-row gap-2 items-center mb-3">
       <div className="border-primary-400 border w-72 group inline-flex items-center justify-center rounded-md py-2 px-4 font-semibold focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2">
-        {amazonTotal > 0? (
+        {amazonTotal > 0 ? (
           <CountUp
             className="block text-lg w-64 text-center"
             separator="."
@@ -83,6 +83,9 @@ const TotalDeals = () => {
         ) : (
           <Spinner />
         )}
+      </div>
+      <div className="border-primary-400 border w-72 group inline-flex items-center justify-center rounded-md py-2 px-4 font-semibold focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2">
+        <p>Kaufland (Coming soon)</p>
       </div>
     </div>
   );
