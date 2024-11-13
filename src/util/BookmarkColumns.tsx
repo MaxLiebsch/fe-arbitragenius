@@ -1,6 +1,5 @@
 import { GridColDef } from "@mui/x-data-grid-premium";
 import { Settings } from "@/types/Settings";
-import { KeepaGraph } from "../components/KeepaGraph";
 import { BookMarkProduct } from "@/types/Product";
 import { Checkbox } from "antd";
 import { BookmarkDeleteSchema, BookmarkSchema } from "@/types/Bookmarks";

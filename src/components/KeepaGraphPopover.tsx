@@ -13,7 +13,11 @@ const KeepaGraphPopover = ({ product }: { product: ModifiedProduct }) => {
       onOpenChange={setOpen}
       trigger="click"
       overlayInnerStyle={{ pointerEvents: "auto" }}
-      content={<KeepaGraph product={product} open={open} />}
+      content={
+        <div className="w-[870px] h-[500px]">
+          <KeepaGraph product={product} open={open} />
+        </div>
+      }
     >
       {open ? (
         <div className="cursor-pointer font-semibold">Graph offen</div>
@@ -23,7 +27,7 @@ const KeepaGraphPopover = ({ product }: { product: ModifiedProduct }) => {
           destroyTooltipOnHide
           title="Detailierte Graphenansicht"
         >
-          <div className="hover:cursor-pointer hover:font-semibold">
+          <div className="hover:cursor-pointer hover:font-semibold h-14">
             <KeepaGraph open={open} product={product} />
           </div>
         </Tooltip>

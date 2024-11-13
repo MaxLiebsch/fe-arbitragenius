@@ -13,6 +13,7 @@ import {
   YAxis,
   Legend,
   Tooltip,
+  ResponsiveContainer,
 } from "recharts";
 
 type DataPoint = "amazonPrice" | "usedPrice" | "newPrice" | "salesRank";
@@ -224,81 +225,82 @@ export const KeepaGraph = ({
   };
 
   return (
-    <LineChart
-      style={{ pointerEvents: open ? "auto" : "none" }}
-      width={open ? 870 : 100}
-      height={open ? 500 : 50}
-      data={data}
-      margin={
-        open
-          ? { top: 20, right: 5, left: 20, bottom: 5 }
-          : {
-              top: 5,
-              right: 5,
-              left: 5,
-              bottom: 5,
-            }
-      }
-    >
-      {open && (
-        <>
-          <Legend
-            layout="vertical"
-            verticalAlign="top"
-            align="right"
-            content={<CustomLegend />}
-          />
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="date" scale={"auto"} />
-          <YAxis
-            yAxisId="left"
-            tickFormatter={(value) =>
-              formatter.format(Math.round(Number(Math.round(value).toFixed(0))))
-            }
-            type="number"
-            domain={["auto", "auto"]}
-          />
-          <YAxis />
-          <YAxis
+    <ResponsiveContainer width={open ? 870 : 100} height={"100%"}>
+      <LineChart
+        style={{ pointerEvents: open ? "auto" : "none" }}
+        data={data}
+        margin={
+          open
+            ? { top: 20, right: 5, left: 20, bottom: 5 }
+            : {
+                top: 5,
+                right: 5,
+                left: 5,
+                bottom: 5,
+              }
+        }
+      >
+        {open && (
+          <>
+            <Legend
+              layout="vertical"
+              verticalAlign="top"
+              align="right"
+              content={<CustomLegend />}
+            />
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="date" scale={"auto"} />
+            <YAxis
+              yAxisId="left"
+              tickFormatter={(value) =>
+                formatter.format(
+                  Math.round(Number(Math.round(value).toFixed(0)))
+                )
+              }
+              type="number"
+              domain={["auto", "auto"]}
+            />
+            <YAxis />
+            <YAxis
+              yAxisId="right"
+              tickFormatter={(value) => `#${Math.round(value).toFixed(0)}`}
+              orientation="right"
+              type="number"
+              domain={["auto", "auto"]}
+            />
+            <YAxis />
+            <Tooltip content={<CustomTooltip />} />
+          </>
+        )}
+        {hasSalesRanks && (
+          <Line
             yAxisId="right"
-            tickFormatter={(value) => `#${Math.round(value).toFixed(0)}`}
-            orientation="right"
-            type="number"
-            domain={["auto", "auto"]}
+            dot={false}
+            connectNulls
+            type="monotone"
+            dataKey="salesRank"
+            stroke="#3a883a"
           />
-          <YAxis />
-          <Tooltip content={<CustomTooltip />} />
-        </>
-      )}
-      {hasSalesRanks && (
-        <Line
-          yAxisId="right"
-          dot={false}
-          connectNulls
-          type="monotone"
-          dataKey="salesRank"
-          stroke="#3a883a"
-        />
-      )}
-      {open && hasAhstprcs && (
-        <Line
-          yAxisId="left"
-          type="step"
-          dataKey="amazonPrice"
-          connectNulls
-          stroke="#ff9900"
-        />
-      )}
-      {open && hasAnhstprcs && (
-        <Line
-          yAxisId="left"
-          type="step"
-          connectNulls
-          dataKey="newPrice"
-          stroke="#8888dd"
-        />
-      )}
-      {/* {isHovered && hasAuhstprcs && (
+        )}
+        {open && hasAhstprcs && (
+          <Line
+            yAxisId="left"
+            type="step"
+            dataKey="amazonPrice"
+            connectNulls
+            stroke="#ff9900"
+          />
+        )}
+        {open && hasAnhstprcs && (
+          <Line
+            yAxisId="left"
+            type="step"
+            connectNulls
+            dataKey="newPrice"
+            stroke="#8888dd"
+          />
+        )}
+        {/* {isHovered && hasAuhstprcs && (
               <Line
                 yAxisId="left"
                 type="step"
@@ -307,6 +309,7 @@ export const KeepaGraph = ({
                 stroke="#444444"
               />
             )} */}
-    </LineChart>
+      </LineChart>
+    </ResponsiveContainer>
   );
 };

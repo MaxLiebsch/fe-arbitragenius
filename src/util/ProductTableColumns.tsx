@@ -1,8 +1,6 @@
 import { GridColDef } from "@mui/x-data-grid-premium";
 import { Settings } from "@/types/Settings";
-import { KeepaGraph } from "../components/KeepaGraph";
 import { ModifiedProduct } from "@/types/Product";
-import { Checkbox, Tooltip } from "antd";
 import { BookmarkDeleteSchema, BookmarkSchema } from "@/types/Bookmarks";
 import { UseMutateFunction } from "@tanstack/react-query";
 import { ProductPagination } from "@/hooks/use-products";
@@ -11,10 +9,6 @@ import Margin from "@/components/columns/Margin";
 import MarginPct from "@/components/columns/MarginPct";
 import VKPrice from "@/components/columns/VKPrice";
 import EKPrice from "@/components/columns/EKPrice";
-import { Button } from "@/components/Button";
-import Image from "next/image";
-import arbitrageOne from "@/images/arbitrageone.png";
-import { arbitrageOneUrlBuilder } from "./arbitrageOneUrlBuilder";
 import OptionField from "@/components/columns/OptionField";
 import PriceAnalysis from "@/components/columns/PriceAnalysis";
 
