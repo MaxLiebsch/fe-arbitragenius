@@ -41,7 +41,9 @@ const VKPrice = ({
     },
     renderCell: (params) => {
       const { row: product } = params;
-      const { a_prc, a_avg_prc, e_prc, shop, a_useCurrPrice } = product;
+      const { a_prc, a_avg_prc, e_prc, shop, a_useCurrPrice, avg30_ahsprcs } =
+        product;
+      const displayAvgPrice = getAvgPrice(product as ModifiedProduct);
       let avgPrice = 0;
       if (a_useCurrPrice === false) {
         avgPrice = getAvgPrice(product as ModifiedProduct);
@@ -82,15 +84,18 @@ const VKPrice = ({
           <div className={`${netto ? "" : "font-semibold text-green-600"}`}>
             <span>
               {formatCurrency(
-                parseFloat(flip || shop === "flip" ?avgPrice :params.value)
+                parseFloat(flip || shop === "flip" ? avgPrice : params.value)
               )}{" "}
             </span>
-            {!flip || !a_useCurrPrice ? (
+            {!flip || a_useCurrPrice === false ? (
               target === "a" && avgPrice && avgPrice > 1 ? (
                 <span>{`(∅ ${formatter.format(avgPrice)})`} </span>
-              ) : median && target === "e" ? (
-                <span>{`(${formatter.format(median)})`} </span>
-              ) : null
+              ) : (
+                <span>{`(∅ ${formatter.format(displayAvgPrice)})`} </span>
+              )
+            ) : null}
+            {median && target === "e" ? (
+              <span>{`(${formatter.format(median)})`} </span>
             ) : null}
           </div>
           {targetQty > 1 && (
