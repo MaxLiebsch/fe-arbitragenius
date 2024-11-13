@@ -1,8 +1,10 @@
-import { PRODUCT_COL, TASK_COL, WHOLESALE_COL } from "@/constant/constant";
+import { PRODUCT_COL, TASK_COL } from "@/constant/constant";
 import { getLoggedInUser } from "@/server/appwrite";
 import clientPool from "@/server/mongoPool";
+import { WholeSaleTask } from "@/types/tasks";
 import { ObjectId } from "mongodb";
 import { NextRequest } from "next/server";
+import { z } from "zod";
 
 export async function GET(
   request: NextRequest,
@@ -55,7 +57,7 @@ export async function DELETE(
 
   const taskCollection = mongo
     .db(process.env.NEXT_MONGO_CRAWLER_DATA ?? "")
-    .collection(TASK_COL);
+    .collection<WholeSaleTask>(TASK_COL);
 
   const productCol = mongo
     .db(process.env.NEXT_MONGO_DB ?? "")
@@ -67,6 +69,15 @@ export async function DELETE(
   });
 
   if (taskFinished !== null) {
+    if (taskFinished.userId !== user.$id) {
+      return new Response(
+        "Analyse kann nicht gelöscht werden, da sie nicht dem Benutzer gehört",
+        {
+          status: 400,
+        }
+      );
+    }
+
     return new Response(
       "Analyse kann nicht gelöscht werden, da sie noch in Bearbeitung ist",
       {
@@ -99,6 +110,72 @@ export async function DELETE(
   }
 
   return new Response("Analyse gelöscht", {
+    status: 200,
+  });
+}
+
+const updateTaskBodySchema = z.object({
+  name: z.string(),
+});
+
+export type UpdateTaskBody = z.infer<typeof updateTaskBodySchema>;
+
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  const user = await getLoggedInUser();
+
+  if (!user) {
+    return new Response("Unauthorized", {
+      status: 401,
+    });
+  }
+
+  const mongo = await clientPool["NEXT_MONGO_CRAWLER_DATA_ADMIN"];
+
+  const taskCol = mongo
+    .db(process.env.NEXT_MONGO_CRAWLER_DATA ?? "")
+    .collection(TASK_COL);
+
+  const task = await taskCol.findOne({
+    _id: new ObjectId(params.id),
+  });
+
+  if (!task) {
+    return new Response("Analyse nicht gefunden", {
+      status: 404,
+    });
+  }
+
+  if (task.userId !== user.$id) {
+    return new Response("Analyse nicht gefunden", {
+      status: 404,
+    });
+  }
+
+  const body = await request.json();
+
+  const parsedBody = updateTaskBodySchema.safeParse(body);
+
+  if (!parsedBody.success) {
+    return new Response(JSON.stringify(parsedBody.error.errors), {
+      status: 400,
+    });
+  }
+
+  const update = await taskCol.updateOne(
+    { _id: new ObjectId(params.id) },
+    { $set: { name: parsedBody.data.name } }
+  );
+
+  if (!update.acknowledged) {
+    return new Response("Analyse konnte nicht aktualisiert werden", {
+      status: 500,
+    });
+  }
+
+  return new Response("Analyse aktualisiert", {
     status: 200,
   });
 }
