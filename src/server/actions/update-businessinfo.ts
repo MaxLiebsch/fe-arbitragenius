@@ -66,18 +66,7 @@ export async function updateBusinessInfoAction(
     if (user.$id) {
       const subscription = await getSubscriptions(user.$id);
       if (subscription.documents[0].customer) {
-        await updateCustomerInformation(subscription.documents[0].customer, {
-          shipping: {
-            name: business,
-            address: {
-              line1: "",
-              city,
-              country: "DE",
-              line2: `${street} ${houseNumber}`,
-              postal_code: code,
-              state: "",
-            },
-          },
+        await updateCustomerInformation(subscription.documents[0].customer, { 
           address: {
             line1: business,
             city,
