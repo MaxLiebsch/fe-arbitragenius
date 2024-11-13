@@ -74,7 +74,7 @@ const ContentMarge = ({
   const [costs, setCosts] = useState(product["costs"]);
   const factor = a_qty / flipQty;
   const [netBuyPrice, setNetBuyPrice] = useState(
-    roundToTwoDecimals(calculateNetPrice(initBuyPrice, product.tax) * factor)
+    calculateNetPrice(initBuyPrice, product.tax) * factor
   );
 
   const strg_1_hy = new Date().getMonth() < 9;
@@ -267,7 +267,7 @@ const ContentMarge = ({
             <p className="ml-auto">{formatter.format(Number(tax))}</p>
           </div>
           <InputNumber
-            value={netBuyPrice}
+            value={roundToTwoDecimals(netBuyPrice)}
             decimalSeparator=","
             onChange={(e) => {
               if (e) {
