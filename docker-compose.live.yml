@@ -4,6 +4,7 @@ services:
     ports:
       - "4000:3000"
     labels:
+      # Router for www.arbispotter.com
       - "traefik.enable=true"
       - "traefik.http.routers.live.rule=Host(`www.arbispotter.com`) && PathPrefix(`/app`)"
       - "traefik.http.services.live.loadbalancer.server.port=3000"
