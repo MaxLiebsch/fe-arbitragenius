@@ -5,7 +5,7 @@ services:
       - "4000:3000"
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.live.rule=Host(`arbispotter.com`) && PathPrefix(`/app`)"
+      - "traefik.http.routers.live.rule=Host(`www.arbispotter.com`) && PathPrefix(`/app`)"
       - "traefik.http.services.live.loadbalancer.server.port=3000"
       - "traefik.http.middlewares.live-headers.headers.customrequestheaders.X-Real-IP=$$remote_addr"
       - "traefik.http.middlewares.live-headers.headers.customrequestheaders.X-Forwarded-For=$$proxy_add_x_forwarded_for"
