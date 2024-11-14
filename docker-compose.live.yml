@@ -20,7 +20,7 @@ services:
       - "traefik.http.routers.redirect.middlewares=redirect-to-www"
 
       # Middleware to handle the redirection
-      - "traefik.http.middlewares.redirect-to-www.redirectregex.regex=^https?://arbispotter.com(.*)"
+      - "traefik.http.middlewares.redirect-to-www.redirectregex.regex=^https://arbispotter.com(.*)"
       - "traefik.http.middlewares.redirect-to-www.redirectregex.replacement=https://www.arbispotter.com$${1}"
       - "traefik.http.middlewares.redirect-to-www.redirectregex.permanent=true"
     networks:

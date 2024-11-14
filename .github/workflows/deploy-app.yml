@@ -20,6 +20,7 @@ jobs:
           command_timeout: 30m
           script: |
             docker builder prune -f
+            git --work-tree=/etc/docker/container/staging --git-dir=/etc/docker/container/staging/.git reset --hard
             git --work-tree=/etc/docker/container/staging --git-dir=/etc/docker/container/staging/.git pull
             cd /etc/docker/container/staging
             docker compose -f docker-compose.staging.yml up --build -d
@@ -38,6 +39,7 @@ jobs:
           passphrase: ${{ secrets.PASSPHRASE }}
           script: |
             docker builder prune -f
+            git --work-tree=/etc/docker/container/live --git-dir=/etc/docker/container/live/.git reset --hard
             git --work-tree=/etc/docker/container/live --git-dir=/etc/docker/container/live/.git pull
             cd /etc/docker/container/live
             docker compose -f docker-compose.live.yml up --build -d 
