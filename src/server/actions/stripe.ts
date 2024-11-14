@@ -25,14 +25,15 @@ export async function createCheckoutSession(
   const checkoutSession: Stripe.Checkout.Session =
     await stripe.checkout.sessions.create({
       mode: "subscription",
-      payment_method_types: ["card", "paypal"],
+      payment_method_types: ["card"],
       customer_email: userEmail,
+      billing_address_collection: "required",
       allow_promotion_codes: true,
       line_items: [
         {
           quantity: 1,
           tax_rates: [taxRate.id],
-          
+
           price_data: {
             currency: "EUR",
             product_data: {
