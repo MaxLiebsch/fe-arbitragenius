@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { createAdminClient } from "../appwrite";
 import { z } from "zod";
+import logger from "@/util/logger";
 
 const RecoveryRequestSchema = z.object({
   email: z.string().email({ message: "Keine valide Email" }),
@@ -37,7 +38,7 @@ export async function recoveryAction(
       `${process.env.NEXT_PUBLIC_DOMAIN}/auth/recovery/callback/${email}`
     );
   } catch (error) {
-    console.log(error);
+    logger.error(`Error creating recovery: ${error}`);
     return {
       message: "Etwas ist schief gelaufen ...",
       formErrors: [],

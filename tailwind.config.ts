@@ -74,7 +74,7 @@ const config: Config = {
           "900": "#185761",
           "950": "#0b4650",
         },
-        amazon: "#FAE3C0",
+        amazon: "#ff9900",
         ebay: "#D6EEFC"
       },
       backgroundImage: {

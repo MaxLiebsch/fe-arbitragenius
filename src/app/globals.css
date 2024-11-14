@@ -3,6 +3,10 @@
 @tailwind utilities;
 
 
+.woot-widget-bubble.woot-elements--left{
+  bottom: 30px;
+}
+
 .loader {
     width: 24px;
     aspect-ratio: 1;
@@ -21,6 +25,16 @@
     -webkit-mask:repeating-linear-gradient(#0000 0 5px,#000 0 10px);
     --s:-1;
   }
+
+  body ::-webkit-scrollbar {
+    width: 5px;
+    background: #f2f2f2;
+  }
+  
+  body ::-webkit-scrollbar-thumb {
+    background-color: #d6d6d6;
+  }
+
   @keyframes l35 {
     0%,
     10% {transform: translate(0) rotate(0)}

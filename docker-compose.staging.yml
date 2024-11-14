@@ -1,0 +1,19 @@
+services:
+  staging:
+    build: /etc/docker/container/staging
+    ports:
+      - "3000:3000"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.staging.rule=Host(`staging.arbispotter.com`) && PathPrefix(`/app`)"
+      - "traefik.http.services.staging.loadbalancer.server.port=3000"
+      - "traefik.http.middlewares.staging-headers.headers.customrequestheaders.X-Real-IP=$$remote_addr"
+      - "traefik.http.middlewares.staging-headers.headers.customrequestheaders.X-Forwarded-For=$$proxy_add_x_forwarded_for"
+      - "traefik.http.middlewares.staging-headers.headers.customrequestheaders.X-Forwarded-Proto=https"
+      - "traefik.http.middlewares.staging-headers.headers.customrequestheaders.X-Forwarded-Host=$$host"
+      - "traefik.http.middlewares.staging-headers.headers.customrequestheaders.X-Frame-Options=SAMEORIGIN"
+    networks:
+      - traefik_web
+networks:
+  traefik_web:
+    external: true

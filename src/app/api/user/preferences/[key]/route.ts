@@ -1,3 +1,4 @@
+import { defaultSettings } from "@/constant/defaultSettings";
 import { createSessionClient, getLoggedInUser } from "@/server/appwrite";
 import { NextRequest } from "next/server";
 import { z } from "zod";
@@ -21,6 +22,15 @@ const serializers: {
       return typeof input === "string" ? input.split(",") : [];
     },
     fallback: JSON.stringify([]),
+  },
+  settings: {
+    serialize(input?: any) {
+      return JSON.stringify(input);
+    },
+    deserialize(input?: any) {
+      return typeof input === "string" ? JSON.parse(input) : {};
+    },
+    fallback: JSON.stringify(defaultSettings),
   },
   address: {
     serialize(input?: any) {

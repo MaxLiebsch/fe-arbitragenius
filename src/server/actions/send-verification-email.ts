@@ -11,7 +11,7 @@ export async function sendVerificationEmailAction() {
 
   const { account } = await createSessionClient();
 
-  account.createVerification(
+  await account.createVerification(
     `${process.env.NEXT_PUBLIC_DOMAIN}/auth/verify/callback/${user.email}`
   );
 

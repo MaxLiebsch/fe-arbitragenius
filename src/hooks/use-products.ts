@@ -1,5 +1,9 @@
+import { ModifiedProduct} from "@/types/Product";
+import { Settings } from "@/types/Settings";
+import { productQueryKey } from "@/util/queryKeys";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
+import { useUserSettings } from "./use-settings";
 
 export type ProductPagination = {
   page: number;
@@ -13,58 +17,38 @@ export type ProductSort =
       direction: "asc" | "desc";
     };
 
-export type Product = {
-  ean: string;
-_id: string;
-  pblsh: boolean;
-  vrfd: boolean;
-  ctgry: string;
-  mnfctr: string;
-  nm: string;
-  e_prc: number;
-  a_prc: number;
-  img: string;
-  lnk: string;
-  prc: number;
-  createdAt: string;
-  updatedAt: string;
-  e_lnk: string;
-  e_img: string;
-  e_nm: string;
-  e_mrgn: number;
-  e_fat: boolean;
-  e_mrgn_pct: number;
-  a_lnk: string;
-  a_img: string;
-  a_nm: string;
-  a_mrgn: number;
-  a_fat: boolean;
-  a_mrgn_pct: number;
-};
-
 export default function useProducts(
   domain: string,
   pagination: ProductPagination,
   sort: ProductSort,
   target: string,
+  refetchOnWindowFocus: boolean = true
 ) {
   const queryClient = useQueryClient();
+  const [settings, setUserSettings] = useUserSettings()
+  const queryKey = [
+    ...productQueryKey(target, domain, pagination.page, pagination.pageSize),
+    sort?.field,
+    sort?.direction,
+    ...(settings ? Object.values(settings) : []),
+  ];
 
-  const productQuery = useQuery<Product[]>({
-    queryKey: [
-      "shop",
-      domain,
-      "product",
-      pagination.page,
-      pagination.pageSize,
-      sort?.field,
-      sort?.direction,
-    ],
+  const productQuery = useQuery<ModifiedProduct[]>({
+    queryKey,
+    enabled: !!domain && !!target && !!settings,
     queryFn: async () => {
+      const { page, pageSize } = pagination;
       let sortQuery = "";
+      let settingsQuery = "";
+      let pageQuery = `&page=${page}&size=${pageSize}`;
       if (sort) sortQuery = `&sortby=${sort.field}&sortorder=${sort.direction}`;
+      if (settings) {
+        settingsQuery = Object.keys(settings)
+          .map((key) => `&${key}=${settings[key as keyof Settings]}`)
+          .join("");
+      }
       return fetch(
-        `/app/api/shop/${domain}/${target}/product?page=${pagination.page}&size=${pagination.pageSize}${sortQuery}`
+        `/app/api/shop/${domain}/${target}/product?${pageQuery}${sortQuery}${settingsQuery}`
       ).then((resp) => resp.json());
     },
   });
@@ -73,22 +57,31 @@ export default function useProducts(
     if (pagination.page < 10) {
       queryClient.prefetchQuery({
         queryKey: [
-          "shop",
-          domain,
-          "product",
-          pagination.page + 1,
-          pagination.pageSize,
+          ...productQueryKey(
+            target,
+            domain,
+            pagination.page + 1,
+            pagination.pageSize
+          ),
           sort?.field,
           sort?.direction,
+          ...(settings ? Object.values(settings) : []),
         ],
         queryFn: async () => {
+          const { page, pageSize } = pagination;
           let sortQuery = "";
+          let settingsQuery = "";
+          let pageQuery = `&page=${page + 1}&size=${pageSize}`;
           if (sort)
             sortQuery = `&sortby=${sort.field}&sortorder=${sort.direction}`;
+
+          if (settings) {
+            settingsQuery = Object.keys(settings)
+              .map((key) => `&${key}=${settings[key as keyof Settings]}`)
+              .join("");
+          }
           return fetch(
-            `/app/api/shop/${domain}/${target}/product?page=${pagination.page + 1}&size=${
-              pagination.pageSize
-            }${sortQuery}`
+            `/app/api/shop/${domain}/${target}/product?${sortQuery}${settingsQuery}${pageQuery}`
           ).then((resp) => resp.json());
         },
       });
@@ -97,6 +90,8 @@ export default function useProducts(
     productQuery.data,
     domain,
     target,
+    pagination,
+    settings,
     pagination.page,
     pagination.pageSize,
     sort,

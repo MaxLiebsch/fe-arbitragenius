@@ -1,4 +1,4 @@
-import { mongoPromise } from "@/server/mongo";
+import clientPool from "@/server/mongoPool";
 import { NextRequest } from "next/server";
 
 export async function GET(request: NextRequest) {
@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
       status: 400,
     });
 
-  const mongo = await mongoPromise;
+  const mongo = await clientPool['NEXT_MONGO'];
 
   const res = await mongo
     .db(process.env.NEXT_MONGO_DB)

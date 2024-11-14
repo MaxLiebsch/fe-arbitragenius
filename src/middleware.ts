@@ -1,23 +1,33 @@
 import { NextResponse } from "next/server";
-import { authMiddleware, getSubscriptions } from "./server/appwrite/middleware";
+import {authMiddleware } from "./server/appwrite/middleware";
 import { getStripeSubscriptions } from "./server/stripe/middleware";
+import { getSubscriptions } from "./server/appwrite/getSubscription";
 
 export const middleware = authMiddleware(async (request) => {
+  const requestPathname = request.nextUrl.pathname;
   if (!request.user) {
-    if (request.nextUrl.pathname.startsWith("/app/api")) {
+    if (requestPathname.startsWith("/app/api")) {
       return new NextResponse("unauthorized", { status: 401 });
     } else {
-      if(request.nextUrl.pathname === "/api/sessions/email"){
-        return NextResponse.next()
+      if (
+        requestPathname === "/api/sessions/email" ||
+        requestPathname.startsWith("/api/account/verification")||
+        requestPathname.startsWith("/api/verify-email")
+      ) {
+        return NextResponse.next();
       }
       return NextResponse.redirect(new URL("/app/auth/signin", request.url));
     }
   }
 
+  if (requestPathname.startsWith("/api/account/verification")) {
+    return NextResponse.next();
+  }
+
   const subscriptions = await getSubscriptions(request.user.$id);
 
   if (!subscriptions.total) {
-    if (!request.nextUrl.pathname.startsWith("/payment"))
+    if (!requestPathname.startsWith("/payment"))
       return NextResponse.redirect(new URL("/app/payment", request.url));
     else return NextResponse.next();
   }
@@ -27,19 +37,33 @@ export const middleware = authMiddleware(async (request) => {
   );
 
   if (
-    !stripeSubscription.data.length ||
-    stripeSubscription.data[0].status !== "active"
-  )
-    if (!request.nextUrl.pathname.startsWith("/payment"))
+    stripeSubscription.data.length &&
+    (stripeSubscription.data[0].status === "active" ||
+      stripeSubscription.data[0].status === "trialing")
+  ) {
+    const subscriptionStatus = stripeSubscription.data[0].status
+    if (requestPathname.startsWith("/payment")) {
+      return NextResponse.redirect(new URL("/app/dashboard", request.url));
+    }
+    const headers: {[key: string]: any} = {
+      "subscription-status": subscriptionStatus,
+    }
+    if(subscriptionStatus === 'trialing') {
+      headers['subscription-trial-end'] = stripeSubscription.data[0].trial_end
+      headers['subscription-trial-start'] = stripeSubscription.data[0].trial_start
+    }
+    return NextResponse.next({
+      headers
+    });
+  } else {
+    if (!requestPathname.startsWith("/payment"))
       return NextResponse.redirect(new URL("/app/payment", request.url));
     else return NextResponse.next();
-
-  return NextResponse.next();
+  }
 });
 
 export const config = {
   matcher:
-
     "/((?!auth|payment/result|static|_next/static|_next/image|favicon.ico).*)",
   missing: [
     { type: "header", key: "next-router-prefetch" },

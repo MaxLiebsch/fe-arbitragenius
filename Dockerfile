@@ -1,4 +1,4 @@
-FROM node:20-slim as build
+FROM node:20 as build
 
 ENV PATH $PATH:/app/node_modules/.bin
 
@@ -8,23 +8,25 @@ COPY . .
 COPY [".env.production", "/app"]
 COPY [".env", "/app"]
 
+RUN apt-get update && apt-get install -y ca-certificates
+RUN update-ca-certificates
+
 COPY package.json ./
-
-
 RUN yarn install
-RUN yarn add sharp --ignore-engines
-
-RUN echo `node -v`
-RUN echo `ls /app/node_modules`
+RUN yarn add sharp@v0.33.3 --ignore-engines
 
 RUN export NEXT_SHARP_PATH=/app/node_modules/sharp && \
     yarn build /app
+ 
 
 FROM node:20-slim as prod
 
 ENV PATH $PATH:/app/node_modules/.bin
 
 EXPOSE 3000/tcp
+
+RUN touch /var/log/app.log
+RUN chmod 666 /var/log/app.log
 
 WORKDIR /app
 

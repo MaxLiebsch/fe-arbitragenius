@@ -13,6 +13,7 @@ export default function Page() {
     if (!user) redirect("/app/auth/signin");
     const { client_secret, url } = await createCheckoutSession(
       user.$id,
+      user.email,
       "month"
     );
     window.location.assign(url as string);
@@ -23,6 +24,7 @@ export default function Page() {
     if (!user) redirect("/app/auth/signin");
     const { client_secret, url } = await createCheckoutSession(
       user.$id,
+      user.email,
       "year"
     );
     window.location.assign(url as string);
@@ -40,7 +42,7 @@ export default function Page() {
             fill
             style={{ objectFit: "contain" }}
             unoptimized
-            />
+          />
         </div>
         <div className="md:text-center">
           <h2 className="font-display text-3xl tracking-tight text-white sm:text-4xl">
@@ -63,14 +65,18 @@ export default function Page() {
           <form action={formActionMonthly} className="space-y-2">
             <input hidden name="monthly-plan"></input>
             <Plan
+              featured
               name={
                 <div className="text-silver-chalice-400 text-3xl line-through">
-                  298€
+                  199€
                 </div>
               }
               price={
-                <div>
+                <div className="relative">
                   149€/<span className="text-3xl">Monat</span>
+                  <span className="text-xs absolute -bottom-3 -right-1">
+                    exkl. MwSt.
+                  </span>
                 </div>
               }
               description="monatlich kündbar"
@@ -81,15 +87,17 @@ export default function Page() {
           <form action={formActionYearly} className="space-y-2">
             <input hidden name="yearly-plan"></input>
             <Plan
-              featured
               name={
                 <div className="text-silver-chalice-300 text-3xl line-through">
-                  199€
+                  149€
                 </div>
               }
               price={
-                <div>
+                <div className="relative">
                   99€/<span className="text-3xl">Monat</span>
+                  <span className="text-xs absolute -bottom-3 -right-1">
+                    exkl. MwSt.
+                  </span>
                 </div>
               }
               description="im Abo"

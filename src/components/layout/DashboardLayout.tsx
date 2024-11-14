@@ -6,22 +6,58 @@ import {
   Bars3Icon,
   ChevronDownIcon,
   HomeIcon,
-  MagnifyingGlassIcon,
   UserCircleIcon,
   UsersIcon,
+  ArrowTrendingUpIcon,
+  BookmarkIcon,
   XMarkIcon,
+  SparklesIcon,
+  ArrowsUpDownIcon
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
-import useFavoriteShops from "@/hooks/use-favorite-shops";
-import { Spin } from "antd";
-import useAccount from "@/hooks/use-account";
+
 import { logoutAction } from "@/server/actions/logout";
 import { Logo } from "../Logo";
 import { usePathname, useRouter } from "next/navigation";
-import Spinner from "../Spinner";
+import { useFormState } from "react-dom";
+import { TotalDealsContext } from "@/context/totalDealsContext";
+import { differenceInDays } from "date-fns";
+import useSalesCount from "@/hooks/use-sales-count";
+import { Badge } from "antd";
+import useAccount from "@/hooks/use-account";
 
 const navigation = [
-  { name: "Dashboard", href: "/dashboard", icon: HomeIcon, current: true },
+  {
+    name: "Shops Übersicht",
+    href: "/dashboard",
+    icon: HomeIcon,
+    current: true,
+  },
+  {
+    name: "Sales Monitor",
+    href: "/dashboard/daily-deals",
+    current: false,
+    icon: SparklesIcon,
+  },
+  {
+    name: "Meine Deals",
+    href: "/dashboard/my-deals",
+    icon: BookmarkIcon,
+    current: false,
+  },
+  {
+    name: "Amazon Flips",
+    icon: ArrowsUpDownIcon,
+    href: "/dashboard/amazon-flips",
+    current: false,
+    
+  },
+  {
+    name: "Wholesale Analyse",
+    href: "/dashboard/wholesale",
+    icon: ArrowTrendingUpIcon,
+    current: false,
+  },
   {
     name: "Profile",
     href: "/dashboard/profile",
@@ -30,10 +66,7 @@ const navigation = [
   },
 ];
 
-const userNavigation = [
-  { name: "Dein Profil", href: "/dashboard/profile" },
-  { name: "Abmelden", action: logoutAction },
-];
+const userNavigation = [{ name: "Dein Profil", href: "/dashboard/profile" }];
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -41,17 +74,40 @@ function classNames(...classes: string[]) {
 
 export const DashboardLayout = ({
   children,
+  subscriptionStatus,
 }: Readonly<{
   children: React.ReactNode;
+  subscriptionStatus: {
+    status: string | null;
+    trialEnd: string | null;
+    trialStart: string | null;
+  };
 }>) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const accountQuery = useAccount();
-  const favoriteShopsQuery = useFavoriteShops();
 
+
+  const router = useRouter();
+  const accountQuery = useAccount();
+  const eSalesCount = useSalesCount("e");
+  const aSalesCount = useSalesCount("a");
+  const newDeals = Boolean(
+    eSalesCount.data?.totalProductsToday || aSalesCount.data?.totalProductsToday
+  );
   const pathname = usePathname();
 
+  const [state, formAction] = useFormState(logoutAction, {
+    message: "",
+  });
+  const [queryUpdate, setQueryUpdate] = useState(0);
+
+  useEffect(() => {
+    if (state.message === "success") {
+      router.push("/auth/signin");
+    }
+  }, [state, router]);
+
   return (
-    <>
+    <TotalDealsContext.Provider value={{ queryUpdate, setQueryUpdate }}>
       <div className="h-full">
         <Transition.Root show={sidebarOpen} as={Fragment}>
           <Dialog
@@ -134,15 +190,16 @@ export const DashboardLayout = ({
                                     )}
                                     aria-hidden="true"
                                   />
+
                                   {item.name}
                                 </Link>
                               </li>
                             ))}
                           </ul>
                         </li>
-                        <li>
+                        {/* <li>
                           <div className="text-xs font-semibold leading-6 text-gray-400">
-                            Your Favorites{" "}
+                            Deine Favoriten{" "}
                             {favoriteShopsQuery.isLoading && (
                               <div className="w-full flex justify-center">
                                 <Spinner />
@@ -176,9 +233,12 @@ export const DashboardLayout = ({
                               </li>
                             ))}
                           </ul>
-                        </li>
+                        </li> */}
                       </ul>
                     </nav>
+                    <div className="absolute left-[0.25rem] bottom-0">
+                      v{process.env.NEXT_PUBLIC_VERSION}
+                    </div>
                   </div>
                 </Dialog.Panel>
               </Transition.Child>
@@ -199,69 +259,49 @@ export const DashboardLayout = ({
                   <ul role="list" className="-mx-2 space-y-1">
                     {navigation.map((item) => (
                       <li key={item.name}>
-                        <Link
-                          href={item.href}
-                          className={classNames(
-                            item.href === pathname
-                              ? "bg-gray-50 text-secondary-900"
-                              : "text-gray-700 hover:text-secondary-900 hover:bg-gray-50",
-                            "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
-                          )}
+                        <Badge.Ribbon
+                          text="Neue Deals"
+                          placement="end"
+                          className={`!-top-2 ${
+                            item.href !== "/dashboard/daily-deals"
+                              ? "hidden"
+                              : ""
+                          } ${
+                            item.href === "/dashboard/daily-deals" && newDeals
+                              ? "visible"
+                              : "hidden"
+                          }`}
                         >
-                          <item.icon
+                          <Link
+                            href={item.href}
                             className={classNames(
                               item.href === pathname
-                                ? "text-secondary-900"
-                                : "text-gray-400 group-hover:text-secondary-900",
-                              "h-6 w-6 shrink-0"
-                            )}
-                            aria-hidden="true"
-                          />
-                          {item.name}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </li>
-                <li>
-                  <div className="text-xs font-semibold leading-6 text-gray-400">
-                    Your Favorites{" "}
-                    {favoriteShopsQuery.isLoading && (
-                      <div className="w-full flex justify-center">
-                        <Spinner />
-                      </div>
-                    )}
-                  </div>
-                  <ul role="list" className="-mx-2 mt-2 space-y-1">
-                    {favoriteShopsQuery.data?.map((shop) => (
-                      <li key={shop.ne}>
-                        <Link
-                          href={`/dashboard/shop/${shop.d}`}
-                          className={classNames(
-                            pathname.includes(shop.d)
-                              ? "bg-gray-50 text-secondary-900"
-                              : "text-gray-700 hover:text-secondary-900 hover:bg-gray-50",
-                            "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
-                          )}
-                        >
-                          <span
-                            className={classNames(
-                              pathname.includes(shop.d)
-                                ? "text-secondary-900 border-secondary-900"
-                                : "text-gray-400 border-gray-200 group-hover:border-secondary-900 group-hover:text-secondary-900",
-                              "flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border text-[0.625rem] font-medium bg-white"
+                                ? "bg-gray-50 text-secondary-900"
+                                : "text-gray-700 hover:text-secondary-900 hover:bg-gray-50",
+                              "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
                             )}
                           >
-                            {shop.d.substring(0, 2).toLocaleUpperCase()}
-                          </span>
-                          <span className="truncate">{shop.ne}</span>
-                        </Link>
+                            <item.icon
+                              className={classNames(
+                                item.href === pathname
+                                  ? "text-secondary-900"
+                                  : "text-gray-400 group-hover:text-secondary-900",
+                                "h-6 w-6 shrink-0"
+                              )}
+                              aria-hidden="true"
+                            />
+                            {item.name}
+                          </Link>
+                        </Badge.Ribbon>
                       </li>
                     ))}
                   </ul>
                 </li>
               </ul>
             </nav>
+            <div className="absolute left-[0.25rem] bottom-0">
+              v{process.env.NEXT_PUBLIC_VERSION}
+            </div>
           </div>
         </div>
 
@@ -284,7 +324,24 @@ export const DashboardLayout = ({
               />
 
               <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
-                <form className="relative flex flex-1" action="#" method="GET">
+                <div className="w-full">
+                  {subscriptionStatus.status === "trialing" ? (
+                    <div className="mt-5">
+                      Danke, dass Du dich für Arbispotter entschieden hast. Du
+                      befindest Dich noch{" "}
+                      <span className="font-semibold">
+                        {differenceInDays(
+                          Number(subscriptionStatus.trialEnd as string) * 1000,
+                          Date.now()
+                        )}{" "}
+                      </span>
+                      Tage in der Testphase.
+                    </div>
+                  ) : (
+                    <></>
+                  )}
+                </div>
+                {/* <form className="relative flex flex-1" action="#" method="GET">
                   <label htmlFor="search-field" className="sr-only">
                     Search
                   </label>
@@ -299,7 +356,7 @@ export const DashboardLayout = ({
                     type="search"
                     name="search"
                   />
-                </form>
+                </form> */}
                 <div className="flex items-center gap-x-4 lg:gap-x-6">
                   {/* Separator */}
                   <div
@@ -320,7 +377,7 @@ export const DashboardLayout = ({
                           {accountQuery.isSuccess ? (
                             accountQuery.data.name
                           ) : (
-                            <>Loading ...</>
+                            <></>
                           )}
                         </span>
                         <ChevronDownIcon
@@ -341,33 +398,33 @@ export const DashboardLayout = ({
                       <Menu.Items className="absolute right-0 z-10 mt-2.5 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none">
                         {userNavigation.map((item) => (
                           <Menu.Item key={item.name}>
-                            {({ active }) =>
-                              Boolean(item.action) ? (
-                                <form action={item.action}>
-                                  <button
-                                    type="submit"
-                                    className={classNames(
-                                      active ? "bg-gray-50" : "",
-                                      "block px-3 py-1 text-sm leading-6 text-gray-900"
-                                    )}
-                                  >
-                                    {item.name}
-                                  </button>
-                                </form>
-                              ) : (
-                                <Link
-                                  href={item.href ? item.href : ""}
-                                  className={classNames(
-                                    active ? "bg-gray-50" : "",
-                                    "block px-3 py-1 text-sm leading-6 text-gray-900"
-                                  )}
-                                >
-                                  {item.name}
-                                </Link>
-                              )
-                            }
+                            {({ active }) => (
+                              <Link
+                                href={item.href ? item.href : ""}
+                                className={classNames(
+                                  active ? "bg-gray-50" : "",
+                                  "block px-3 py-1 text-sm leading-6 text-gray-900"
+                                )}
+                              >
+                                {item.name}
+                              </Link>
+                            )}
                           </Menu.Item>
                         ))}
+                        <Menu.Item key={"logout"}>
+                          <form action={formAction}>
+                            <input hidden></input>
+                            <button
+                              type="submit"
+                              className={classNames(
+                                "focus:bg-gray-50",
+                                "block px-3 py-1 text-sm leading-6 text-gray-900"
+                              )}
+                            >
+                              Logout
+                            </button>
+                          </form>
+                        </Menu.Item>
                       </Menu.Items>
                     </Transition>
                   </Menu>
@@ -375,11 +432,11 @@ export const DashboardLayout = ({
               </div>
             </div>
           </div>
-          <div className="lg:pl-80 pt-20 pb-4 px-4 sm:px-6 lg:px-8 h-full">
+          <div className="lg:pl-80 pt-20 pb-4 px-4 sm:px-6 lg:px-8 h-full relative">
             {children}
           </div>
         </main>
       </div>
-    </>
+    </TotalDealsContext.Provider>
   );
 };

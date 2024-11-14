@@ -1,5 +1,11 @@
-import { MongoClient } from "mongodb";
+import { PRODUCT_COL } from "@/constant/constant";
+import clientPool from "./mongoPool";
 
-const client = new MongoClient(process.env.NEXT_MONGO ?? "");
+export const getProductCol = async () => {
+  const mongo = await clientPool["NEXT_MONGO"];
+  const productCol = mongo
+    .db(process.env.NEXT_MONGO_DB)
+    .collection(PRODUCT_COL);
 
-export const mongoPromise = client.connect();
+  return productCol;
+};

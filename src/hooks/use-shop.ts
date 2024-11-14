@@ -7,6 +7,8 @@ export type Shop = {
   a_fat_total?: number;
   e_fat_total?: number;
   ne: string;
+  e_cats: { [key: string]: number };
+  a_cats: { [key: string]: number };
 };
 
 export default function useShop(domain: string) {
