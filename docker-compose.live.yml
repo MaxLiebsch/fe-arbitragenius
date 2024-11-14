@@ -1,17 +1,28 @@
 services:
   live:
     build: /etc/docker/container/live
-    ports: 
+    ports:
       - "4000:3000"
     labels:
+      # Router for www.arbispotter.com
       - "traefik.enable=true"
-      - "traefik.http.routers.live.rule=Host(`arbispotter.com`) && PathPrefix(`/app`)"
+      - "traefik.http.routers.live.rule=(Host(`arbispotter.com`) || Host(`www.arbispotter.com`)) && PathPrefix(`/app`)"
       - "traefik.http.services.live.loadbalancer.server.port=3000"
       - "traefik.http.middlewares.live-headers.headers.customrequestheaders.X-Real-IP=$$remote_addr"
       - "traefik.http.middlewares.live-headers.headers.customrequestheaders.X-Forwarded-For=$$proxy_add_x_forwarded_for"
       - "traefik.http.middlewares.live-headers.headers.customrequestheaders.X-Forwarded-Proto=https"
       - "traefik.http.middlewares.live-headers.headers.customrequestheaders.X-Forwarded-Host=$$host"
-      - "traefik.http.middlewares.live-headers.headers.customrequestheaders.X-Frame-Options=SAMEORIGIN"  
+      - "traefik.http.middlewares.live-headers.headers.customrequestheaders.X-Frame-Options=SAMEORIGIN"
+      
+      # Redirect router for arbispotter.com to www.arbispotter.com
+      - "traefik.http.routers.redirect.rule=Host(`arbispotter.com`) && PathPrefix(`/app`)"
+      - "traefik.http.routers.redirect.entrypoints=https"
+      - "traefik.http.routers.redirect.middlewares=redirect-to-www"
+
+      # Middleware to handle the redirection
+      - "traefik.http.middlewares.redirect-to-www.redirectregex.regex=^https://arbispotter.com(.*)"
+      - "traefik.http.middlewares.redirect-to-www.redirectregex.replacement=https://www.arbispotter.com$${1}"
+      - "traefik.http.middlewares.redirect-to-www.redirectregex.permanent=true"
     networks:
       - traefik_web
 networks:
