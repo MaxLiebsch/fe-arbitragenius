@@ -38,7 +38,6 @@ export async function signupAction(
 
   try {
     const verifyEmail = await fetch("/app/api/verify-email?email=" + email);
-    console.log("verifyEmail:", verifyEmail);
     if (verifyEmail) {
       const info = await verifyEmail.json();
       if (info.result === "risky") {
