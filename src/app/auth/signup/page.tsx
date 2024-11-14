@@ -4,6 +4,8 @@ import { SubmitButton } from "@/components/FormSubmitBn";
 import { Logo } from "@/components/Logo";
 import { NavLink } from "@/components/NavLink";
 import { signupAction } from "@/server/actions/signup";
+import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
+import { Input } from "antd";
 import { useRef } from "react";
 import { useFormState } from "react-dom";
 
@@ -77,14 +79,22 @@ const SignUp = () => {
                   </label>
                 </div>
                 <div className="mt-2">
-                  <input
+                  <Input.Password
+                    id="password"
+                    name="password"
+                    placeholder="Passwort"
+                    iconRender={(visible) =>
+                      visible ? <EyeIcon className="h-6 w-6"  /> : <EyeSlashIcon className="h-6 w-6" />
+                    }
+                  />
+                  {/* <input
                     id="password"
                     name="password"
                     type="password"
                     autoComplete="current-password"
                     required
                     className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-chartreuse-yellow-700 sm:text-sm sm:leading-6"
-                  />
+                  /> */}
                 </div>
                 <div className="text-sm text-red-500 mt-1">
                   {state?.fieldErrors.password}
@@ -135,7 +145,10 @@ const SignUp = () => {
                 </div>
               </div>
               <div className="space-y-1">
-                <a className="text-secondary-950 underline" href="/app/auth/signin">
+                <a
+                  className="text-secondary-950 underline"
+                  href="/app/auth/signin"
+                >
                   Du hast bereits ein Account?
                 </a>
                 <SubmitButton text="Registrieren" />
