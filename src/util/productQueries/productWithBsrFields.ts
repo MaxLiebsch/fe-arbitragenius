@@ -7,7 +7,7 @@ export function productWithBsrFields(
   const { productsWithNoBsr, maxPrimaryBsr } = customerSettings;
   if (productsWithNoBsr) {
     findQuery.push({
-      $or: [{ bsr: { $size: 0 } }, { "bsr.number": { $lte: maxPrimaryBsr } }],
+      $or: [{ bsr: { $size: 0 } }, { "bsr.number": {$gt: 0, $lte: maxPrimaryBsr } }],
     });
   } else {
     findQuery.push({
@@ -15,7 +15,7 @@ export function productWithBsrFields(
         {
           bsr: { $size: 1 },
         },
-        { "bsr.number": { $lte: maxPrimaryBsr } },
+        { "bsr.number": { $gt: 0, $lte: maxPrimaryBsr } },
       ],
     });
   }
