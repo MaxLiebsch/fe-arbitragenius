@@ -1,4 +1,4 @@
-export const totalOffersCountField = (
+export const addTotalOffersCountField = (
   findQuery: any[],
   totalOfferCount: number
 ) => {

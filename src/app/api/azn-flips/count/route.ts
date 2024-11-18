@@ -1,14 +1,13 @@
 import { getProductCol } from "@/server/mongo";
 import { Settings } from "@/types/Settings";
-import { aznFlipMarginFields } from "@/util/productQueries/aznFlipMarginFields";
-import { buyBoxFields } from "@/util/productQueries/buyBox";
-import { ebyMarginFields } from "@/util/productQueries/ebyMarginFields";
+import { aznFlipFields } from "@/util/productQueries/aznFlipFields";
+import { addBuyBoxFields } from "@/util/productQueries/buyBox";
+import { ebyFields } from "@/util/productQueries/ebyFields";
 import { marginFields } from "@/util/productQueries/marginFields";
-import { monthlySoldField } from "@/util/productQueries/monthlySoldField";
-import { productWithBsrFields } from "@/util/productQueries/productWithBsrFields";
+import { addMonthlySoldField } from "@/util/productQueries/monthlySoldField";
+import { addProductWithBsrFields } from "@/util/productQueries/productWithBsrFields";
 import { settingsFromSearchQuery } from "@/util/productQueries/settingsFromSearchQuery";
-import { targetVerification } from "@/util/productQueries/targetVerfication";
-import { totalOffersCountField } from "@/util/productQueries/totalOffersCountField";
+import { addTotalOffersCountField } from "@/util/productQueries/totalOffersCountField";
 import { NextRequest } from "next/server";
 
 export async function GET(request: NextRequest) {
@@ -21,10 +20,7 @@ export async function GET(request: NextRequest) {
   let {
     minMargin,
     minPercentageMargin,
-    netto,
-    monthlySold,
-    totalOfferCount,
-    buyBox,
+    netto, 
   } = customerSettings;
 
   if (netto) {
@@ -32,29 +28,14 @@ export async function GET(request: NextRequest) {
     minPercentageMargin = Number((minPercentageMargin * 1.19).toFixed(0));
   }
 
-  const targetVerificationPending = searchParams.get(
-    `${target}_vrfd.vrfn_pending`
-  );
-
   const aggregation: { [key: string]: any }[] = [];
-  const findQuery: any[] = [];
 
   if (isAmazon) {
-    aggregation.push(...aznFlipMarginFields(customerSettings));
+    aggregation.push(...aznFlipFields(customerSettings));
   } else {
-    aggregation.push(...ebyMarginFields(customerSettings));
+    aggregation.push(...ebyFields(customerSettings));
   }
 
-  findQuery.push(marginFields({ target, settings: customerSettings }));
-  targetVerification(findQuery, target, targetVerificationPending);
-
-  if (isAmazon) {
-    monthlySoldField(findQuery, monthlySold);
-    totalOffersCountField(findQuery, totalOfferCount);
-    buyBoxFields(buyBox, findQuery, isAmazon);
-    productWithBsrFields(findQuery, customerSettings);
-  }
-  const pblshKey = isAmazon ? "a_pblsh" : "e_pblsh";
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const tomorrow = new Date(today);
@@ -62,8 +43,7 @@ export async function GET(request: NextRequest) {
   aggregation.push(
     {
       $match: {
-        [pblshKey]: true,
-        $and: findQuery,
+        ...marginFields({ target, settings: customerSettings }),
       },
     },
     {

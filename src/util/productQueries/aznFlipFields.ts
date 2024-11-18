@@ -1,7 +1,8 @@
 import { Settings } from "@/types/Settings";
 import { mrgnFieldName, mrgnPctFieldName } from "./mrgnProps";
+import { addAznSettingsFields } from "./addAznSettingsFields";
 
-export const aznFlipMarginFields = (
+export const aznFlipFields = (
   settings: Settings,
   isWholesale?: boolean
 ) => {
@@ -11,19 +12,21 @@ export const aznFlipMarginFields = (
   const match: any = {
     a_pblsh: true,
     a_prc: { $gt: 0 },
-    "costs.azn": { $exists: true },
+    "costs.azn": { $gt: 0 },
     aznUpdatedAt: { $gt: new Date(Date.now() - 96 * 60 * 1000).toISOString() },
     $or: [
-      { avg30_ahsprcs: { $exists: true, $gt: 0 } },
-      { avg30_ansprcs: { $exists: true, $gt: 0 } },
-      { avg90_ahsprcs: { $exists: true, $gt: 0 } },
-      { avg90_ansprcs: { $exists: true, $gt: 0 } },
+      { avg30_ahsprcs: { $gt: 0 } },
+      { avg30_ansprcs: { $gt: 0 } },
+      { avg90_ahsprcs: { $gt: 0 } },
+      { avg90_ansprcs: { $gt: 0 } },
     ],
   };
 
   if (settings.a_cats.length > 0 && settings.a_cats[0] !== 0) {
     match["categoryTree.catId"] = { $in: settings.a_cats };
   }
+
+  addAznSettingsFields(settings, match);
 
   const query: any = [];
 

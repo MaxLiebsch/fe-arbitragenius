@@ -1,7 +1,7 @@
 import { Settings } from "@/types/Settings";
 import { mrgnFieldName, mrgnPctFieldName } from "./mrgnProps";
 
-export const ebyMarginFields = (
+export const ebyFields = (
   settings: Settings,
   sdmn?: string,
   isWholeSale?: boolean
@@ -11,7 +11,6 @@ export const ebyMarginFields = (
   const match: any = {
     e_pblsh: true,
     e_prc: { $gt: 0 },
-    e_uprc: { $gt: 0 },
   };
 
   if (sdmn) {

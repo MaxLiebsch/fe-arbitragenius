@@ -2,8 +2,8 @@ import { PRODUCT_COL, WHOLESALE_COL } from "@/constant/constant";
 import { getLoggedInUser } from "@/server/appwrite";
 import clientPool from "@/server/mongoPool";
 import { Settings } from "@/types/Settings";
-import { aznMarginFields } from "@/util/productQueries/aznMarginFields";
-import { ebyMarginFields } from "@/util/productQueries/ebyMarginFields";
+import { aznFields } from "@/util/productQueries/aznFields";
+import { ebyFields } from "@/util/productQueries/ebyFields";
 import { settingsFromSearchQuery } from "@/util/productQueries/settingsFromSearchQuery";
 import { SortDirection } from "mongodb";
 import { NextRequest } from "next/server";
@@ -44,9 +44,9 @@ export async function GET(
   const aggregation = [];
 
   if (isAmazon) {
-    aggregation.push(...aznMarginFields(customerSettings, WHOLESALE_COL, true));
+    aggregation.push(...aznFields(customerSettings, WHOLESALE_COL, true));
   } else {
-    aggregation.push(...ebyMarginFields(customerSettings, WHOLESALE_COL, true));
+    aggregation.push(...ebyFields(customerSettings, WHOLESALE_COL, true));
   }
 
   const mongo = await clientPool["NEXT_MONGO_ADMIN"];

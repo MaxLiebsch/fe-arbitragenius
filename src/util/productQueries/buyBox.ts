@@ -1,4 +1,4 @@
-export function buyBoxFields(buyBox: string, findQuery: any[], isAmazon: boolean) {
+export function addBuyBoxFields(buyBox: string, findQuery: any[], isAmazon: boolean) {
   if (buyBox === "amazon") {
     findQuery.push({
       buyBoxIsAmazon: true,
@@ -23,4 +23,6 @@ export function buyBoxFields(buyBox: string, findQuery: any[], isAmazon: boolean
       ],
     });
   }
+
+  // buyBoxIsAmazon:{ $in: [true, false, null] }
 }

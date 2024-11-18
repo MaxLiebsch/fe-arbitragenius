@@ -1,5 +1,5 @@
 import { Settings } from "@/types/Settings";
-import { mrgnFieldName, mrgnPctFieldName } from "./mrgnProps";
+import { mrgnFieldName } from "./mrgnProps";
 
 export interface MarrginFields {
   target: string;
@@ -7,16 +7,8 @@ export interface MarrginFields {
 }
 
 export const marginFields = ({ target, settings }: MarrginFields) => {
-  const { minMargin, minPercentageMargin, euProgram } = settings;
+  const { minMargin, euProgram } = settings;
   return {
-    $and: [
-      { [`${target}_prc`]: { $gt: 0 } },
-      { [mrgnFieldName(target, euProgram)]: { $gt: minMargin } },
-      {
-        [mrgnPctFieldName(target, euProgram)]: {
-          $gt: minPercentageMargin,
-        },
-      },
-    ],
+    [mrgnFieldName(target, euProgram)]: { $gt: minMargin },
   };
 };

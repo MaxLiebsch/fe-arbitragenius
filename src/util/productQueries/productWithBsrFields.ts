@@ -1,6 +1,6 @@
 import { Settings } from "@/types/Settings";
 
-export function productWithBsrFields(
+export function addProductWithBsrFields(
   findQuery: any[],
   customerSettings: Settings
 ) {

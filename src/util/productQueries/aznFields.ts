@@ -1,24 +1,32 @@
 import { Settings } from "@/types/Settings";
 import { mrgnFieldName, mrgnPctFieldName } from "./mrgnProps";
+import { addAznSettingsFields } from "./addAznSettingsFields";
 
-export const aznMarginFields = (
+export const aznFields = (
   settings: Settings,
   sdmn: string,
   isWholesale?: boolean
-) => {
-  const { a_tptStandard, a_strg, a_prepCenter, fba, euProgram } = settings;
+): any[] => {
+  const {
+    a_tptStandard,
+    a_strg,
+    a_prepCenter,
+    fba,
+    euProgram,
+  } = settings;
   const transport = settings[a_tptStandard as "a_tptSmall"];
 
   const match: any = {
     sdmn, // shop domain
     a_pblsh: true,
     a_prc: { $gt: 0 },
-    a_uprc: { $gt: 0 },
   };
 
   if (settings.a_cats.length > 0 && settings.a_cats[0] !== 0) {
     match["categoryTree.catId"] = { $in: settings.a_cats };
   }
+
+  addAznSettingsFields(settings, match);
 
   const query: any = [];
 
