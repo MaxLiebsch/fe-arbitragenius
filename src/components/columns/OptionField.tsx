@@ -46,10 +46,15 @@ const OptionField = ({
 }: OptionFieldProps): GridColDef<any> => {
   return {
     field: "isBookmarked",
-    headerName: "Optionen",
+    renderHeader: (params) => (
+      <Tooltip title="Export der Daten">
+        <div>Optionen</div>
+      </Tooltip>
+    ),
     headerAlign: "center",
     sortable: false,
     width: 150,
+    disableColumnMenu: true,
     align: "center",
     renderCell: (params) => {
       const product = params.row;
@@ -84,7 +89,12 @@ const OptionField = ({
           >
             Mein Deal
           </Checkbox>
-          {asin && !flip && <ArbitrageOneExportBtn product={product} source_price_calculated_net={0} />}
+          {asin && !flip && (
+            <ArbitrageOneExportBtn
+              product={product}
+              source_price_calculated_net={0}
+            />
+          )}
         </div>
       );
     },

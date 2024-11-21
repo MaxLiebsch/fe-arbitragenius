@@ -9,9 +9,7 @@ import CopyToClipboard from "../CopyToClipboard";
 import { ProductPagination } from "@/hooks/use-products";
 import Link from "next/link";
 import { formatDistanceToNow, parseISO } from "date-fns";
-import { parseSalesRank } from "@/util/parseSalesRank";
 import { de } from "date-fns/locale";
-import { aznCategoryMapping } from "@/constant/constant";
 import { targetLinkBuilder } from "@/util/targetLinkBuilder";
 import { getLatestBsr } from "@/util/getLatestBsr";
 
@@ -36,14 +34,10 @@ const InfoField = ({
     nm,
     mnfctr,
     asin,
-    categoryTree,
-    keepaUpdatedAt,
-    salesRanks,
     availUpdatedAt,
     updatedAt,
     dealAznUpdatedAt,
     dealEbyUpdatedAt,
-    bsr: initialBsr,
     drops30,
     drops90,
     monthlySold,

@@ -21,7 +21,7 @@ const EKPrice = ({
     align: "left",
     renderHeader: (params) => (
       <div className="relative w-16 flex flex-col !leading-tight">
-        <Tooltip title="Einkaufspreis" placement="topLeft">
+        <Tooltip title="Einkaufspreis des Produktes" placement="topLeft">
           <div>EK</div>
         </Tooltip>
         <div className="bottom-1 text-xs text-gray-500">
