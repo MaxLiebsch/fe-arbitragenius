@@ -133,7 +133,14 @@ const aznProductQuery = [
 ];
 
 const ebyCntQuery = [
-  { $match: { e_pblsh: true, e_prc: { $gt: 0 }, sdmn: "idealo.de" } },
+  {
+    $match: {
+      e_pblsh: true,
+      e_prc: { $gt: 0 },
+      sdmn: "idealo.de",
+      e_mrgn: { $gt: 0 },
+    },
+  },
   {
     $addFields: {
       e_mrgn: {
@@ -168,6 +175,7 @@ const ebyCntQuery = [
       },
     },
   },
+  { $match: { e_mrgn: { $gt: 0 } } },
   {
     $addFields: {
       e_mrgn_pct: {
@@ -175,7 +183,7 @@ const ebyCntQuery = [
       },
     },
   },
-  { $match: { e_mrgn: { $gt: 0 } } },
+
   { $count: "productCount" },
 ];
 

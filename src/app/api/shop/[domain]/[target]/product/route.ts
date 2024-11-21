@@ -3,17 +3,13 @@ import { getProductCol } from "@/server/mongo";
 import { Settings } from "@/types/Settings";
 import { aznFields } from "@/util/productQueries/aznFields";
 
-import { addBuyBoxFields } from "@/util/productQueries/buyBox";
 import { ebyFields } from "@/util/productQueries/ebyFields";
 import { lookupUserId } from "@/util/productQueries/lookupUserId";
-import { marginFields } from "@/util/productQueries/marginFields";
-import { addMonthlySoldField } from "@/util/productQueries/monthlySoldField";
+import { marginField } from "@/util/productQueries/marginFields";
 
-import { addProductWithBsrFields } from "@/util/productQueries/productWithBsrFields";
 import { projectField } from "@/util/productQueries/projectField";
 import { settingsFromSearchQuery } from "@/util/productQueries/settingsFromSearchQuery";
 import { sortingField } from "@/util/productQueries/sortingField";
-import { addTotalOffersCountField } from "@/util/productQueries/totalOffersCountField";
 import { SortDirection } from "mongodb";
 import { NextRequest } from "next/server";
 
@@ -33,15 +29,7 @@ export async function GET(
   const isAmazon = target === "a";
 
   const customerSettings: Settings = settingsFromSearchQuery(searchParams);
-  let {
-    minMargin,
-    minPercentageMargin,
-    netto,
-    monthlySold,
-    totalOfferCount,
-    euProgram,
-    buyBox,
-  } = customerSettings;
+  let { minMargin, minPercentageMargin, netto, euProgram } = customerSettings;
 
   if (netto) {
     minMargin = Number((minMargin * 1.19).toFixed(0));
@@ -79,19 +67,6 @@ export async function GET(
 
   sortingField(isAmazon, query, sort, euProgram);
 
-  if (isAmazon) {
-    aggregation[0].$match = {
-      ...aggregation[0].$match,
-      ...marginFields({ target, settings: customerSettings }),
-    };
-  } else {
-    aggregation.push({
-      $match: {
-        ...marginFields({ target, settings: customerSettings }),
-      },
-    });
-  }
-
   aggregation.push(
     projectField(target),
     {
@@ -108,8 +83,21 @@ export async function GET(
   lookupUserId(aggregation, user, target);
   const productCol = await getProductCol();
 
-
   const res = await productCol.aggregate(aggregation).toArray();
+  if (
+    isAmazon &&
+    domain === "idealo.de" &&
+    process.env.NODE_ENV === "development"
+  ) {
+    console.log("AZNAGGP", JSON.stringify(aggregation));
+  }
+  if (
+    !isAmazon &&
+    domain === "idealo.de" &&
+    process.env.NODE_ENV === "development"
+  ) {
+    console.log("EBYAGGP", JSON.stringify(aggregation));
+  }
 
   return Response.json(res);
 }

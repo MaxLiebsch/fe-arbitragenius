@@ -5,7 +5,7 @@ import { Settings } from "@/types/Settings";
 import { aznFields } from "@/util/productQueries/aznFields";
 import { ebyFields } from "@/util/productQueries/ebyFields";
 import { lookupUserId } from "@/util/productQueries/lookupUserId";
-import { marginFields } from "@/util/productQueries/marginFields";
+import { marginField } from "@/util/productQueries/marginFields";
 import { projectField } from "@/util/productQueries/projectField";
 import { settingsFromSearchQuery } from "@/util/productQueries/settingsFromSearchQuery";
 import { sortingField } from "@/util/productQueries/sortingField";
@@ -46,7 +46,7 @@ export async function GET(
 
   aggregation[0].$match = {
     ...targetFields[0].$match,
-    ...marginFields({ target, settings: customerSettings }),
+    ...marginField({ target, settings: customerSettings }),
   };
 
   const query = {

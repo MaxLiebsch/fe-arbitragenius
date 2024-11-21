@@ -1,13 +1,12 @@
 import { getProductCol } from "@/server/mongo";
 import { Settings } from "@/types/Settings";
 import { aznFlipFields } from "@/util/productQueries/aznFlipFields";
-import { addBuyBoxFields } from "@/util/productQueries/buyBox";
 import { ebyFields } from "@/util/productQueries/ebyFields";
-import { marginFields } from "@/util/productQueries/marginFields";
-import { addMonthlySoldField } from "@/util/productQueries/monthlySoldField";
-import { addProductWithBsrFields } from "@/util/productQueries/productWithBsrFields";
+import {
+  marginField,
+  marginPctField,
+} from "@/util/productQueries/marginFields";
 import { settingsFromSearchQuery } from "@/util/productQueries/settingsFromSearchQuery";
-import { addTotalOffersCountField } from "@/util/productQueries/totalOffersCountField";
 import { NextRequest } from "next/server";
 
 export async function GET(request: NextRequest) {
@@ -17,11 +16,7 @@ export async function GET(request: NextRequest) {
   const isAmazon = target === "a";
 
   const customerSettings: Settings = settingsFromSearchQuery(searchParams);
-  let {
-    minMargin,
-    minPercentageMargin,
-    netto, 
-  } = customerSettings;
+  let { minMargin, minPercentageMargin, netto } = customerSettings;
 
   if (netto) {
     minMargin = Number((minMargin * 1.19).toFixed(0));
@@ -43,7 +38,9 @@ export async function GET(request: NextRequest) {
   aggregation.push(
     {
       $match: {
-        ...marginFields({ target, settings: customerSettings }),
+        ...marginField({ target, settings: customerSettings }),
+        ...(customerSettings.minPercentageMargin > 0 &&
+          marginPctField({ target, settings: customerSettings })),
       },
     },
     {
@@ -62,6 +59,12 @@ export async function GET(request: NextRequest) {
   const productCol = await getProductCol();
 
   const res = await productCol.aggregate(aggregation).toArray();
+
+  if (
+    process.env.NODE_ENV === "development"
+  ) {
+    console.log("FLIPAGGPCOUNT", JSON.stringify(aggregation));
+  }
 
   return Response.json(
     res.length && res[0]?.productCount

@@ -3,7 +3,7 @@ import { getProductCol } from "@/server/mongo";
 import { Settings } from "@/types/Settings";
 import { aznFields } from "@/util/productQueries/aznFields";
 import { ebyFields } from "@/util/productQueries/ebyFields";
-import { marginFields } from "@/util/productQueries/marginFields";
+import { marginField } from "@/util/productQueries/marginFields";
 import { settingsFromSearchQuery } from "@/util/productQueries/settingsFromSearchQuery";
 import { NextRequest } from "next/server";
 
@@ -36,7 +36,7 @@ export async function GET(request: NextRequest) {
 
   aggregation[0].$match = {
     ...targetFields[0].$match,
-    ...marginFields({ target, settings: customerSettings }),
+    ...marginField({ target, settings: customerSettings }),
   };
 
   aggregation.push(
@@ -46,7 +46,7 @@ export async function GET(request: NextRequest) {
           {
             $match: {
               ...targetFields[0].$match,
-              ...marginFields({ target, settings: customerSettings }),
+              ...marginField({ target, settings: customerSettings }),
             },
           },
           { $count: "count" },
@@ -55,7 +55,7 @@ export async function GET(request: NextRequest) {
           {
             $match: {
               ...targetFields[0].$match,
-              ...marginFields({ target, settings: customerSettings }),
+              ...marginField({ target, settings: customerSettings }),
               createdAt: {
                 $gte: today.toISOString(),
                 $lt: tomorrow.toISOString(),

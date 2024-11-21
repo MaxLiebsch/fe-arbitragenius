@@ -44,6 +44,7 @@ export const ebyProjectFields = {
   e_img: 1,
   esin: 1,
   dealEbyUpdatedAt: 1,
+  e_totalOfferCount: 1,
   e_prc: 1,
   e_uprc: 1,
   e_qty: 1,

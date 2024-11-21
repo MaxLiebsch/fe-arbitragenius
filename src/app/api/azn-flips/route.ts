@@ -5,7 +5,7 @@ import { aznFlipFields } from "@/util/productQueries/aznFlipFields";
 
 import { ebyFields } from "@/util/productQueries/ebyFields";
 import { lookupUserId } from "@/util/productQueries/lookupUserId";
-import { marginFields } from "@/util/productQueries/marginFields";
+import { marginField } from "@/util/productQueries/marginFields";
 
 import { projectField } from "@/util/productQueries/projectField";
 import { settingsFromSearchQuery } from "@/util/productQueries/settingsFromSearchQuery";
@@ -71,7 +71,7 @@ export async function GET(
   aggregation.push(
     {
       $match: {
-        ...marginFields({ target, settings: customerSettings }),
+        ...marginField({ target, settings: customerSettings }),
       },
     },
     projectField("a"),
