@@ -5,6 +5,7 @@ export function settingsFromSearchQuery(searchParams: URLSearchParams) {
     minMargin: Number(searchParams.get("minMargin")) || 0,
     euProgram: searchParams.get("euProgram") === "true",
     fba: searchParams.get("fba") === "true",
+    targetPlatforms: [],
     a_tptSmall: Number(searchParams.get("a_tptSmall")) || 0,
     a_tptMiddle: Number(searchParams.get("a_tptMiddle")) || 4.95,
     a_tptLarge: Number(searchParams.get("a_tptLarge")) || 6.95,
