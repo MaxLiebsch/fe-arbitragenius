@@ -14,12 +14,13 @@ export default function useSalesCount(
       .map((key) => `&${key}=${settings[key as keyof Settings]}`)
       .join("");
   }
+  const targetEnabled = settings && settings.targetPlatforms && settings.targetPlatforms.includes(target);
   return useQuery<{ productCount: number; totalProductsToday: number }>({
     queryKey: [
       ...countQueryKey(target, 'sales') ,
       ...(settings ? Object.values(settings) : []),
     ],
-    enabled: !!settings?.loaded,
+    enabled: !!settings?.loaded && targetEnabled,
     queryFn: () =>
       fetch(`/app/api/sales/count?target=${target}${settingsQuery}`).then((resp) =>
         resp.json()

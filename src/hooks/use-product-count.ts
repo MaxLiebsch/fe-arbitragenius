@@ -11,9 +11,10 @@ export default function useProductCount(
   const [settings, setUserSettings] = useUserSettings();
   if (settings) {
     settingsQuery = Object.keys(settings)
-      .map((key) => `&${key}=${settings[key as keyof Settings]}`)
-      .join("");
+    .map((key) => `&${key}=${settings[key as keyof Settings]}`)
+    .join("");
   }
+  const targetEnabled = settings && settings.targetPlatforms && settings.targetPlatforms.includes(target);
   return useQuery<{ productCount: number }>({
     queryKey: [
       target,
@@ -23,7 +24,7 @@ export default function useProductCount(
       "count",
       ...(settings ? Object.values(settings) : []),
     ],
-    enabled: !!domain && !!target && !!settings,
+    enabled: !!domain && !!target && !!settings && targetEnabled,
     queryFn: () =>
       fetch(
         `/app/api/shop/${domain}/${target}/product/count?${settingsQuery}`

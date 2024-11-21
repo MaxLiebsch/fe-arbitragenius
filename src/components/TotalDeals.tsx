@@ -6,6 +6,7 @@ import React, { useContext, useEffect } from "react";
 import CountUp from "react-countup";
 import Spinner from "./Spinner";
 import { useUserSettings } from "@/hooks/use-settings";
+import { Tooltip } from "antd";
 const TotalDeals = () => {
   const queryClient = useQueryClient();
   const [ebayTotal, setEbayTotal] = React.useState(0);
@@ -16,6 +17,16 @@ const TotalDeals = () => {
   const [amazonTotal, setAmazonTotal] = React.useState(0);
   const [amazonPrevTotal, setAmazonPrevTotal] = React.useState(0);
   const { queryUpdate } = useContext(TotalDealsContext);
+
+  const aTargetEnabled =
+    settings &&
+    settings.targetPlatforms &&
+    settings.targetPlatforms.includes("a");
+  const eTargetEnabled =
+    settings &&
+    settings.targetPlatforms &&
+    settings.targetPlatforms.includes("e");
+
   useEffect(() => {
     if (settings.loaded === false) return;
     setEbayTotal(0);
@@ -66,12 +77,20 @@ const TotalDeals = () => {
             end={amazonTotal}
             duration={2.2}
           />
-        ) : (
+        ) : aTargetEnabled ? (
           <Spinner />
+        ) : (
+          <Tooltip
+            color={"#11848d"}
+            destroyTooltipOnHide
+            title="Aktivere Amazon in den Profileinstellungen"
+          >
+            <p>Amazon deaktiviert</p>
+          </Tooltip>
         )}
       </div>
       <div className="border-primary-400 border w-72 group inline-flex items-center justify-center rounded-md py-2 px-4 font-semibold focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2">
-        {amazonTotal > 0 ? (
+        {ebayTotal > 0 ? (
           <CountUp
             className="block text-lg w-64 text-center"
             separator="."
@@ -80,8 +99,16 @@ const TotalDeals = () => {
             end={ebayTotal}
             duration={2.2}
           />
-        ) : (
+        ) : eTargetEnabled ? (
           <Spinner />
+        ) : (
+          <Tooltip
+            color={"#11848d"}
+            destroyTooltipOnHide
+            title="Aktivere Ebay in den Profileinstellungen"
+          >
+            <p>Ebay deaktiviert</p>
+          </Tooltip>
         )}
       </div>
       <div className="border-primary-400 border w-72 group inline-flex items-center justify-center rounded-md py-2 px-4 font-semibold focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2">

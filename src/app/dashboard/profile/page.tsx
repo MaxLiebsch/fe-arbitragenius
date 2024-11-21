@@ -12,6 +12,7 @@ import { deleteAccountAction } from "@/server/actions/delete-account";
 import ProfileSettings from "@/components/ProfileSettings";
 import { useQueryClient } from "@tanstack/react-query";
 import SubscriptionAndInvoices from "@/components/SubscriptionAndInvoices";
+import ProfileTargetPlatformsFilter from "@/components/ProfileTargetPlatformsFilter";
 
 const secondaryNavigation = [
   { name: "Einstellungen", href: "#", current: false },
@@ -136,6 +137,7 @@ const Page = () => {
         <Tab.Panel>
           <div className="divide-y divide-white/5">
             <h1 className="sr-only">Einstellungen</h1>
+            <ProfileTargetPlatformsFilter/>
             <ProfileSettings />
           </div>
         </Tab.Panel>

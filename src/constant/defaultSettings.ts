@@ -4,6 +4,7 @@ export const defaultSettings: Settings = {
   loaded: false,
   minMargin: 0,
   minPercentageMargin: 0,
+  targetPlatforms: ["azn"],
   euProgram: true,
   fba: true,
   a_cats: [0],

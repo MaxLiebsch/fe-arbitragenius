@@ -24,7 +24,7 @@ export default function useAznFlipsProducts(
   refetchOnWindowFocus: boolean = true
 ) {
   const [settings, setUserSettings] = useUserSettings();
-
+  const targetEnabled = settings && settings.targetPlatforms && settings.targetPlatforms.includes(target); 
   const productQuery = useQuery<ModifiedProduct[]>({
     queryKey: [
       ...aznFlipsQueryKey(pagination.page, pagination.pageSize),
@@ -32,7 +32,7 @@ export default function useAznFlipsProducts(
       sort?.direction,
       ...(settings ? Object.values(settings) : []),
     ],
-    enabled: !!target && !!settings,
+    enabled: !!target && !!settings && targetEnabled,
     refetchOnWindowFocus: false,
     queryFn: async () => {
       const { page, pageSize } = pagination;

@@ -27,6 +27,7 @@ export async function updateSettingsAction(
     netto: parsedFormData.netto ?? true,
     minMargin: parseInt(parsedFormData.minMargin || "0"),
     fba: parsedFormData.fba ?? true,
+    targetPlatforms: parsedFormData.targetPlatforms,
     a_prepCenter: parseFloat(parsedFormData.a_prepCenter || "0"),
     a_tptSmall: parseFloat(parsedFormData.a_tptSmall || "2.95"),
     a_strg: parseFloat(parsedFormData.a_strg || "0"),
