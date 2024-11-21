@@ -53,6 +53,7 @@ export const createColumns: (
       field: "nm",
       headerName: "Produkte",
       flex: 0.65,
+      sortable: false,
       renderCell: (params) => (
         <InfoField
           flip={flip}

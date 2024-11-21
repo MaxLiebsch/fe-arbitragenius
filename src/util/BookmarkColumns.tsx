@@ -50,6 +50,7 @@ export const bookMarkColumns: (
       field: "nm",
       headerName: "Produkte",
       flex: 0.75,
+      sortable: false,
       renderCell: (params) => (
         <InfoField
           product={params.row}

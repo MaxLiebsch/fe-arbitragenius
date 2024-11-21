@@ -67,6 +67,7 @@ export const createSalesTableColumns: (
     headerName: "Produkte",
     disableColumnMenu: true,
     flex: 1,
+    sortable: false,
     renderCell: (params) => (
       <InfoField
         product={params.row}
