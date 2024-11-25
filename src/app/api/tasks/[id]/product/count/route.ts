@@ -1,6 +1,5 @@
-import { PRODUCT_COL } from "@/constant/constant";
 import { getLoggedInUser } from "@/server/appwrite";
-import clientPool from "@/server/mongoPool";
+import { getProductCol } from "@/server/mongo";
 import { NextRequest } from "next/server";
 
 export async function GET(
@@ -14,15 +13,10 @@ export async function GET(
       status: 401,
     });
   }
-
-  const mongo = await clientPool['NEXT_MONGO_ADMIN'];
-
-  const res = await mongo
-    .db(process.env.NEXT_MONGO_DB ?? "")
-    .collection(PRODUCT_COL)
-    .countDocuments({
-      taskIds: params.id,
-    });
+  const col = await getProductCol();
+  const res = await col.countDocuments({
+    taskIds: params.id,
+  });
 
   return Response.json(res);
 }

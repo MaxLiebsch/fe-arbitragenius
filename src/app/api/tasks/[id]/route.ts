@@ -1,5 +1,6 @@
-import { PRODUCT_COL, TASK_COL } from "@/constant/constant";
+import {  TASK_COL } from "@/constant/constant";
 import { getLoggedInUser } from "@/server/appwrite";
+import { getProductCol } from "@/server/mongo";
 import clientPool from "@/server/mongoPool";
 import { WholeSaleTask } from "@/types/tasks";
 import { ObjectId } from "mongodb";
@@ -59,9 +60,7 @@ export async function DELETE(
     .db(process.env.NEXT_MONGO_CRAWLER_DATA ?? "")
     .collection<WholeSaleTask>(TASK_COL);
 
-  const productCol = mongo
-    .db(process.env.NEXT_MONGO_DB ?? "")
-    .collection(PRODUCT_COL);
+  const productCol = await getProductCol()
 
   const taskFinished = await taskCollection.findOne({
     _id: new ObjectId(params.id),

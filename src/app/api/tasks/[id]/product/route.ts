@@ -1,5 +1,6 @@
-import { PRODUCT_COL, WHOLESALE_COL } from "@/constant/constant";
+import { WHOLESALE_COL } from "@/constant/constant";
 import { getLoggedInUser } from "@/server/appwrite";
+import { getProductCol } from "@/server/mongo";
 import clientPool from "@/server/mongoPool";
 import { Settings } from "@/types/Settings";
 import { aznFields } from "@/util/productQueries/aznFields";
@@ -50,9 +51,8 @@ export async function GET(
   }
 
   const mongo = await clientPool["NEXT_MONGO_ADMIN"];
-  const productCol = mongo
-    .db(process.env.NEXT_MONGO_DB ?? "")
-    .collection(PRODUCT_COL);
+
+  const productCol = await getProductCol()
 
   const sort: {
     [key: string]: SortDirection;

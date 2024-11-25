@@ -1,5 +1,5 @@
-import { PRODUCT_COL } from "@/constant/constant";
 import { getLoggedInUser } from "@/server/appwrite";
+import { getProductCol } from "@/server/mongo";
 import clientPool from "@/server/mongoPool";
 import {
   Bookmark,
@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
   const mongo = await clientPool["NEXT_MONGO_ADMIN"];
   const spotterDb = mongo.db(process.env.NEXT_MONGO_DB ?? "");
   const users = spotterDb.collection("users");
-  const productCol = spotterDb.collection(PRODUCT_COL);
+  const productCol = await getProductCol() 
 
   /*
     Aggregagte bookmarks in chunks of 10
