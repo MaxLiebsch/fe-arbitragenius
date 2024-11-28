@@ -15,11 +15,9 @@ import { Tooltip } from "antd";
 
 const MarginPct = ({
   target,
-  flip,
   settings,
 }: {
   target: string;
-  flip?: boolean;
   settings: Settings;
 }): GridColDef<any> => {
   return {
@@ -44,11 +42,11 @@ const MarginPct = ({
       const { row: product } = params;
       const { prc, a_prc, tax, a_useCurrPrice, shop, a_qty, e_qty, qty } =
         product;
-      const price = flip ? a_prc : prc;
-      const flipQty = flip ? a_qty : qty;
+      const isFlip = shop === "flip";
+      const price = isFlip ? a_prc : prc;
+      const flipQty = isFlip ? a_qty : qty;
       const factor = (target === "a" ? a_qty : e_qty) / flipQty;
       const netPrice = calculateNetPrice(price, tax) * factor;
-      const isFlip = shop === "flip";
       const margin = product[mrgnFieldName(target, settings.euProgram)];
       const roi = appendPercentage(
         roundToFourDecimals(margin / netPrice) * 100
@@ -61,7 +59,7 @@ const MarginPct = ({
       // }
       return (
         <div className="flex flex-col">
-          {a_useCurrPrice === false && !flip && !isFlip ? (
+          {a_useCurrPrice === false && !isFlip ? (
             <div className="flex flex-row gap-1 items-center justify-center text-amber-600">
               <span>
                 <ExclamationTriangleIcon className="h-6 w-6" />

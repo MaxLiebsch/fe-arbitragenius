@@ -34,11 +34,6 @@ export async function GET(request: NextRequest) {
   const tomorrow = new Date(today);
   tomorrow.setDate(today.getDate() + 1);
 
-  aggregation[0].$match = {
-    ...targetFields[0].$match,
-    ...marginField({ target, settings: customerSettings }),
-  };
-
   aggregation.push(
     {
       $facet: {
@@ -80,6 +75,12 @@ export async function GET(request: NextRequest) {
 
   const res = await productCol.aggregate(aggregation).toArray();
 
+  if (isAmazon && process.env.NODE_ENV === "development") {
+    console.log("AZNAGGSCOUNT", JSON.stringify(aggregation));
+  }
+  if (!isAmazon && process.env.NODE_ENV === "development") {
+    console.log("EBYAGGSCOUNT", JSON.stringify(aggregation));
+  }
 
   return Response.json(
     res.length && res[0]?.productCount

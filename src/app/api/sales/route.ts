@@ -44,11 +44,6 @@ export async function GET(
 
   aggregation.push(...targetFields);
 
-  aggregation[0].$match = {
-    ...targetFields[0].$match,
-    ...marginField({ target, settings: customerSettings }),
-  };
-
   const query = {
     page: Number(searchParams.get("page")) || 0,
     size: Number(searchParams.get("size")) || 10,
@@ -72,7 +67,7 @@ export async function GET(
   sortingField(isAmazon, query, sort, euProgram);
 
   aggregation.push(
-    projectField(target),
+    projectField(target, "sales"),
     {
       $sort: sort,
     },

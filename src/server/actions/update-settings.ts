@@ -3,6 +3,7 @@
 import { AppwriteException } from "node-appwrite";
 import { createSessionClient } from "../appwrite";
 import { Settings, SettingsSchema } from "@/types/Settings";
+import { DEFAULT_MAX_BSR } from "@/constant/constant";
 
 interface FieldError {
   message: string;
@@ -43,7 +44,7 @@ export async function updateSettingsAction(
     tptMiddle: parseFloat(parsedFormData.tptMiddle || "4.95"),
     tptLarge: parseFloat(parsedFormData.tptLarge || "6.95"),
     tptStandard: parsedFormData.tptStandard || "tptMiddle",
-    maxPrimaryBsr: parseInt(parsedFormData.maxPrimaryBsr || "0"),
+    maxPrimaryBsr: parseInt(parsedFormData.maxPrimaryBsr || DEFAULT_MAX_BSR.toString()),
     productsWithNoBsr: parsedFormData.productsWithNoBsr,
     monthlySold: parseInt(parsedFormData.monthlySold || "0"),
     totalOfferCount: parseInt(parsedFormData.totalOfferCount || "0"),

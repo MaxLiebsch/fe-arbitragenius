@@ -24,11 +24,12 @@ export default function Providers({ children }: { children: ReactNode }) {
     if (accountQuery.data && prefs) {
       const settings = prefs.settings;
       if (settings) {
-        setUserSettings({
+        const updatedSettings = {
           ...defaultSettings,
           ...JSON.parse(settings),
           loaded: true,
-        });
+        }
+        setUserSettings(updatedSettings);
       } else {
         const today = Date.now();
         const registrationDate = new Date(accountQuery.data.registration);

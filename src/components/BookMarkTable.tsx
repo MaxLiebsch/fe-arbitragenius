@@ -9,32 +9,34 @@ import React, { useMemo } from "react";
 import Spinner from "./Spinner";
 import useBookMarkAdd from "@/hooks/use-bookmark-add";
 import useBookMarkRemove from "@/hooks/use-bookmark-remove";
-import { BookMarkProduct } from "@/types/Product";
+import { BookMarkProduct, ModifiedProduct } from "@/types/Product";
 import { bookMarkColumns } from "@/util/BookmarkColumns";
 import { Settings } from "@/types/Settings";
 import { usePaginationAndSort } from "@/hooks/use-pagination";
 import useAccount from "@/hooks/use-account";
+import { useUserSettings } from "@/hooks/use-settings";
 
 export default function BookmarkTable(props: {
   products: BookMarkProduct[];
   target: string;
   loading: boolean;
 }) {
-  
   const { target, loading, products } = props;
-  const [paginationModel, setPaginationModel, sortModel, setSortModel] = usePaginationAndSort(); 
-  
+  const [paginationModel, setPaginationModel, sortModel, setSortModel] =
+    usePaginationAndSort();
+
   const apiRef = useGridApiRef();
 
   const addBookMark = useBookMarkAdd();
   const removeBookmark = useBookMarkRemove();
+  const [settings] = useUserSettings();
   const user = useAccount();
   const userRoles = useMemo(() => user.data?.labels ?? [], [user.data?.labels]);
 
   const handleSortModelChange = (model: GridSortModel) => {
     if (model.length) {
       setSortModel({
-        field: model[0].field,
+        field: model[0].field ?? "bookmarkedAt",
         direction: model[0].sort ?? "asc",
       });
     } else {
@@ -46,13 +48,20 @@ export default function BookmarkTable(props: {
     () =>
       bookMarkColumns(
         target,
-        { netto: true } as Settings,
+        settings,
         paginationModel,
         addBookMark.mutate,
         removeBookmark.mutate,
-        userRoles,
+        userRoles
       ),
-    [removeBookmark.mutate, addBookMark.mutate, paginationModel, target,userRoles]
+    [
+      removeBookmark.mutate,
+      addBookMark.mutate,
+      settings,
+      paginationModel,
+      target,
+      userRoles,
+    ]
   );
 
   return (
@@ -64,13 +73,18 @@ export default function BookmarkTable(props: {
           columnVisibilityModel: {
             bsr: target === "a" ? true : false,
             analytics: target === "a" ? true : false,
-            asin: target === "a" ? true : false,
           },
         },
       }}
       getRowId={(row) => row._id}
       columns={columns}
-      rows={products}
+      rows={[...products].sort((a: BookMarkProduct, b: BookMarkProduct) => {
+        if (a.bookmarkedAt && b.bookmarkedAt) {
+          return a.bookmarkedAt > b.bookmarkedAt ? -1 : 1;
+        } else {
+          return 0;
+        }
+      })}
       loading={loading}
       pageSizeOptions={[10, 20, 50]}
       paginationModel={paginationModel}

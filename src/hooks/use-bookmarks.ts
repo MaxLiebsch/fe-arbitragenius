@@ -15,6 +15,7 @@ export default function useBookmarks(refetchOnWindowFocus: boolean = true) {
   const productQuery = useQuery<BookMarkReturn>({
     queryKey: ["bookmarks"],
     refetchOnWindowFocus,
+    enabled: !!settings.loaded,
     queryFn: async () => {
       return fetch(`/app/api/user/bookmarks?${settingsQuery}`).then((resp) => resp.json());
     },

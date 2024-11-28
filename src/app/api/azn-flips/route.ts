@@ -74,7 +74,7 @@ export async function GET(
         ...marginField({ target, settings: customerSettings }),
       },
     },
-    projectField("a"),
+    projectField("a", "flip"),
     {
       $group: {
         _id: {

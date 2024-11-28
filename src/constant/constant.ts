@@ -1,6 +1,7 @@
 import { SplitStats } from "@/types/admin/initSplitStats";
 
 export const keepaTimeSummand = 21564000;
+export const DEFAULT_MAX_BSR = 10000000;
 export const STALETIME = 1000 * 60 * 10;
 export const GCTIME = 10000 * 60 * 24;
 export const PRODUCT_COL = "products";

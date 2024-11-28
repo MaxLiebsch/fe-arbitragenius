@@ -1,7 +1,6 @@
 import { GridColDef } from "@mui/x-data-grid-premium";
 import { Settings } from "@/types/Settings";
 import { BookMarkProduct } from "@/types/Product";
-import { Checkbox } from "antd";
 import { BookmarkDeleteSchema, BookmarkSchema } from "@/types/Bookmarks";
 import { UseMutateFunction } from "@tanstack/react-query";
 import { ProductPagination } from "@/hooks/use-products";
@@ -11,6 +10,8 @@ import Margin from "@/components/columns/Margin";
 import VKPrice from "@/components/columns/VKPrice";
 import EKPrice from "@/components/columns/EKPrice";
 import PriceAnalysis from "@/components/columns/PriceAnalysis";
+import OptionField from "@/components/columns/OptionField";
+import { format } from "date-fns";
 
 export const bookMarkColumns: (
   target: string,
@@ -47,6 +48,14 @@ export const bookMarkColumns: (
 ) => {
   return [
     {
+      field: "bookmarkedAt",
+      headerName: "Hinzugefügt",
+      valueFormatter: (params) => {
+        const date = new Date(params.value as string);
+        return format(date, "dd.MM.yyyy HH:mm");
+      },
+    },
+    {
       field: "nm",
       headerName: "Produkte",
       flex: 0.75,
@@ -65,39 +74,11 @@ export const bookMarkColumns: (
     PriceAnalysis(),
     MarginPct({ target, settings }),
     Margin({ target, settings }),
-    {
-      field: "isBookmarked",
-      headerName: "Gemerkt",
-      headerAlign: "center",
-      align: "center",
-      renderCell: (params) => (
-        <Checkbox
-          checked={params.row.isBookmarked}
-          onChange={(e) => {
-            if (e.target.checked) {
-              addBookmark({
-                body: {
-                  target: target,
-                  shop: params.row.shop,
-                  productId: params.row._id,
-                },
-                page: pagination.page,
-                pageSize: pagination.pageSize,
-              });
-            } else {
-              removeBookmark({
-                body: {
-                  target: target,
-                  shop: params.row.shop,
-                  productId: params.row._id,
-                },
-                page: pagination.page,
-                pageSize: pagination.pageSize,
-              });
-            }
-          }}
-        />
-      ),
-    },
+    OptionField({
+      addBookmark,
+      removeBookmark,
+      pagination,
+      target,
+    }) 
   ];
 };

@@ -86,8 +86,6 @@ export const createSalesTableColumns: (
     addBookmark,
     removeBookmark,
     pagination,
-    target,
-    domain: "sales",
-    flip: false,
+    target, 
   }),
 ];

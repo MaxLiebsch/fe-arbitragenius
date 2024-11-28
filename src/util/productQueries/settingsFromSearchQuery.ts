@@ -1,3 +1,4 @@
+import { DEFAULT_MAX_BSR } from "@/constant/constant";
 import { BuyBox, Settings } from "@/types/Settings";
 
 export function settingsFromSearchQuery(searchParams: URLSearchParams) {
@@ -16,7 +17,7 @@ export function settingsFromSearchQuery(searchParams: URLSearchParams) {
     e_prepCenter: Number(searchParams.get("e_prepCenter")) || 0,
     e_cats: searchParams.getAll("e_cats")[0].split(',').map(Number),
     minPercentageMargin: Number(searchParams.get("minPercentageMargin")) || 0,
-    maxPrimaryBsr: Number(searchParams.get("maxPrimaryBsr")) || 1000000,
+    maxPrimaryBsr: Number(searchParams.get("maxPrimaryBsr")) || DEFAULT_MAX_BSR,
     tptSmall: Number(searchParams.get("tptSmall")) || 0,
     tptMiddle: Number(searchParams.get("tptMiddle")) || 4.95,
     tptLarge: Number(searchParams.get("tptLarge")) || 6.95,

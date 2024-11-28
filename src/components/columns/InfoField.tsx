@@ -58,10 +58,10 @@ const InfoField = ({
   const lastUpdated = availUpdatedAt || updatedAt;
 
   const { bsr, aznCategory } = getLatestBsr(product);
-  const isFlip = shop === "flip";
+  const isFlip = shop === "flip" || flip;
   return (
     <div className="flex flex-col divide-y p-1 w-full">
-      {nm && !flip && !isFlip && (
+      {nm && !isFlip && (
         <div className={`${nm?.length < 114 && "flex gap-1"}`}>
           <div className="flex flex-row gap-2 w-full">
             <div>{ImageRenderer(prefixLink(img, shopDomain))}</div>
@@ -89,7 +89,12 @@ const InfoField = ({
           <div className="flex flex-row gap-2 w-full">
             <div>{ImageRenderer(prefixLink(targetImg, s))}</div>
             <div className="flex flex-col w-full">
-              <div>{LinkWrapper(targetLink, targetName)}</div>
+              <div>
+                <span className="font-semibold">
+                  {isFlip ? "Amazon Flip: " : ""}
+                </span>
+                {LinkWrapper(targetLink, targetName)}
+              </div>
               {targetUpdatedAt && (
                 <time className="ml-auto mt-auto text-gray-500 text-xs">
                   {formatDistanceToNow(parseISO(targetUpdatedAt), {

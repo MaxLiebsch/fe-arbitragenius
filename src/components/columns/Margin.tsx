@@ -8,10 +8,8 @@ import { Tooltip } from "antd";
 const Margin = ({
   target,
   settings,
-  flip,
 }: {
   target: string;
-  flip?: boolean;
   settings: Settings;
 }): GridColDef<any> => {
   return {

@@ -5,7 +5,6 @@ import { aznFields } from "@/util/productQueries/aznFields";
 
 import { ebyFields } from "@/util/productQueries/ebyFields";
 import { lookupUserId } from "@/util/productQueries/lookupUserId";
-import { marginField } from "@/util/productQueries/marginFields";
 
 import { projectField } from "@/util/productQueries/projectField";
 import { settingsFromSearchQuery } from "@/util/productQueries/settingsFromSearchQuery";
@@ -68,7 +67,7 @@ export async function GET(
   sortingField(isAmazon, query, sort, euProgram);
 
   aggregation.push(
-    projectField(target),
+    projectField(target, "$sdmn"),
     {
       $sort: sort,
     },

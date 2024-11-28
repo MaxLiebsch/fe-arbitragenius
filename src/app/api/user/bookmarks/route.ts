@@ -7,13 +7,13 @@ import {
   BookmarkDeleteSchema,
   BookmarkSchema,
 } from "@/types/Bookmarks";
+import { ModifiedProduct } from "@/types/Product";
 import { Settings } from "@/types/Settings";
-import {
-  mrgnFieldName,
-  mrgnPctFieldName,
-} from "@/util/productQueries/mrgnProps";
+import { aznFields } from "@/util/productQueries/aznFields";
+import { aznFlipFields } from "@/util/productQueries/aznFlipFields";
+import { ebyFields } from "@/util/productQueries/ebyFields";
+import { projectField } from "@/util/productQueries/projectField";
 import { settingsFromSearchQuery } from "@/util/productQueries/settingsFromSearchQuery";
-import { roundToTwoDecimals } from "@/util/roundToTwoDecimals";
 import { ObjectId, WithId } from "mongodb";
 import { NextRequest } from "next/server";
 
@@ -22,14 +22,10 @@ export async function GET(request: NextRequest) {
   if (!user) return new Response("unauthorized", { status: 401 });
   const searchParams = request.nextUrl.searchParams;
   const customerSettings: Settings = settingsFromSearchQuery(searchParams);
-
-  const { fba, a_prepCenter, a_strg, a_tptStandard, euProgram } =
-    customerSettings;
-  const strg_1_hy = new Date().getMonth() < 9;
   const mongo = await clientPool["NEXT_MONGO_ADMIN"];
   const spotterDb = mongo.db(process.env.NEXT_MONGO_DB ?? "");
   const users = spotterDb.collection("users");
-  const productCol = await getProductCol() 
+  const productCol = await getProductCol();
 
   /*
     Aggregagte bookmarks in chunks of 10
@@ -41,19 +37,25 @@ export async function GET(request: NextRequest) {
       status: 404,
     });
 
-  const bookmarks = userData.bookmarks;
+  const bookmarks = userData.bookmarks as Bookmark[];
 
   // Gruppiere die Bookmarks nach Shop
-
-  const bookmarksByTarget = bookmarks.reduce(
+  // a, e, flip
+  const groupedBookmarksByTarget = bookmarks.reduce(
     (acc: BookmarkByTarget, bookmark: Bookmark) => {
-      if (acc[bookmark.target]) {
-        if (!acc[bookmark.target][bookmark.shop]) {
-          acc[bookmark.target][bookmark.shop] = [];
+      const { target, shop } = bookmark;
+      if (shop === "flip") {
+        if (!acc[shop]) {
+          acc[shop] = [];
         }
-        acc[bookmark.target][bookmark.shop].push(bookmark.productId);
+        acc[shop].push(bookmark.productId);
+      } else if (acc[bookmark.target]) {
+        if (!acc[bookmark.target]) {
+          acc[bookmark.target] = [];
+        }
+        acc[bookmark.target].push(bookmark.productId);
       } else {
-        acc[bookmark.target] = { [bookmark.shop]: [bookmark.productId] };
+        acc[bookmark.target] = [bookmark.productId];
       }
       return acc;
     },
@@ -62,100 +64,103 @@ export async function GET(request: NextRequest) {
 
   // Abfragen für jede Shop-Kollektion in Stapeln
   interface ProductsByTarget {
-    [key: string]: WithId<Document>[];
+    [key: string]: WithId<ModifiedProduct>[];
   }
-  const productByTarget = await Object.entries(bookmarksByTarget).reduce(
-    async (accPromise, [target, shops]) => {
-      const acc = await accPromise;
-      const products = Object.entries(shops).map(async ([shop, productIds]) => {
-        const products = await productCol
-          .find({
-            _id: { $in: productIds },
-          })
-          .toArray();
 
-        return products.map((product) => {
-          if (shop === "flip") {
-            let avgPrice = 0;
-            let {
-              avg30_ansprcs,
-              avg30_ahsprcs,
-              avg90_ahsprcs,
-              avg90_ansprcs,
-              a_qty,
-              a_prc,
-              qty,
-              costs,
-            } = product;
-
-            if (avg30_ahsprcs && avg30_ahsprcs > 0) {
-              avgPrice = avg30_ahsprcs;
-            } else if (avg30_ansprcs && avg30_ansprcs > 0) {
-              avgPrice = avg30_ansprcs;
-            } else if (avg90_ahsprcs && avg90_ahsprcs > 0) {
-              avgPrice = avg90_ahsprcs;
-            } else if (avg90_ansprcs && avg90_ansprcs > 0) {
-              avgPrice = avg90_ansprcs;
-            }
-
-            avgPrice = roundToTwoDecimals(avgPrice / 100);
-            const tax = roundToTwoDecimals(
-              avgPrice - avgPrice / (1 + product.tax / 100)
-            );
-            const factor = a_qty / qty;
-            const buyPrice = roundToTwoDecimals((a_prc / 1.19) * factor);
-
-            const externalCosts = fba
-              ? costs.tpt + costs[strg_1_hy ? "strg_1_hy" : "strg_2_hy"]
-              : a_strg +
-                a_prepCenter +
-                customerSettings[a_tptStandard as "a_tptSmall"];
-
-            const earning =
-              (avgPrice -
-                costs.azn -
-                costs.varc -
-                externalCosts -
-                tax -
-                buyPrice) *
-              qty;
-
-            // VK - Kosten - Steuern - EK / VK * 100
-            const margin =
-              ((avgPrice -
-                costs.azn -
-                costs.varc -
-                externalCosts -
-                tax -
-                buyPrice) /
-                avgPrice) *
-              100;
-
-            return {
-              ...product,
-              a_avg_prc: avgPrice,
-              [mrgnFieldName("a", euProgram)]: roundToTwoDecimals(earning),
-              [mrgnPctFieldName("a", euProgram)]: roundToTwoDecimals(margin),
-              isBookmarked: true,
-              shop,
-            };
-          }
-          return {
-            ...product,
-            isBookmarked: true,
-            shop,
-          };
-        });
-      });
-      const productsByShop = await Promise.all(products);
-
-      acc[target] = productsByShop.flat() as unknown as WithId<Document>[];
-      return acc;
+  const aggregation: any[] = [
+    {
+      $match: {
+        _id: { $in: bookmarks.map((b) => b.productId) },
+      },
     },
-    Promise.resolve({} as ProductsByTarget)
-  );
+    {
+      $facet: {},
+    },
+    {
+      $project: {
+        a: {
+          $concatArrays: [{ $ifNull: ["$a", []] }, { $ifNull: ["$flip", []] }],
+        },
+        e: { $ifNull: ["$e", []] },
+      },
+    },
+  ];
 
-  return new Response(JSON.stringify(productByTarget), {
+  if (groupedBookmarksByTarget.e) {
+    aggregation[1].$facet["e"] = [
+      { $match: { _id: { $in: groupedBookmarksByTarget.e } } },
+      ...ebyFields(customerSettings),
+      {
+        $project: {
+          ...projectField("e", "$sdmn").$project,
+          isBookmarked: { $literal: true },
+        },
+      },
+    ];
+  }
+  if (groupedBookmarksByTarget.flip) {
+    aggregation[1].$facet["flip"] = [
+      { $match: { _id: { $in: groupedBookmarksByTarget.flip } } },
+      ...aznFlipFields(customerSettings),
+      {
+        $project: {
+          ...projectField("a", "flip").$project,
+          isBookmarked: { $literal: true },
+        },
+      },
+    ];
+  }
+  if (groupedBookmarksByTarget.a) {
+    aggregation[1].$facet["a"] = [
+      { $match: { _id: { $in: groupedBookmarksByTarget.a } } },
+      ...aznFields(customerSettings),
+      {
+        $project: {
+          ...projectField("a", "$sdmn").$project,
+          isBookmarked: { $literal: true },
+        },
+      },
+    ];
+  }
+  const products = await productCol.aggregate(aggregation).toArray();
+
+  if (process.env.NODE_ENV === "development") {
+    console.log("AZNAGGBCOUNT", JSON.stringify(aggregation));
+  }
+
+  const productsReturn = products.length
+    ? (products[0] as ProductsByTarget)
+    : {};
+
+  const flatProducts = Object.values(productsReturn).flat();
+  const obsoleteBookmarks = bookmarks.filter((bookmark) => {
+    return !flatProducts.some(
+      (product) => product._id.toString() === bookmark.productId.toString()
+    );
+  });
+
+  if (obsoleteBookmarks.length > 0) {
+    const update: any = {
+      $pull: {
+        bookmarks: {
+          productId: {
+            $in: obsoleteBookmarks.map((b) => b.productId),
+          },
+        },
+      },
+    };
+    await users.findOneAndUpdate({ userId: user.$id }, update);
+  }
+
+  Object.entries(productsReturn).forEach(([key, value]) => {
+    productsReturn[key] = value.map((product: ModifiedProduct) => {
+      const bookmark = bookmarks.find(b => b.productId.toString() === product._id.toString());
+      product.bookmarkedAt = bookmark?.createdAt;
+      return product;
+    });
+  });
+
+  return new Response(JSON.stringify(productsReturn), {
     status: 200,
     headers: {
       "Content-Type": "application/json",
@@ -186,6 +191,7 @@ export async function POST(request: NextRequest) {
           productId: bookmarkId,
           shop: bookmark.shop,
           target: bookmark.target,
+          createdAt: new Date().getTime(),
         },
       },
     },

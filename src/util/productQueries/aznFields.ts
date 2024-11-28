@@ -5,14 +5,13 @@ import { marginField, marginPctField } from "./marginFields";
 
 export const aznFields = (
   settings: Settings,
-  sdmn: string,
+  sdmn?: string,
   isWholesale?: boolean
 ): any[] => {
   const { a_tptStandard, a_strg, a_prepCenter, fba, euProgram } = settings;
   const transport = settings[a_tptStandard as "a_tptSmall"];
 
   const match: any = {
-    sdmn, // shop domain
     a_pblsh: true,
     ...marginField({ target: "a", settings }),
     ...(settings.minPercentageMargin > 0 &&
@@ -21,6 +20,10 @@ export const aznFields = (
   const isSommer = new Date().getMonth() < 9;
   if (settings.a_cats.length > 0 && settings.a_cats[0] !== 0) {
     match["categoryTree.catId"] = { $in: settings.a_cats };
+  }
+
+  if(sdmn){
+    match.sdmn = sdmn;
   }
 
   addAznSettingsFields(settings, match);

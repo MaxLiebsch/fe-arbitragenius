@@ -1,4 +1,7 @@
 import { Settings } from "@/types/Settings";
+import { DEFAULT_MAX_BSR } from "./constant";
+
+
 
 export const defaultSettings: Settings = {
   loaded: false,
@@ -22,7 +25,7 @@ export const defaultSettings: Settings = {
   strg: 0,
   tptStandard: "tptMiddle",
   netto: true,
-  maxPrimaryBsr: 1000000,
+  maxPrimaryBsr: DEFAULT_MAX_BSR,
   productsWithNoBsr: false,
   monthlySold: 0,
   totalOfferCount: 0,

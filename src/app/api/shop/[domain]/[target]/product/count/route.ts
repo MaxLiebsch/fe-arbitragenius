@@ -2,7 +2,6 @@ import { getProductCol } from "@/server/mongo";
 import { Settings } from "@/types/Settings";
 import { aznFields } from "@/util/productQueries/aznFields";
 import { ebyFields } from "@/util/productQueries/ebyFields";
-import { marginField } from "@/util/productQueries/marginFields";
 import { settingsFromSearchQuery } from "@/util/productQueries/settingsFromSearchQuery";
 import { NextRequest } from "next/server";
 
@@ -34,11 +33,19 @@ export async function GET(
   aggregation.push({ $count: "productCount" });
   const productCol = await getProductCol();
   const res = await productCol.aggregate(aggregation).toArray();
-  if(isAmazon && domain === 'idealo.de' && process.env.NODE_ENV === 'development') {
-     console.log('AZNAGGPCOUNT',JSON.stringify(aggregation))
+  if (
+    isAmazon &&
+    domain === "idealo.de" &&
+    process.env.NODE_ENV === "development"
+  ) {
+    console.log("AZNAGGPCOUNT", JSON.stringify(aggregation));
   }
-  if(!isAmazon && domain === 'idealo.de' && process.env.NODE_ENV === 'development') {
-    console.log('EBYAGGPCOUNT',JSON.stringify(aggregation))
- }
+  if (
+    !isAmazon &&
+    domain === "idealo.de" &&
+    process.env.NODE_ENV === "development"
+  ) {
+    console.log("EBYAGGPCOUNT", JSON.stringify(aggregation));
+  }
   return Response.json(res.length ? res[0] : { productCount: 0 });
 }

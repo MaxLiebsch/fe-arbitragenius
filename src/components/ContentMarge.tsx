@@ -45,9 +45,9 @@ const ContentMarge = ({
   const {
     prc,
     a_prc,
-    a_avg_prc,
     a_qty,
     qty: buyQty,
+    shop,
     a_useCurrPrice,
     asin,
   } = product;
@@ -59,7 +59,7 @@ const ContentMarge = ({
     avgPrice = getAvgPrice(product as ModifiedProduct);
   }
 
-  const isFlip = a_avg_prc !== undefined;
+  const isFlip = shop === "flip";
   const initBuyPrice = isFlip ? a_prc : prc;
   const flipQty = isFlip ? a_qty : buyQty;
   const initSellPrice = isFlip || useAvgPrice ? avgPrice : a_prc;
