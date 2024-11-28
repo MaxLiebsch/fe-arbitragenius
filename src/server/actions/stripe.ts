@@ -4,6 +4,7 @@ import { stripe } from "../stripe";
 import { Stripe } from "stripe";
 import { formatAmountForStripe } from "@/util/stripe-helpers";
 import { headers } from "next/headers";
+import { SUBSCRIPTION_TRIAL_DAYS } from "@/constant/constant";
 
 export async function createCheckoutSession(
   userId: string,
@@ -48,7 +49,7 @@ export async function createCheckoutSession(
         },
       ],
       subscription_data: {
-        trial_period_days: 7,
+        trial_period_days: SUBSCRIPTION_TRIAL_DAYS,
       },
       success_url: `${origin}/app/payment/result?userId=${userId}&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/app/payment`,
