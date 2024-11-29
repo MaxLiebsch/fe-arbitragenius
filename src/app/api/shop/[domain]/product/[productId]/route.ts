@@ -1,3 +1,4 @@
+import { PRODUCT_COL } from "@/constant/constant";
 import { getLoggedInUser } from "@/server/appwrite";
 import { getProductCol } from "@/server/mongo";
 import clientPool from "@/server/mongoPool";
@@ -32,7 +33,7 @@ export async function POST(
   if (!form.success) {
     return Response.json(form.error, { status: 400 });
   }
-  const col = await getProductCol();
+  const col = client.db().collection(PRODUCT_COL)
 
   const product = await col.findOne({ _id: new ObjectId(productId) });
 
@@ -234,10 +235,10 @@ export async function DELETE(
   if (!user?.labels.includes("admin")) {
     return Response.json("unauthorized", { status: 401 });
   }
-  const col = await getProductCol();
-
+  
   const { domain, productId } = params;
   const client = await clientPool["NEXT_MONGO_ADMIN"];
+  const col = client.db().collection(PRODUCT_COL);
 
   const res = await col.deleteOne({ _id: new ObjectId(productId) });
 
