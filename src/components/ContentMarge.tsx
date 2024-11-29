@@ -46,6 +46,7 @@ const ContentMarge = ({
     prc,
     a_prc,
     a_qty,
+    a_avg_prc,
     qty: buyQty,
     shop,
     a_useCurrPrice,
@@ -59,7 +60,7 @@ const ContentMarge = ({
     avgPrice = getAvgPrice(product as ModifiedProduct);
   }
 
-  const isFlip = shop === "flip";
+  const isFlip = a_avg_prc !== undefined;
   const initBuyPrice = isFlip ? a_prc : prc;
   const flipQty = isFlip ? a_qty : buyQty;
   const initSellPrice = isFlip || useAvgPrice ? avgPrice : a_prc;
@@ -109,7 +110,6 @@ const ContentMarge = ({
   //   console.log("cal earning:", earning, "ist", product["a_w_mrgn"]);
   //   console.log("content window roi:", roi);
   // }
-
 
   return (
     <div className="w-96 relative">
@@ -261,24 +261,22 @@ const ContentMarge = ({
             stringMode
             addonBefore="Einkaufspreis € (Netto)"
           />
-            <h3 className="leading-6 mb-1 text-gray-900 flex flex-row space-x-1 items-center">
-              <InputNumber
-                value={prepCenterCosts}
-                className="w-full"
-                decimalSeparator=","
-                onChange={(e) => {
-                  if (e) {
-                    const parsed = parseFloat(
-                      e.toString().replaceAll(",", ".")
-                    );
-                    setPrepCenterCosts(parsed);
-                  }
-                }}
-                stringMode
-                step={0.01}
-                addonBefore="Prepcenter €"
-              />
-            </h3>
+          <h3 className="leading-6 mb-1 text-gray-900 flex flex-row space-x-1 items-center">
+            <InputNumber
+              value={prepCenterCosts}
+              className="w-full"
+              decimalSeparator=","
+              onChange={(e) => {
+                if (e) {
+                  const parsed = parseFloat(e.toString().replaceAll(",", "."));
+                  setPrepCenterCosts(parsed);
+                }
+              }}
+              stringMode
+              step={0.01}
+              addonBefore="Prepcenter €"
+            />
+          </h3>
         </div>
         <div className="w-full flex flex-col">
           <h3 className="font-semibold leading-6 mt-2 mb-1 text-gray-900 flex flex-row space-x-1 items-center">
