@@ -40,7 +40,7 @@ const ProductTableTabs = ({ domain }: { domain: string }) => {
           DipMax Export GmbH übernimmt für die dargestellten Informationen und
           deren Genauigkeit und Vollständigkeit keine Gewährleistung.
         </div>
-        <Tab.Panels className="flex h-[calc(100vh-198px)]">
+        <Tab.Panels className="flex h-[calc(100vh-220px)]">
           <Tab.Panel className="w-full  h-full">
             <ProductsTable domain={domain} target="a" />
           </Tab.Panel>
