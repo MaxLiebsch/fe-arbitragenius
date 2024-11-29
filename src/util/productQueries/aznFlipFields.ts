@@ -129,6 +129,7 @@ export const aznFlipFields = (settings: Settings, isWholesale?: boolean) => {
                       },
                       "$costs.tpt",
                       "$costs.varc",
+                      a_prepCenter,
                       isSommer ? "$costs.strg_1_hy" : "$costs.strg_2_hy",
                       "$costs.azn",
                     ],
