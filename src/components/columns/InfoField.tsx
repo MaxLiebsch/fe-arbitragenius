@@ -42,6 +42,7 @@ const InfoField = ({
     drops90,
     monthlySold,
     shop,
+    sourceDomain,
     ebyCategories,
     [`${target}_nm` as "a_nm" | "e_nm"]: targetName,
     [`${target}_img` as "a_img" | "e_img"]: targetImg,
@@ -59,6 +60,7 @@ const InfoField = ({
 
   const { bsr, aznCategory } = getLatestBsr(product);
   const isFlip = shop === "flip" || flip;
+
   return (
     <div className="flex flex-col divide-y p-1 w-full">
       {nm && !isFlip && (
@@ -66,7 +68,13 @@ const InfoField = ({
           <div className="flex flex-row gap-2 w-full">
             <div>{ImageRenderer(prefixLink(img, shopDomain))}</div>
             <div className="flex flex-col w-full">
-              {shop && (
+              {sourceDomain ? (
+                <span className="font-semibold">
+                  {sourceDomain!.slice(0, 1).toUpperCase() +
+                    sourceDomain!.slice(1)}
+                  :{" "}
+                </span>
+              ) : (
                 <span className="font-semibold">
                   {shop!.slice(0, 1).toUpperCase() + shop!.slice(1)}:{" "}
                 </span>

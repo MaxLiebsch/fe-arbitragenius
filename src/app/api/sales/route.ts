@@ -5,7 +5,6 @@ import { Settings } from "@/types/Settings";
 import { aznFields } from "@/util/productQueries/aznFields";
 import { ebyFields } from "@/util/productQueries/ebyFields";
 import { lookupUserId } from "@/util/productQueries/lookupUserId";
-import { marginField } from "@/util/productQueries/marginFields";
 import { projectField } from "@/util/productQueries/projectField";
 import { settingsFromSearchQuery } from "@/util/productQueries/settingsFromSearchQuery";
 import { sortingField } from "@/util/productQueries/sortingField";
@@ -78,6 +77,14 @@ export async function GET(
       $limit: query.size,
     }
   );
+  
+  if (isAmazon && process.env.NODE_ENV === "development") {
+    console.log("AZNAGGSPGET", JSON.stringify(aggregation));
+  }
+  if (!isAmazon && process.env.NODE_ENV === "development") {
+    console.log("EBYAGGSPGET", JSON.stringify(aggregation));
+  }
+
 
   lookupUserId(aggregation, user, target);
   const productCol = await getProductCol();
