@@ -1,4 +1,3 @@
-import axios, { AxiosError } from "axios";
 import Stripe from "stripe";
 
 export async function getStripeSubscriptions(
@@ -98,4 +97,15 @@ export async function updateCustomerInformation(
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
   const response = await stripe.customers.update(customer, data);
   return response;
+}
+
+export async function cancelSubscription(subscriptionId: string, body: any) {
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+  if (Object.keys(body).length) {
+    const response = await stripe.subscriptions.update(subscriptionId, body);
+    return response;
+  } else {
+    const response = await stripe.subscriptions.cancel(subscriptionId);
+    return response;
+  }
 }

@@ -540,7 +540,7 @@ const Page = () => {
                 </div>
               </form>
             </div>
-            {/* Delete account */}
+            {/* Delete account
             <div className="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 px-4 py-6 sm:px-6 md:grid-cols-3 lg:px-8">
               <div>
                 <h2 className="text-base font-semibold leading-7 text-secondary-950">
@@ -573,7 +573,7 @@ const Page = () => {
                 )}
                 <SubmitButton text="Ja, Account löschen" />
               </form>
-            </div>
+            </div> */}
           </div>
         </Tab.Panel>
         {/* Rechnungen */}

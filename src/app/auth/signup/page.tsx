@@ -6,7 +6,7 @@ import { NavLink } from "@/components/NavLink";
 import { signupAction } from "@/server/actions/signup";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import { Input } from "antd";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useFormState } from "react-dom";
 
 const SignUp = () => {
@@ -16,7 +16,21 @@ const SignUp = () => {
     fieldErrors: {},
   });
 
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+
   const formRef = useRef<HTMLFormElement>(null);
+
+  const validate = () => {
+    const x = document.getElementById("password") as HTMLInputElement;
+    const y = document.getElementById("retype_password") as HTMLInputElement;
+
+    if (x.value && y.value && x.value !== y.value) {
+      setPasswordError("Passwörter stimmen nicht überein");
+    } else {
+      setPasswordError(null);
+      return;
+    }
+  };
 
   return (
     <>
@@ -31,7 +45,7 @@ const SignUp = () => {
         </div>
         <div className="mt-5 sm:mx-auto sm:w-full sm:max-w-sm">
           <form ref={formRef} action={formAction}>
-            <div className="space-y-6">
+            <div className="space-y-3">
               <div>
                 <label
                   htmlFor="email"
@@ -40,17 +54,16 @@ const SignUp = () => {
                   Email Addresse *
                 </label>
                 <div className="mt-2">
-                  <input
+                  <Input
                     id="email"
                     name="email"
                     type="email"
                     autoComplete="email"
                     required
-                    className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-chartreuse-yellow-700 sm:text-sm sm:leading-6"
                   />
                 </div>
                 <div className="text-sm text-red-500 mt-1">
-                  {state?.fieldErrors.email}
+                  {state?.fieldErrors?.email && state?.fieldErrors?.email[0]}
                 </div>
               </div>
               <div>
@@ -61,12 +74,7 @@ const SignUp = () => {
                   Name
                 </label>
                 <div className="mt-2">
-                  <input
-                    id="name"
-                    name="name"
-                    type="text"
-                    className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-chartreuse-yellow-700 sm:text-sm sm:leading-6"
-                  />
+                  <Input id="name" name="name" type="text" />
                 </div>
               </div>
               <div>
@@ -78,26 +86,45 @@ const SignUp = () => {
                     Passwort *
                   </label>
                 </div>
-                <div className="mt-2">
+                <div className="mt-2 gap-2 flex flex-col">
                   <Input.Password
                     id="password"
+                    onBlur={() => validate()}
                     name="password"
                     placeholder="Passwort"
                     iconRender={(visible) =>
-                      visible ? <EyeIcon className="h-6 w-6"  /> : <EyeSlashIcon className="h-6 w-6" />
+                      visible ? (
+                        <span className="h-4 w-4">
+                          <EyeIcon className="h-4 w-4" />
+                        </span>
+                      ) : (
+                        <span className="h-4 w-4">
+                          <EyeSlashIcon className="h-4 w-4" />
+                        </span>
+                      )
                     }
                   />
-                  {/* <input
-                    id="password"
-                    name="password"
-                    type="password"
-                    autoComplete="current-password"
-                    required
-                    className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-chartreuse-yellow-700 sm:text-sm sm:leading-6"
-                  /> */}
+                  <Input.Password
+                    id="retype_password"
+                    onBlur={() => validate()}
+                    placeholder="Wiederholung Passwort"
+                    iconRender={(visible) =>
+                      visible ? (
+                        <span className="h-4 w-4">
+                          <EyeIcon className="h-4 w-4" />
+                        </span>
+                      ) : (
+                        <span className="h-4 w-4">
+                          <EyeSlashIcon className="h-4 w-4" />
+                        </span>
+                      )
+                    }
+                  />
                 </div>
                 <div className="text-sm text-red-500 mt-1">
-                  {state?.fieldErrors.password}
+                  {(state?.fieldErrors?.password &&
+                    state?.fieldErrors.password[0]) ||
+                    passwordError}
                 </div>
               </div>
 
@@ -141,7 +168,7 @@ const SignUp = () => {
                   </div>
                 </div>
                 <div className="text-sm text-red-500">
-                  {state?.fieldErrors.terms}
+                  {state?.fieldErrors?.terms && state?.fieldErrors.terms[0]}
                 </div>
               </div>
               <div className="space-y-1">

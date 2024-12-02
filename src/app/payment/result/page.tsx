@@ -2,9 +2,11 @@ import type { Stripe } from "stripe";
 
 import { stripe } from "@/server/stripe";
 import Link from "next/link";
-import { createDatabaseClient } from "@/server/appwrite";
-import { ID, Query } from "node-appwrite";
+import { createDatabaseClient, getLoggedInUser } from "@/server/appwrite";
+import { ID, Models, Query } from "node-appwrite";
 import { Logo } from "@/components/Logo";
+import { redirect } from "next/navigation";
+import InvalidPage from "@/components/Invalid-Page";
 
 export default async function ResultPage({
   searchParams,
@@ -12,35 +14,79 @@ export default async function ResultPage({
   searchParams: { userId: string; session_id: string };
 }): Promise<JSX.Element> {
   if (!searchParams.userId) throw new Error("Please provide a valid userId");
+
+  const user = await getLoggedInUser();
+
+  if (!user || user.$id !== searchParams.userId) {
+    return <InvalidPage text="Der Link is ungültig." />;
+  }
+
   if (!searchParams.session_id)
     throw new Error("Please provide a valid session_id (`cs_test_...`)");
+  try {
+    const checkoutSession: Stripe.Checkout.Session =
+      await stripe.checkout.sessions.retrieve(searchParams.session_id);
 
-  const checkoutSession: Stripe.Checkout.Session =
-    await stripe.checkout.sessions.retrieve(searchParams.session_id);
+    if (checkoutSession.metadata?.status === "saved") {
+      return <InvalidPage text="Der Link is ungültig." />;
+    }
 
-  const databases = await createDatabaseClient();
-
-  const subscription = await databases.listDocuments(
-    process.env.NEXT_CUSTOMER_DB_ID!,
-    process.env.NEXT_CUSTOMER_SUBSCRIPTION_ID!,
-    [
-      Query.equal("userId", searchParams.userId),
-      Query.equal("customer", String(checkoutSession.customer)),
-      Query.equal("subscription", String(checkoutSession.subscription)),
-    ]
-  );
-
-  if (!subscription.total) {
-    await databases.createDocument(
+    const databases = await createDatabaseClient();
+    interface Subscription extends Models.Document {
+      userId: string;
+      customer: string;
+      subscription: string;
+      pastSubscriptions: string[];
+    }
+    const subscription = await databases.listDocuments<Subscription>(
       process.env.NEXT_CUSTOMER_DB_ID!,
       process.env.NEXT_CUSTOMER_SUBSCRIPTION_ID!,
-      ID.unique(),
-      {
-        userId: searchParams.userId,
-        customer: checkoutSession.customer,
-        subscription: checkoutSession.subscription,
-      }
+      [
+        Query.equal("userId", searchParams.userId),
+        Query.equal("customer", String(checkoutSession.customer)),
+      ]
     );
+
+    if (subscription.total) {
+      /*
+         es gibt bereits ein Dokument mit den gleichen Daten
+         wir muessen pruefen ob es sich um eine alte Session handelt
+      */
+
+      await databases.updateDocument(
+        process.env.NEXT_CUSTOMER_DB_ID!,
+        process.env.NEXT_CUSTOMER_SUBSCRIPTION_ID!,
+        subscription.documents[0].$id,
+        {
+          userId: searchParams.userId,
+          customer: checkoutSession.customer,
+          subscription: checkoutSession.subscription,
+        }
+      );
+      await stripe.checkout.sessions.update(checkoutSession.id, {
+        metadata: {
+          status: "saved",
+        },
+      });
+    } else {
+      await databases.createDocument(
+        process.env.NEXT_CUSTOMER_DB_ID!,
+        process.env.NEXT_CUSTOMER_SUBSCRIPTION_ID!,
+        ID.unique(),
+        {
+          userId: searchParams.userId,
+          customer: checkoutSession.customer,
+          subscription: checkoutSession.subscription,
+        }
+      );
+      await stripe.checkout.sessions.update(checkoutSession.id, {
+        metadata: {
+          status: "saved",
+        },
+      });
+    }
+  } catch (error) {
+    return <InvalidPage text="Der Link is ungültig." />;
   }
 
   return (

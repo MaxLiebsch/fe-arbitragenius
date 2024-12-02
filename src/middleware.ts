@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import {authMiddleware } from "./server/appwrite/middleware";
+import { authMiddleware } from "./server/appwrite/middleware";
 import { getStripeSubscriptions } from "./server/stripe/middleware";
 import { getSubscriptions } from "./server/appwrite/getSubscription";
 
@@ -11,7 +11,7 @@ export const middleware = authMiddleware(async (request) => {
     } else {
       if (
         requestPathname === "/api/sessions/email" ||
-        requestPathname.startsWith("/api/account/verification")||
+        requestPathname.startsWith("/api/account/verification") ||
         requestPathname.startsWith("/api/verify-email")
       ) {
         return NextResponse.next();
@@ -20,7 +20,15 @@ export const middleware = authMiddleware(async (request) => {
     }
   }
 
+  if(requestPathname.startsWith("/api/user/subscriptions")) {
+    return NextResponse.next();
+  }
+
   if (requestPathname.startsWith("/api/account/verification")) {
+    return NextResponse.next();
+  }
+
+  if(requestPathname.startsWith("/api/plans")) {
     return NextResponse.next();
   }
 
@@ -38,22 +46,28 @@ export const middleware = authMiddleware(async (request) => {
 
   if (
     stripeSubscription.data.length &&
-    (stripeSubscription.data[0].status === "active" ||
-      stripeSubscription.data[0].status === "trialing")
+    stripeSubscription.data.some(
+      (sub) => sub.status === "active" || sub.status === "trialing"
+    )
   ) {
-    const subscriptionStatus = stripeSubscription.data[0].status
+    const index = stripeSubscription.data.findIndex(
+      (sub) => sub.status === "active" || sub.status === "trialing"
+    );
+    const subscriptionStatus = stripeSubscription.data[index].status;
     if (requestPathname.startsWith("/payment")) {
       return NextResponse.redirect(new URL("/app/dashboard", request.url));
     }
-    const headers: {[key: string]: any} = {
+    const headers: { [key: string]: any } = {
       "subscription-status": subscriptionStatus,
-    }
-    if(subscriptionStatus === 'trialing') {
-      headers['subscription-trial-end'] = stripeSubscription.data[0].trial_end
-      headers['subscription-trial-start'] = stripeSubscription.data[0].trial_start
+    };
+    if (subscriptionStatus === "trialing") {
+      headers["subscription-trial-end"] =
+        stripeSubscription.data[index].trial_end;
+      headers["subscription-trial-start"] =
+        stripeSubscription.data[index].trial_start;
     }
     return NextResponse.next({
-      headers
+      headers,
     });
   } else {
     if (!requestPathname.startsWith("/payment"))

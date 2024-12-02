@@ -3,6 +3,8 @@
 import { SubmitButton } from "@/components/FormSubmitBn";
 import { Logo } from "@/components/Logo";
 import { signinAction } from "@/server/actions/signin";
+import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
+import { Input } from "antd";
 import { useRef } from "react";
 import { useFormState } from "react-dom";
 
@@ -24,7 +26,7 @@ const SignIn = () => {
         </div>
         <div className="mt-5 sm:mx-auto sm:w-full sm:max-w-sm">
           <form ref={formRef} action={formAction}>
-            <div className="space-y-6">
+            <div className="space-y-3">
               <div>
                 <label
                   htmlFor="email"
@@ -33,13 +35,12 @@ const SignIn = () => {
                   Email Addresse *
                 </label>
                 <div className="mt-2">
-                  <input
+                  <Input
                     id="email"
                     name="email"
                     type="email"
                     autoComplete="email"
                     required
-                    className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-chartreuse-yellow-700 sm:text-sm sm:leading-6"
                   />
                 </div>
               </div>
@@ -53,16 +54,22 @@ const SignIn = () => {
                     Passwort *
                   </label>
                 </div>
-                <div className="mt-2">
-                  <input
-                    id="password"
-                    name="password"
-                    type="password"
-                    autoComplete="current-password"
-                    required
-                    className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-chartreuse-yellow-700 sm:text-sm sm:leading-6"
-                  />
-                </div>
+                <Input.Password
+                  id="password"
+                  name="password"
+                  placeholder="Passwort"
+                  iconRender={(visible) =>
+                    visible ? (
+                      <span className="h-4 w-4">
+                        <EyeIcon className="h-4 w-4" />
+                      </span>
+                    ) : (
+                      <span className="h-4 w-4">
+                        <EyeSlashIcon className="h-4 w-4" />
+                      </span>
+                    )
+                  }
+                />
               </div>
 
               <div className="space-y-1">
