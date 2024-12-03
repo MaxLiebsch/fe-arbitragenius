@@ -25,16 +25,21 @@ export async function GET() {
     subscriptions.documents[0].subscription
   );
 
-  console.log('subscription:', subscription)
   if (subscription.schedule) {
     const schedule = await stripe.subscriptionSchedules.retrieve(
       subscription.schedule as string
     );
-    console.log('schedule:', schedule)
-    // @ts-ignore
-    if (subscription.plan.id !== schedule?.phases[1].items[0].plan) {
+    if (
+      schedule &&
+      schedule.phases &&
+      schedule.phases[1] &&
+      schedule.phases[1].items &&
+      schedule.phases[1].items[0] &&
+      //@ts-ignore
+      subscription.plan.id !== schedule.phases[1].items[0].plan
+    ) {
       subscription.schedule = schedule;
-    }else{
+    } else {
       subscription.schedule = null;
     }
   }
