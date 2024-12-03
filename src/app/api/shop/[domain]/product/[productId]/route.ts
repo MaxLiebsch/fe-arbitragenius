@@ -1,5 +1,6 @@
 import { PRODUCT_COL } from "@/constant/constant";
 import { getLoggedInUser } from "@/server/appwrite";
+import { getProductCol } from "@/server/mongo";
 import clientPool from "@/server/mongoPool";
 import { ProductUpdateSchema } from "@/types/ProductUpdate";
 import { resetAznProductQuery } from "@/util/aznQueries";
@@ -32,11 +33,9 @@ export async function POST(
   if (!form.success) {
     return Response.json(form.error, { status: 400 });
   }
+  const col = client.db().collection(PRODUCT_COL)
 
-  const product = await client
-    .db(process.env.NEXT_MONGO_DB)
-    .collection(PRODUCT_COL)
-    .findOne({ _id: new ObjectId(productId) });
+  const product = await col.findOne({ _id: new ObjectId(productId) });
 
   if (product === null) {
     return Response.json("Product not found " + productId, { status: 404 });
@@ -222,10 +221,8 @@ export async function POST(
   if (Object.keys(query).length === 0) {
     return Response.json({ acknowledged: true });
   }
-  const res = await client
-    .db(process.env.NEXT_MONGO_DB)
-    .collection(PRODUCT_COL)
-    .updateOne({ _id: new ObjectId(productId) }, query);
+
+  const res = await col.updateOne({ _id: new ObjectId(productId) }, query);
 
   return Response.json(res);
 }
@@ -238,14 +235,12 @@ export async function DELETE(
   if (!user?.labels.includes("admin")) {
     return Response.json("unauthorized", { status: 401 });
   }
-
+  
   const { domain, productId } = params;
   const client = await clientPool["NEXT_MONGO_ADMIN"];
+  const col = client.db().collection(PRODUCT_COL);
 
-  const res = await client
-    .db(process.env.NEXT_MONGO_DB)
-    .collection(PRODUCT_COL)
-    .deleteOne({ _id: new ObjectId(productId) });
+  const res = await col.deleteOne({ _id: new ObjectId(productId) });
 
   return Response.json(res);
 }

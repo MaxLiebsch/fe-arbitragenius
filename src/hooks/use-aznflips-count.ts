@@ -8,21 +8,26 @@ export default function useAznFlipsCount(
   refetchOnWindowFocus: boolean = true
 ) {
   let settingsQuery = "";
-  const [settings, setUserSettings] = useUserSettings() 
+  const [settings, setUserSettings] = useUserSettings();
   if (settings) {
     settingsQuery = Object.keys(settings)
       .map((key) => `&${key}=${settings[key as keyof Settings]}`)
       .join("");
   }
+  const targetEnabled =
+    settings &&
+    settings.targetPlatforms &&
+    settings.targetPlatforms.includes(target);
+    
   return useQuery<{ productCount: number; totalProductsToday: number }>({
     queryKey: [
-      ...countQueryKey(target, 'flips') ,
+      ...countQueryKey(target, "flips"),
       ...(settings ? Object.values(settings) : []),
     ],
-    enabled: !!settings?.loaded,
+    enabled: !!settings?.loaded && targetEnabled,
     queryFn: () =>
-      fetch(`/app/api/azn-flips/count?target=${target}${settingsQuery}`).then((resp) =>
-        resp.json()
+      fetch(`/app/api/azn-flips/count?target=${target}${settingsQuery}`).then(
+        (resp) => resp.json()
       ),
   });
 }

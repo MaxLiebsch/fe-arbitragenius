@@ -45,9 +45,10 @@ const ContentMarge = ({
   const {
     prc,
     a_prc,
-    a_avg_prc,
     a_qty,
+    a_avg_prc,
     qty: buyQty,
+    shop,
     a_useCurrPrice,
     asin,
   } = product;
@@ -87,7 +88,7 @@ const ContentMarge = ({
   const tax = calculateTax(sellPrice, product.tax);
 
   const externalCosts = fba
-    ? costs.tpt + costs[period]
+    ? costs.tpt + costs[period] + prepCenterCosts
     : storageCosts + prepCenterCosts + transport;
 
   const totalCosts = addCosts([
@@ -109,7 +110,6 @@ const ContentMarge = ({
   //   console.log("cal earning:", earning, "ist", product["a_w_mrgn"]);
   //   console.log("content window roi:", roi);
   // }
-
 
   return (
     <div className="w-96 relative">
@@ -236,23 +236,6 @@ const ContentMarge = ({
                 addonBefore="Lagerkosten €"
               />
             </h3>
-            <h3 className="font-semibold leading-6 mb-1 text-gray-900 flex flex-row space-x-1 items-center">
-              <InputNumber
-                value={prepCenterCosts}
-                decimalSeparator=","
-                onChange={(e) => {
-                  if (e) {
-                    const parsed = parseFloat(
-                      e.toString().replaceAll(",", ".")
-                    );
-                    setPrepCenterCosts(parsed);
-                  }
-                }}
-                stringMode
-                step={0.01}
-                addonBefore="PrepCenter €"
-              />
-            </h3>
           </>
         )}
         <h3 className="font-semibold leading-6 mt-2 mb-1 text-gray-900 flex flex-row space-x-1 items-center">
@@ -278,6 +261,22 @@ const ContentMarge = ({
             stringMode
             addonBefore="Einkaufspreis € (Netto)"
           />
+          <h3 className="leading-6 mb-1 text-gray-900 flex flex-row space-x-1 items-center">
+            <InputNumber
+              value={prepCenterCosts}
+              className="w-full"
+              decimalSeparator=","
+              onChange={(e) => {
+                if (e) {
+                  const parsed = parseFloat(e.toString().replaceAll(",", "."));
+                  setPrepCenterCosts(parsed);
+                }
+              }}
+              stringMode
+              step={0.01}
+              addonBefore="Prepcenter €"
+            />
+          </h3>
         </div>
         <div className="w-full flex flex-col">
           <h3 className="font-semibold leading-6 mt-2 mb-1 text-gray-900 flex flex-row space-x-1 items-center">
@@ -294,7 +293,7 @@ const ContentMarge = ({
           </h3>
           <h3 className="font-semibold leading-6 mb-1 text-gray-900 flex flex-row space-x-1 items-center">
             <div className="flex flex-row w-full">
-              <p>ROI:</p>
+              <p>ROI (Netto):</p>
               <p
                 className={`ml-auto ${
                   roi < 0 ? "text-red-600" : "text-green-600"
@@ -306,7 +305,7 @@ const ContentMarge = ({
           </h3>
           <h3 className="font-semibold leading-6 mb-1 text-gray-900 flex flex-row space-x-1 items-center">
             <div className="flex flex-row w-full">
-              <p>Nettospanne:</p>
+              <p>Nettomarge:</p>
               <p
                 className={`ml-auto ${
                   earning < 0 ? "text-red-600" : "text-green-600"

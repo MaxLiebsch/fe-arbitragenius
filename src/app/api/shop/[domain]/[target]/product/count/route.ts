@@ -1,14 +1,8 @@
 import { getProductCol } from "@/server/mongo";
 import { Settings } from "@/types/Settings";
-import { aznMarginFields } from "@/util/productQueries/aznMarginFields";
-import { buyBoxFields } from "@/util/productQueries/buyBox";
-import { ebyMarginFields } from "@/util/productQueries/ebyMarginFields";
-import { marginFields } from "@/util/productQueries/marginFields";
-import { monthlySoldField } from "@/util/productQueries/monthlySoldField";
-import { productWithBsrFields } from "@/util/productQueries/productWithBsrFields";
+import { aznFields } from "@/util/productQueries/aznFields";
+import { ebyFields } from "@/util/productQueries/ebyFields";
 import { settingsFromSearchQuery } from "@/util/productQueries/settingsFromSearchQuery";
-import { targetVerification } from "@/util/productQueries/targetVerfication";
-import { totalOffersCountField } from "@/util/productQueries/totalOffersCountField";
 import { NextRequest } from "next/server";
 
 export async function GET(
@@ -21,54 +15,37 @@ export async function GET(
   const isAmazon = target === "a";
   const customerSettings: Settings = settingsFromSearchQuery(searchParams);
 
-  let {
-    minMargin,
-    minPercentageMargin,
-    netto,
-    monthlySold,
-    totalOfferCount,
-    buyBox,
-  } = customerSettings;
+  let { minMargin, minPercentageMargin, netto } = customerSettings;
 
   if (netto) {
     minMargin = Number((minMargin * 1.19).toFixed(0));
     minPercentageMargin = Number((minPercentageMargin * 1.19).toFixed(0));
   }
 
-  const targetVerificationPending = searchParams.get(
-    `${target}_vrfd.vrfn_pending`
-  );
-
   const aggregation: { [key: string]: any }[] = [];
-  const findQuery: any[] = [];
 
   if (isAmazon) {
-    aggregation.push(...aznMarginFields(customerSettings, domain));
+    aggregation.push(...aznFields(customerSettings, domain));
   } else {
-    aggregation.push(...ebyMarginFields(customerSettings));
-  }
-  findQuery.push(marginFields({ target, settings: customerSettings }));
-  targetVerification(findQuery, target, targetVerificationPending);
+    aggregation.push(...ebyFields(customerSettings, domain));
+  } 
 
-  if (isAmazon) {
-    monthlySoldField(findQuery, monthlySold);
-    totalOffersCountField(findQuery, totalOfferCount);
-    buyBoxFields(buyBox, findQuery, isAmazon);
-    productWithBsrFields(findQuery, customerSettings);
-  }
-  const pblshKey = isAmazon ? "a_pblsh" : "e_pblsh";
-  aggregation.push(
-    {
-      $match: {
-        sdmn: domain,
-        [pblshKey]: true,
-        $and: findQuery,
-      },
-    },
-    { $count: "productCount" }
-  );
+  aggregation.push({ $count: "productCount" });
   const productCol = await getProductCol();
   const res = await productCol.aggregate(aggregation).toArray();
-
+  if (
+    isAmazon &&
+    domain === "idealo.de" &&
+    process.env.NODE_ENV === "development"
+  ) {
+    console.log("AZNAGGPCOUNT", JSON.stringify(aggregation));
+  }
+  if (
+    !isAmazon &&
+    domain === "idealo.de" &&
+    process.env.NODE_ENV === "development"
+  ) {
+    console.log("EBYAGGPCOUNT", JSON.stringify(aggregation));
+  }
   return Response.json(res.length ? res[0] : { productCount: 0 });
 }

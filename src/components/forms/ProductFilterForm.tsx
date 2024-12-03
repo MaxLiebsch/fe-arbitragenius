@@ -23,6 +23,7 @@ import BuyBox from "./productFilterFields/BuyBox";
 import ShowProductsWithBsr from "./productFilterFields/ShowProductsWithBsr";
 import EbyTransport from "./productFilterFields/EbyTransport";
 import CategorySelect from "./productFilterFields/CategorySelect";
+import APrepcenter from "./productFilterFields/APrepcenter";
 
 const ProductFilterForm = ({ layout = "slim" }: { layout?: Layout }) => {
   const [settings, setUserSettings] = useUserSettings();
@@ -69,6 +70,8 @@ const ProductFilterForm = ({ layout = "slim" }: { layout?: Layout }) => {
   const [isFba, setIsFba] = useState(settings.fba);
 
   const onFinish = async (values: any) => {
+    values = { ...values, targetPlatforms: settings.targetPlatforms };
+
     setUpdateSettingsState({ message: "", fieldErrors: {}, error: "" });
     setIsSubmitting(true); // Set the submission state to true
     try {
@@ -76,7 +79,7 @@ const ProductFilterForm = ({ layout = "slim" }: { layout?: Layout }) => {
       const updateSettings = await updateSettingsAction(values);
       const updatedSettings = updateSettings?.settings;
       if (updatedSettings) {
-        setUserSettings({...updatedSettings, loaded: true});
+        setUserSettings({ ...updatedSettings, loaded: true });
       }
       setUpdateSettingsState(updateSettings);
     } finally {
@@ -98,99 +101,94 @@ const ProductFilterForm = ({ layout = "slim" }: { layout?: Layout }) => {
 
   return (
     <>
-      {/* {settings.loaded === false ? (
-        <div className="flex items-center justify-center w-full mr-12">
-          <Spinner />
-        </div>
-      ) : ( */}
-        <Form
-          ref={formRef}
-          form={form}
-          className="md:col-span-2"
-          initialValues={settings}
-          onFinish={onFinish}
-          onValuesChange={onValuesChange}
+      <Form
+        ref={formRef}
+        form={form}
+        className="md:col-span-2"
+        initialValues={settings}
+        onFinish={onFinish}
+        onValuesChange={onValuesChange}
+      >
+        <div
+          className={`grid grid-cols-1 h-full ${
+            layout === "wide"
+              ? "gap-x-6 gap-y-3 sm:grid-cols-6 sm:max-w-7xl"
+              : "gap-x-2 gap-y-1 sm:grid-cols-1"
+          }`}
         >
+          {/* Hiddenfield */}
+          {layout !== "wide" && <HiddenProductFilterFields />}
+          {/* Netto/Brutto */}
+          {layout === "wide" && <Netto layout={layout} />}
+          {/* Minimale Marge % */}
+          <MinMarginPct layout={layout} />
+          {/* Minimale Marge € */}
+          <MinMargin layout={layout} />
+          {/* Amazon */}
+          <h2
+            className={`${
+              layout === "wide" ? "sm:col-span-6" : "hidden"
+            }  text-base font-semibold leading-7 text-secondary-950`}
+          >
+            Amazon
+          </h2>
+          {/* Programm Mitteleuropa */}
+          {layout === "wide" && <EuProgram layout={layout} />}
+          {/* FBA */}
+          {layout === "wide" && (
+            <>
+              <Fba layout={layout} />
+              {/* Azn Standard Versandkosten */}
+              {!isFba && <AznTransport layout={layout} />}
+              <APrepcenter isFba={isFba} layout={layout} />
+            </>
+          )}
+          {/* Azn Categories */}
+          <CategorySelect layout={layout} target="a" />
+          {/* BSR */}
+          <Bsr layout={layout} />
+          {/* Minimale monatliche Verkäufe */}
+          <MonthlySales layout={layout} />
+          {/* Maximale Offer */}
+          <MaxOfferCount layout={layout} />
+          {/* BuyBox */}
+          <BuyBox layout={layout} />
+          {/* BSR */}
+          <ShowProductsWithBsr layout={layout} />
+
+          <h2
+            className={`${
+              layout === "wide" ? "sm:col-span-6" : "hidden"
+            }  text-base font-semibold leading-7 text-secondary-950`}
+          >
+            Ebay
+          </h2>
+          {/* Eby Categories */}
+          <CategorySelect layout={layout} target="e" />
+          {/* Eby Standard Versandkosten */}
+          <EbyTransport layout={layout} />
           <div
-            className={`grid grid-cols-1 h-full ${
-              layout === "wide"
-                ? "gap-x-6 gap-y-3 sm:grid-cols-6 sm:max-w-7xl"
-                : "gap-x-2 gap-y-1 sm:grid-cols-1"
+            className={`relative ${
+              layout === "wide" ? "sm:col-span-6" : "sm:col-span-2"
             }`}
           >
-            {/* Hiddenfield */}
-            {layout !== "wide" && <HiddenProductFilterFields />}
-            {/* Netto/Brutto */}
-            {layout === "wide" && <Netto layout={layout} />}
-            {/* Minimale Marge % */}
-            <MinMarginPct layout={layout} />
-            {/* Minimale Marge € */}
-            <MinMargin layout={layout} />
-            {/* Amazon */}
-            <h2
-              className={`${
-                layout === "wide" ? "sm:col-span-6" : "hidden"
-              }  text-base font-semibold leading-7 text-secondary-950`}
-            >
-              Amazon
-            </h2>
-            {/* Programm Mitteleuropa */}
-            {layout === "wide" && <EuProgram layout={layout} />}
-            {/* FBA */}
-            {layout === "wide" && (
-              <>
-                <Fba layout={layout} />
-                {/* Azn Standard Versandkosten */}
-                {!isFba && <AznTransport layout={layout} />}
-              </>
-            )}
-            {/* Azn Categories */}
-            <CategorySelect layout={layout} target="a" />
-            {/* BSR */}
-            <Bsr layout={layout} />
-            {/* Minimale monatliche Verkäufe */}
-            <MonthlySales layout={layout} />
-            {/* Maximale Offer */}
-            <MaxOfferCount layout={layout} />
-            {/* BuyBox */}
-            <BuyBox layout={layout} />
-            {/* BSR */}
-            <ShowProductsWithBsr layout={layout} />
-
-            <h2
-              className={`${
-                layout === "wide" ? "sm:col-span-6" : "hidden"
-              }  text-base font-semibold leading-7 text-secondary-950`}
-            >
-              Ebay
-            </h2>
-            {/* Eby Categories */}
-            <CategorySelect layout={layout} target="e" />
-            {/* Eby Standard Versandkosten */}
-            <EbyTransport layout={layout} />
-            <div
-              className={`relative ${
-                layout === "wide" ? "sm:col-span-6" : "sm:col-span-2"
-              }`}
-            >
-              {Boolean(updateSettingsState?.error) && (
-                <div className="text-sm text-red-500 text-right">
-                  ✗ {updateSettingsState?.error}
-                </div>
-              )}
-              {Boolean(updateSettingsState?.message) && (
-                <div className="text-sm text-green-500 text-right absolute -top-6 w-full">
-                  ✓ {updateSettingsState?.message}
-                </div>
-              )}
-
-              <div className="flex ml-auto">
-                <SubmitButton text="Speichern" isSubmitting={isSubmitting} />
+            {Boolean(updateSettingsState?.error) && (
+              <div className="text-sm text-red-500 text-right">
+                ✗ {updateSettingsState?.error}
               </div>
+            )}
+            {Boolean(updateSettingsState?.message) && (
+              <div className="text-sm text-green-500 text-right absolute -top-6 w-full">
+                ✓ {updateSettingsState?.message}
+              </div>
+            )}
+
+            <div className="flex ml-auto">
+              <SubmitButton text="Speichern" isSubmitting={isSubmitting} />
             </div>
           </div>
-        </Form>
-      {/* )} */}
+        </div>
+      </Form>
     </>
   );
 };

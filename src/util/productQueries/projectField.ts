@@ -2,9 +2,11 @@ import { aznProjectFields } from "../aznQueries";
 import { ebyProjectFields } from "../ebyQueries";
 import { commonProjectFields } from "./commonProject";
 
-export function projectField(target: string) {
+export function projectField(target: string, location?: string) {
   let project = {
+    sourceDomain:  "$shop" ,
     ...commonProjectFields,
+    shop: location,
   };
 
   if (target === "a") {

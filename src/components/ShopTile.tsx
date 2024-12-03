@@ -27,17 +27,6 @@ const ShopTile = ({ shop }: { shop: Shop }) => {
                   Gesamt: {shop.total ?? 0}
                 </div>
               </div>
-              {/* <Button
-            className="ml-auto"
-            icon={
-              favorites?.includes(shop.d) ? (
-                <StarIcon className="h-4 w-4" />
-              ) : (
-                <StarIconOutline className="h-4 w-4" />
-              )
-            }
-            onClick={() => handleToggleFavorite(shop.d)}
-          /> */}
             </div>
           }
           bordered={false}

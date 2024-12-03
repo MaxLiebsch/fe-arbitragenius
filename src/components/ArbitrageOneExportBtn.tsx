@@ -10,10 +10,34 @@ const ArbitrageOneExportBtn = ({
   product,
   source_price_calculated_net,
 }: {
-  product: Pick<ModifiedProduct, "asin" | "a_prc" | "prc" | "lnk">;
+  product: Pick<
+    ModifiedProduct,
+    "asin" | "a_prc" | "prc" | "lnk" | "a_avg_prc" | 'asin' | "shop"
+  >;
   source_price_calculated_net: number;
 }) => {
-  const { asin, a_prc, lnk, prc } = product;
+  const { asin, a_prc, lnk, prc, a_avg_prc, shop } = product;
+
+  const flip = shop === "flip";
+
+  const defaultExport = {
+    asin,
+    source_price_calculated_net,
+    sell_price: a_prc,
+    source_price: prc,
+    source_url: lnk,
+    target_marketplace: "de",
+  };
+
+  const flipExport = {
+    asin,
+    source_price_calculated_net,
+    sell_price: a_avg_prc!,
+    source_price: a_prc!,
+    source_url: "https://www.amazon.de/dp/" + asin,
+    target_marketplace: "de",
+  };
+
   return (
     <Tooltip
       color={"#11848d"}
@@ -24,14 +48,9 @@ const ArbitrageOneExportBtn = ({
         className="w-32 h-10"
         variant="outline"
         target="_blank"
-        href={arbitrageOneUrlBuilder({
-          asin,
-          source_price_calculated_net,
-          sell_price: a_prc,
-          source_price: prc,
-          source_url: lnk,
-          target_marketplace: "de",
-        })}
+        href={arbitrageOneUrlBuilder(
+          flip === true ? flipExport : defaultExport
+        )}
       >
         <Image alt="ArbitrageOne logo" src={arbitrageOne} />
       </Button>

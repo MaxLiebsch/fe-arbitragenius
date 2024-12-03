@@ -1,15 +1,10 @@
 import { SALES_COL } from "@/constant/constant";
 import { getProductCol } from "@/server/mongo";
 import { Settings } from "@/types/Settings";
-import { aznMarginFields } from "@/util/productQueries/aznMarginFields";
-import { buyBoxFields } from "@/util/productQueries/buyBox";
-import { ebyMarginFields } from "@/util/productQueries/ebyMarginFields";
-import { marginFields } from "@/util/productQueries/marginFields";
-import { monthlySoldField } from "@/util/productQueries/monthlySoldField";
-import { productWithBsrFields } from "@/util/productQueries/productWithBsrFields";
+import { aznFields } from "@/util/productQueries/aznFields";
+import { ebyFields } from "@/util/productQueries/ebyFields";
+import { marginField } from "@/util/productQueries/marginFields";
 import { settingsFromSearchQuery } from "@/util/productQueries/settingsFromSearchQuery";
-import { targetVerification } from "@/util/productQueries/targetVerfication";
-import { totalOffersCountField } from "@/util/productQueries/totalOffersCountField";
 import { NextRequest } from "next/server";
 
 export async function GET(request: NextRequest) {
@@ -19,57 +14,34 @@ export async function GET(request: NextRequest) {
   const isAmazon = target === "a";
 
   const customerSettings: Settings = settingsFromSearchQuery(searchParams);
-  let {
-    minMargin,
-    minPercentageMargin,
-    productsWithNoBsr,
-    netto,
-    monthlySold,
-    totalOfferCount,
-    buyBox,
-  } = customerSettings;
+  let { minMargin, minPercentageMargin, netto } = customerSettings;
 
   if (netto) {
     minMargin = Number((minMargin * 1.19).toFixed(0));
     minPercentageMargin = Number((minPercentageMargin * 1.19).toFixed(0));
   }
 
-  const targetVerificationPending = searchParams.get(
-    `${target}_vrfd.vrfn_pending`
-  );
-
   const aggregation: { [key: string]: any }[] = [];
-  const findQuery: any[] = [];
 
-  if (isAmazon) {
-    aggregation.push(...aznMarginFields(customerSettings, SALES_COL));
-  } else {
-    aggregation.push(...ebyMarginFields(customerSettings, SALES_COL));
-  }
+  const targetFields = isAmazon
+    ? aznFields(customerSettings, SALES_COL)
+    : ebyFields(customerSettings, SALES_COL);
 
-  findQuery.push(marginFields({ target, settings: customerSettings }));
-  targetVerification(findQuery, target, targetVerificationPending);
+  aggregation.push(...targetFields);
 
-  if (isAmazon) {
-    monthlySoldField(findQuery, monthlySold);
-    totalOffersCountField(findQuery, totalOfferCount);
-    buyBoxFields(buyBox, findQuery, isAmazon);
-    productWithBsrFields(findQuery, customerSettings);
-  }
-  const pblshKey = isAmazon ? "a_pblsh" : "e_pblsh";
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const tomorrow = new Date(today);
   tomorrow.setDate(today.getDate() + 1);
+
   aggregation.push(
     {
       $facet: {
         totalProducts: [
           {
             $match: {
-              sdmn: SALES_COL,
-              [pblshKey]: true,
-              $and: findQuery,
+              ...targetFields[0].$match,
+              ...marginField({ target, settings: customerSettings }),
             },
           },
           { $count: "count" },
@@ -77,12 +49,12 @@ export async function GET(request: NextRequest) {
         totalProductsToday: [
           {
             $match: {
+              ...targetFields[0].$match,
+              ...marginField({ target, settings: customerSettings }),
               createdAt: {
                 $gte: today.toISOString(),
                 $lt: tomorrow.toISOString(),
               },
-              [pblshKey]: true,
-              $and: findQuery,
             },
           },
           { $count: "count" },
@@ -99,9 +71,16 @@ export async function GET(request: NextRequest) {
     }
   );
 
-  const productCol = await getProductCol()
+  const productCol = await getProductCol();
 
   const res = await productCol.aggregate(aggregation).toArray();
+
+  if (isAmazon && process.env.NODE_ENV === "development") {
+    console.log("AZNAGGSCOUNT", JSON.stringify(aggregation));
+  }
+  if (!isAmazon && process.env.NODE_ENV === "development") {
+    console.log("EBYAGGSCOUNT", JSON.stringify(aggregation));
+  }
 
   return Response.json(
     res.length && res[0]?.productCount

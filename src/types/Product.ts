@@ -62,8 +62,10 @@ export interface ModifiedProduct extends Product {
   bsr_1: number;
   bsr_cat_1: string;
   e_pRange?: Prange;
+  sourceDomain?: string;
   e_uprc: number;
   e_vrfd?: Verification;
+  bookmarkedAt?: number;
   a_vrfd?: Verification;
   e_totalOfferCount?: number;
   drops30?:number,

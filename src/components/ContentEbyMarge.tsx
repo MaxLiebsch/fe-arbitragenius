@@ -2,7 +2,7 @@
 
 import { ModifiedProduct } from "@/types/Product";
 import { appendPercentage, formatter } from "@/util/formatter";
-import {  InputNumber, Popover, Switch } from "antd";
+import { InputNumber, Popover, Switch } from "antd";
 import React, { useMemo, useState } from "react";
 import CopyToClipboard from "./CopyToClipboard";
 import { ebayTier } from "@/constant/ebay";
@@ -91,7 +91,7 @@ const ContentEbyMarge = ({
     roundToTwoDecimals(calculateNetPrice(product["prc"], product.tax) * factor)
   );
   const [storageCosts, setStorageCosts] = useState(settings.strg ?? 0);
-
+  const [prepCenterCosts, setPrepCenterCosts] = useState(settings.e_prepCenter);
   const [transportCosts, setTransportCosts] = useState(
     settings[settings.tptStandard as keyof Settings] as number
   );
@@ -101,6 +101,7 @@ const ContentEbyMarge = ({
     transportCosts,
     taxCosts,
     netBuyPrice,
+    prepCenterCosts
   ]);
   const earning = sellPrice - totalCosts;
   const margin = roundToFourDecimals(earning / sellPrice) * 100;
@@ -227,7 +228,7 @@ const ContentEbyMarge = ({
             </Popover>
           </div>
         </h3>
-        <h3 className="font-semibold leading-6 mt-2 mb-1 text-gray-900 flex flex-row space-x-1 items-center">
+        <h3 className="leading-6 mt-2 mb-1 text-gray-900 flex flex-row space-x-1 items-center">
           <InputNumber
             stringMode
             value={transportCosts}
@@ -242,9 +243,10 @@ const ContentEbyMarge = ({
             decimalSeparator=","
           />
         </h3>
-        <h3 className="font-semibold leading-6 mb-1 text-gray-900 flex flex-row space-x-1 items-center">
+        <h3 className="leading-6 mb-1 text-gray-900 flex flex-row space-x-1 items-center">
           <InputNumber
             stringMode
+            className="!w-full"
             value={storageCosts}
             onChange={(e) => {
               if (e) {
@@ -255,6 +257,22 @@ const ContentEbyMarge = ({
             step={0.01}
             addonBefore="Lagerkosten €"
             decimalSeparator=","
+          />
+        </h3>
+        <h3 className="leading-6 mb-1 text-gray-900 flex flex-row space-x-1 items-center">
+          <InputNumber
+            value={prepCenterCosts}
+            className="w-full"
+            decimalSeparator=","
+            onChange={(e) => {
+              if (e) {
+                const parsed = parseFloat(e.toString().replaceAll(",", "."));
+                setPrepCenterCosts(parsed);
+              }
+            }}
+            stringMode
+            step={0.01}
+            addonBefore="Prepcenter €"
           />
         </h3>
         <h3 className="font-semibold leading-6 mt-2 mb-1 text-gray-900 flex flex-row space-x-1 items-center">
@@ -310,7 +328,7 @@ const ContentEbyMarge = ({
           </h3>
           <h3 className="font-semibold leading-6 mb-1 text-gray-900 flex flex-row space-x-1 items-center">
             <div className="flex flex-row w-full">
-              <p>Nettospanne:</p>
+              <p>Nettomarge:</p>
               <p
                 className={`ml-auto ${
                   earning < 0 ? "text-red-600" : "text-green-600"

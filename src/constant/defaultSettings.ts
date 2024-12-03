@@ -1,9 +1,13 @@
 import { Settings } from "@/types/Settings";
+import { DEFAULT_MAX_BSR } from "./constant";
+
+
 
 export const defaultSettings: Settings = {
   loaded: false,
   minMargin: 0,
   minPercentageMargin: 0,
+  targetPlatforms: ["a"],
   euProgram: true,
   fba: true,
   a_cats: [0],
@@ -21,8 +25,8 @@ export const defaultSettings: Settings = {
   strg: 0,
   tptStandard: "tptMiddle",
   netto: true,
-  maxPrimaryBsr: 1000000,
-  productsWithNoBsr: true,
+  maxPrimaryBsr: DEFAULT_MAX_BSR,
+  productsWithNoBsr: false,
   monthlySold: 0,
   totalOfferCount: 0,
   buyBox: "both",

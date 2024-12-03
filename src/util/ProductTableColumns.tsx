@@ -53,6 +53,7 @@ export const createColumns: (
       field: "nm",
       headerName: "Produkte",
       flex: 0.65,
+      sortable: false,
       renderCell: (params) => (
         <InfoField
           flip={flip}
@@ -66,15 +67,13 @@ export const createColumns: (
     EKPrice({ settings, flip }),
     VKPrice({ target, settings, flip }),
     PriceAnalysis(),
-    MarginPct({ target, settings, flip }),
-    Margin({ target, settings, flip }),
+    MarginPct({ target, settings}),
+    Margin({ target, settings }),
     OptionField({
       addBookmark,
       removeBookmark,
       pagination,
       target,
-      domain,
-      flip,
     }),
   ];
 };

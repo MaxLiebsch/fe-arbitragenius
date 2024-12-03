@@ -1,7 +1,8 @@
 import { Settings } from "@/types/Settings";
 import { mrgnFieldName, mrgnPctFieldName } from "./mrgnProps";
+import { marginField, marginPctField } from "./marginFields";
 
-export const ebyMarginFields = (
+export const ebyFields = (
   settings: Settings,
   sdmn?: string,
   isWholeSale?: boolean
@@ -10,8 +11,9 @@ export const ebyMarginFields = (
   const transport = settings[tptStandard as "tptSmall"];
   const match: any = {
     e_pblsh: true,
-    e_prc: { $gt: 0 },
-    e_uprc: { $gt: 0 },
+    ...marginField({ target: "e", settings }),
+    ...(settings.minPercentageMargin > 0 &&
+      marginPctField({ target: "e", settings })),
   };
 
   if (sdmn) {
@@ -29,6 +31,7 @@ export const ebyMarginFields = (
       $match: match,
     });
   }
+
   query.push(
     {
       $addFields: {
@@ -65,6 +68,9 @@ export const ebyMarginFields = (
           ],
         },
       },
+    },
+    {
+      $match: { ...marginField({ target: "e", settings }) },
     },
     {
       $addFields: {

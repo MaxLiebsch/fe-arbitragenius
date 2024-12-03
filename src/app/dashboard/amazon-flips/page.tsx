@@ -21,6 +21,10 @@ const Page = () => {
   const target = "a";
   const domain = "flip";
   const [settings, setUserSettings] = useUserSettings();
+  const targetEnabled =
+    settings &&
+    settings.targetPlatforms &&
+    settings.targetPlatforms.includes(target);
   const [paginationModel, setPaginationModel, sortModel, setSortModel] =
     usePaginationAndSort();
   const apiRef = useGridApiRef();
@@ -67,54 +71,61 @@ const Page = () => {
   );
   return (
     <div className="h-full relative">
-      <Title>Amazon Flips</Title>
+      <Title>Amazon Flips (Beta)</Title>
+      <div className="absolute text-primary-950 text-xs right-0 top-[3.15rem]">
+        Amazon Flips befindet sich im Beta-Status. Angebote können sehr schnell varieren. Es können Probleme bei der Margenberechnung auftreten.
+      </div>
       <div className="flex h-[calc(100vh-198px)]">
-        <DataGridPremium
-          apiRef={apiRef}
-          sortingOrder={["desc", "asc"]}
-          initialState={{
-            columns: {
-              columnVisibilityModel: {
-                bsr: target === "a" ? true : false,
-                analytics: target === "a" ? true : false,
-                asin: target === "a" ? true : false,
+        {targetEnabled ? (
+          <DataGridPremium
+            apiRef={apiRef}
+            sortingOrder={["desc", "asc"]}
+            initialState={{
+              columns: {
+                columnVisibilityModel: {
+                  bsr: target === "a" ? true : false,
+                  analytics: target === "a" ? true : false,
+                  asin: target === "a" ? true : false,
+                },
               },
-            },
-          }}
-          getRowId={(row) => row._id}
-          columns={columns}
-          rows={productQuery.data ?? []}
-          rowCount={productCountQuery.data?.productCount ?? 0}
-          loading={productQuery.isFetching}
-          pageSizeOptions={[10, 20, 50]}
-          paginationModel={paginationModel}
-          onPaginationModelChange={setPaginationModel}
-          paginationMode="server"
-          disableColumnMenu
-          pagination={true}
-          localeText={deDE.components.MuiDataGrid.defaultProps.localeText}
-          getRowHeight={() => "auto"}
-          sortingMode="server"
-          sx={{
-            // disable cell selection style
-            ".MuiDataGrid-cell:focus": {
-              outline: "none",
-            },
-            // pointer cursor on ALL rows
-            "& .MuiDataGrid-row:hover": {
-              cursor: "pointer",
-            },
-          }}
-          onSortModelChange={handleSortModelChange}
-          experimentalFeatures={{ columnGrouping: true }}
-          slots={{
-            loadingOverlay: () => (
-              <div className="h-full w-full flex items-center justify-center">
-                <Spinner />
-              </div>
-            ),
-          }}
-        />
+            }}
+            getRowId={(row) => row._id}
+            columns={columns}
+            rows={productQuery.data ?? []}
+            rowCount={productCountQuery.data?.productCount ?? 0}
+            loading={productQuery.isFetching}
+            pageSizeOptions={[10, 20, 50]}
+            paginationModel={paginationModel}
+            onPaginationModelChange={setPaginationModel}
+            paginationMode="server"
+            disableColumnMenu
+            pagination={true}
+            localeText={deDE.components.MuiDataGrid.defaultProps.localeText}
+            getRowHeight={() => "auto"}
+            sortingMode="server"
+            sx={{
+              // disable cell selection style
+              ".MuiDataGrid-cell:focus": {
+                outline: "none",
+              },
+              // pointer cursor on ALL rows
+              "& .MuiDataGrid-row:hover": {
+                cursor: "pointer",
+              },
+            }}
+            onSortModelChange={handleSortModelChange}
+            experimentalFeatures={{ columnGrouping: true }}
+            slots={{
+              loadingOverlay: () => (
+                <div className="h-full w-full flex items-center justify-center">
+                  <Spinner />
+                </div>
+              ),
+            }}
+          />
+        ) : (
+          <div>Aktiviere Amazon in den Profileinstellungen</div>
+        )}
       </div>
     </div>
   );

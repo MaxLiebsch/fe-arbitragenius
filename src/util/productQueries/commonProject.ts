@@ -4,6 +4,7 @@ export const commonProjectFields = {
   lnk: 1,
   img: 1,
   nm: 1,
+  cur:1,
   eanList: 1,
   s: 1,
   qty_v: 1,

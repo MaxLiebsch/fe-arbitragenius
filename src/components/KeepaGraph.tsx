@@ -81,6 +81,13 @@ export const KeepaGraph = ({
         salesRank: number | null;
       }[] = [];
 
+      const lastDataPoints: { [key: string]: null | number } = {
+        amazonPrice: null,
+        usedPrice: null,
+        newPrice: null,
+        salesRank: null,
+      };
+
       const addToCombinedData = (data: number[][], type: DataPoint) => {
         data.forEach((entry, i) => {
           const date = entry[0];
@@ -91,15 +98,22 @@ export const KeepaGraph = ({
             (data) => data.epoch === date
           );
           if (idxExistingData !== -1) {
+            lastDataPoints[type] = value;
+            combinedData[idxExistingData]['salesRank'] = lastDataPoints["salesRank"];
+            combinedData[idxExistingData]['amazonPrice'] = lastDataPoints["amazonPrice"];
+            combinedData[idxExistingData]['usedPrice'] = lastDataPoints["usedPrice"];
+            combinedData[idxExistingData]['newPrice'] = lastDataPoints["newPrice"];
             combinedData[idxExistingData][type] = value;
+
           } else {
+            lastDataPoints[type] = value;
             combinedData.push({
               date: format(fromUnixTime(date), "d LLL", { locale: de }),
               epoch: date,
-              amazonPrice: null,
-              usedPrice: null,
-              newPrice: null,
-              salesRank: null,
+              amazonPrice: lastDataPoints["amazonPrice"],
+              usedPrice: lastDataPoints["usedPrice"],
+              newPrice: lastDataPoints["newPrice"],
+              salesRank: lastDataPoints["salesRank"],
               [type]: value,
             });
           }
@@ -277,7 +291,7 @@ export const KeepaGraph = ({
             yAxisId="right"
             dot={false}
             connectNulls
-            type="monotone"
+            type="linear"
             dataKey="salesRank"
             stroke="#3a883a"
           />
@@ -285,7 +299,8 @@ export const KeepaGraph = ({
         {open && hasAhstprcs && (
           <Line
             yAxisId="left"
-            type="step"
+            dot={false}
+            type="monotone"
             dataKey="amazonPrice"
             connectNulls
             stroke="#ff9900"
@@ -294,7 +309,8 @@ export const KeepaGraph = ({
         {open && hasAnhstprcs && (
           <Line
             yAxisId="left"
-            type="step"
+            dot={false}
+            type="monotone" 
             connectNulls
             dataKey="newPrice"
             stroke="#8888dd"

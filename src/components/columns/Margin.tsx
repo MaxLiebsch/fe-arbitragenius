@@ -3,22 +3,27 @@ import React from "react";
 import { GridColDef } from "@mui/x-data-grid-premium";
 import { mrgnFieldName } from "@/util/productQueries/mrgnProps";
 import MarginPopover from "../MarginPopover";
+import { Tooltip } from "antd";
 
 const Margin = ({
   target,
   settings,
-  flip,
 }: {
   target: string;
-  flip?: boolean;
   settings: Settings;
 }): GridColDef<any> => {
   return {
     field: mrgnFieldName(target, settings.euProgram),
-    headerName: "Marge",
     renderHeader: (params) => (
-      <div className="relative">
-        <div>Marge</div>
+      <div className="relative flex flex-col !leading-tight">
+        <Tooltip title="Gewinn in Euro">
+          <div>Gewinn</div>
+        </Tooltip>
+        <div className="text-xs">
+          <span className="text-green-600">
+            {settings.netto ? "Netto" : "Brutto"}
+          </span>
+        </div>
       </div>
     ),
     renderCell: (params) => (

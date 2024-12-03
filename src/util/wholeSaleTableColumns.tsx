@@ -46,6 +46,8 @@ export const createWholeSaleColumns: (
     field: "name",
     headerName: "Produkte",
     flex: 1,
+    disableColumnMenu: true,
+    sortable: false,
     renderCell: (params) => {
       return (
         <InfoField

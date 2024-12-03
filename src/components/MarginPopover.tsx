@@ -44,13 +44,7 @@ const MarginPopover = ({ product, target, settings }: MarginPopoverProps) => {
             open ? "font-semibold" : ""
           }`}
         >
-          <div
-            className={`${settings.netto ? "" : "font-semibold text-green-600"}
-        ${margin < 0 ? "text-red-600" : ""}
-        `}
-          >
-            {formatCurrency(margin)}
-          </div>
+          <div>{formatCurrency(margin)}</div>
         </div>
       </Tooltip>
     </Popover>

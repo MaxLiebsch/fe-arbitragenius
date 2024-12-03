@@ -9,9 +9,7 @@ import CopyToClipboard from "../CopyToClipboard";
 import { ProductPagination } from "@/hooks/use-products";
 import Link from "next/link";
 import { formatDistanceToNow, parseISO } from "date-fns";
-import { parseSalesRank } from "@/util/parseSalesRank";
 import { de } from "date-fns/locale";
-import { aznCategoryMapping } from "@/constant/constant";
 import { targetLinkBuilder } from "@/util/targetLinkBuilder";
 import { getLatestBsr } from "@/util/getLatestBsr";
 
@@ -36,18 +34,15 @@ const InfoField = ({
     nm,
     mnfctr,
     asin,
-    categoryTree,
-    keepaUpdatedAt,
-    salesRanks,
     availUpdatedAt,
     updatedAt,
     dealAznUpdatedAt,
     dealEbyUpdatedAt,
-    bsr: initialBsr,
     drops30,
     drops90,
     monthlySold,
     shop,
+    sourceDomain,
     ebyCategories,
     [`${target}_nm` as "a_nm" | "e_nm"]: targetName,
     [`${target}_img` as "a_img" | "e_img"]: targetImg,
@@ -64,15 +59,22 @@ const InfoField = ({
   const lastUpdated = availUpdatedAt || updatedAt;
 
   const { bsr, aznCategory } = getLatestBsr(product);
-  const isFlip = shop === "flip";
+  const isFlip = shop === "flip" || flip;
+
   return (
     <div className="flex flex-col divide-y p-1 w-full">
-      {nm && !flip && !isFlip && (
+      {nm && !isFlip && (
         <div className={`${nm?.length < 114 && "flex gap-1"}`}>
           <div className="flex flex-row gap-2 w-full">
             <div>{ImageRenderer(prefixLink(img, shopDomain))}</div>
             <div className="flex flex-col w-full">
-              {shop && (
+              {sourceDomain ? (
+                <span className="font-semibold">
+                  {sourceDomain!.slice(0, 1).toUpperCase() +
+                    sourceDomain!.slice(1)}
+                  :{" "}
+                </span>
+              ) : (
                 <span className="font-semibold">
                   {shop!.slice(0, 1).toUpperCase() + shop!.slice(1)}:{" "}
                 </span>
@@ -95,7 +97,12 @@ const InfoField = ({
           <div className="flex flex-row gap-2 w-full">
             <div>{ImageRenderer(prefixLink(targetImg, s))}</div>
             <div className="flex flex-col w-full">
-              <div>{LinkWrapper(targetLink, targetName)}</div>
+              <div>
+                <span className="font-semibold">
+                  {isFlip ? "Amazon Flip: " : ""}
+                </span>
+                {LinkWrapper(targetLink, targetName)}
+              </div>
               {targetUpdatedAt && (
                 <time className="ml-auto mt-auto text-gray-500 text-xs">
                   {formatDistanceToNow(parseISO(targetUpdatedAt), {

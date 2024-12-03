@@ -56,7 +56,10 @@ const Plan = ({
             <CheckIcon
               className={featured ? "text-white" : "text-primary-400"}
             />
-            <span className="ml-4">{feature}</span>
+            <span
+              className="ml-4"
+              dangerouslySetInnerHTML={{ __html: feature }}
+            ></span>
           </li>
         ))}
       </ul>

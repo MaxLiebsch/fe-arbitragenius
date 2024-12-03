@@ -1,22 +1,14 @@
-import { PRODUCT_COL } from "@/constant/constant";
 import { getLoggedInUser } from "@/server/appwrite";
 import { getProductCol } from "@/server/mongo";
-import clientPool from "@/server/mongoPool";
-import { BuyBox, Settings } from "@/types/Settings";
-import { aznMarginFields } from "@/util/productQueries/aznMarginFields";
- 
-import { buyBoxFields } from "@/util/productQueries/buyBox";
-import { ebyMarginFields } from "@/util/productQueries/ebyMarginFields";
+import { Settings } from "@/types/Settings";
+import { aznFields } from "@/util/productQueries/aznFields";
+
+import { ebyFields } from "@/util/productQueries/ebyFields";
 import { lookupUserId } from "@/util/productQueries/lookupUserId";
-import { marginFields } from "@/util/productQueries/marginFields";
-import { monthlySoldField } from "@/util/productQueries/monthlySoldField";
- 
-import { productWithBsrFields } from "@/util/productQueries/productWithBsrFields";
+
 import { projectField } from "@/util/productQueries/projectField";
 import { settingsFromSearchQuery } from "@/util/productQueries/settingsFromSearchQuery";
 import { sortingField } from "@/util/productQueries/sortingField";
-import { targetVerification } from "@/util/productQueries/targetVerfication";
-import { totalOffersCountField } from "@/util/productQueries/totalOffersCountField";
 import { SortDirection } from "mongodb";
 import { NextRequest } from "next/server";
 
@@ -36,20 +28,7 @@ export async function GET(
   const isAmazon = target === "a";
 
   const customerSettings: Settings = settingsFromSearchQuery(searchParams);
-
-  const targetVerificationPending = searchParams.get(
-    `${target}_vrfd.vrfn_pending`
-  );
-
-  let {
-    minMargin,
-    minPercentageMargin,
-    netto,
-    monthlySold,
-    totalOfferCount,
-    euProgram,
-    buyBox,
-  } = customerSettings;
+  let { minMargin, minPercentageMargin, netto, euProgram } = customerSettings;
 
   if (netto) {
     minMargin = Number((minMargin * 1.19).toFixed(0));
@@ -58,21 +37,10 @@ export async function GET(
 
   const aggregation: { [key: string]: any }[] = [];
 
-  const findQuery: any[] = [];
   if (isAmazon) {
-    aggregation.push(...aznMarginFields(customerSettings, domain));
+    aggregation.push(...aznFields(customerSettings, domain));
   } else {
-    aggregation.push(...ebyMarginFields(customerSettings, domain));
-  }
-
-  findQuery.push(marginFields({ target, settings: customerSettings }));
-  targetVerification(findQuery, target, targetVerificationPending);
-
-  if (isAmazon) {
-    buyBoxFields(buyBox, findQuery, isAmazon);
-    monthlySoldField(findQuery, monthlySold);
-    totalOffersCountField(findQuery, totalOfferCount);
-    productWithBsrFields(findQuery, customerSettings);
+    aggregation.push(...ebyFields(customerSettings, domain));
   }
 
   const query = {
@@ -97,16 +65,9 @@ export async function GET(
   } = {};
 
   sortingField(isAmazon, query, sort, euProgram);
-  const pblshKey = isAmazon ? "a_pblsh" : "e_pblsh";
+
   aggregation.push(
-    {
-      $match: {
-        sdmn: domain,
-        [pblshKey]: true,
-        $and: findQuery,
-      },
-    },
-    projectField(target),
+    projectField(target, "$sdmn"),
     {
       $sort: sort,
     },
@@ -117,10 +78,25 @@ export async function GET(
       $limit: query.size,
     }
   );
-   
+
   lookupUserId(aggregation, user, target);
-  const productCol = await getProductCol()
+  const productCol = await getProductCol();
+
   const res = await productCol.aggregate(aggregation).toArray();
+  if (
+    isAmazon &&
+    domain === "idealo.de" &&
+    process.env.NODE_ENV === "development"
+  ) {
+    console.log("AZNAGGP", JSON.stringify(aggregation));
+  }
+  if (
+    !isAmazon &&
+    domain === "idealo.de" &&
+    process.env.NODE_ENV === "development"
+  ) {
+    console.log("EBYAGGP", JSON.stringify(aggregation));
+  }
 
   return Response.json(res);
 }

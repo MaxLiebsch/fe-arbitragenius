@@ -4,9 +4,6 @@ import { GridColDef } from "@mui/x-data-grid-premium";
 import { UseMutateFunction } from "@tanstack/react-query";
 import { Checkbox, Tooltip } from "antd";
 import React from "react";
-import { Button } from "../Button";
-import { arbitrageOneUrlBuilder } from "@/util/arbitrageOneUrlBuilder";
-import Image from "next/image";
 import ArbitrageOneExportBtn from "../ArbitrageOneExportBtn";
 
 interface OptionFieldProps {
@@ -31,9 +28,7 @@ interface OptionFieldProps {
     void
   >;
   target: string;
-  domain: string;
   pagination: ProductPagination;
-  flip: boolean;
 }
 
 const OptionField = ({
@@ -41,30 +36,38 @@ const OptionField = ({
   removeBookmark,
   pagination,
   target,
-  domain,
-  flip,
 }: OptionFieldProps): GridColDef<any> => {
   return {
     field: "isBookmarked",
-    headerName: "Optionen",
+    renderHeader: (params) => (
+      <Tooltip title="Export der Daten">
+        <div>Optionen</div>
+      </Tooltip>
+    ),
     headerAlign: "center",
     sortable: false,
     width: 150,
+    disableColumnMenu: true,
     align: "center",
     renderCell: (params) => {
       const product = params.row;
-      const { asin, a_prc, lnk, prc, tax } = product;
+      const {
+        asin,
+        shop,
+        isBookmarked,
+        _id: productId,
+      } = product;
       return (
         <div className="flex flex-col justify-center gap-2">
           <Checkbox
-            checked={params.row.isBookmarked}
+            checked={isBookmarked}
             onChange={(e) => {
               if (e.target.checked) {
                 addBookmark({
                   body: {
                     target: target,
-                    shop: domain,
-                    productId: params.row._id,
+                    shop,
+                    productId,
                   },
                   page: pagination.page,
                   pageSize: pagination.pageSize,
@@ -73,8 +76,8 @@ const OptionField = ({
                 removeBookmark({
                   body: {
                     target: target,
-                    shop: domain,
-                    productId: params.row._id,
+                    shop,
+                    productId,
                   },
                   page: pagination.page,
                   pageSize: pagination.pageSize,
@@ -84,7 +87,12 @@ const OptionField = ({
           >
             Mein Deal
           </Checkbox>
-          {asin && !flip && <ArbitrageOneExportBtn product={product} source_price_calculated_net={0} />}
+          {asin && (
+            <ArbitrageOneExportBtn
+              product={product}
+              source_price_calculated_net={0}
+            />
+          )}
         </div>
       );
     },

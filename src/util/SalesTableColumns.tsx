@@ -67,6 +67,7 @@ export const createSalesTableColumns: (
     headerName: "Produkte",
     disableColumnMenu: true,
     flex: 1,
+    sortable: false,
     renderCell: (params) => (
       <InfoField
         product={params.row}
@@ -85,8 +86,6 @@ export const createSalesTableColumns: (
     addBookmark,
     removeBookmark,
     pagination,
-    target,
-    domain: "sales",
-    flip: false,
+    target, 
   }),
 ];

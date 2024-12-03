@@ -1,17 +1,17 @@
 import {
-  BookmarkByTarget,
   BookmarkDeleteSchema,
   BookMarkReturn,
-  BookmarkSchema,
   Variables,
 } from "@/types/Bookmarks";
-import { ModifiedProduct } from "@/types/Product";
 import {
   QueryClient,
   useMutation,
   useQueryClient,
 } from "@tanstack/react-query";
 import {
+  invalidateAznFlipsQueriesOnSettled,
+  invalidateFlipQueries,
+  invalidateListingsQuery,
   invalidateProductQueriesOnSettled,
   invalidateSalesQueriesOnSettled,
 } from "./use-bookmark-add";
@@ -24,26 +24,7 @@ const invalidateProductQueries = async (
   const { body, page, pageSize } = variables;
   const { target, shop } = body;
   const queryKey = productQueryKey(target, shop, page, pageSize);
-  await queryClient.cancelQueries({ queryKey, exact: false });
-  const previousQuery = queryClient.getQueriesData({
-    queryKey,
-    exact: false,
-  });
-  if (previousQuery.length) {
-    const previousQueryData = previousQuery[0];
-    const products = (previousQueryData[1] as ModifiedProduct[]).map(
-      (product) => {
-        if (product._id === variables.body.productId) {
-          return {
-            ...product,
-            isBookmarked: false,
-          };
-        }
-        return product;
-      }
-    );
-    queryClient.setQueryData(previousQueryData[0], products);
-  }
+  await invalidateListingsQuery(queryKey, queryClient, variables, false);
   await queryClient.cancelQueries({ queryKey: ["bookmarks"] });
   const previousBookmarks = queryClient.getQueryData([
     "bookmarks",
@@ -73,26 +54,7 @@ const invalidateSalesQueries = async (
     variables.page,
     variables.pageSize
   );
-  await queryClient.cancelQueries({ queryKey, exact: false });
-  const previousQuery = queryClient.getQueriesData({
-    queryKey,
-    exact: false,
-  });
-  if (previousQuery.length) {
-    const previousQueryData = previousQuery[0];
-    const products = (previousQueryData[1] as ModifiedProduct[]).map(
-      (product) => {
-        if (product._id === variables.body.productId) {
-          return {
-            ...product,
-            isBookmarked: false,
-          };
-        }
-        return product;
-      }
-    );
-    queryClient.setQueryData(previousQueryData[0], products);
-  }
+  await invalidateListingsQuery(queryKey, queryClient, variables, false);
   await queryClient.cancelQueries({ queryKey: ["bookmarks"] });
   const previousBookmarks = queryClient.getQueryData([
     "bookmarks",
@@ -133,13 +95,18 @@ export default function useBookMarkRemove() {
     onMutate: async (variables) => {
       if (variables.body.shop === "sales") {
         await invalidateSalesQueries(variables, queryClient);
+      } else if (variables.body.shop === "flip") {
+        await invalidateFlipQueries(variables, queryClient);
       } else {
         await invalidateProductQueries(variables, queryClient);
       }
     },
     onSettled: (data, error, variables, context) => {
+      queryClient.invalidateQueries({ queryKey: ["bookmarks"], exact: true });
       if (variables.body.shop === "sales") {
         invalidateSalesQueriesOnSettled(variables, queryClient);
+      } else if (variables.body.shop === "flip") {
+        invalidateAznFlipsQueriesOnSettled(variables, queryClient);
       } else {
         invalidateProductQueriesOnSettled(variables, queryClient);
       }

@@ -1,22 +1,15 @@
-import { PRODUCT_COL } from "@/constant/constant";
 import { getLoggedInUser } from "@/server/appwrite";
 import { getProductCol } from "@/server/mongo";
-import clientPool from "@/server/mongoPool";
 import { Settings } from "@/types/Settings";
-import { aznFlipMarginFields } from "@/util/productQueries/aznFlipMarginFields";
+import { aznFlipFields } from "@/util/productQueries/aznFlipFields";
 
-import { buyBoxFields } from "@/util/productQueries/buyBox";
-import { ebyMarginFields } from "@/util/productQueries/ebyMarginFields";
+import { ebyFields } from "@/util/productQueries/ebyFields";
 import { lookupUserId } from "@/util/productQueries/lookupUserId";
-import { marginFields } from "@/util/productQueries/marginFields";
-import { monthlySoldField } from "@/util/productQueries/monthlySoldField";
+import { marginField } from "@/util/productQueries/marginFields";
 
-import { productWithBsrFields } from "@/util/productQueries/productWithBsrFields";
 import { projectField } from "@/util/productQueries/projectField";
 import { settingsFromSearchQuery } from "@/util/productQueries/settingsFromSearchQuery";
 import { sortingField } from "@/util/productQueries/sortingField";
-import { targetVerification } from "@/util/productQueries/targetVerfication";
-import { totalOffersCountField } from "@/util/productQueries/totalOffersCountField";
 import { SortDirection } from "mongodb";
 import { NextRequest } from "next/server";
 
@@ -37,21 +30,7 @@ export async function GET(
 
   const customerSettings: Settings = settingsFromSearchQuery(searchParams);
 
-  const targetVerificationPending = searchParams.get(
-    `${target}_vrfd.vrfn_pending`
-  );
-
-  let {
-    minMargin,
-    minPercentageMargin,
-    productsWithNoBsr,
-    netto,
-    monthlySold,
-    totalOfferCount,
-    euProgram,
-    buyBox,
-    fba,
-  } = customerSettings;
+  let { minMargin, minPercentageMargin, netto, euProgram } = customerSettings;
 
   if (netto) {
     minMargin = Number((minMargin * 1.19).toFixed(0));
@@ -60,21 +39,10 @@ export async function GET(
 
   const aggregation: { [key: string]: any }[] = [];
 
-  const findQuery: any[] = [];
   if (isAmazon) {
-    aggregation.push(...aznFlipMarginFields(customerSettings));
+    aggregation.push(...aznFlipFields(customerSettings));
   } else {
-    aggregation.push(...ebyMarginFields(customerSettings));
-  }
-
-  findQuery.push(marginFields({ target, settings: customerSettings }));
-  targetVerification(findQuery, target, targetVerificationPending);
-
-  if (isAmazon) {
-    buyBoxFields(buyBox, findQuery, isAmazon);
-    monthlySoldField(findQuery, monthlySold);
-    totalOffersCountField(findQuery, totalOfferCount);
-    productWithBsrFields(findQuery, customerSettings);
+    aggregation.push(...ebyFields(customerSettings));
   }
 
   const query = {
@@ -97,26 +65,26 @@ export async function GET(
   const sort: {
     [key: string]: SortDirection;
   } = {};
+
   sortingField(isAmazon, query, sort, euProgram);
-  const pblshKey = isAmazon ? "a_pblsh" : "e_pblsh";
+
   aggregation.push(
     {
       $match: {
-        [pblshKey]: true,
-        $and: findQuery,
+        ...marginField({ target, settings: customerSettings }),
       },
     },
-    projectField("a"),
+    projectField("a", "flip"),
     {
       $group: {
         _id: {
-          field2: "$asin"
+          field2: "$asin",
         },
-        document: { $first: "$$ROOT" }
-      }
+        document: { $first: "$$ROOT" },
+      },
     },
     {
-      $replaceRoot: { newRoot: "$document" }
+      $replaceRoot: { newRoot: "$document" },
     },
     {
       $sort: sort,
@@ -131,6 +99,7 @@ export async function GET(
 
   lookupUserId(aggregation, user, target);
   const productCol = await getProductCol();
+
   const res = await productCol.aggregate(aggregation).toArray();
 
   return Response.json(res);

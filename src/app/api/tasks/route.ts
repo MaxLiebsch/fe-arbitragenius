@@ -1,5 +1,6 @@
-import { PRODUCT_COL, WHOLESALE_COL } from "@/constant/constant";
+import { WHOLESALE_COL } from "@/constant/constant";
 import { getLoggedInUser } from "@/server/appwrite";
+import { getProductCol } from "@/server/mongo";
 import clientPool from "@/server/mongoPool";
 import {
   MutateTaskRequest,
@@ -70,9 +71,8 @@ export async function POST(request: NextRequest) {
     .db(process.env.NEXT_MONOGO_CRAWLER_DATA)
     .collection(process.env.NEXT_MONGO_TASKS ?? "");
 
-  const productCol = spotter
-    .db(process.env.NEXT_MONGO_DB)
-    .collection(PRODUCT_COL);
+  const productCol = await getProductCol()
+
 
   const res = await taskCollection.countDocuments({
     userId: user.$id,

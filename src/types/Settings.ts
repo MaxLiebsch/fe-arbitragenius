@@ -16,6 +16,7 @@ export const SettingsSchema = z.object({
   a_tptSmall: z.number(),
   a_tptMiddle: z.number(),
   a_tptLarge: z.number(),
+  targetPlatforms: z.array(z.string()),
   euProgram: z.boolean(),
   a_prepCenter: z.number(),
   e_prepCenter: z.number(),

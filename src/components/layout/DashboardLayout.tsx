@@ -12,7 +12,7 @@ import {
   BookmarkIcon,
   XMarkIcon,
   SparklesIcon,
-  ArrowsUpDownIcon
+  ArrowsUpDownIcon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
 
@@ -21,10 +21,11 @@ import { Logo } from "../Logo";
 import { usePathname, useRouter } from "next/navigation";
 import { useFormState } from "react-dom";
 import { TotalDealsContext } from "@/context/totalDealsContext";
-import { differenceInDays } from "date-fns";
 import useSalesCount from "@/hooks/use-sales-count";
 import { Badge } from "antd";
 import useAccount from "@/hooks/use-account";
+import { formatDistanceToNow } from "date-fns";
+import { de } from "date-fns/locale";
 
 const navigation = [
   {
@@ -46,11 +47,10 @@ const navigation = [
     current: false,
   },
   {
-    name: "Amazon Flips",
+    name: "Amazon Flips (Beta)",
     icon: ArrowsUpDownIcon,
     href: "/dashboard/amazon-flips",
     current: false,
-    
   },
   {
     name: "Wholesale Analyse",
@@ -84,7 +84,6 @@ export const DashboardLayout = ({
   };
 }>) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-
 
   const router = useRouter();
   const accountQuery = useAccount();
@@ -330,12 +329,12 @@ export const DashboardLayout = ({
                       Danke, dass Du dich für Arbispotter entschieden hast. Du
                       befindest Dich noch{" "}
                       <span className="font-semibold">
-                        {differenceInDays(
+                        {formatDistanceToNow(
                           Number(subscriptionStatus.trialEnd as string) * 1000,
-                          Date.now()
+                          { locale: de }
                         )}{" "}
                       </span>
-                      Tage in der Testphase.
+                      in der Testphase.
                     </div>
                   ) : (
                     <></>

@@ -1,14 +1,12 @@
 import { getProductCol } from "@/server/mongo";
 import { Settings } from "@/types/Settings";
-import { aznFlipMarginFields } from "@/util/productQueries/aznFlipMarginFields";
-import { buyBoxFields } from "@/util/productQueries/buyBox";
-import { ebyMarginFields } from "@/util/productQueries/ebyMarginFields";
-import { marginFields } from "@/util/productQueries/marginFields";
-import { monthlySoldField } from "@/util/productQueries/monthlySoldField";
-import { productWithBsrFields } from "@/util/productQueries/productWithBsrFields";
+import { aznFlipFields } from "@/util/productQueries/aznFlipFields";
+import { ebyFields } from "@/util/productQueries/ebyFields";
+import {
+  marginField,
+  marginPctField,
+} from "@/util/productQueries/marginFields";
 import { settingsFromSearchQuery } from "@/util/productQueries/settingsFromSearchQuery";
-import { targetVerification } from "@/util/productQueries/targetVerfication";
-import { totalOffersCountField } from "@/util/productQueries/totalOffersCountField";
 import { NextRequest } from "next/server";
 
 export async function GET(request: NextRequest) {
@@ -18,43 +16,21 @@ export async function GET(request: NextRequest) {
   const isAmazon = target === "a";
 
   const customerSettings: Settings = settingsFromSearchQuery(searchParams);
-  let {
-    minMargin,
-    minPercentageMargin,
-    netto,
-    monthlySold,
-    totalOfferCount,
-    buyBox,
-  } = customerSettings;
+  let { minMargin, minPercentageMargin, netto } = customerSettings;
 
   if (netto) {
     minMargin = Number((minMargin * 1.19).toFixed(0));
     minPercentageMargin = Number((minPercentageMargin * 1.19).toFixed(0));
   }
 
-  const targetVerificationPending = searchParams.get(
-    `${target}_vrfd.vrfn_pending`
-  );
-
   const aggregation: { [key: string]: any }[] = [];
-  const findQuery: any[] = [];
 
   if (isAmazon) {
-    aggregation.push(...aznFlipMarginFields(customerSettings));
+    aggregation.push(...aznFlipFields(customerSettings));
   } else {
-    aggregation.push(...ebyMarginFields(customerSettings));
+    aggregation.push(...ebyFields(customerSettings));
   }
 
-  findQuery.push(marginFields({ target, settings: customerSettings }));
-  targetVerification(findQuery, target, targetVerificationPending);
-
-  if (isAmazon) {
-    monthlySoldField(findQuery, monthlySold);
-    totalOffersCountField(findQuery, totalOfferCount);
-    buyBoxFields(buyBox, findQuery, isAmazon);
-    productWithBsrFields(findQuery, customerSettings);
-  }
-  const pblshKey = isAmazon ? "a_pblsh" : "e_pblsh";
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const tomorrow = new Date(today);
@@ -62,8 +38,9 @@ export async function GET(request: NextRequest) {
   aggregation.push(
     {
       $match: {
-        [pblshKey]: true,
-        $and: findQuery,
+        ...marginField({ target, settings: customerSettings }),
+        ...(customerSettings.minPercentageMargin > 0 &&
+          marginPctField({ target, settings: customerSettings })),
       },
     },
     {
@@ -82,6 +59,12 @@ export async function GET(request: NextRequest) {
   const productCol = await getProductCol();
 
   const res = await productCol.aggregate(aggregation).toArray();
+
+  if (
+    process.env.NODE_ENV === "development"
+  ) {
+    console.log("FLIPAGGPCOUNT", JSON.stringify(aggregation));
+  }
 
   return Response.json(
     res.length && res[0]?.productCount

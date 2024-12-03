@@ -1,29 +1,28 @@
 import { Settings } from "@/types/Settings";
 import { mrgnFieldName, mrgnPctFieldName } from "./mrgnProps";
+import { addAznSettingsFields } from "./addAznSettingsFields";
 
-export const aznFlipMarginFields = (
-  settings: Settings,
-  isWholesale?: boolean
-) => {
+export const aznFlipFields = (settings: Settings, isWholesale?: boolean) => {
   const { a_tptStandard, a_strg, a_prepCenter, fba, euProgram } = settings;
   const transport = settings[a_tptStandard as "a_tptSmall"];
 
   const match: any = {
     a_pblsh: true,
-    a_prc: { $gt: 0 },
-    "costs.azn": { $exists: true },
+    "costs.azn": { $gt: 0 },
     aznUpdatedAt: { $gt: new Date(Date.now() - 96 * 60 * 1000).toISOString() },
     $or: [
-      { avg30_ahsprcs: { $exists: true, $gt: 0 } },
-      { avg30_ansprcs: { $exists: true, $gt: 0 } },
-      { avg90_ahsprcs: { $exists: true, $gt: 0 } },
-      { avg90_ansprcs: { $exists: true, $gt: 0 } },
+      { avg30_ahsprcs: { $gt: 0 } },
+      { avg30_ansprcs: { $gt: 0 } },
+      { avg90_ahsprcs: { $gt: 0 } },
+      { avg90_ansprcs: { $gt: 0 } },
     ],
   };
 
   if (settings.a_cats.length > 0 && settings.a_cats[0] !== 0) {
     match["categoryTree.catId"] = { $in: settings.a_cats };
   }
+
+  addAznSettingsFields(settings, match);
 
   const query: any = [];
 
@@ -67,6 +66,11 @@ export const aznFlipMarginFields = (
       },
     },
     {
+      $match: {
+        a_avg_prc: { $gt: 0 },
+      },
+    },
+    {
       $addFields: {
         "costs.azn": {
           $round: [
@@ -85,7 +89,82 @@ export const aznFlipMarginFields = (
     }
   );
 
-  if (!fba) {
+  if (fba) {
+    query.push(
+      {
+        $addFields: {
+          [aznMrgn]: {
+            $round: [
+              {
+                $subtract: [
+                  "$a_avg_prc",
+                  {
+                    $add: [
+                      {
+                        $divide: [
+                          "$a_prc",
+                          {
+                            $add: [
+                              1,
+                              { $divide: [{ $ifNull: ["$tax", 19] }, 100] },
+                            ],
+                          },
+                        ],
+                      },
+                      {
+                        $subtract: [
+                          "$a_avg_prc",
+                          {
+                            $divide: [
+                              "$a_avg_prc",
+                              {
+                                $add: [
+                                  1,
+                                  { $divide: [{ $ifNull: ["$tax", 19] }, 100] },
+                                ],
+                              },
+                            ],
+                          },
+                        ],
+                      },
+                      "$costs.tpt",
+                      "$costs.varc",
+                      a_prepCenter,
+                      isSommer ? "$costs.strg_1_hy" : "$costs.strg_2_hy",
+                      "$costs.azn",
+                    ],
+                  },
+                ],
+              },
+              2,
+            ],
+          },
+        },
+      },
+      {
+        $match: {
+          [aznMrgn]: { $gte: settings.minMargin },
+        },
+      },
+      {
+        $addFields: {
+          [aznMrgnPct]: {
+            $round: [
+              {
+                $multiply: [
+                  {
+                    $divide: [`$${aznMrgn}`, "$a_avg_prc"],
+                  },
+                  100,
+                ],
+              },
+              2,
+            ],
+          },
+        },
+      }
+    );
+  } else {
     // If the user does not use Azn FBA, then the margin is calculated,
     // based on there settings for transport, storage, and preparation center
     query.push(
@@ -141,72 +220,8 @@ export const aznFlipMarginFields = (
         },
       },
       {
-        $addFields: {
-          [aznMrgnPct]: {
-            $round: [
-              {
-                $multiply: [
-                  {
-                    $divide: [`$${aznMrgn}`, "$a_avg_prc"],
-                  },
-                  100,
-                ],
-              },
-              2,
-            ],
-          },
-        },
-      }
-    );
-  } else {
-    query.push(
-      {
-        $addFields: {
-          [aznMrgn]: {
-            $round: [
-              {
-                $subtract: [
-                  "$a_avg_prc",
-                  {
-                    $add: [
-                      {
-                        $divide: [
-                          "$a_prc",
-                          {
-                            $add: [
-                              1,
-                              { $divide: [{ $ifNull: ["$tax", 19] }, 100] },
-                            ],
-                          },
-                        ],
-                      },
-                      {
-                        $subtract: [
-                          "$a_avg_prc",
-                          {
-                            $divide: [
-                              "$a_avg_prc",
-                              {
-                                $add: [
-                                  1,
-                                  { $divide: [{ $ifNull: ["$tax", 19] }, 100] },
-                                ],
-                              },
-                            ],
-                          },
-                        ],
-                      },
-                      "$costs.tpt",
-                      "$costs.varc",
-                      isSommer ? "$costs.strg_1_hy" : "$costs.strg_2_hy",
-                      "$costs.azn",
-                    ],
-                  },
-                ],
-              },
-              2,
-            ],
-          },
+        $match: {
+          a_avg_prc: { $gt: 0 },
         },
       },
       {
