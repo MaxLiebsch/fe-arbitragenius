@@ -38,12 +38,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="de">
+    <html lang="de" suppressHydrationWarning>
       <body
-        suppressHydrationWarning={true}
+      suppressHydrationWarning
         className={`${inter.className} h-screen`}
       >
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem >
           <AntdRegistry>
             <QueryClientProviderWrapper>{children}</QueryClientProviderWrapper>
           </AntdRegistry>

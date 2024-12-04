@@ -29,8 +29,6 @@ import { Badge } from "antd";
 import useAccount from "@/hooks/use-account";
 import { formatDistanceToNow } from "date-fns";
 import { de } from "date-fns/locale";
-import { useTheme } from "next-themes";
-import usePreferences from "@/hooks/use-preferences";
 import useAppereanceAdd from "@/hooks/use-appereance-add";
 import { Mode } from "@/types/Appearance";
 import { useUserTheme } from "@/hooks/useUserTheme";
@@ -124,16 +122,19 @@ export const DashboardLayout = ({
   });
   const [queryUpdate, setQueryUpdate] = useState(0);
   const { theme } = useUserTheme()
+  const [isClient, setIsClient] = useState(false);
   const  mutateAppearance = useAppereanceAdd();
   useEffect(() => {
     if (state.message === "success") {
       router.push("/auth/signin");
     }
-  }, [state, router]);
+    setIsClient(true);
 
-  const darkMode = theme === "dark";
+  }, [state, router, theme]);
 
-  if (theme === undefined) return null;
+  if (!isClient) {
+    return null;
+  }
 
   return (
     <TotalDealsContext.Provider value={{ queryUpdate, setQueryUpdate }}>
@@ -334,7 +335,7 @@ export const DashboardLayout = ({
           </div>
         </div>
 
-        <main className="h-full">
+        <main className="h-full" suppressHydrationWarning>
           <div className="lg:pl-80 fixed top-0 z-40 lg:mx-auto lg:px-8 w-full">
             <div className="flex h-16 items-center gap-x-4 border-b border-border-gray bg-default px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-0 lg:shadow-none">
               <button
