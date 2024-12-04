@@ -15,14 +15,14 @@ services:
       - "traefik.http.middlewares.live-headers.headers.customrequestheaders.X-Frame-Options=SAMEORIGIN"
       
       # Redirect router for arbispotter.com to www.arbispotter.com
-      - "traefik.http.routers.redirect.rule=Host(`arbispotter.com`) && PathPrefix(`/app`)"
-      - "traefik.http.routers.redirect.entrypoints=https"
-      - "traefik.http.routers.redirect.middlewares=redirect-to-www"
+      - "traefik.http.routers.app-redirect.rule=Host(`arbispotter.com`) && PathPrefix(`/app`)"
+      - "traefik.http.routers.app-redirect.entrypoints=https"
+      - "traefik.http.routers.app-redirect.middlewares=redirect-app-to-www"
 
       # Middleware to handle the redirection
-      - "traefik.http.middlewares.redirect-to-www.redirectregex.regex=^https://arbispotter.com(.*)"
-      - "traefik.http.middlewares.redirect-to-www.redirectregex.replacement=https://www.arbispotter.com$${1}"
-      - "traefik.http.middlewares.redirect-to-www.redirectregex.permanent=true"
+      - "traefik.http.middlewares.redirect-app-to-www.redirectregex.regex=^https?://arbispotter\\.com(.*)"
+      - "traefik.http.middlewares.redirect-app-to-www.redirectregex.replacement=https://www.arbispotter.com$${1}"
+      - "traefik.http.middlewares.redirect-app-to-www.redirectregex.permanent=true"
     networks:
       - traefik_web
 networks:
