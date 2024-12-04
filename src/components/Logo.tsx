@@ -1,10 +1,16 @@
+'use client';
+
 import Image from "next/image";
-import logoPrimary from "@/images/logos/logo_secondary.svg";
+import logoSecondary from "@/images/logos/logo-secondary.svg";
+import logoPrimary from "@/images/logos/logo-gray-1.png";
 import Link from "next/link";
+import { useTheme } from "next-themes";
+import { useUserTheme } from "@/hooks/useUserTheme";
 export function Logo() {
+  const {theme, systemTheme} = useUserTheme()
   return (
     <Link href="https://www.arbispotter.com">
-      <Image src={logoPrimary} priority={true} alt="Arbispotter" style={{ width: '100%', height: 'auto' }} />
+      <Image src={theme === "dark"?logoPrimary:logoSecondary} priority={true} alt="Arbispotter" style={{ width: '100%', height: 'auto' }} />
     </Link>
     // <svg aria-hidden="true" viewBox="0 0 109 40" {...props}>
     //   <path

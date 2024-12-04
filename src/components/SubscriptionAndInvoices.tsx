@@ -19,18 +19,18 @@ const SubscriptionAndInvoices = () => {
   if (data)
     return (
       <div className="gap-y-4">
-        <h2 className="text-base font-semibold leading-7 text-secondary-950">
+        <h2 className="text-base font-semibold leading-7 text-secondary">
           Subscription
         </h2>
         <Subscription subscription={data.subscription} />
-        <h2 className="mt-6 text-base font-semibold leading-7 text-secondary-950">
+        <h2 className="mt-6 text-base font-semibold leading-7 text-secondary">
           Rechnungen
         </h2>
         <p className="flex flex-row gap-1">
           <ExclamationCircleIcon className="h-6 w-6" />
           <span>
             Um deine Rechungsinformationen zu ändern, klicke auf
-            <span className="text-base font-semibold leading-7 text-secondary-950">
+            <span className="text-base font-semibold leading-7 text-secondary">
               {" "}
               Account{" "}
             </span>

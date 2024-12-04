@@ -12,20 +12,20 @@ export default function Page({
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm space-y-3">
           <Logo />
-          <h2 className="text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
+          <h2 className="text-center text-2xl font-bold leading-9 tracking-tight text-gray-dark">
             Das hat nicht geklappt! :&#40;
           </h2>
         </div>
         <div className="mt-5 sm:mx-auto sm:w-full sm:max-w-sm space-y-2">
           <div className="flex flex-row justify-between">
             <a
-              className="text-secondary-950 underline text-sm"
+              className="text-secondary underline text-sm"
               href="/app/auth/signup"
             >
               Du hast keinen Account?
             </a>
             <a
-              className="text-secondary-950 underline text-sm"
+              className="text-secondary underline text-sm"
               href="/app/auth/signin"
             >
               Zum Login

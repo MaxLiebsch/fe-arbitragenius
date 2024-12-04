@@ -128,7 +128,7 @@ const ProductFilterForm = ({ layout = "slim" }: { layout?: Layout }) => {
           <h2
             className={`${
               layout === "wide" ? "sm:col-span-6" : "hidden"
-            }  text-base font-semibold leading-7 text-secondary-950`}
+            }  text-base font-semibold leading-7 text-secondary`}
           >
             Amazon
           </h2>
@@ -159,7 +159,7 @@ const ProductFilterForm = ({ layout = "slim" }: { layout?: Layout }) => {
           <h2
             className={`${
               layout === "wide" ? "sm:col-span-6" : "hidden"
-            }  text-base font-semibold leading-7 text-secondary-950`}
+            }  text-base font-semibold leading-7 text-secondary`}
           >
             Ebay
           </h2>

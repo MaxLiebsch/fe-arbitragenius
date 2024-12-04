@@ -75,7 +75,10 @@ const config: Config = {
           "950": "#0b4650",
         },
         amazon: "#ff9900",
-        ebay: "#D6EEFC"
+        darkBackgroud: "#12121212",
+        
+        ebay: "#D6EEFC",
+        darkText: "#dcdcdcdc"
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
@@ -84,6 +87,7 @@ const config: Config = {
       },
     },
   },
+  darkMode: 'selector', 
   plugins: [
     require('@headlessui/tailwindcss')({ prefix: 'ui' }),
     require('@tailwindcss/forms')

@@ -17,7 +17,7 @@ export default async function Page({
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8 space-y-5">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm space-y-3">
           <Logo/> 
-          <h2 className="text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
+          <h2 className="text-center text-2xl font-bold leading-9 tracking-tight text-gray-dark">
             Account Verifizieren
           </h2>
         </div>
@@ -29,13 +29,13 @@ export default async function Page({
         <div className="sm:mx-auto sm:w-full sm:max-w-sm space-y-2">
           <div className="flex flex-row justify-between">
             <Link
-              className="text-secondary-950 underline text-sm"
+              className="text-secondary underline text-sm"
               href="/app/auth/signup"
             >
               Ich habe keinen Account?
             </Link>
             <Link
-              className="text-secondary-950 underline text-sm"
+              className="text-secondary underline text-sm"
               href="/app/auth/signin"
             >
               Zum Login
@@ -62,7 +62,7 @@ export default async function Page({
             <div className="flex flex-row w-full justify-end">
               <Link
                 href="/auth/verify?status=retry"
-                className="text-secondary-950 underline text-sm"
+                className="text-secondary underline text-sm"
               >
                 Keine Email erhalten?
               </Link>

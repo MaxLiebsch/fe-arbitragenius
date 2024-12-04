@@ -6,6 +6,7 @@ import MuiXLicense from "../components/MuiXLicense";
 import Script from "next/script";
 import QueryClientProviderWrapper from "@/components/provider/QueryClientProviderWrapper";
 const sharp = require("sharp");
+import { ThemeProvider } from "next-themes";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -15,6 +16,20 @@ export const metadata: Metadata = {
     default: "Arbispotter - Move Fast, Earn Easy",
   },
   description: "Wir machen Product Sourcing schnell, einfach und intelligent.",
+  icons: {
+    icon: [
+      {
+        media: "(prefers-color-scheme: light)",
+        url: "/app/favicon.ico",
+        href: "/app/favicon.ico",
+      },
+      {
+        media: "(prefers-color-scheme: dark)",
+        url: "/app/favicon-dark.ico",
+        href: "/app/favicon-dark.ico",
+      },
+    ],
+  },
 };
 
 export default function RootLayout({
@@ -28,9 +43,11 @@ export default function RootLayout({
         suppressHydrationWarning={true}
         className={`${inter.className} h-screen`}
       >
-        <AntdRegistry>
-          <QueryClientProviderWrapper>{children}</QueryClientProviderWrapper>
-        </AntdRegistry>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <AntdRegistry>
+            <QueryClientProviderWrapper>{children}</QueryClientProviderWrapper>
+          </AntdRegistry>
+        </ThemeProvider>
         <MuiXLicense />
         <Script id="chatwood">
           {`

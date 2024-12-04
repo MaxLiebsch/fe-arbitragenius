@@ -4,7 +4,7 @@ export type Color = "green" | "gray" | "red" | "yellow";
 
 const COLORS: { [key in Color]: string } = {
   green: "bg-green-50 text-green-700 ring-green-600/20",
-  gray: "bg-gray-50 text-gray-700 ring-gray-600/20",
+  gray: "bg-gray-50 text-gray-dark ring-gray-600/20",
   red: "bg-red-50 text-red-700 ring-red-600/20",
   yellow: "bg-yellow-50 text-yellow-700 ring-yellow-600/20",
 };

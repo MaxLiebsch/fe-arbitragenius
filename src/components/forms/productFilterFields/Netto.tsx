@@ -9,12 +9,12 @@ const Netto = ({ layout }: { layout: Layout }) => {
     <div className={`${layout === "wide" ? "sm:col-span-6" : "sm:col-span-1"}`}>
       <label
         htmlFor="netto"
-        className="block text-sm font-medium leading-6 text-secondary-950"
+        className="block text-sm font-medium leading-6 text-secondary"
       >
         <h2
           className={`${
             layout === "wide" ? "sm:col-span-6" : "hidden"
-          }  text-base font-semibold leading-7 text-secondary-950`}
+          }  text-base font-semibold leading-7 text-secondary`}
         >
           Preise
         </h2>

@@ -22,7 +22,7 @@ export default function Page({
     <>
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-          <h2 className="text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
+          <h2 className="text-center text-2xl font-bold leading-9 tracking-tight text-gray-dark">
             Stelle deinen{" "}
             <span className="inline-block -mb-2">
               <Logo />
@@ -35,7 +35,7 @@ export default function Page({
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-medium leading-6 text-gray-900"
+                className="block text-sm font-medium leading-6 text-gray-dark"
               >
                 Email Adresse *
               </label>
@@ -56,13 +56,13 @@ export default function Page({
             <div className="space-y-2">
               <div className="flex flex-row justify-between">
                 <Link
-                  className="text-secondary-950 underline text-sm"
+                  className="text-secondary underline text-sm"
                   href="/app/auth/signup"
                 >
                   Ich habe keinen Account?
                 </Link>
                 <Link
-                  className="text-secondary-950 underline text-sm"
+                  className="text-secondary underline text-sm"
                   href="/app/auth/signin"
                 >
                   Zum Login
@@ -85,14 +85,14 @@ export default function Page({
                 <div className="flex flex-row w-full justify-end">
                   <Link
                     href="/auth/recovery?status=retry"
-                    className="text-secondary-950 underline text-sm"
+                    className="text-secondary underline text-sm"
                   >
                     Keine Email erhalten?
                   </Link>
                 </div>
               )}
               {Boolean(state?.message) && (
-                <div className="text-sm text-red-600 text-right">
+                <div className="text-sm text-red text-right">
                   ✗ {state.message}
                 </div>
               )}

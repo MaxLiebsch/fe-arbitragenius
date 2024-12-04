@@ -33,7 +33,7 @@ const Invoices = ({ invoices }: { invoices: Stripe.Invoice[] }) => {
           >
             <div className="min-w-0">
               <div className="flex items-start gap-x-3">{id}</div>
-              <p className="mt-1 flex text-xs/5 text-gray-500">
+              <p className="mt-1 flex text-xs/5 text-gray">
                 {format(fromUnixTime(period_start), "dd.MM.yyyy")}-
                 {format(fromUnixTime(period_end), "dd.MM.yyyy")}
               </p>
@@ -41,7 +41,7 @@ const Invoices = ({ invoices }: { invoices: Stripe.Invoice[] }) => {
             </div>
             <div>
               <div className="flex items-start gap-x-3">Rechungsbetrag</div>
-              <p className="text-sm/5 font-medium text-gray-900">
+              <p className="text-sm/5 font-medium text-gray-dark">
                 {total ? formatCurrency(total / 100) : formatter.format(0)}
               </p>
             </div>

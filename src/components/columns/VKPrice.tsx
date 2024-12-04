@@ -34,7 +34,7 @@ const VKPrice = ({
             </div>
           </Tooltip>
           <div className="text-xs">
-            <span className="text-green-600">{netto ? "Netto" : "Brutto"}</span>
+            <span className="text-green">{netto ? "Netto" : "Brutto"}</span>
           </div>
         </div>
       );
@@ -72,7 +72,7 @@ const VKPrice = ({
       return (
         <div className="flex flex-col">
           {dumping && !flip ? (
-            <div className="text-blue-600  flex flex-row items-center gap-1">
+            <div className="text-blue-600 dark:text-blue=300 flex flex-row items-center gap-1">
               <span className="h-6 w-6">
                 <ExclamationCircleIcon />
               </span>
@@ -81,7 +81,7 @@ const VKPrice = ({
           ) : (
             <></>
           )}
-          <div className={`${netto ? "" : "font-semibold text-green-600"}`}>
+          <div className={`${netto ? "" : "font-semibold text-green"}`}>
             <span>
               {formatCurrency(
                 parseFloat(flip || shop === "flip" ? avgPrice : params.value)
@@ -106,7 +106,7 @@ const VKPrice = ({
               <span className="text-xs">{targetQty} Stück</span>
             </>
           )}
-          <div className={`${netto ? "font-semibold text-green-600" : ""}`}>
+          <div className={`${netto ? "font-semibold text-green" : ""}`}>
             {formatCurrency(
               calculationDeduction(
                 parseFloat(target === "a" ? priceForCalculation : e_prc),
@@ -116,10 +116,10 @@ const VKPrice = ({
           </div>
           {target === "e" && min && max ? (
             <>
-              <div className="text-xs text-gray-500">
+              <div className="text-xs text-gray">
                 <span>Min: {formatter.format(min)}</span>
               </div>
-              <div className="text-xs text-gray-500">
+              <div className="text-xs text-gray">
                 <span>Max: {formatter.format(max)}</span>
               </div>
             </>

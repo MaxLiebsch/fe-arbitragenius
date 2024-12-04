@@ -81,7 +81,7 @@ const InfoField = ({
               )}
               <>{LinkWrapper(lnk, nm, mnfctr)}</>
               {lastUpdated && (
-                <time className="ml-auto mt-auto text-gray-500 text-xs">
+                <time className="ml-auto mt-auto text-gray text-xs">
                   {formatDistanceToNow(parseISO(lastUpdated), {
                     locale: de,
                     addSuffix: true,
@@ -104,7 +104,7 @@ const InfoField = ({
                 {LinkWrapper(targetLink, targetName)}
               </div>
               {targetUpdatedAt && (
-                <time className="ml-auto mt-auto text-gray-500 text-xs">
+                <time className="ml-auto mt-auto text-gray text-xs">
                   {formatDistanceToNow(parseISO(targetUpdatedAt), {
                     locale: de,
                     addSuffix: true,

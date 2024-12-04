@@ -17,7 +17,7 @@ const SignIn = () => {
     <>
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-          <h2 className="text-center text-2xl font-bold leading-9 tracking-tight text-secondary-950 flex justify-center space-x-3">
+          <h2 className="text-center text-2xl font-bold leading-9 tracking-tight text-secondary flex justify-center space-x-3">
             <span>Anmelden bei </span>
             <span className="inline-block -mb-2">
               <Logo />
@@ -30,7 +30,7 @@ const SignIn = () => {
               <div>
                 <label
                   htmlFor="email"
-                  className="block text-sm font-medium leading-6 text-gray-900"
+                  className="block text-sm font-medium leading-6 text-gray-dark"
                 >
                   Email Addresse *
                 </label>
@@ -49,7 +49,7 @@ const SignIn = () => {
                 <div className="flex items-center justify-between">
                   <label
                     htmlFor="password"
-                    className="block text-sm font-medium leading-6 text-gray-900"
+                    className="block text-sm font-medium leading-6 text-gray-dark"
                   >
                     Passwort *
                   </label>
@@ -75,13 +75,13 @@ const SignIn = () => {
               <div className="space-y-1">
                 <div className="flex flex-row justify-between mb-3">
                   <a
-                    className="text-secondary-950 underline text-sm"
+                    className="text-secondary underline text-sm"
                     href="/app/auth/signup"
                   >
                     Keinen Account?
                   </a>
                   <a
-                    className="text-secondary-950 underline text-sm"
+                    className="text-secondary underline text-sm"
                     href="/app/auth/recovery"
                   >
                     Passwort vergessen?

@@ -9,8 +9,8 @@ export default function InvalidPage({ text }: { text: string }) {
           <Logo />
         </div>
       </div>
-      <h1 className="mt-3 text-lg font-semibold text-gray-900">Upps!</h1>
-      <p className="mt-3 text-sm text-gray-700">{text}</p>
+      <h1 className="mt-3 text-lg font-semibold text-gray-dark">Upps!</h1>
+      <p className="mt-3 text-sm text-gray-dark">{text}</p>
     </SlimLayout>
   );
 }

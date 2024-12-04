@@ -10,7 +10,7 @@ const MinMargin = ({ layout }: { layout: Layout }) => {
     <div className={`${layout === "wide" ? "sm:col-span-3" : "sm:col-span-2"}`}>
       <label
         htmlFor="minMargin"
-        className="block text-sm font-medium leading-6 text-secondary-950"
+        className="block text-sm font-medium leading-6 text-secondary"
       >
         Minimale Marge € ({settings.netto ? "Netto" : "Brutto"})
       </label>
@@ -39,7 +39,7 @@ const MinMargin = ({ layout }: { layout: Layout }) => {
             step={1}
             min={0}
             max={9999}
-            className="block w-full rounded-md border-0 bg-white/5 py-1.5 pl-1 text-secondary-950 shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
+            className="block w-full rounded-md border-0 bg-white/5 py-1.5 pl-1 text-secondary shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
           />
         </Form.Item>
       </div>

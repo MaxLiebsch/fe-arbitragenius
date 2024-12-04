@@ -155,7 +155,7 @@ const ContentMarge = ({
           }}
           addonBefore="Verkaufspreis € (Brutto)"
         />
-        <h3 className="font-semibold leading-6 mb-1 mt-2 text-gray-900 flex flex-row space-x-1 items-center">
+        <h3 className="font-semibold leading-6 mb-1 mt-2 text-gray-dark flex flex-row space-x-1 items-center">
           <div className="flex flex-row w-full">
             <p>Amazon Gebühren:</p>
             <p className="ml-auto">
@@ -175,13 +175,13 @@ const ContentMarge = ({
         </div>
         {fba ? (
           <>
-            <h3 className="font-semibold leading-6 mt-2 mb-1 text-gray-900 flex flex-row space-x-1 items-center">
+            <h3 className="font-semibold leading-6 mt-2 mb-1 text-gray-dark flex flex-row space-x-1 items-center">
               <div className="flex flex-row w-full">
                 <p>Versandkosten:</p>
                 <p className="ml-auto">{formatter.format(costs.tpt)}</p>
               </div>
             </h3>
-            <h3 className="font-semibold leading-6 mb-1 mt-2 text-gray-900 flex flex-row space-x-1 items-center">
+            <h3 className="font-semibold leading-6 mb-1 mt-2 text-gray-dark flex flex-row space-x-1 items-center">
               <div className="flex flex-row w-full">
                 <p>Lagerkosten:</p>
                 <p className="ml-auto">{formatter.format(costs[period])}</p>
@@ -202,7 +202,7 @@ const ContentMarge = ({
           </>
         ) : (
           <>
-            <h3 className="font-semibold leading-6 mt-2 mb-1 text-gray-900 flex flex-row space-x-1 items-center">
+            <h3 className="font-semibold leading-6 mt-2 mb-1 text-gray-dark flex flex-row space-x-1 items-center">
               <InputNumber
                 value={transport}
                 onChange={(e) => {
@@ -219,7 +219,7 @@ const ContentMarge = ({
                 addonBefore="Versandkosten €"
               />
             </h3>
-            <h3 className="font-semibold leading-6 mb-1 text-gray-900 flex flex-row space-x-1 items-center">
+            <h3 className="font-semibold leading-6 mb-1 text-gray-dark flex flex-row space-x-1 items-center">
               <InputNumber
                 value={storageCosts}
                 onChange={(e) => {
@@ -238,7 +238,7 @@ const ContentMarge = ({
             </h3>
           </>
         )}
-        <h3 className="font-semibold leading-6 mt-2 mb-1 text-gray-900 flex flex-row space-x-1 items-center">
+        <h3 className="font-semibold leading-6 mt-2 mb-1 text-gray-dark flex flex-row space-x-1 items-center">
           <div className="flex flex-row w-full">
             <p>Sonstige Kosten:</p>
             <p className="ml-auto">{formatter.format(tax + netBuyPrice)}</p>
@@ -261,7 +261,7 @@ const ContentMarge = ({
             stringMode
             addonBefore="Einkaufspreis € (Netto)"
           />
-          <h3 className="leading-6 mb-1 text-gray-900 flex flex-row space-x-1 items-center">
+          <h3 className="leading-6 mb-1 text-gray-dark flex flex-row space-x-1 items-center">
             <InputNumber
               value={prepCenterCosts}
               className="w-full"
@@ -279,36 +279,36 @@ const ContentMarge = ({
           </h3>
         </div>
         <div className="w-full flex flex-col">
-          <h3 className="font-semibold leading-6 mt-2 mb-1 text-gray-900 flex flex-row space-x-1 items-center">
+          <h3 className="font-semibold leading-6 mt-2 mb-1 text-gray-dark flex flex-row space-x-1 items-center">
             <div className="flex flex-row w-full">
               <p>Nettogewinn:</p>
               <p
                 className={`ml-auto ${
-                  earning < 0 ? "text-red-600" : "text-green-600"
+                  earning < 0 ? "text-red" : "text-green"
                 }`}
               >
                 {formatter.format(earning)}
               </p>
             </div>
           </h3>
-          <h3 className="font-semibold leading-6 mb-1 text-gray-900 flex flex-row space-x-1 items-center">
+          <h3 className="font-semibold leading-6 mb-1 text-gray-dark flex flex-row space-x-1 items-center">
             <div className="flex flex-row w-full">
               <p>ROI (Netto):</p>
               <p
                 className={`ml-auto ${
-                  roi < 0 ? "text-red-600" : "text-green-600"
+                  roi < 0 ? "text-red" : "text-green"
                 }`}
               >
                 {appendPercentage(roi)}
               </p>
             </div>
           </h3>
-          <h3 className="font-semibold leading-6 mb-1 text-gray-900 flex flex-row space-x-1 items-center">
+          <h3 className="font-semibold leading-6 mb-1 text-gray-dark flex flex-row space-x-1 items-center">
             <div className="flex flex-row w-full">
               <p>Nettomarge:</p>
               <p
                 className={`ml-auto ${
-                  earning < 0 ? "text-red-600" : "text-green-600"
+                  earning < 0 ? "text-red" : "text-green"
                 }`}
               >
                 {appendPercentage(margin)}

@@ -262,7 +262,7 @@ const Page = async () => {
       <ul>
         {/* SCRAPER */}
         <li>
-          <h3 className="text-base font-semibold leading-6 text-gray-900 flex flex-row space-x-1 items-center">
+          <h3 className="text-base font-semibold leading-6 text-gray-dark flex flex-row space-x-1 items-center">
             {scraper.length} Scraper
           </h3>
           <div className="grid grid-cols-4 gap-2 w-full md:w-[calc(100vw-400px)] overflow-x-auto">
@@ -312,7 +312,7 @@ const Page = async () => {
         <ProcessStats processStats={processStats[0]} />
         {/* INFRASTRUCTURE */}
         <li>
-          <h3 className="text-base font-semibold leading-6 text-gray-900 flex flex-row space-x-1 items-center">
+          <h3 className="text-base font-semibold leading-6 text-gray-dark flex flex-row space-x-1 items-center">
             {infrastructure.length} Other (Infrastructure)
           </h3>
           <div className="grid grid-cols-4 gap-2 w-full md:w-[calc(100vw-400px)] overflow-x-auto">
@@ -328,7 +328,7 @@ const Page = async () => {
         </li>
         {/* KEEPA */}
         <li>
-          <h3 className="text-base font-semibold leading-6 text-gray-900 flex flex-row space-x-1 items-center">
+          <h3 className="text-base font-semibold leading-6 text-gray-dark flex flex-row space-x-1 items-center">
             {keepaTasks.length} Keepa Tasks
           </h3>
           <div className="flex flex-col">
@@ -345,7 +345,7 @@ const Page = async () => {
         </li>
         {/* CRAWL SHOPS */}
         <li>
-          <h3 className="text-base font-semibold leading-6 text-gray-900 flex flex-row space-x-1 items-center">
+          <h3 className="text-base font-semibold leading-6 text-gray-dark flex flex-row space-x-1 items-center">
             {shops.length} Shops Crawl Shops Total: {total}
           </h3>
           <div>
@@ -376,7 +376,7 @@ const Page = async () => {
 
         {/* DAILY SALES */}
         <li>
-          <h3 className="text-base font-semibold leading-6 text-gray-900 flex flex-row space-x-1 items-center">
+          <h3 className="text-base font-semibold leading-6 text-gray-dark flex flex-row space-x-1 items-center">
             {shops.length} Daily Deals Total: {totalSales}
           </h3>
           <div>
@@ -387,7 +387,7 @@ const Page = async () => {
         </li>
         {/* MATCH PRODUCTS */}
         <li>
-          <h3 className="text-base font-semibold leading-6 text-gray-900 flex flex-row space-x-1 items-center">
+          <h3 className="text-base font-semibold leading-6 text-gray-dark flex flex-row space-x-1 items-center">
             Match
           </h3>
           <div>
@@ -406,7 +406,7 @@ const Page = async () => {
         <div className="flex flex-col md:flex-row justify-between">
           {/* CRAWL EANS */}
           <li>
-            <h3 className="text-base font-semibold leading-6 text-gray-900 flex flex-row space-x-1 items-center">
+            <h3 className="text-base font-semibold leading-6 text-gray-dark flex flex-row space-x-1 items-center">
               Crawl Eans
             </h3>
             <div>{totalCrawlEans} pending</div>
@@ -427,7 +427,7 @@ const Page = async () => {
           </li>
           {/* LOOKUP INFOS */}
           <li>
-            <h3 className="text-base font-semibold leading-6 text-gray-900 flex flex-row space-x-1 items-center">
+            <h3 className="text-base font-semibold leading-6 text-gray-dark flex flex-row space-x-1 items-center">
               Lookup Infos
             </h3>
             <div>{totalLookupInfos} pending</div>
@@ -448,7 +448,7 @@ const Page = async () => {
           </li>
           {/* QUERY EANS ON EBAY */}
           <li>
-            <h3 className="text-base font-semibold leading-6 text-gray-900 flex flex-row space-x-1 items-center">
+            <h3 className="text-base font-semibold leading-6 text-gray-dark flex flex-row space-x-1 items-center">
               Query Eans on Ebay
             </h3>
             <div>{totalQueryEansEby} pending</div>
@@ -469,7 +469,7 @@ const Page = async () => {
           </li>
           {/* LOOKUP CATEGORY */}
           <li>
-            <h3 className="text-base font-semibold leading-6 text-gray-900 flex flex-row space-x-1 items-center">
+            <h3 className="text-base font-semibold leading-6 text-gray-dark flex flex-row space-x-1 items-center">
               LookupCategories
             </h3>
             <div>{totalLookupCategory} pending</div>
@@ -493,7 +493,7 @@ const Page = async () => {
         <div className="flex flex-col md:flex-row justify-between">
           {/* SCRAPE POS LISTINGS AZN */}
           <li>
-            <h3 className="text-base font-semibold leading-6 text-gray-900 flex flex-row space-x-1 items-center">
+            <h3 className="text-base font-semibold leading-6 text-gray-dark flex flex-row space-x-1 items-center">
               Pos. Margin - Azn
             </h3>
             <div>{totalDealsOnAzn} pending</div>
@@ -528,7 +528,7 @@ const Page = async () => {
           </li>
           {/* SCRAPE AZN LISTINGS */}
           <li>
-            <h3 className="text-base font-semibold leading-6 text-gray-900 flex flex-row space-x-1 items-center">
+            <h3 className="text-base font-semibold leading-6 text-gray-dark flex flex-row space-x-1 items-center">
               Neg. Margin - Azn
             </h3>
             <div>{totalNegAznDeals} pending</div>
@@ -563,7 +563,7 @@ const Page = async () => {
           </li>
           {/* SCRAPE POS LISTINGS EBY */}
           <li>
-            <h3 className="text-base font-semibold leading-6 text-gray-900 flex flex-row space-x-1 items-center">
+            <h3 className="text-base font-semibold leading-6 text-gray-dark flex flex-row space-x-1 items-center">
               Pos. Margin - Eby
             </h3>
             <div>{totalDealsOnEby} pending</div>
@@ -598,7 +598,7 @@ const Page = async () => {
           </li>
           {/* SCRAPE EBY LISTINGS */}
           <li>
-            <h3 className="text-base font-semibold leading-6 text-gray-900 flex flex-row space-x-1 items-center">
+            <h3 className="text-base font-semibold leading-6 text-gray-dark flex flex-row space-x-1 items-center">
               Neg. Margin - Eby
             </h3>
             <div>{totalNegEbyDeals} pending</div>

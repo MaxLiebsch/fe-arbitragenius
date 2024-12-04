@@ -28,7 +28,7 @@ const SalesTableTabs = () => {
                 {({ selected }) => (
                   <div
                     key={item.name}
-                    className={selected ? "text-primary-950" : ""}
+                    className={selected ? "text-gray-dark" : ""}
                   >
                     {item.name}
                   </div>
@@ -37,7 +37,7 @@ const SalesTableTabs = () => {
             );
           })}
         </Tab.List>
-        <div className="absolute text-primary-950 text-xs right-0 top-[1.25rem]">
+        <div className="absolute text-gray-dark text-xs right-0 top-[1.25rem]">
           DipMax Export GmbH übernimmt für die dargestellten Informationen und
           deren Genauigkeit und Vollständigkeit keine Gewährleistung.
         </div>

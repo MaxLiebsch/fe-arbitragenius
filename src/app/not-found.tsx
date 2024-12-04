@@ -12,11 +12,11 @@ export default function NotFound() {
           <Logo />
         </div>
       </div>
-      <p className="mt-20 text-sm font-medium text-gray-700">404</p>
-      <h1 className="mt-3 text-lg font-semibold text-gray-900">
+      <p className="mt-20 text-sm font-medium text-gray-dark">404</p>
+      <h1 className="mt-3 text-lg font-semibold text-gray-dark">
         Upps! Seite nicht gefunden
       </h1>
-      <p className="mt-3 text-sm text-gray-700">
+      <p className="mt-3 text-sm text-gray-dark">
         Leider konnten wir die gesuchte Seite nicht finden.
       </p>
       <Button href="/" className="mt-10">

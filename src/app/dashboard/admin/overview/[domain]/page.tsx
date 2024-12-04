@@ -37,7 +37,7 @@ const Page = async ({
       <div>
         {_tasks.map((task) => (
           <div key={task.id}>
-            <h2 className="text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
+            <h2 className="text-center text-2xl font-bold leading-9 tracking-tight text-gray-dark">
               Task: {task.id}
             </h2>
             <TaskEditor task={{ ...task, _id: task._id.toString() }} />

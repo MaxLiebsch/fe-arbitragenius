@@ -1,6 +1,6 @@
 {
   "name": "fe-arbitrage",
-  "version": "0.0.485",
+  "version": "0.0.486",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -10,12 +10,12 @@
   },
   "dependencies": {
     "@ant-design/nextjs-registry": "^1.0.0",
-    "@emotion/react": "^11.11.4",
-    "@emotion/styled": "^11.11.0",
+    "@emotion/react": "^11.13.5",
+    "@emotion/styled": "^11.13.5",
     "@headlessui/react": "^1.7.18",
     "@headlessui/tailwindcss": "^0.2.0",
     "@heroicons/react": "^2.1.1",
-    "@mui/material": "^5.15.11",
+    "@mui/material": "^6.1.9",
     "@mui/x-data-grid-premium": "^6.19.5",
     "@sentry/nextjs": "^8.2.1",
     "@tailwindcss/forms": "^0.5.7",
@@ -35,6 +35,7 @@
     "jsoneditor-react": "^3.1.2",
     "mongodb": "^6.4.0",
     "next": "v14.2.5",
+    "next-themes": "^0.4.3",
     "node-appwrite": "^12.0.0",
     "notistack": "^3.0.1",
     "papaparse": "^5.4.1",
@@ -58,7 +59,7 @@
     "eslint": "^8",
     "eslint-config-next": "^14.2.3",
     "postcss": "^8",
-    "tailwindcss": "^3.3.0",
+    "tailwindcss": "^3.4.16",
     "typescript": "^5",
     "webpack": "^5.91.0"
   }

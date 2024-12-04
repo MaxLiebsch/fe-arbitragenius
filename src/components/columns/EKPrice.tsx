@@ -24,8 +24,8 @@ const EKPrice = ({
         <Tooltip title="Einkaufspreis des Produktes" placement="topLeft">
           <div>EK</div>
         </Tooltip>
-        <div className="bottom-1 text-xs text-gray-500">
-          <span className="text-green-600">{netto ? "Netto" : "Brutto"}</span>
+        <div className="bottom-1 text-xs text-gray">
+          <span className="text-green">{netto ? "Netto" : "Brutto"}</span>
         </div>
       </div>
     ),
@@ -37,7 +37,7 @@ const EKPrice = ({
       const currQty = flip || shop === "flip" ? a_qty : qty;
       return (
         <div className="flex flex-col">
-          <div className={`${netto ? "" : "font-semibold text-green-600"}`}>
+          <div className={`${netto ? "" : "font-semibold text-green"}`}>
             {formatCurrency(price)}
           </div>
           {currQty > 1 && (
@@ -46,7 +46,7 @@ const EKPrice = ({
             <span className="text-xs">{currQty} Stück</span>
             </>
           )}
-          <div className={`${netto ? "font-semibold text-green-600" : ""}`}>
+          <div className={`${netto ? "font-semibold text-green" : ""}`}>
             {formatCurrency(calculationDeduction(price, true))}
           </div>
         </div>

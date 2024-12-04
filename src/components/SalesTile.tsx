@@ -16,8 +16,8 @@ const SalesTile = ({ shop }: { shop: Shop }) => {
           title={
             <div className="flex flex-row items-center">
               <div className="flex flex-col">
-                <div>Sales Monitor</div>
-                <div className="text-sm font-thin text-gray-500">
+                <div className="text-secondary">Sales Monitor</div>
+                <div className="text-sm font-thin text-gray">
                   Gesamt: {shop.total ?? 0}
                 </div>
               </div>

@@ -72,7 +72,7 @@ const Page = () => {
   return (
     <div className="h-full relative">
       <Title>Amazon Flips (Beta)</Title>
-      <div className="absolute text-primary-950 text-xs right-0 top-[3.15rem]">
+      <div className="absolute text-gray-dark text-xs right-0 top-[3.15rem]">
         Amazon Flips befindet sich im Beta-Status. Angebote können sehr schnell varieren. Es können Probleme bei der Margenberechnung auftreten.
       </div>
       <div className="flex h-[calc(100vh-198px)]">

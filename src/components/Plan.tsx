@@ -25,7 +25,7 @@ const Plan = ({
         "flex flex-col items-center rounded-3xl px-6 sm:px-8",
         featured
           ? "order-first bg-gradient-to-t from-secondary-800 to-secondary-400 py-8 lg:order-none"
-          : "border border-primary-400 lg:py-8"
+          : "border border-secondary lg:py-8"
       )}
     >
       {featured ? (

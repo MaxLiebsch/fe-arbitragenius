@@ -27,7 +27,7 @@ const ScoreAndMatch = (props: ScoreAndMatchProps) => {
           {typeof isMatch === "boolean" && isMatch ? (
             <div className="text-green-500">Match!</div>
           ) : (
-            <div className="text-red-600">No Match!</div>
+            <div className="text-red">No Match!</div>
           )}
         </div>
       )}

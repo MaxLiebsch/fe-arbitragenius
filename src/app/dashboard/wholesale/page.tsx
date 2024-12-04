@@ -139,7 +139,7 @@ const columns: GridColDef<ProductRow>[] = [
     field: `a_mrgn`,
     headerName: "Marge €",
     renderCell: (params) => (
-      <div className="text-green-600 font-semibold">
+      <div className="text-green font-semibold">
         {formatCurrency(calculationDeduction(parseFloat(params.value), true))}
       </div>
     ),
@@ -431,7 +431,7 @@ const Page = () => {
               </div>
             ) : (
               <>
-                <h3 className="text-base font-semibold leading-6 text-gray-900 flex flex-row space-x-1 items-center mb-3">
+                <h3 className="text-base font-semibold leading-6 text-gray-dark flex flex-row space-x-1 items-center mb-3">
                   <div>Wholesale Analysen</div>
                 </h3>
                 <Space direction="horizontal" size={16}>

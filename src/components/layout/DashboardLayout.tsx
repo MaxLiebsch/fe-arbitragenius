@@ -13,6 +13,9 @@ import {
   XMarkIcon,
   SparklesIcon,
   ArrowsUpDownIcon,
+  SunIcon,
+  MoonIcon,
+  Cog6ToothIcon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
 
@@ -26,6 +29,11 @@ import { Badge } from "antd";
 import useAccount from "@/hooks/use-account";
 import { formatDistanceToNow } from "date-fns";
 import { de } from "date-fns/locale";
+import { useTheme } from "next-themes";
+import usePreferences from "@/hooks/use-preferences";
+import useAppereanceAdd from "@/hooks/use-appereance-add";
+import { Mode } from "@/types/Appearance";
+import { useUserTheme } from "@/hooks/useUserTheme";
 
 const navigation = [
   {
@@ -68,6 +76,23 @@ const navigation = [
 
 const userNavigation = [{ name: "Dein Profil", href: "/dashboard/profile" }];
 
+const appearanceItems = {
+  mode: [
+    {
+      mode: "light",
+      name: "Hell",
+    },
+    {
+      mode: "dark",
+      name: "Dunkel",
+    },
+    {
+      mode: "system",
+      name: "System",
+    },
+  ],
+};
+
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
@@ -98,12 +123,17 @@ export const DashboardLayout = ({
     message: "",
   });
   const [queryUpdate, setQueryUpdate] = useState(0);
-
+  const { theme } = useUserTheme()
+  const  mutateAppearance = useAppereanceAdd();
   useEffect(() => {
     if (state.message === "success") {
       router.push("/auth/signin");
     }
   }, [state, router]);
+
+  const darkMode = theme === "dark";
+
+  if (theme === undefined) return null;
 
   return (
     <TotalDealsContext.Provider value={{ queryUpdate, setQueryUpdate }}>
@@ -161,7 +191,7 @@ export const DashboardLayout = ({
                     </div>
                   </Transition.Child>
                   {/* Sidebar component, swap this element with another sidebar if you like */}
-                  <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-white px-6 pb-2 pt-5">
+                  <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-default px-6 pb-2 pt-5">
                     <div className="flex h-16 shrink-0 items-center">
                       <Logo />
                     </div>
@@ -175,16 +205,16 @@ export const DashboardLayout = ({
                                   href={item.href}
                                   className={classNames(
                                     pathname === item.href
-                                      ? "bg-gray-50 text-secondary-900"
-                                      : "text-gray-700 hover:text-secondary-900 hover:bg-gray-50",
+                                      ? "bg-gray-light text-secondary"
+                                      : "text-gray-dark hover:text-secondary hover:bg-gray-light",
                                     "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
                                   )}
                                 >
                                   <item.icon
                                     className={classNames(
                                       pathname === item.href
-                                        ? "text-secondary-900"
-                                        : "text-gray-400 group-hover:text-secondary-900",
+                                        ? "text-secondary"
+                                        : "text-gray-400 group-hover:text-secondary",
                                       "h-6 w-6 shrink-0"
                                     )}
                                     aria-hidden="true"
@@ -212,16 +242,16 @@ export const DashboardLayout = ({
                                   href={`/dashboard/shop/${shop.d}`}
                                   className={classNames(
                                     pathname.includes(shop.d)
-                                      ? "bg-gray-50 text-secondary-900"
-                                      : "text-gray-700 hover:text-secondary-900 hover:bg-gray-50",
+                                      ? "bg-gray-light text-secondary"
+                                      : "text-gray-dark hover:text-secondary hover:bg-gray-light",
                                     "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
                                   )}
                                 >
                                   <span
                                     className={classNames(
                                       // team.current
-                                      //   ? "text-secondary-900 border-secondary-900" :
-                                      "text-gray-400 border-gray-200 group-hover:border-secondary-900 group-hover:text-secondary-900",
+                                      //   ? "text-secondary border-secondary-900" :
+                                      "text-gray-400 border-border-gray group-hover:border-secondary-900 group-hover:text-secondary",
                                       "flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border text-[0.625rem] font-medium bg-white"
                                     )}
                                   >
@@ -248,7 +278,7 @@ export const DashboardLayout = ({
         {/* Static sidebar for desktop */}
         <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
           {/* Sidebar component, swap this element with another sidebar if you like */}
-          <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6">
+          <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-border-gray bg-default  px-6">
             <div className="mt-5">
               <Logo />
             </div>
@@ -275,16 +305,16 @@ export const DashboardLayout = ({
                             href={item.href}
                             className={classNames(
                               item.href === pathname
-                                ? "bg-gray-50 text-secondary-900"
-                                : "text-gray-700 hover:text-secondary-900 hover:bg-gray-50",
+                                ? "bg-gray-light text-secondary"
+                                : "text-gray-dark hover:text-secondary hover:bg-gray-light",
                               "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
                             )}
                           >
                             <item.icon
                               className={classNames(
                                 item.href === pathname
-                                  ? "text-secondary-900"
-                                  : "text-gray-400 group-hover:text-secondary-900",
+                                  ? "text-secondary"
+                                  : "text-gray-400 group-hover:text-secondary",
                                 "h-6 w-6 shrink-0"
                               )}
                               aria-hidden="true"
@@ -306,10 +336,10 @@ export const DashboardLayout = ({
 
         <main className="h-full">
           <div className="lg:pl-80 fixed top-0 z-40 lg:mx-auto lg:px-8 w-full">
-            <div className="flex h-16 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-0 lg:shadow-none">
+            <div className="flex h-16 items-center gap-x-4 border-b border-border-gray bg-default px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-0 lg:shadow-none">
               <button
                 type="button"
-                className="-m-2.5 p-2.5 text-gray-700 lg:hidden"
+                className="-m-2.5 p-2.5 text-gray-dark lg:hidden"
                 onClick={() => setSidebarOpen(true)}
               >
                 <span className="sr-only">Open sidebar</span>
@@ -350,7 +380,7 @@ export const DashboardLayout = ({
                   />
                   <input
                     id="search-field"
-                    className="block h-full w-full border-0 py-0 pl-8 pr-0 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm"
+                    className="block h-full w-full border-0 py-0 pl-8 pr-0 text-gray-dark placeholder:text-gray-400 focus:ring-0 sm:text-sm"
                     placeholder="Search..."
                     type="search"
                     name="search"
@@ -363,14 +393,55 @@ export const DashboardLayout = ({
                     aria-hidden="true"
                   />
 
-                  {/* Profile dropdown */}
-                  <Menu as="div" className="relative">
+                  {/* Apperance dropdown */}
+                  <Menu as="div" className="dark:bg-black relative">
+                    <Menu.Button className="-m-1.5 flex items-center p-1.5">
+                      <Cog6ToothIcon className="h-6 w-6" />
+                      
+                    </Menu.Button>
+                    <Transition
+                      as={Fragment}
+                      enter="transition ease-out duration-100"
+                      enterFrom="transform opacity-0 scale-95"
+                      enterTo="transform opacity-100 scale-100"
+                      leave="transition ease-in duration-75"
+                      leaveFrom="transform opacity-100 scale-100"
+                      leaveTo="transform opacity-0 scale-95"
+                    >
+
+                      
+                      <Menu.Items className="dark:bg-black absolute right-0 z-10 mt-2.5 w-32 origin-top-right rounded-md bg-default py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none">
+                        {appearanceItems["mode"].map((item) => (
+                          <Menu.Item key={item.name}>
+                            {({ active }) => (
+                              <button
+                                onClick={() => {
+                                  mutateAppearance.mutate({
+                                    mode: item.mode as Mode,
+                                  });
+                                }}
+                                className={classNames(
+                                  "w-full",
+                                  theme === item.mode ? "bg-gray-light" : "",
+                                  "block px-3 py-1 text-sm leading-6 text-gray-dark"
+                                )}
+                              >
+                                {item.name}
+                              </button>
+                            )}
+                          </Menu.Item>
+                        ))}
+                      </Menu.Items>
+                    </Transition>
+                  </Menu>
+
+                  <Menu as="div" className="dark:bg-black relative">
                     <Menu.Button className="-m-1.5 flex items-center p-1.5">
                       <span className="sr-only">Open user menu</span>
                       <UserCircleIcon className="h-8 w-8 text-gray-400" />
                       <span className="hidden lg:flex lg:items-center">
                         <span
-                          className="ml-4 text-sm font-semibold leading-6 text-gray-900"
+                          className="ml-4 text-sm font-semibold leading-6 text-gray-dark"
                           aria-hidden="true"
                         >
                           {accountQuery.isSuccess ? (
@@ -394,15 +465,15 @@ export const DashboardLayout = ({
                       leaveFrom="transform opacity-100 scale-100"
                       leaveTo="transform opacity-0 scale-95"
                     >
-                      <Menu.Items className="absolute right-0 z-10 mt-2.5 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none">
+                      <Menu.Items className="dark:bg-black absolute right-0 z-10 mt-2.5 w-32 origin-top-right rounded-md bg-default py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none">
                         {userNavigation.map((item) => (
                           <Menu.Item key={item.name}>
                             {({ active }) => (
                               <Link
                                 href={item.href ? item.href : ""}
                                 className={classNames(
-                                  active ? "bg-gray-50" : "",
-                                  "block px-3 py-1 text-sm leading-6 text-gray-900"
+                                  active ? "bg-gray-light" : "",
+                                  "block px-3 py-1 text-sm leading-6 text-gray-dark"
                                 )}
                               >
                                 {item.name}
@@ -416,8 +487,8 @@ export const DashboardLayout = ({
                             <button
                               type="submit"
                               className={classNames(
-                                "focus:bg-gray-50",
-                                "block px-3 py-1 text-sm leading-6 text-gray-900"
+                                "focus:bg-gray-light",
+                                "block px-3 py-1 text-sm leading-6 text-gray-dark"
                               )}
                             >
                               Logout

@@ -67,7 +67,7 @@ const TotalDeals = () => {
 
   return (
     <div className="flex flex-row gap-2 items-center mb-3">
-      <div className="border-primary-400 border w-72 group inline-flex items-center justify-center rounded-md py-2 px-4 font-semibold focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2">
+      <div className="border-secondary border w-72 group inline-flex items-center justify-center rounded-md py-2 px-4 font-semibold focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 text-secondary">
         {amazonTotal > 0 ? (
           <CountUp
             className="block text-lg w-64 text-center"
@@ -85,11 +85,11 @@ const TotalDeals = () => {
             destroyTooltipOnHide
             title="Aktivere Amazon in den Profileinstellungen"
           >
-            <p>Amazon deaktiviert</p>
+            <p className="text-secondary">Amazon deaktiviert</p>
           </Tooltip>
         )}
       </div>
-      <div className="border-primary-400 border w-72 group inline-flex items-center justify-center rounded-md py-2 px-4 font-semibold focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2">
+      <div className="border-secondary border w-72 group inline-flex items-center justify-center rounded-md py-2 px-4 font-semibold focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 text-secondary">
         {ebayTotal > 0 ? (
           <CountUp
             className="block text-lg w-64 text-center"
@@ -107,12 +107,12 @@ const TotalDeals = () => {
             destroyTooltipOnHide
             title="Aktivere Ebay in den Profileinstellungen"
           >
-            <p>Ebay deaktiviert</p>
+            <p className="text-secondary">Ebay deaktiviert</p>
           </Tooltip>
         )}
       </div>
-      <div className="border-primary-400 border w-72 group inline-flex items-center justify-center rounded-md py-2 px-4 font-semibold focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2">
-        <p>Kaufland (Coming soon)</p>
+      <div className="border-secondary border w-72 group inline-flex items-center justify-center rounded-md py-2 px-4 font-semibold focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 text-secondary">
+        <p className="text-secondary">Kaufland (Coming soon)</p>
       </div>
     </div>
   );
