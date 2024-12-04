@@ -10,15 +10,15 @@ import useAccount from "@/hooks/use-account";
 import { useUserSettings } from "@/hooks/use-settings";
 import { defaultSettings } from "@/constant/defaultSettings";
 import { useUserTheme } from "@/hooks/useUserTheme";
+import MyThemeProvider from "./MyThemeProvider";
 
 const { defaultAlgorithm, darkAlgorithm } = theme;
 
 export default function Providers({ children }: { children: ReactNode }) {
   const accountQuery = useAccount();
   const [settings, setUserSettings] = useUserSettings();
-  const {theme, systemTheme} = useUserTheme() 
-  const darkMode = theme === "dark"
-
+  const { theme, systemTheme } = useUserTheme();
+  const darkMode = theme === "dark";
 
   useEffect(() => {
     const prefs = accountQuery.data?.prefs;
@@ -41,24 +41,24 @@ export default function Providers({ children }: { children: ReactNode }) {
   }, [accountQuery.data, setUserSettings, darkMode]);
 
   return (
-    
     <>
-    
       <SnackbarProvider />
       <MuiProvider>
-        <ConfigProvider
-          theme={{
-            algorithm: darkMode ? darkAlgorithm : defaultAlgorithm,
-            token: { 
-              colorPrimary: darkMode
-                ? (tw.theme as any).extend.colors["darkText"]
-                : (tw.theme as any).extend.colors["primary"]["500"],
-              borderRadius: 2,
-            },
-          }}
-        >
-          {children}
-        </ConfigProvider>
+        <MyThemeProvider>
+          <ConfigProvider
+            theme={{
+              algorithm: darkMode ? darkAlgorithm : defaultAlgorithm,
+              token: {
+                colorPrimary: darkMode
+                  ? (tw.theme as any).extend.colors["darkText"]
+                  : (tw.theme as any).extend.colors["primary"]["500"],
+                borderRadius: 2,
+              },
+            }}
+          >
+            {children}
+          </ConfigProvider>
+        </MyThemeProvider>
       </MuiProvider>
       <DevTools />
       <ReactQueryDevtools initialIsOpen={false} buttonPosition="bottom-left" />

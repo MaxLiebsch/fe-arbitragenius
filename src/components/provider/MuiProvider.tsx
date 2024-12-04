@@ -1,10 +1,8 @@
 "use client";
 
-import React, { ReactNode } from "react";
-import { ThemeProvider, createTheme } from "@mui/material/styles";
+import React, { ReactNode, useEffect } from "react";
+import { ThemeProvider, createTheme, useColorScheme } from "@mui/material/styles";
 import theme from "../../../tailwind.config";
-import { useTheme } from "next-themes";
-import { useUserTheme } from "@/hooks/useUserTheme";
 
 const colors = theme.theme?.extend?.colors as {
   primary: {
@@ -16,11 +14,10 @@ const colors = theme.theme?.extend?.colors as {
 };
 
 const MuiProvider = ({ children }: { children: ReactNode }) => {
-  const { theme, systemTheme} = useUserTheme()
+
   const muitheme = createTheme({
     colorSchemes: {
-      dark: theme === "dark" && true,
-      light: theme === "light" && true,
+      dark: true,
     },
     palette: {
       primary: {
