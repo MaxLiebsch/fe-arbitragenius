@@ -85,14 +85,12 @@ export async function GET(
   const res = await productCol.aggregate(aggregation).toArray();
   if (
     isAmazon &&
-    domain === "idealo.de" &&
     process.env.NODE_ENV === "development"
   ) {
     console.log("AZNAGGP", JSON.stringify(aggregation));
   }
   if (
     !isAmazon &&
-    domain === "idealo.de" &&
     process.env.NODE_ENV === "development"
   ) {
     console.log("EBYAGGP", JSON.stringify(aggregation));
