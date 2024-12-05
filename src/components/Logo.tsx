@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import logoSecondary from "@/images/logos/logo-secondary.svg";
-import logoPrimary from "@/images/logos/logo-gray-1.png";
+import logoPrimary from "@/images/logos/logo-darkmode.svg";
 import Link from "next/link";
 import { useThemeAtom } from "@/hooks/use-theme";
 export function Logo() {
@@ -13,7 +13,7 @@ export function Logo() {
         src={mode === "dark" ? logoPrimary : logoSecondary}
         priority={true}
         alt="Arbispotter"
-        style={{ width: "100%", height: mode === "dark" ? "64px" : "auto" }}
+        style={{ width: "100%", height: "auto" }}
       />
     </Link>
     // <svg aria-hidden="true" viewBox="0 0 109 40" {...props}>
