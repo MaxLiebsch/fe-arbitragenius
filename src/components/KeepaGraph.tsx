@@ -1,11 +1,10 @@
 import { keepaTimeSummand } from "@/constant/constant";
-import { useUserTheme } from "@/hooks/useUserTheme";
+import { useThemeAtom } from "@/hooks/use-theme";
 import { ModifiedProduct } from "@/types/Product";
 import { formatter } from "@/util/formatter";
 import { getLatestBsr } from "@/util/getLatestBsr";
 import { format, fromUnixTime } from "date-fns";
 import { de } from "date-fns/locale";
-import { useTheme } from "next-themes";
 import { useCallback, useMemo, useState } from "react";
 import {
   LineChart,
@@ -43,7 +42,7 @@ export const KeepaGraph = ({
   } = product;
 
   const { bsr, aznCategory } = getLatestBsr(product);
-  const {theme, systemTheme} =  useUserTheme()
+  const [{ mode }, setApperance] = useThemeAtom();
 
   const hasAhstprcs = ahstprcs && ahstprcs.length;
   const hasAnhstprcs = anhstprcs && anhstprcs.length;
@@ -211,7 +210,7 @@ export const KeepaGraph = ({
 
   // Custom tooltip
   const CustomTooltip = ({ active, payload, label }: any) => {
-    const darkMode = theme === "dark"
+    const darkMode = mode === "dark"
 
     let defaultStyle = {
       backgroundColor: "#fff",

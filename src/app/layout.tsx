@@ -15,21 +15,7 @@ export const metadata: Metadata = {
     template: "%s - Arbispotter",
     default: "Arbispotter - Move Fast, Earn Easy",
   },
-  description: "Wir machen Product Sourcing schnell, einfach und intelligent.",
-  icons: {
-    icon: [
-      {
-        media: "(prefers-color-scheme: light)",
-        url: "/app/favicon.ico",
-        href: "/app/favicon.ico",
-      },
-      {
-        media: "(prefers-color-scheme: dark)",
-        url: "/app/favicon-dark.ico",
-        href: "/app/favicon-dark.ico",
-      },
-    ],
-  },
+  description: "Wir machen Product Sourcing schnell, einfach und intelligent."
 };
 
 export default function RootLayout({

@@ -1,27 +1,22 @@
 "use client";
 
 import React, { ReactNode, useEffect } from "react";
-import { ThemeProvider, createTheme, useColorScheme } from "@mui/material/styles";
-import { useUserTheme } from "@/hooks/useUserTheme";
+import {
+  useColorScheme,
+} from "@mui/material/styles";
+import { useThemeAtom } from "@/hooks/use-theme";
 
 const MyThemeProvider = ({ children }: { children: ReactNode }) => {
   const { mode, setMode } = useColorScheme();
-  const {theme, systemTheme} = useUserTheme() 
-  console.log('mode:', mode)
-  const darkMode = theme === "dark"
+  const [{ mode: _mode }, setApperance] = useThemeAtom();
 
   useEffect(() => {
-    if(theme){
-      console.log('theme:', theme)
-      setMode(theme === 'dark' ? 'dark' : 'light')
+    if (_mode) {
+      setMode(_mode === "dark" ? "dark" : "light");
     }
-  }, [ darkMode, theme, setMode, mode]);
-  
-  return (
-    <>
-      {children}
-    </>
-  );
+  }, [_mode, setMode]);
+
+  return <>{children}</>;
 };
 
 export default MyThemeProvider;

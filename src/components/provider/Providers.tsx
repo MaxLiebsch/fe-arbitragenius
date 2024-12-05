@@ -40,6 +40,8 @@ export default function Providers({ children }: { children: ReactNode }) {
     }
   }, [accountQuery.data, setUserSettings, darkMode]);
 
+  if (!theme) return null;
+
   return (
     <>
       <SnackbarProvider />

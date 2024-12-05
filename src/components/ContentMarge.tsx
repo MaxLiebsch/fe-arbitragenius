@@ -2,7 +2,7 @@
 import { ModifiedProduct } from "@/types/Product";
 import { appendPercentage, formatter } from "@/util/formatter";
 import { InputNumber, Switch } from "antd";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import CopyToClipboard from "./CopyToClipboard";
 import {
   roundToFourDecimals,
@@ -14,6 +14,10 @@ import { calculateTax } from "@/util/calculateTax";
 import { calculateNetPrice } from "@/util/calculateNetPrice";
 import ArbitrageOneExportBtn from "./ArbitrageOneExportBtn";
 import { addCosts } from "@/util/addCosts";
+import {
+  mrgnFieldName,
+  mrgnPctFieldName,
+} from "@/util/productQueries/mrgnProps";
 
 const ContentMarge = ({
   product,
@@ -30,6 +34,11 @@ const ContentMarge = ({
     | "asin"
     | "nm"
     | "a_w_mrgn"
+    | "a_p_w_mrgn"
+    | "a_w_mrgn_pct"
+    | "a_p_w_mrgn"
+    | "a_p_w_mrgn_pct"
+    | "a_p_mrgn"
     | "eanList"
     | "a_useCurrPrice"
     | "a_qty"
@@ -70,6 +79,7 @@ const ContentMarge = ({
     settings[settings.a_tptStandard as "a_tptSmall"]
   );
   const [fba, setFba] = useState(settings.fba);
+  const [firstLoad, setFirstLoad] = useState(true);
   const [prepCenterCosts, setPrepCenterCosts] = useState(settings.a_prepCenter);
   const [storageCosts, setStorageCosts] = useState(settings.a_strg ?? 0);
   const [costs, setCosts] = useState(product["costs"]);
@@ -77,7 +87,17 @@ const ContentMarge = ({
   const [netBuyPrice, setNetBuyPrice] = useState(
     calculateNetPrice(initBuyPrice, product.tax) * factor
   );
-
+  const earningsFieldName = mrgnFieldName("a", settings.euProgram);
+  const marginFieldName = mrgnPctFieldName("a", settings.euProgram);
+  const [earnings, setEarnings] = useState<number>(
+    (product as ModifiedProduct)[earningsFieldName as keyof ModifiedProduct]
+  );
+  const [margin, setMargin] = useState<number>(
+    (product as ModifiedProduct)[marginFieldName as keyof ModifiedProduct]
+  );
+  const [roi, setRoi] = useState<number>(
+    roundToFourDecimals(earnings / netBuyPrice) * 100
+  );
   const strg_1_hy = new Date().getMonth() < 9;
   const [sellPrice, setSellPrice] = useState(initSellPrice);
   const [period, setPeriod] = useState<"strg_1_hy" | "strg_2_hy">(
@@ -98,18 +118,36 @@ const ContentMarge = ({
     tax,
     netBuyPrice,
   ]);
-  const earning = sellPrice - totalCosts;
-  const margin = roundToFourDecimals(earning / sellPrice) * 100;
-  const roi = roundToFourDecimals(earning / netBuyPrice) * 100;
 
-  // if (product.asin === "B01K7SHKCK") {
-  //   console.log("totalCosts:", totalCosts);
-  //   console.log("netBuyPrice:", netBuyPrice);
-  //   console.log("sellPrice:", sellPrice);
-  //   console.log("content window factor:", factor);
-  //   console.log("cal earning:", earning, "ist", product["a_w_mrgn"]);
-  //   console.log("content window roi:", roi);
-  // }
+  useEffect(() => {
+    if(firstLoad) {
+      setFirstLoad(false);
+      return;
+    }
+    const earning = sellPrice - totalCosts;
+    const margin = roundToFourDecimals(earning / sellPrice) * 100;
+    const roi = roundToFourDecimals(earning / netBuyPrice) * 100;
+    setRoi(roi);
+    setMargin(margin);
+    setEarnings(earning);
+    // if (product.asin === "B0C5QWYNVH") {
+    //   console.log("tax:", tax);
+    //   console.log("earning / netBuyPrice:", earning / netBuyPrice);
+    //   console.log("earning / sellPrice:", earning / sellPrice);
+    //   console.log("totalCosts:", totalCosts);
+    //   console.log("netBuyPrice:", netBuyPrice);
+    //   console.log("sellPrice:", sellPrice);
+    //   console.log("content window factor:", factor);
+    //   console.log("cal earning:", earning, "ist", earnings);
+    //   console.log("cal margin:", margin, "ist", _margin);
+    //   console.log("content window roi:", roi);
+    // }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    prepCenterCosts,
+    sellPrice,
+    netBuyPrice
+  ]);
 
   return (
     <div className="w-96 relative">
@@ -284,21 +322,17 @@ const ContentMarge = ({
               <p>Nettogewinn:</p>
               <p
                 className={`ml-auto ${
-                  earning < 0 ? "text-red" : "text-green"
+                  earnings < 0 ? "text-red" : "text-green"
                 }`}
               >
-                {formatter.format(earning)}
+                {formatter.format(earnings)}
               </p>
             </div>
           </h3>
           <h3 className="font-semibold leading-6 mb-1 text-gray-dark flex flex-row space-x-1 items-center">
             <div className="flex flex-row w-full">
               <p>ROI (Netto):</p>
-              <p
-                className={`ml-auto ${
-                  roi < 0 ? "text-red" : "text-green"
-                }`}
-              >
+              <p className={`ml-auto ${roi < 0 ? "text-red" : "text-green"}`}>
                 {appendPercentage(roi)}
               </p>
             </div>
@@ -308,7 +342,7 @@ const ContentMarge = ({
               <p>Nettomarge:</p>
               <p
                 className={`ml-auto ${
-                  earning < 0 ? "text-red" : "text-green"
+                  earnings < 0 ? "text-red" : "text-green"
                 }`}
               >
                 {appendPercentage(margin)}

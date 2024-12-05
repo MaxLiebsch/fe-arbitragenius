@@ -4,6 +4,7 @@ import { Button, Card } from "antd";
 import { Shop } from "@/hooks/use-shop";
 import Spinner from "./Spinner";
 import useSalesCount from "@/hooks/use-sales-count";
+import Link from "next/link";
 
 const SalesTile = ({ shop }: { shop: Shop }) => {
   const { data: aCount, isFetching: aIsFetching } = useSalesCount("a");
@@ -31,11 +32,11 @@ const SalesTile = ({ shop }: { shop: Shop }) => {
               <p className="w-full border-b border-gray-200 mb-2">Profitabel</p>
               <div className="flex flex-row gap-1">
                 {aCount?.productCount ? (
-                  <Button
-                    className="flex-grow"
-                    href={`/app/dashboard/daily-deals?target=amazon`}
+                  <Link
+                    className="flex-grow text-secondary border border-border-gray py-1"
+                    href={`/dashboard/daily-deals?target=amazon`}
                   >
-                    <p className="font-semibold flex flex-row hover:font-bold">
+                    <p className="font-semibold flex flex-row hover:font-bold justify-center">
                       <span>Amazon: </span>
                       {aIsFetching ? (
                         <Spinner size={"!w-1 ml-4"} />
@@ -45,14 +46,14 @@ const SalesTile = ({ shop }: { shop: Shop }) => {
                         </span>
                       )}
                     </p>
-                  </Button>
+                  </Link>
                 ) : null}
                 {eCount?.productCount ? (
-                  <Button
-                    className="flex-grow"
+                  <Link
+                    className="flex-grow text-secondary border border-border-gray py-1"
                     href={`/app/dashboard/daily-deals?target=ebay`}
                   >
-                    <p className="font-semibold flex flex-row hover:font-bold">
+                    <p className="font-semibold flex flex-row hover:font-bold justify-center">
                       <span>Ebay: </span>
                       {eIsFetching ? (
                         <Spinner size={"!w-1 ml-4"} />
@@ -62,7 +63,7 @@ const SalesTile = ({ shop }: { shop: Shop }) => {
                         </span>
                       )}
                     </p>
-                  </Button>
+                  </Link>
                 ) : null}
               </div>
             </div>

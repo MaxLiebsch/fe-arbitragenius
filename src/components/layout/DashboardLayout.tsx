@@ -31,7 +31,7 @@ import { formatDistanceToNow } from "date-fns";
 import { de } from "date-fns/locale";
 import useAppereanceAdd from "@/hooks/use-appereance-add";
 import { Mode } from "@/types/Appearance";
-import { useUserTheme } from "@/hooks/useUserTheme";
+import { useThemeAtom } from "@/hooks/use-theme";
 
 const navigation = [
   {
@@ -121,16 +121,15 @@ export const DashboardLayout = ({
     message: "",
   });
   const [queryUpdate, setQueryUpdate] = useState(0);
-  const { theme } = useUserTheme()
+  const [{ mode }, setApperance] = useThemeAtom();
   const [isClient, setIsClient] = useState(false);
-  const  mutateAppearance = useAppereanceAdd();
+  const mutateAppearance = useAppereanceAdd();
   useEffect(() => {
     if (state.message === "success") {
       router.push("/auth/signin");
     }
     setIsClient(true);
-
-  }, [state, router, theme]);
+  }, [state, router]);
 
   if (!isClient) {
     return null;
@@ -398,7 +397,6 @@ export const DashboardLayout = ({
                   <Menu as="div" className="dark:bg-black relative">
                     <Menu.Button className="-m-1.5 flex items-center p-1.5">
                       <Cog6ToothIcon className="h-6 w-6" />
-                      
                     </Menu.Button>
                     <Transition
                       as={Fragment}
@@ -409,8 +407,6 @@ export const DashboardLayout = ({
                       leaveFrom="transform opacity-100 scale-100"
                       leaveTo="transform opacity-0 scale-95"
                     >
-
-                      
                       <Menu.Items className="dark:bg-black absolute right-0 z-10 mt-2.5 w-32 origin-top-right rounded-md bg-default py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none">
                         {appearanceItems["mode"].map((item) => (
                           <Menu.Item key={item.name}>
@@ -423,7 +419,7 @@ export const DashboardLayout = ({
                                 }}
                                 className={classNames(
                                   "w-full",
-                                  theme === item.mode ? "bg-gray-light" : "",
+                                  mode === item.mode ? "bg-gray-light" : "",
                                   "block px-3 py-1 text-sm leading-6 text-gray-dark"
                                 )}
                               >
