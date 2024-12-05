@@ -13,7 +13,7 @@ export function Logo() {
         src={mode === "dark" ? logoPrimary : logoSecondary}
         priority={true}
         alt="Arbispotter"
-        style={{ width: "100%", height: "auto" }}
+        style={{ width: "100%", height: mode === "dark" ? "64px" : "auto" }}
       />
     </Link>
     // <svg aria-hidden="true" viewBox="0 0 109 40" {...props}>
