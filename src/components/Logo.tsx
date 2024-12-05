@@ -8,7 +8,7 @@ import { useThemeAtom } from "@/hooks/use-theme";
 export function Logo() {
   const [{ mode }, setApperance] = useThemeAtom();
   return (
-    <Link href="https://www.arbispotter.com">
+    <Link href="/">
       <Image
         src={mode === "dark" ? logoPrimary : logoSecondary}
         priority={true}
