@@ -10,7 +10,7 @@ export function Footer() {
       <Container>
         <div className="py-2 md:py-8">
           <Logo />
-          <nav className="mt-10 text-sm" aria-label="quick links">
+          <nav className="mt-3 md:mt-10 text-sm" aria-label="quick links">
             <div className="-my-1 flex flex-col lg:flex-row  justify-center gap-x-6">
               <NavLink href="https://www.arbispotter.com/imprint">
                 Impressum
