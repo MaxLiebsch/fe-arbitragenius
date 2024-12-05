@@ -52,7 +52,7 @@ const ProfileTargetPlatformsFilter = () => {
   return (
     <div className="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 px-4 py-6 sm:px-6 md:grid-cols-3 lg:px-8">
       <div>
-        <h2 className="text-base font-semibold leading-7 text-secondary-950">
+        <h2 className="text-base font-semibold leading-7 text-secondary">
           Zielplatformen
         </h2>
         <p className="mt-1 text-sm leading-6 text-gray-400">
@@ -71,7 +71,7 @@ const ProfileTargetPlatformsFilter = () => {
           <Form.Item style={{ marginBottom: "0px" }} name="targetPlatforms">
             <Checkbox.Group
               options={options}
-              className="rounded border-gray-300 pt-4 text-secondary-950 focus:ring-secondary-500"
+              className="rounded border-gray-300 pt-4 text-secondary focus:ring-secondary-500"
             />
           </Form.Item>
           {Boolean(error) && (

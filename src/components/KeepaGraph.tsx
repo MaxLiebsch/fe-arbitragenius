@@ -1,4 +1,5 @@
 import { keepaTimeSummand } from "@/constant/constant";
+import { useThemeAtom } from "@/hooks/use-theme";
 import { ModifiedProduct } from "@/types/Product";
 import { formatter } from "@/util/formatter";
 import { getLatestBsr } from "@/util/getLatestBsr";
@@ -41,6 +42,7 @@ export const KeepaGraph = ({
   } = product;
 
   const { bsr, aznCategory } = getLatestBsr(product);
+  const [{ mode }, setApperance] = useThemeAtom();
 
   const hasAhstprcs = ahstprcs && ahstprcs.length;
   const hasAnhstprcs = anhstprcs && anhstprcs.length;
@@ -204,17 +206,32 @@ export const KeepaGraph = ({
     );
   };
 
+
+
   // Custom tooltip
   const CustomTooltip = ({ active, payload, label }: any) => {
+    const darkMode = mode === "dark"
+
+    let defaultStyle = {
+      backgroundColor: "#fff",
+      border: "1px solid #ccc",
+      padding: "10px",
+    }
+
+    if(darkMode){
+      defaultStyle = {
+        backgroundColor: "#1a1a1a",
+        border: "1px solid #ccc",
+        padding: "10px",
+      }
+    }
+    
+    
     if (active && payload && payload.length) {
       return (
         <div
           className="custom-tooltip"
-          style={{
-            backgroundColor: "#fff",
-            border: "1px solid #ccc",
-            padding: "10px",
-          }}
+          style={defaultStyle}
         >
           <p
             className="label"

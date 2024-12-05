@@ -10,6 +10,15 @@ const serializers: {
     fallback?: string;
   };
 } = {
+  appearance: {
+    serialize(input?: any) {
+      return JSON.stringify(input);
+    },
+    deserialize(input?: any) {
+      return typeof input === "string" ? JSON.parse(input) : {};
+    },
+    fallback: JSON.stringify({ mode: "system" }),
+  },
   favorites: {
     serialize(input?: any) {
       return z
@@ -56,7 +65,7 @@ export async function GET(
 ) {
   const user = await getLoggedInUser();
   if (!user) return new Response("unauthorized", { status: 401 });
-
+  
   const preferences = user.prefs as any;
 
   if (Object.keys(user.prefs).includes(params.key) && serializers[params.key]) {

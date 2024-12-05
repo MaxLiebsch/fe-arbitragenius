@@ -5,7 +5,7 @@ import React from "react";
 const ShowProductsWithBsr = ({ layout }: { layout: Layout }) => {
   return (
     <div className={`${layout === "wide" ? "sm:col-span-3" : "sm:col-span-2"}`}>
-      <div className="block text-sm font-medium leading-6 text-secondary-950">
+      <div className="block text-sm font-medium leading-6 text-secondary">
         BSR (Amazon Bestseller Rang)
       </div>
       <div className="relative flex items-start">
@@ -15,7 +15,7 @@ const ShowProductsWithBsr = ({ layout }: { layout: Layout }) => {
             valuePropName="checked"
             name="productsWithNoBsr"
           >
-            <Checkbox className="rounded border-gray-300 pt-4 text-secondary-950 focus:ring-secondary-500">
+            <Checkbox className="rounded border-gray-300 pt-4 text-secondary focus:ring-secondary-500">
               Produkte ohne BSR anzeigen
             </Checkbox>
           </Form.Item>

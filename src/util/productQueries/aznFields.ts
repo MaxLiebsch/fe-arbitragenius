@@ -22,7 +22,7 @@ export const aznFields = (
     match["categoryTree.catId"] = { $in: settings.a_cats };
   }
 
-  if(sdmn){
+  if (sdmn) {
     match.sdmn = sdmn;
   }
 
@@ -35,17 +35,67 @@ export const aznFields = (
       $match: match,
     });
   }
-  if(fba){
+  if (fba) {
     // If the user does not use Azn FBA, then the margin is calculated,
     // based on there settings for transport, storage, and preparation center
     query.push(
+      {
+        $addFields: {
+          a_avg_prc: {
+            $cond: {
+              if: { $eq: ["$a_useCurrPrice", true] },
+              then: "$$REMOVE", // Skip field if using current price
+              else: {
+                $divide: [
+                  {
+                    $cond: {
+                      if: { $gt: ["$avg30_ahsprcs", -1] },
+                      then: "$avg30_ahsprcs",
+                      else: {
+                        $cond: {
+                          if: { $gt: ["$avg30_ansprcs", -1] },
+                          then: "$avg30_ansprcs",
+                          else: {
+                            $cond: {
+                              if: { $gt: ["$avg90_ahsprcs", -1] },
+                              then: "$avg90_ahsprcs",
+                              else: "$avg90_ansprcs",
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                  100,
+                ],
+              },
+            },
+          },
+        },
+      },
+      {
+        $addFields: {
+          computedPrice: {
+            $cond: {
+              if: {
+                $and: [
+                  { $ne: ["$a_avg_prc", null] },
+                  { $gt: ["$a_avg_prc", "$a_prc"] },
+                ],
+              },
+              then: "$a_avg_prc",
+              else: "$a_prc",
+            },
+          },
+        },
+      },
       {
         $addFields: {
           [mrgnFieldName("a", euProgram)]: {
             $round: [
               {
                 $subtract: [
-                  "$a_prc",
+                  "$computedPrice",
                   {
                     $add: [
                       {
@@ -66,10 +116,10 @@ export const aznFields = (
                       },
                       {
                         $subtract: [
-                          "$a_prc",
+                          "$computedPrice",
                           {
                             $divide: [
-                              "$a_prc",
+                              "$computedPrice",
                               {
                                 $add: [
                                   1,
@@ -106,7 +156,10 @@ export const aznFields = (
               {
                 $multiply: [
                   {
-                    $divide: [`$${mrgnFieldName("a", euProgram)}`, "$a_prc"],
+                    $divide: [
+                      `$${mrgnFieldName("a", euProgram)}`,
+                      "$computedPrice",
+                    ],
                   },
                   100,
                 ],
@@ -117,17 +170,67 @@ export const aznFields = (
         },
       }
     );
-  }else{
+  } else {
     // If the user does not use Azn FBA, then the margin is calculated,
     // based on there settings for transport, storage, and preparation center
     query.push(
+      {
+        $addFields: {
+          a_avg_prc: {
+            $cond: {
+              if: { $eq: ["$a_useCurrPrice", true] },
+              then: "$$REMOVE", // Skip field if using current price
+              else: {
+                $divide: [
+                  {
+                    $cond: {
+                      if: { $gt: ["$avg30_ahsprcs", -1] },
+                      then: "$avg30_ahsprcs",
+                      else: {
+                        $cond: {
+                          if: { $gt: ["$avg30_ansprcs", -1] },
+                          then: "$avg30_ansprcs",
+                          else: {
+                            $cond: {
+                              if: { $gt: ["$avg90_ahsprcs", -1] },
+                              then: "$avg90_ahsprcs",
+                              else: "$avg90_ansprcs",
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                  100,
+                ],
+              },
+            },
+          },
+        },
+      },
+      {
+        $addFields: {
+          computedPrice: {
+            $cond: {
+              if: {
+                $and: [
+                  { $ne: ["$a_avg_prc", null] },
+                  { $gt: ["$a_avg_prc", "$a_prc"] },
+                ],
+              },
+              then: "$a_avg_prc",
+              else: "$a_prc",
+            },
+          },
+        },
+      },
       {
         $addFields: {
           [mrgnFieldName("a", euProgram)]: {
             $round: [
               {
                 $subtract: [
-                  "$a_prc",
+                  "$computedPrice",
                   {
                     $add: [
                       {
@@ -148,10 +251,10 @@ export const aznFields = (
                       },
                       {
                         $subtract: [
-                          "$a_prc",
+                          "$computedPrice",
                           {
                             $divide: [
-                              "$a_prc",
+                              "$computedPrice",
                               {
                                 $add: [
                                   1,
@@ -187,7 +290,10 @@ export const aznFields = (
               {
                 $multiply: [
                   {
-                    $divide: [`$${mrgnFieldName("a", euProgram)}`, "$a_prc"],
+                    $divide: [
+                      `$${mrgnFieldName("a", euProgram)}`,
+                      "$computedPrice",
+                    ],
                   },
                   100,
                 ],
@@ -198,9 +304,7 @@ export const aznFields = (
         },
       }
     );
-
   }
 
-  
   return query;
 };

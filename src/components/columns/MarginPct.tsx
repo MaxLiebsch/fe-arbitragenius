@@ -32,7 +32,7 @@ const MarginPct = ({
           <span>{` (ROI)`}</span>
         </Tooltip>
         <div className="text-xs">
-          <span className="text-green-600">
+          <span className="text-green">
             {settings.netto ? "Netto" : "Brutto"}
           </span>
         </div>

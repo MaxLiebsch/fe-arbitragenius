@@ -56,7 +56,7 @@ const RetrieveAsin = (
             ) : (
               <span>
                 <span className="font-semibold"> BuyBox:</span>
-                <span className="text-green-600 font-medium"> Seller</span>
+                <span className="text-green font-medium"> Seller</span>
               </span>
             )}
           </span>

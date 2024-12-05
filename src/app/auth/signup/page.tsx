@@ -36,7 +36,7 @@ const SignUp = () => {
     <>
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-          <h2 className="text-center text-2xl font-bold leading-9 tracking-tight text-gray-900 flex items-center space-x-2">
+          <h2 className="text-center text-2xl font-bold leading-9 tracking-tight text-gray-dark flex items-center space-x-2">
             <span className="inline-block -mb-2">
               <Logo />
             </span>{" "}
@@ -49,7 +49,7 @@ const SignUp = () => {
               <div>
                 <label
                   htmlFor="email"
-                  className="block text-sm font-medium leading-6 text-gray-900"
+                  className="block text-sm font-medium leading-6 text-gray-dark"
                 >
                   Email Addresse *
                 </label>
@@ -69,7 +69,7 @@ const SignUp = () => {
               <div>
                 <label
                   htmlFor="email"
-                  className="block text-sm font-medium leading-6 text-gray-900"
+                  className="block text-sm font-medium leading-6 text-gray-dark"
                 >
                   Name
                 </label>
@@ -81,7 +81,7 @@ const SignUp = () => {
                 <div className="flex items-center justify-between">
                   <label
                     htmlFor="password"
-                    className="block text-sm font-medium leading-6 text-gray-900"
+                    className="block text-sm font-medium leading-6 text-gray-dark"
                   >
                     Passwort *
                   </label>
@@ -136,13 +136,13 @@ const SignUp = () => {
                       aria-describedby="terms-description"
                       name="terms"
                       type="checkbox"
-                      className="bg-secondary-600 h-4 w-4 rounded border-gray-300 text-secondary-950 focus:ring-secondary-500"
+                      className="bg-secondary-600 h-4 w-4 rounded border-gray-300 text-secondary focus:ring-secondary-500"
                     />
                   </div>
                   <div className="ml-3 text-sm leading-6">
                     <label
                       htmlFor="terms"
-                      className="font-medium text-gray-900"
+                      className="font-medium text-gray-dark"
                     >
                       Ich stimme
                     </label>{" "}
@@ -162,7 +162,7 @@ const SignUp = () => {
                         Datenschutz
                       </NavLink>
                     </span>
-                    <span id="terms-description" className="text-gray-500">
+                    <span id="terms-description" className="text-gray">
                       <span className="sr-only">AGB und Datenschutz </span>zu.
                     </span>
                   </div>
@@ -173,7 +173,7 @@ const SignUp = () => {
               </div>
               <div className="space-y-1">
                 <a
-                  className="text-secondary-950 underline"
+                  className="text-secondary underline"
                   href="/app/auth/signin"
                 >
                   Du hast bereits ein Account?

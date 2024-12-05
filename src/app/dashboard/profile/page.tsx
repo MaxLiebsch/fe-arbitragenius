@@ -121,7 +121,7 @@ const Page = () => {
                 {({ selected }) => (
                   <div
                     key={item.name}
-                    className={selected ? "text-primary-950" : ""}
+                    className={selected ? "text-gray-dark" : ""}
                   >
                     {item.name}
                   </div>
@@ -147,7 +147,7 @@ const Page = () => {
             <h1 className="sr-only">Account Einstellungen</h1>
             <div className="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 px-4 py-6 sm:px-6 md:grid-cols-3 lg:px-8">
               <div>
-                <h2 className="text-base font-semibold leading-7 text-secondary-950">
+                <h2 className="text-base font-semibold leading-7 text-secondary">
                   Persönliche Informationen
                 </h2>
                 <p className="mt-1 text-sm leading-6 text-gray-400">
@@ -164,7 +164,7 @@ const Page = () => {
                   <div className="sm:col-span-3">
                     <label
                       htmlFor="name"
-                      className="block text-sm font-medium leading-6 text-secondary-950"
+                      className="block text-sm font-medium leading-6 text-secondary"
                     >
                       Name
                     </label>
@@ -175,7 +175,7 @@ const Page = () => {
                         name="name"
                         id="name"
                         autoComplete="given-name"
-                        className="block w-full rounded-md border-0 bg-white/5 py-1.5 pl-1 text-secondary-950 shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
+                        className="block w-full rounded-md border-0 bg-white/5 py-1.5 pl-1 text-secondary shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
                       />
                     </div>
                     {Boolean(updateNameState?.error) && (
@@ -193,7 +193,7 @@ const Page = () => {
                   <div className="sm:col-span-3">
                     <label
                       htmlFor="email"
-                      className="block text-sm font-medium leading-6 text-secondary-950"
+                      className="block text-sm font-medium leading-6 text-secondary"
                     >
                       Email address
                     </label>
@@ -205,7 +205,7 @@ const Page = () => {
                         name="email"
                         type="email"
                         autoComplete="email"
-                        className="block w-full rounded-md border-0 bg-white/5 py-1.5 pl-1 text-secondary-950 shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
+                        className="block w-full rounded-md border-0 bg-white/5 py-1.5 pl-1 text-secondary shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
                       />
                     </div>
                   </div>
@@ -219,7 +219,7 @@ const Page = () => {
             {/* Change business information */}
             <div className="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 px-4 py-6 sm:px-6 md:grid-cols-3 lg:px-8">
               <div>
-                <h2 className="text-base font-semibold leading-7 text-secondary-950">
+                <h2 className="text-base font-semibold leading-7 text-secondary">
                   Geschäftsinformation
                 </h2>
                 <p className="mt-1 text-sm leading-6 text-gray-400">
@@ -237,7 +237,7 @@ const Page = () => {
                   <div className="sm:col-span-3">
                     <label
                       htmlFor="business"
-                      className="block text-sm font-medium leading-6 text-secondary-950"
+                      className="block text-sm font-medium leading-6 text-secondary"
                     >
                       Geschäftsname
                     </label>
@@ -248,7 +248,7 @@ const Page = () => {
                         name="business"
                         id="business"
                         autoComplete="businessname"
-                        className="block w-full rounded-md border-0 bg-white/5 py-1.5 pl-1 text-secondary-950 shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
+                        className="block w-full rounded-md border-0 bg-white/5 py-1.5 pl-1 text-secondary shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
                       />
                     </div>
                     {Boolean(
@@ -267,7 +267,7 @@ const Page = () => {
                   <div className="sm:col-span-3">
                     <label
                       htmlFor="vatin"
-                      className="block text-sm font-medium leading-6 text-secondary-950"
+                      className="block text-sm font-medium leading-6 text-secondary"
                     >
                       VAT Nummer
                     </label>
@@ -278,7 +278,7 @@ const Page = () => {
                         name="vatin"
                         type="text"
                         autoComplete="vatin"
-                        className="block w-full rounded-md border-0 bg-white/5 py-1.5 pl-1 text-secondary-950 shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
+                        className="block w-full rounded-md border-0 bg-white/5 py-1.5 pl-1 text-secondary shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
                       />
                     </div>
                     {Boolean(updateBusinessInfoState.fieldErrors["vatin"]) && (
@@ -291,7 +291,7 @@ const Page = () => {
                   <div className="sm:col-span-3">
                     <label
                       htmlFor="street"
-                      className="block text-sm font-medium leading-6 text-secondary-950"
+                      className="block text-sm font-medium leading-6 text-secondary"
                     >
                       Straße
                     </label>
@@ -303,7 +303,7 @@ const Page = () => {
                           defaultValue={businessInfo.street}
                           id="street"
                           autoComplete="street"
-                          className="block w-full rounded-md border-0 bg-white/5 py-1.5 pl-1 text-secondary-950 shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
+                          className="block w-full rounded-md border-0 bg-white/5 py-1.5 pl-1 text-secondary shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
                         />
                       </div>
                     </div>
@@ -318,7 +318,7 @@ const Page = () => {
                   <div className="sm:col-span-3">
                     <label
                       htmlFor="houseNumber"
-                      className="block text-sm font-medium leading-6 text-secondary-950"
+                      className="block text-sm font-medium leading-6 text-secondary"
                     >
                       Hausnummer
                     </label>
@@ -330,7 +330,7 @@ const Page = () => {
                           name="houseNumber"
                           id="houseNumber"
                           autoComplete="houseNumber"
-                          className="flex-1 border-0 bg-transparent py-1.5 pl-1 text-secondary-950 focus:ring-0 sm:text-sm sm:leading-6"
+                          className="flex-1 border-0 bg-transparent py-1.5 pl-1 text-secondary focus:ring-0 sm:text-sm sm:leading-6"
                         />
                       </div>
                     </div>
@@ -350,7 +350,7 @@ const Page = () => {
                   <div className="sm:col-span-3">
                     <label
                       htmlFor="code"
-                      className="block text-sm font-medium leading-6 text-secondary-950"
+                      className="block text-sm font-medium leading-6 text-secondary"
                     >
                       Postleitzahl
                     </label>
@@ -363,7 +363,7 @@ const Page = () => {
                           name="code"
                           id="code"
                           autoComplete="code"
-                          className="flex-1 border-0 bg-transparent py-1.5 pl-1 text-secondary-950 focus:ring-0 sm:text-sm sm:leading-6"
+                          className="flex-1 border-0 bg-transparent py-1.5 pl-1 text-secondary focus:ring-0 sm:text-sm sm:leading-6"
                         />
                       </div>
                     </div>
@@ -377,7 +377,7 @@ const Page = () => {
                   <div className="sm:col-span-3">
                     <label
                       htmlFor="city"
-                      className="block text-sm font-medium leading-6 text-secondary-950"
+                      className="block text-sm font-medium leading-6 text-secondary"
                     >
                       Stadt
                     </label>
@@ -390,7 +390,7 @@ const Page = () => {
                           defaultValue={businessInfo.city}
                           id="city"
                           autoComplete="city"
-                          className="flex-1 border-0 bg-transparent py-1.5 pl-1 text-secondary-950 focus:ring-0 sm:text-sm sm:leading-6"
+                          className="flex-1 border-0 bg-transparent py-1.5 pl-1 text-secondary focus:ring-0 sm:text-sm sm:leading-6"
                         />
                       </div>
                     </div>
@@ -420,7 +420,7 @@ const Page = () => {
             {/* Change password */}
             <div className="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 px-4 py-6 sm:px-6 md:grid-cols-3 lg:px-8">
               <div>
-                <h2 className="text-base font-semibold leading-7 text-secondary-950">
+                <h2 className="text-base font-semibold leading-7 text-secondary">
                   Passwort ändern
                 </h2>
                 <p className="mt-1 text-sm leading-6 text-gray-400">
@@ -438,7 +438,7 @@ const Page = () => {
                   <div className="col-span-full">
                     <label
                       htmlFor="current-password"
-                      className="block text-sm font-medium leading-6 text-secondary-950"
+                      className="block text-sm font-medium leading-6 text-secondary"
                     >
                       Aktuelles Passwort
                     </label>
@@ -448,7 +448,7 @@ const Page = () => {
                         name="oldPassword"
                         type="password"
                         autoComplete="current-password"
-                        className="block w-full rounded-md border-0 bg-white/5 py-1.5 pl-1 text-secondary-950 shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
+                        className="block w-full rounded-md border-0 bg-white/5 py-1.5 pl-1 text-secondary shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
                       />
                     </div>
                   </div>
@@ -456,7 +456,7 @@ const Page = () => {
                   <div className="col-span-full">
                     <label
                       htmlFor="new-password"
-                      className="block text-sm font-medium leading-6 text-secondary-950"
+                      className="block text-sm font-medium leading-6 text-secondary"
                     >
                       Neues Passwort
                     </label>
@@ -466,7 +466,7 @@ const Page = () => {
                         name="password"
                         type="password"
                         autoComplete="new-password"
-                        className="block w-full rounded-md border-0 bg-white/5 py-1.5 pl-1 text-secondary-950 shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
+                        className="block w-full rounded-md border-0 bg-white/5 py-1.5 pl-1 text-secondary shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
                       />
                     </div>
                     {Boolean(updatePasswordState?.error) && (
@@ -490,7 +490,7 @@ const Page = () => {
             {/* Logout from all sessions */}
             <div className="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 px-4 py-6 sm:px-6 md:grid-cols-3 lg:px-8">
               <div>
-                <h2 className="text-base font-semibold leading-7 text-secondary-950">
+                <h2 className="text-base font-semibold leading-7 text-secondary">
                   Andere Sitzungen abmelden
                 </h2>
                 <p className="mt-1 text-sm leading-6 text-gray-400">
@@ -509,7 +509,7 @@ const Page = () => {
                   <div className="col-span-full">
                     <label
                       htmlFor="logout-password"
-                      className="block text-sm font-medium leading-6 text-secondary-950"
+                      className="block text-sm font-medium leading-6 text-secondary"
                     >
                       Dein Passwort
                     </label>
@@ -519,7 +519,7 @@ const Page = () => {
                         name="password"
                         type="password"
                         autoComplete="current-password"
-                        className="block w-full rounded-md border-0 bg-white/5 py-1.5 pl-1 text-secondary-950 shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
+                        className="block w-full rounded-md border-0 bg-white/5 py-1.5 pl-1 text-secondary shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
                       />
                     </div>
                     {Boolean(deleteSessionsState?.error) && (
@@ -543,7 +543,7 @@ const Page = () => {
             {/* Delete account
             <div className="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 px-4 py-6 sm:px-6 md:grid-cols-3 lg:px-8">
               <div>
-                <h2 className="text-base font-semibold leading-7 text-secondary-950">
+                <h2 className="text-base font-semibold leading-7 text-secondary">
                   Account löschen
                 </h2>
                 <p className="mt-1 text-sm leading-6 text-gray-400">
@@ -591,7 +591,7 @@ const Page = () => {
             <h1 className="sr-only">Benachrichtigungen</h1>
             <div className="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 px-4 py-6 sm:px-6 md:grid-cols-3 lg:px-8">
               <div>
-                <h2 className="text-base font-semibold leading-7 text-secondary-950">
+                <h2 className="text-base font-semibold leading-7 text-secondary">
                   Benachrichtigungen - coming soon
                 </h2>
               </div>

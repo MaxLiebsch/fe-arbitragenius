@@ -95,7 +95,7 @@ export const createWholeSaleColumns: (
     field: `${target}_status`,
     headerName: "Status",
     renderCell: (params) => (
-      <div className="text-green-600 font-semibold h-8 w-8">
+      <div className="text-green font-semibold h-8 w-8">
         {params.value === "complete" ? (
           <Tooltip title="Vollständig">
             <CheckIcon fontSize={16} />

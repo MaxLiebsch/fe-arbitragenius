@@ -1,10 +1,20 @@
+"use client";
+
 import Image from "next/image";
-import logoPrimary from "@/images/logos/logo_secondary.svg";
+import logoSecondary from "@/images/logos/logo-secondary.svg";
+import logoPrimary from "@/images/logos/logo-gray-1.png";
 import Link from "next/link";
+import { useThemeAtom } from "@/hooks/use-theme";
 export function Logo() {
+  const [{ mode }, setApperance] = useThemeAtom();
   return (
     <Link href="https://www.arbispotter.com">
-      <Image src={logoPrimary} priority={true} alt="Arbispotter" style={{ width: '100%', height: 'auto' }} />
+      <Image
+        src={mode === "dark" ? logoPrimary : logoSecondary}
+        priority={true}
+        alt="Arbispotter"
+        style={{ width: "100%", height: "auto" }}
+      />
     </Link>
     // <svg aria-hidden="true" viewBox="0 0 109 40" {...props}>
     //   <path

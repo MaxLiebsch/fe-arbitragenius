@@ -31,7 +31,7 @@ const TaskCard = ({ task }: { task: DbTask }) => {
     <Card
       extra={
         <Link
-          className="text-secondary-950"
+          className="text-secondary"
           href={`/dashboard/wholesale/task/${task._id.toString()}`}
         >
           Analyse öffnen

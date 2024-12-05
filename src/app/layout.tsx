@@ -6,6 +6,7 @@ import MuiXLicense from "../components/MuiXLicense";
 import Script from "next/script";
 import QueryClientProviderWrapper from "@/components/provider/QueryClientProviderWrapper";
 const sharp = require("sharp");
+import { ThemeProvider } from "next-themes";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -14,7 +15,7 @@ export const metadata: Metadata = {
     template: "%s - Arbispotter",
     default: "Arbispotter - Move Fast, Earn Easy",
   },
-  description: "Wir machen Product Sourcing schnell, einfach und intelligent.",
+  description: "Wir machen Product Sourcing schnell, einfach und intelligent."
 };
 
 export default function RootLayout({
@@ -23,14 +24,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="de">
+    <html lang="de" suppressHydrationWarning>
       <body
-        suppressHydrationWarning={true}
+      suppressHydrationWarning
         className={`${inter.className} h-screen`}
       >
-        <AntdRegistry>
-          <QueryClientProviderWrapper>{children}</QueryClientProviderWrapper>
-        </AntdRegistry>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem >
+          <AntdRegistry>
+            <QueryClientProviderWrapper>{children}</QueryClientProviderWrapper>
+          </AntdRegistry>
+        </ThemeProvider>
         <MuiXLicense />
         <Script id="chatwood">
           {`

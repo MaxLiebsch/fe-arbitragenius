@@ -33,8 +33,12 @@ export type Product = {
   updatedAt: string;
   e_img: string;
   e_nm: string;
-  e_mrgn: number;
-  e_mrgn_pct: number;
+  e_mrgn?: number;
+  e_mrgn_prc?: number;
+  e_mrgn_pct?: number;
+  e_ns_costs?: number;
+  e_ns_mrgn?: number;
+  e_ns_mrgn_pct?: number;
   a_img: string;
   a_nm: string;
   a_mrgn: number;
@@ -65,6 +69,12 @@ export interface ModifiedProduct extends Product {
   sourceDomain?: string;
   e_uprc: number;
   e_vrfd?: Verification;
+  e_mrgn?: number;
+  e_mrgn_prc?: number;
+  e_mrgn_pct?: number;
+  e_ns_costs?: number;
+  e_ns_mrgn?: number;
+  e_ns_mrgn_pct?: number;
   bookmarkedAt?: number;
   a_vrfd?: Verification;
   e_totalOfferCount?: number;
@@ -75,6 +85,10 @@ export interface ModifiedProduct extends Product {
   a_uprc: number;
   esin: string;
   a_w_mrgn?: number;
+  a_w_mrgn_pct?: number;
+  a_p_w_mrgn?: number;
+  a_p_w_mrgn_pct?: number;
+  a_p_mrgn?: number;
   shop?: string;
   uprc: number;
   availUpdatedAt?: string;

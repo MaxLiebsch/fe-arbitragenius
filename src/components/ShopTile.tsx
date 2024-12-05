@@ -1,8 +1,9 @@
 "use client";
-import { Button, Card } from "antd";
+import { Card } from "antd";
 import { Shop } from "@/hooks/use-shop";
 import useProductCount from "@/hooks/use-product-count";
 import Spinner from "./Spinner";
+import Link from "next/link";
 
 const ShopTile = ({ shop }: { shop: Shop }) => {
   const { data: aCount, isFetching: aIsFetching } = useProductCount(
@@ -22,8 +23,8 @@ const ShopTile = ({ shop }: { shop: Shop }) => {
           title={
             <div className="flex flex-row items-center">
               <div className="flex flex-col">
-                <div>{shop.ne}</div>
-                <div className="text-sm font-thin text-gray-500">
+                <div className="text-secondary">{shop.ne}</div>
+                <div className="text-sm font-thin text-gray">
                   Gesamt: {shop.total ?? 0}
                 </div>
               </div>
@@ -37,9 +38,9 @@ const ShopTile = ({ shop }: { shop: Shop }) => {
               <p className="w-full border-b border-gray-200 mb-2">Profitabel</p>
               <div className="flex flex-row gap-1">
                 {aCount?.productCount ? (
-                  <Button
-                    className="flex-grow"
-                    href={`/app/dashboard/shop/${shop.d}?target=amazon`}
+                  <Link
+                    className="flex-grow text-secondary border border-border-gray py-1"
+                    href={`/dashboard/shop/${shop.d}?target=amazon`}
                   >
                     <p className=" font-semibold flex flex-row hover:font-bold justify-center">
                       <span>Amazon: </span>
@@ -51,14 +52,14 @@ const ShopTile = ({ shop }: { shop: Shop }) => {
                         </span>
                       )}
                     </p>
-                  </Button>
+                  </Link>
                 ) : (
                   <></>
                 )}
                 {eCount?.productCount ? (
-                  <Button
-                    className="flex-grow"
-                    href={`/app/dashboard/shop/${shop.d}?target=ebay`}
+                  <Link
+                    className="flex-grow text-secondary border border-border-gray py-1"
+                    href={`/dashboard/shop/${shop.d}?target=ebay`}
                   >
                     <p className=" font-semibold flex flex-row hover:font-bold justify-center">
                       <span>Ebay: </span>
@@ -70,7 +71,7 @@ const ShopTile = ({ shop }: { shop: Shop }) => {
                         </span>
                       )}
                     </p>
-                  </Button>
+                  </Link>
                 ) : (
                   <></>
                 )}

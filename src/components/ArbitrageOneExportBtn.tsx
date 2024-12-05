@@ -5,6 +5,8 @@ import { arbitrageOneUrlBuilder } from "@/util/arbitrageOneUrlBuilder";
 import { ModifiedProduct } from "@/types/Product";
 import Image from "next/image";
 import arbitrageOne from "@/images/arbitrageone.png";
+import arbitrageOneDark from "@/images/arbitrageone-dark.png";
+import { useThemeAtom } from "@/hooks/use-theme";
 
 const ArbitrageOneExportBtn = ({
   product,
@@ -12,10 +14,11 @@ const ArbitrageOneExportBtn = ({
 }: {
   product: Pick<
     ModifiedProduct,
-    "asin" | "a_prc" | "prc" | "lnk" | "a_avg_prc" | 'asin' | "shop"
+    "asin" | "a_prc" | "prc" | "lnk" | "a_avg_prc" | "asin" | "shop"
   >;
   source_price_calculated_net: number;
 }) => {
+  const [{ mode }, setApperance] = useThemeAtom(); 
   const { asin, a_prc, lnk, prc, a_avg_prc, shop } = product;
 
   const flip = shop === "flip";
@@ -52,7 +55,10 @@ const ArbitrageOneExportBtn = ({
           flip === true ? flipExport : defaultExport
         )}
       >
-        <Image alt="ArbitrageOne logo" src={arbitrageOne} />
+        <Image
+          alt="ArbitrageOne logo"
+          src={mode === "dark" ? arbitrageOneDark : arbitrageOne}
+        />
       </Button>
     </Tooltip>
   );

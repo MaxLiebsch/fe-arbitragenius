@@ -37,7 +37,9 @@ const queryClient = getQueryClient();
 
 const QueryClientProviderWrapper = ({ children }: { children: ReactNode }) => {
   return (
-    <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={queryClient}> 
+    
+    
       <Providers>{children}</Providers>
     </QueryClientProvider>
   );

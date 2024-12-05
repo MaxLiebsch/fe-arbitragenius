@@ -7,7 +7,7 @@ const BuyBox = ({ layout }: { layout: Layout }) => {
     <div className={`${layout === "wide" ? "sm:col-span-3" : "sm:col-span-2"}`}>
       <label
         htmlFor="buyBox"
-        className="block text-sm font-medium leading-6 text-secondary-950"
+        className="block text-sm font-medium leading-6 text-secondary"
       >
         BuyBox
       </label>
