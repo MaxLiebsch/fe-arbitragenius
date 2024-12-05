@@ -394,7 +394,7 @@ export const DashboardLayout = ({
                   />
 
                   {/* Apperance dropdown */}
-                  <Menu as="div" className="dark:bg-black relative">
+                  <Menu as="div" className="relative">
                     <Menu.Button className="-m-1.5 flex items-center p-1.5">
                       <Cog6ToothIcon className="h-6 w-6" />
                     </Menu.Button>
@@ -432,7 +432,7 @@ export const DashboardLayout = ({
                     </Transition>
                   </Menu>
 
-                  <Menu as="div" className="dark:bg-black relative">
+                  <Menu as="div" className="relative">
                     <Menu.Button className="-m-1.5 flex items-center p-1.5">
                       <span className="sr-only">Open user menu</span>
                       <UserCircleIcon className="h-8 w-8 text-gray-400" />
