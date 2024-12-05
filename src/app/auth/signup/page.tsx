@@ -33,7 +33,7 @@ const SignUp = () => {
   };
 
   return (
-    <div className="flex flex-1 flex-col justify-center px-6 pt-12 pb-44 md:py-12 lg:px-8 overflow-y-auto">
+    <div className="flex flex-1 min-h-full flex-col justify-center px-6 pt-12 pb-40 md:pb-0 md:py-12 lg:px-8 overflow-y-auto">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
         <h2 className="flex-col text-2xl font-bold leading-9 tracking-tight text-gray-dark flex">
           <div className="w-[200px] h-[70px] self-center">
