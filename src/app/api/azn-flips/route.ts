@@ -5,7 +5,7 @@ import { aznFlipFields } from "@/util/productQueries/aznFlipFields";
 
 import { ebyFields } from "@/util/productQueries/ebyFields";
 import { lookupUserId } from "@/util/productQueries/lookupUserId";
-import { marginField } from "@/util/productQueries/marginFields";
+import { marginField, marginPctField } from "@/util/productQueries/marginFields";
 
 import { projectField } from "@/util/productQueries/projectField";
 import { settingsFromSearchQuery } from "@/util/productQueries/settingsFromSearchQuery";
@@ -72,6 +72,8 @@ export async function GET(
     {
       $match: {
         ...marginField({ target, settings: customerSettings }),
+        ...(customerSettings.minPercentageMargin > 0 &&
+          marginPctField({ target, settings: customerSettings })),
       },
     },
     { $project: { ...projectField("a", "flip").$project, a_avg_prc: 1 } },
@@ -99,6 +101,9 @@ export async function GET(
 
   lookupUserId(aggregation, user, target);
   const productCol = await getProductCol();
+  if (process.env.NODE_ENV === "development") {
+    console.log("FLIPAGGPGET", JSON.stringify(aggregation));
+  }
 
   const res = await productCol.aggregate(aggregation).toArray();
 
