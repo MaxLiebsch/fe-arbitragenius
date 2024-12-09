@@ -18,7 +18,7 @@ const variantStyles = {
   },
   outline: {
     slate:
-      'ring-primary-200 dark:ring-secondary-200 disabled:opacity-75 disabled:bg-gray-500 disabled:text-gray-800 text-primary-300 dark:text-secondary-300 hover:text-primary-900 hover:ring-primary-300 dark:hover:text-secondary-900 hover:ring-secondary-300 active:bg-primary-100 active:text-primary-600 focus-visible:outline-primary-600 focus-visible:ring-primary-300',
+      'ring-primary-200 dark:ring-secondary-200 disabled:opacity-75 disabled:bg-gray-500 disabled:text-gray-800 text-primary-300 dark:text-secondary-300  hover:text-primary-900 hover:ring-primary-300 dark:hover:text-white hover:ring-secondary-300 active:bg-primary-100 active:text-primary-600 focus-visible:outline-primary-600 focus-visible:ring-primary-300',
     white:
       'ring-primary-400 dark:ring-secondary-400 disabled:opacity-75 disabled:bg-gray-500 disabled:text-gray-800 text-secondary-400 hover:ring-primary-500 active:ring-primary-700 active:text-primary-400 focus-visible:outline-white',
   },

@@ -1,6 +1,6 @@
 {
   "name": "fe-arbitrage",
-  "version": "0.0.494",
+  "version": "0.0.495",
   "private": true,
   "scripts": {
     "dev": "next dev",

@@ -35,7 +35,7 @@ export default function Page() {
     }
     const interval = formData.get("interval") as string;
 
-    if (interval !== "month" && interval !== "year") {
+    if (interval !== "month" && interval !== "year" && interval !== "earlybird") {
       message.error("Ungültiges Abo.");
       return;
     }
@@ -59,7 +59,7 @@ export default function Page() {
     const priceId = stripeProductResponse.data.find(
       (plan: Stripe.Product) => plan.metadata.interval === interval
     ).default_price;
-    
+
     const user = await getLoggedInUser();
 
     if (!user) redirect("/app/auth/signin");
@@ -91,7 +91,7 @@ export default function Page() {
   };
 
   return (
-    <div className="flex flex-1 relative h-screen w-screen flex-col justify-center px-6 py-12 lg:px-8 overflow-hidden">
+    <div className="flex flex-1 relative  flex-col justify-center px-6 py-12 lg:px-8 overflow-hidden">
       <div className="absolute bg-no-repeat -left-[7rem] -top-4 lg:-left-[69rem] lg:-top-4 h-[180%] w-[180%] bg-secondary-950">
         <Image
           className="bg-no-repeat"
@@ -105,7 +105,6 @@ export default function Page() {
       <div className="md:text-center">
         <h2 className="font-display text-3xl tracking-tight text-white sm:text-4xl">
           <span className="relative whitespace-nowrap">
-            {/* <SwirlyDoodle className="absolute left-0 top-1/2 h-[1em] w-full fill-secondary-700" /> */}
             <span className="whitespace-break-spaces md:whitespace-normal">
               Transparente Preise ohne versteckte Kosten!
             </span>
@@ -119,11 +118,36 @@ export default function Page() {
           </p>
         </div>
       </div>
-      <div className="mt-20 mx-auto w-full flex flex-row items-center justify-center space-x-20">
+      <div className="-mx-4 mt-16 grid max-w-2xl grid-cols-1 gap-y-10 sm:mx-auto lg:-mx-8 lg:max-w-none lg:grid-cols-3 xl:mx-0 xl:gap-x-8">
+        <form action={formAction} className="space-y-2">
+          <input hidden name="interval" defaultValue="earlybird" />
+          <Plan
+            featured="Early Bird"
+            name={
+              <div className="text-silver-chalice-400 text-3xl line-through">
+                149€
+              </div>
+            }
+            price={
+              <div className="relative">
+                79€/<span className="text-3xl">Monat</span>
+                <span className="text-xs absolute -bottom-3 -right-1">
+                  exkl. MwSt.
+                </span>
+              </div>
+            }
+            description={
+              <span>
+                im Early Bird Abo (limitiert)
+              </span>
+            }
+            features={features}
+          />
+        </form>
+
         <form action={formAction} className="space-y-2">
           <input hidden name="interval" defaultValue="month" />
           <Plan
-            featured
             name={
               <div className="text-silver-chalice-400 text-3xl line-through">
                 199€
@@ -137,7 +161,7 @@ export default function Page() {
                 </span>
               </div>
             }
-            description="monatlich kündbar"
+            description="im Monatsabo"
             features={features}
           />
         </form>
@@ -158,7 +182,7 @@ export default function Page() {
                 </span>
               </div>
             }
-            description="im Abo"
+            description="im Jahresabo"
             features={features}
           />
         </form>
