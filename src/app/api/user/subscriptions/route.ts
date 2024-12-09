@@ -8,6 +8,12 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
 const SubscriptionUpdateBody = z.object({
   cancel_at_period_end: z.boolean().optional(),
+  cancellation_details: z
+    .object({
+      feedback: z.string().nullable(),
+      comment: z.string().nullable(),
+    })
+    .optional(),
 });
 
 export async function GET(request: NextRequest) {

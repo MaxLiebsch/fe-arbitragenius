@@ -9,14 +9,14 @@ const Plan = ({
   description,
   href,
   features,
-  featured = false,
+  featured = undefined,
 }: {
   name: ReactNode;
   price: ReactNode;
-  description: string;
+  description:  ReactNode;
   href?: string;
   features: Array<string>;
-  featured?: boolean;
+  featured?: string;
 }) => {
   return (
     <section
@@ -29,8 +29,8 @@ const Plan = ({
       )}
     >
       {featured ? (
-        <span className="absolute -right-0 -top-5 md:-right-10 md:-top-6 inline-flex items-center rounded-full bg-gray-50 px-8 py-1 text-lg font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
-          meist gebucht
+        <span className="absolute -right-0 -top-5 md:-right-9 md:-top-6 inline-flex items-center rounded-full bg-gray-50 px-8 py-1 text-lg font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
+          {featured} 
         </span>
       ) : (
         <></>

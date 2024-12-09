@@ -101,11 +101,12 @@ export async function updateCustomerInformation(
 
 export async function cancelSubscription(subscriptionId: string, body: any) {
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
-  if (Object.keys(body).length) {
+  delete body?.cancelation_details?.reason;
+  if (body?.cancel_at_period_end) {
     const response = await stripe.subscriptions.update(subscriptionId, body);
     return response;
   } else {
-    const response = await stripe.subscriptions.cancel(subscriptionId);
+    const response = await stripe.subscriptions.cancel(subscriptionId, body);
     return response;
   }
 }
