@@ -30,7 +30,9 @@ export function useUserTheme() {
     } catch (e) {
       console.warn("Could not dispatch focus event");
     }
-  }, [theme]);
+    
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (appearance.data) {
@@ -48,7 +50,8 @@ export function useUserTheme() {
       setApperance({ mode: systemTheme });
       updateFavicon();
     }
-  }, [appearance.data, setTheme, systemTheme, setApperance, updateFavicon]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [appearance.data]);
 
   return { theme, systemTheme };
 }
