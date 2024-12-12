@@ -1,11 +1,13 @@
 "use server";
-import { Models } from "appwrite";
+import { Account, Models } from "appwrite";
 import { ReadonlyRequestCookies } from "next/dist/server/web/spec-extension/adapters/request-cookies";
 import { RequestCookies } from "next/dist/server/web/spec-extension/cookies";
 import type { NextRequest, NextResponse } from "next/server";
 import { sessionCookieName } from "../constant";
+import { LRUCache } from "lru-cache";
+import { MAX_CACHE_SIZE, TTL_UPCOMING_REQUEST } from "@/constant/constant";
 
-const legacy = process.env.NODE_ENV === 'development' ? "_legacy": ""
+const legacy = process.env.NODE_ENV === "development" ? "_legacy" : "";
 
 export type AppwriteServerConfiguration = {
   url: string;
@@ -31,9 +33,15 @@ export type AppwriteNextMiddleware<Preferences extends Models.Preferences> = (
   handler: AppwriteNextMiddlewareHandler<Preferences>
 ) => AppwriteNextMiddlewareHandler<Preferences>;
 
+const cache = new LRUCache<string, any>({
+  max: MAX_CACHE_SIZE,
+  ttl: TTL_UPCOMING_REQUEST,
+  ttlAutopurge: true,
+});
+
 export function authMiddleware<Preferences extends Models.Preferences>(
   handler: AppwriteNextMiddlewareHandler<Preferences>
-): AppwriteNextMiddlewareHandler<Preferences>{
+): AppwriteNextMiddlewareHandler<Preferences> {
   return async (request) => {
     const token = request.cookies.get(sessionCookieName)?.value;
 
@@ -42,10 +50,20 @@ export function authMiddleware<Preferences extends Models.Preferences>(
     }
 
     try {
+      const cachedAccount = cache.get(token);
+
+      if (cachedAccount) {
+        request.user = cachedAccount;
+        return handler(request);
+      }
+
       const account = await getUser<Preferences>(request.cookies);
 
-
       request.user = account || undefined;
+
+      if(account){
+        cache.set(token, account);
+      }
 
       return handler(request);
     } catch (error) {
@@ -61,6 +79,7 @@ async function getUser<Preferences extends Models.Preferences>(
 ) {
   try {
     const token = cookies.get(sessionCookieName)?.value ?? "";
+
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT}/account`,
       {
@@ -71,7 +90,7 @@ async function getUser<Preferences extends Models.Preferences>(
           Cookie: `a_session_${process.env.NEXT_PUBLIC_APPWRITE_PROJECT}${legacy}=${token}`,
           "x-appwrite-project": process.env.NEXT_PUBLIC_APPWRITE_PROJECT,
         },
-        cache: "no-store",
+        // cache: "no-store",
       }
     );
 

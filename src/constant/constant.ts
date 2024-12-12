@@ -10,6 +10,9 @@ export const WHOLESALE_COL = "wholesale";
 export const TASK_COL = "tasks";
 export const SALES_COL = "sales";
 export const amazonTransportFee = 0.25;
+export const TTL_UPCOMING_REQUEST = 1000 * 60 * 45;
+export const MAX_CACHE_SIZE = 1000;
+
 export const aznCategoryMapping = [
   { label: "Alle Kategorien", value: 0 },
   { label: "Auto & Motorrad", value: 78191031 },
