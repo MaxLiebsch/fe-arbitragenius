@@ -28,7 +28,7 @@ const VKPrice = ({
     renderHeader: (params) => {
       return (
         <div className="relative w-32 flex flex-col !leading-tight">
-          <Tooltip title={`Verkaufspreis des Produktes und ${target === "a" ? (flip ? "" : "und der statistischer Durchschnittspreis der letzten 30 Tage") : "der Medianpreis der verfügbaren Angebote"}`} placement="topLeft">
+          <Tooltip title={`Verkaufspreis des Produktes und ${target === "a" ? (flip ? "" : "der statistischer Durchschnittspreis der letzten 30 Tage") : "der Medianpreis der verfügbaren Angebote"}`} placement="topLeft">
             <div>
               VK {target === "a" ? (flip ? "" : "(∅ 30 Tage)") : "(M Median)"}
             </div>

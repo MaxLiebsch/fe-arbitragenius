@@ -11,7 +11,7 @@ export const createEmailPasswordSession = async (params: SigninRequest) => {
     return { message: "success" };
   } else {
     if (data.type === "AppwriteException") {
-      return { message: "Ungültige Anmeldedaten" };
+      return { message: data.message };
     }
     return { message: "Etwas ist schief gelaufen ..." };
   }

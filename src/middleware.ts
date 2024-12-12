@@ -2,6 +2,16 @@ import { NextResponse } from "next/server";
 import { authMiddleware } from "./server/appwrite/middleware";
 import { getStripeSubscriptions } from "./server/stripe/middleware";
 import { getSubscriptions } from "./server/appwrite/getSubscription";
+import { MAX_CACHE_SIZE, TTL_UPCOMING_REQUEST } from "./constant/constant";
+import { LRUCache } from "lru-cache";
+import { Models } from "node-appwrite";
+import Stripe from "stripe";
+
+const subScriptionCache = new LRUCache<string, any>({
+  max: MAX_CACHE_SIZE,
+  ttl: TTL_UPCOMING_REQUEST,
+  ttlAutopurge: true,
+});
 
 export const middleware = authMiddleware(async (request) => {
   const requestPathname = request.nextUrl.pathname;
@@ -20,7 +30,7 @@ export const middleware = authMiddleware(async (request) => {
     }
   }
 
-  if(requestPathname.startsWith("/api/user/subscriptions")) {
+  if (requestPathname.startsWith("/api/user/subscriptions")) {
     return NextResponse.next();
   }
 
@@ -28,11 +38,24 @@ export const middleware = authMiddleware(async (request) => {
     return NextResponse.next();
   }
 
-  if(requestPathname.startsWith("/api/plans")) {
+  if (requestPathname.startsWith("/api/plans")) {
     return NextResponse.next();
   }
 
-  const subscriptions = await getSubscriptions(request.user.$id);
+  let subscriptions: Models.DocumentList<
+    {
+      userId: string;
+      customer: string;
+      subscription: string;
+    } & Models.Document
+  >;
+
+  if (subScriptionCache.has(request.user.$id)) {
+    subscriptions = subScriptionCache.get(request.user.$id);
+  } else {
+    subscriptions = await getSubscriptions(request.user.$id);
+    subScriptionCache.set(request.user.$id, subscriptions);
+  }
 
   if (!subscriptions.total) {
     if (!requestPathname.startsWith("/payment"))
@@ -40,9 +63,24 @@ export const middleware = authMiddleware(async (request) => {
     else return NextResponse.next();
   }
 
-  const stripeSubscription = await getStripeSubscriptions(
-    subscriptions.documents[0].customer
-  );
+  let stripeSubscription: Pick<
+    Stripe.Response<Stripe.ApiList<Stripe.Subscription>>,
+    "data"
+  >;
+
+  if (subScriptionCache.has(subscriptions.documents[0].customer)) {
+    stripeSubscription = subScriptionCache.get(
+      subscriptions.documents[0].customer
+    );
+  } else {
+    stripeSubscription = await getStripeSubscriptions(
+      subscriptions.documents[0].customer
+    );
+    subScriptionCache.set(
+      subscriptions.documents[0].customer,
+      stripeSubscription
+    );
+  }
 
   if (
     stripeSubscription.data.length &&
