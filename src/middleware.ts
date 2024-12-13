@@ -58,9 +58,10 @@ export const middleware = authMiddleware(async (request) => {
   }
 
   if (!subscriptions.total) {
-    if (!requestPathname.startsWith("/payment"))
+    if (!requestPathname.startsWith("/payment")) {
+      subScriptionCache.delete(request.user.$id);
       return NextResponse.redirect(new URL("/app/payment", request.url));
-    else return NextResponse.next();
+    } else return NextResponse.next();
   }
 
   let stripeSubscription: Pick<
@@ -108,9 +109,10 @@ export const middleware = authMiddleware(async (request) => {
       headers,
     });
   } else {
-    if (!requestPathname.startsWith("/payment"))
+    if (!requestPathname.startsWith("/payment")) {
+      subScriptionCache.delete(subscriptions.documents[0].customer);
       return NextResponse.redirect(new URL("/app/payment", request.url));
-    else return NextResponse.next();
+    } else return NextResponse.next();
   }
 });
 

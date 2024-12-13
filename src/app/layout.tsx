@@ -7,7 +7,7 @@ import Script from "next/script";
 import QueryClientProviderWrapper from "@/components/provider/QueryClientProviderWrapper";
 const sharp = require("sharp");
 import { ThemeProvider } from "next-themes";
-import { usePathname } from "next/navigation";
+import { Analytics } from "@vercel/analytics/react"
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -36,7 +36,7 @@ export default function RootLayout({
           </AntdRegistry>
         </ThemeProvider>
         <MuiXLicense />
-  
+       <Analytics mode='auto'/> 
       </body>
     </html>
   );
