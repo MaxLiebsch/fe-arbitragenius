@@ -3,7 +3,7 @@ import https from "https";
 import axios from "axios";
 import { SigninRequestSchema } from "@/server/actions/signin";
 
-const DOMAIN_REGEX = /Domain=[^;]+/;
+const DOMAIN_REGEX = /domain=[^;]+/i;
 
 export async function POST(request: NextRequest) {
   const body = await request.json();
