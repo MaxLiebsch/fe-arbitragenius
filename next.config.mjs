@@ -12,7 +12,7 @@ const nextConfig = {
   },
   transpilePackages: ["jotai-devtools"],
   images: {
-    unoptmized: isVercel ? false : true,
+    unoptimized: isVercel ? false : true,
     remotePatterns: [
       {
         protocol: "https",
