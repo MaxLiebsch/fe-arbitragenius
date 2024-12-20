@@ -2,16 +2,9 @@ import { NextResponse } from "next/server";
 import { authMiddleware } from "./server/appwrite/middleware";
 import { getStripeSubscriptions } from "./server/stripe/middleware";
 import { getSubscriptions } from "./server/appwrite/getSubscription";
-import { MAX_CACHE_SIZE, TTL_UPCOMING_REQUEST } from "./constant/constant";
-import { LRUCache } from "lru-cache";
 import { Models } from "node-appwrite";
 import Stripe from "stripe";
-
-const subScriptionCache = new LRUCache<string, any>({
-  max: MAX_CACHE_SIZE,
-  ttl: TTL_UPCOMING_REQUEST,
-  ttlAutopurge: true,
-});
+import { subScriptionCache } from "./server/cache/subscriptionCache";
 
 export const middleware = authMiddleware(async (request) => {
   const requestPathname = request.nextUrl.pathname;
@@ -54,7 +47,9 @@ export const middleware = authMiddleware(async (request) => {
     subscriptions = subScriptionCache.get(request.user.$id);
   } else {
     subscriptions = await getSubscriptions(request.user.$id);
-    subScriptionCache.set(request.user.$id, subscriptions);
+    if (subscriptions.total) {
+      subScriptionCache.set(request.user.$id, subscriptions);
+    }
   }
 
   if (!subscriptions.total) {
