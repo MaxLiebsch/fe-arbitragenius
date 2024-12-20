@@ -9,18 +9,20 @@ import { subScriptionCache } from "./server/cache/subscriptionCache";
 export const middleware = authMiddleware(async (request) => {
   const requestPathname = request.nextUrl.pathname;
   if (!request.user) {
-    if (requestPathname.startsWith("/api")) {
+    if (
+      requestPathname.startsWith("/api") ||
+      requestPathname.startsWith("/app/api")
+    ) {
       return new NextResponse("unauthorized", { status: 401 });
     } else {
       if (
-        requestPathname.includes('/favicon') ||
+        requestPathname.includes("/favicon") ||
         requestPathname === "/api/sessions/email" ||
         requestPathname.startsWith("/api/account/verification") ||
         requestPathname.startsWith("/api/verify-email")
       ) {
         return NextResponse.next();
       }
-      console.log('test', requestPathname);
       return NextResponse.redirect(new URL("/app/auth/signin", request.url));
     }
   }
