@@ -3,7 +3,7 @@ import https from "https";
 import axios from "axios";
 import { SigninRequestSchema } from "@/server/actions/signin";
 
-const DOMAIN_REGEX = /domain=[^;]+/i;
+const DOMAIN_REGEX = /Domain=[^;]+/;
 
 export async function POST(request: NextRequest) {
   const body = await request.json();
@@ -28,7 +28,6 @@ export async function POST(request: NextRequest) {
   const clientIp =
   xForwardedFor || // Use the first IP if behind a proxy
   remoteAddress; // Fallback to direct connection IP
-  console.log('clientIp:', clientIp)
 
   request.headers.forEach((value, key) => {
     requestHeaders[key] = value;

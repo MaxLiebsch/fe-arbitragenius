@@ -9,14 +9,10 @@ import { subScriptionCache } from "./server/cache/subscriptionCache";
 export const middleware = authMiddleware(async (request) => {
   const requestPathname = request.nextUrl.pathname;
   if (!request.user) {
-    if (
-      requestPathname.startsWith("/api") ||
-      requestPathname.startsWith("/app/api")
-    ) {
+    if (requestPathname.startsWith("/app/api")) {
       return new NextResponse("unauthorized", { status: 401 });
     } else {
       if (
-        requestPathname.includes("/favicon") ||
         requestPathname === "/api/sessions/email" ||
         requestPathname.startsWith("/api/account/verification") ||
         requestPathname.startsWith("/api/verify-email")
@@ -51,16 +47,15 @@ export const middleware = authMiddleware(async (request) => {
     subscriptions = subScriptionCache.get(request.user.$id);
   } else {
     subscriptions = await getSubscriptions(request.user.$id);
-    if (subscriptions.total) {
+    if(subscriptions.total){
       subScriptionCache.set(request.user.$id, subscriptions);
     }
   }
 
   if (!subscriptions.total) {
-    if (!requestPathname.startsWith("/payment")) {
-      subScriptionCache.delete(request.user.$id);
+    if (!requestPathname.startsWith("/payment"))
       return NextResponse.redirect(new URL("/app/payment", request.url));
-    } else return NextResponse.next();
+    else return NextResponse.next();
   }
 
   let stripeSubscription: Pick<
@@ -108,10 +103,9 @@ export const middleware = authMiddleware(async (request) => {
       headers,
     });
   } else {
-    if (!requestPathname.startsWith("/payment")) {
-      subScriptionCache.delete(subscriptions.documents[0].customer);
+    if (!requestPathname.startsWith("/payment"))
       return NextResponse.redirect(new URL("/app/payment", request.url));
-    } else return NextResponse.next();
+    else return NextResponse.next();
   }
 });
 
