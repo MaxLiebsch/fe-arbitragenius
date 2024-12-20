@@ -3,11 +3,9 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
 import MuiXLicense from "../components/MuiXLicense";
-import Script from "next/script";
 import QueryClientProviderWrapper from "@/components/provider/QueryClientProviderWrapper";
 const sharp = require("sharp");
 import { ThemeProvider } from "next-themes";
-import { Analytics } from "@vercel/analytics/react"
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -36,7 +34,6 @@ export default function RootLayout({
           </AntdRegistry>
         </ThemeProvider>
         <MuiXLicense />
-       <Analytics mode='auto'/> 
       </body>
     </html>
   );

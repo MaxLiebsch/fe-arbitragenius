@@ -35,14 +35,19 @@ const isPaymentPath = (requestPathname: string) =>
 
 export const middleware = authMiddleware(async (request) => {
   const requestPathname = request.nextUrl.pathname;
-  console.log('requestPathname:', requestPathname)
+  const fullUrl = request.url;
+  const currentUrl = new URL(fullUrl);
+  const pathname = currentUrl.pathname;
+  
   if (!request.user) {
+    console.log("requestPathname:", requestPathname);
+    console.log('pathname:', pathname)
+    if (isExceptionPath(requestPathname)) {
+      return NextResponse.next();
+    }
     if (isApi(requestPathname)) {
       return new NextResponse("unauthorized", { status: 401 });
     } else {
-      if (isExceptionPath(requestPathname)) {
-        return NextResponse.next();
-      }
       return NextResponse.redirect(new URL("/app/auth/signin", request.url));
     }
   }
