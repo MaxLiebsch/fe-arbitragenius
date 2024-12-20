@@ -8,6 +8,7 @@ import { subScriptionCache } from "./server/cache/subscriptionCache";
 
 const isApi = (requestPathname: string) =>
   requestPathname.startsWith("/app/api") || requestPathname.startsWith("/api");
+
 const isExceptionPath = (requestPathname: string) =>
   requestPathname.startsWith("/api/sessions/email") ||
   requestPathname.startsWith("/api/account/verification") ||
@@ -34,6 +35,7 @@ const isPaymentPath = (requestPathname: string) =>
 
 export const middleware = authMiddleware(async (request) => {
   const requestPathname = request.nextUrl.pathname;
+  console.log('requestPathname:', requestPathname)
   if (!request.user) {
     if (isApi(requestPathname)) {
       return new NextResponse("unauthorized", { status: 401 });
@@ -109,7 +111,7 @@ export const middleware = authMiddleware(async (request) => {
       (sub) => sub.status === "active" || sub.status === "trialing"
     );
     const subscriptionStatus = stripeSubscription.data[index].status;
-    if (requestPathname.startsWith("/payment")) {
+    if (isPaymentPath(requestPathname)) {
       return NextResponse.redirect(new URL("/app/dashboard", request.url));
     }
     const headers: { [key: string]: any } = {
