@@ -6,42 +6,29 @@ import { Models } from "node-appwrite";
 import Stripe from "stripe";
 import { subScriptionCache } from "./server/cache/subscriptionCache";
 
-const isApi = (requestPathname: string) =>
-  requestPathname.startsWith("/app/api") || requestPathname.startsWith("/api");
+const isApi = (requestPathname: string) => requestPathname.includes("/api");
 
 const isExceptionPath = (requestPathname: string) =>
-  requestPathname.startsWith("/api/sessions/email") ||
-  requestPathname.startsWith("/api/account/verification") ||
-  requestPathname.startsWith("/api/verify-email") ||
-  requestPathname.startsWith("/app/api/sessions/email") ||
-  requestPathname.startsWith("/app/api/account/verification") ||
-  requestPathname.startsWith("/app/api/verify-email");
+  requestPathname.includes("/api/sessions/email") ||
+  requestPathname.includes("/api/account/verification") ||
+  requestPathname.includes("/api/verify-email");
 
 const isSubscriptionPath = (requestPathname: string) =>
-  requestPathname.startsWith("/api/user/subscriptions") ||
-  requestPathname.startsWith("/app/api/user/subscriptions");
+  requestPathname.includes("/api/user/subscriptions");
 
 const isPlanPath = (requestPathname: string) =>
-  requestPathname.startsWith("/api/user/plans") ||
-  requestPathname.startsWith("/app/api/user/plans");
+  requestPathname.includes("/api/user/plans");
 
 const isVerificationPath = (requestPathname: string) =>
-  requestPathname.startsWith("/api/account/verification") ||
-  requestPathname.startsWith("/app/api/account/verification");
+  requestPathname.includes("/api/account/verification");
 
 const isPaymentPath = (requestPathname: string) =>
-  requestPathname.startsWith("/payment") ||
-  requestPathname.startsWith("/app/payment");
+  requestPathname.includes("/payment");
 
 export const middleware = authMiddleware(async (request) => {
   const requestPathname = request.nextUrl.pathname;
-  const fullUrl = request.url;
-  const currentUrl = new URL(fullUrl);
-  const pathname = currentUrl.pathname;
   
   if (!request.user) {
-    console.log("requestPathname:", requestPathname);
-    console.log('pathname:', pathname)
     if (isExceptionPath(requestPathname)) {
       return NextResponse.next();
     }
