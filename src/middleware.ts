@@ -6,48 +6,34 @@ import { Models } from "node-appwrite";
 import Stripe from "stripe";
 import { subScriptionCache } from "./server/cache/subscriptionCache";
 
-const isApi = (requestPathname: string) => requestPathname.includes("/api");
-
-const isExceptionPath = (requestPathname: string) =>
-  requestPathname.includes("/api/sessions/email") ||
-  requestPathname.includes("/api/account/verification") ||
-  requestPathname.includes("/api/verify-email");
-
-const isSubscriptionPath = (requestPathname: string) =>
-  requestPathname.includes("/api/user/subscriptions");
-
-const isPlanPath = (requestPathname: string) =>
-  requestPathname.includes("/api/user/plans");
-
-const isVerificationPath = (requestPathname: string) =>
-  requestPathname.includes("/api/account/verification");
-
-const isPaymentPath = (requestPathname: string) =>
-  requestPathname.includes("/payment");
-
 export const middleware = authMiddleware(async (request) => {
   const requestPathname = request.nextUrl.pathname;
-  
+  console.log(request.url)
+  console.log([...request.headers])
   if (!request.user) {
-    if (isExceptionPath(requestPathname)) {
-      return NextResponse.next();
-    }
-    if (isApi(requestPathname)) {
+    if (requestPathname.startsWith("/app/api")) {
       return new NextResponse("unauthorized", { status: 401 });
     } else {
+      if (
+        requestPathname === "/api/sessions/email" ||
+        requestPathname.startsWith("/api/account/verification") ||
+        requestPathname.startsWith("/api/verify-email")
+      ) {
+        return NextResponse.next();
+      }
       return NextResponse.redirect(new URL("/app/auth/signin", request.url));
     }
   }
 
-  if (isSubscriptionPath(requestPathname)) {
+  if (requestPathname.startsWith("/api/user/subscriptions")) {
     return NextResponse.next();
   }
 
-  if (isVerificationPath(requestPathname)) {
+  if (requestPathname.startsWith("/api/account/verification")) {
     return NextResponse.next();
   }
 
-  if (isPlanPath(requestPathname)) {
+  if (requestPathname.startsWith("/api/plans")) {
     return NextResponse.next();
   }
 
@@ -63,13 +49,13 @@ export const middleware = authMiddleware(async (request) => {
     subscriptions = subScriptionCache.get(request.user.$id);
   } else {
     subscriptions = await getSubscriptions(request.user.$id);
-    if (subscriptions.total) {
+    if(subscriptions.total){
       subScriptionCache.set(request.user.$id, subscriptions);
     }
   }
 
   if (!subscriptions.total) {
-    if (!isPaymentPath(requestPathname))
+    if (!requestPathname.startsWith("/payment"))
       return NextResponse.redirect(new URL("/app/payment", request.url));
     else return NextResponse.next();
   }
@@ -103,7 +89,7 @@ export const middleware = authMiddleware(async (request) => {
       (sub) => sub.status === "active" || sub.status === "trialing"
     );
     const subscriptionStatus = stripeSubscription.data[index].status;
-    if (isPaymentPath(requestPathname)) {
+    if (requestPathname.startsWith("/payment")) {
       return NextResponse.redirect(new URL("/app/dashboard", request.url));
     }
     const headers: { [key: string]: any } = {
@@ -119,7 +105,7 @@ export const middleware = authMiddleware(async (request) => {
       headers,
     });
   } else {
-    if (!isPaymentPath(requestPathname))
+    if (!requestPathname.startsWith("/payment"))
       return NextResponse.redirect(new URL("/app/payment", request.url));
     else return NextResponse.next();
   }
