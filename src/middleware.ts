@@ -6,7 +6,8 @@ import { Models } from "node-appwrite";
 import Stripe from "stripe";
 import { subscriptionCache } from "./server/cache/subscriptionCache";
 
-const isVercel = process.env.VERCEL === 'true';
+const isVercel = process.env.VERCEL === "true";
+const basepath = "/app";
 
 function cleanPathname(pathname: string): string {
   // Look for the pattern after .app/ or just get everything after the last /app/
@@ -20,37 +21,45 @@ function cleanPathname(pathname: string): string {
   return pathname.replace(/^\/[a-f0-9]+\/[A-Z]+\/https?\/[^/]+/, "");
 }
 
+const isApiPath = (pathname: string) => pathname.startsWith(`${basepath}/api`);
+
+const allowedPaths = (pathname: string): boolean => {
+  return (
+    pathname.startsWith(`${basepath}/api/sessions/email`) ||
+    pathname.startsWith(`${basepath}/api/account/verification`) ||
+    pathname.startsWith(`${basepath}/api/verify-email`)
+  );
+};
+
+const isSubscriptionPath = (pathname: string): boolean =>
+  pathname.startsWith(`${basepath}/api/user/subscriptions`);
+
+const isPlansPath = (pathname: string) =>
+  pathname.startsWith(`${basepath}/api/plans`);
+
 export const middleware = authMiddleware(async (request) => {
-  const requestPathname = isVercel
+  const pathname = isVercel
   ? cleanPathname(request.nextUrl.pathname)
   : request.nextUrl.pathname;
-  console.log('requestPathname:', requestPathname, isVercel)
-
+  
+  console.log('pathname:', pathname)
   if (!request.user) {
-    if (
-      requestPathname === "/api/sessions/email" ||
-      requestPathname.startsWith("/api/account/verification") ||
-      requestPathname.startsWith("/api/verify-email")
-    ) {
+    if (allowedPaths(pathname)) {
       return NextResponse.next();
     }
 
-    if (requestPathname.startsWith("/api")) {
+    if (isApiPath(pathname)) {
       return new NextResponse("unauthorized", { status: 401 });
     } else {
       return NextResponse.redirect(new URL("/app/auth/signin", request.url));
     }
   }
 
-  if (requestPathname.startsWith("/api/user/subscriptions")) {
+  if (isSubscriptionPath(pathname)) {
     return NextResponse.next();
   }
 
-  if (requestPathname.startsWith("/api/account/verification")) {
-    return NextResponse.next();
-  }
-
-  if (requestPathname.startsWith("/api/plans")) {
+  if (isPlansPath(pathname)) {
     return NextResponse.next();
   }
 
@@ -72,7 +81,7 @@ export const middleware = authMiddleware(async (request) => {
   }
 
   if (!subscriptions.total) {
-    if (!requestPathname.startsWith("/payment"))
+    if (!pathname.startsWith("/payment"))
       return NextResponse.redirect(new URL("/app/payment", request.url));
     else return NextResponse.next();
   }
@@ -106,7 +115,7 @@ export const middleware = authMiddleware(async (request) => {
       (sub) => sub.status === "active" || sub.status === "trialing"
     );
     const subscriptionStatus = stripeSubscription.data[index].status;
-    if (requestPathname.startsWith("/payment")) {
+    if (pathname.startsWith("/payment")) {
       return NextResponse.redirect(new URL("/app/dashboard", request.url));
     }
     const headers: { [key: string]: any } = {
@@ -122,7 +131,7 @@ export const middleware = authMiddleware(async (request) => {
       headers,
     });
   } else {
-    if (!requestPathname.startsWith("/payment"))
+    if (!pathname.startsWith("/payment"))
       return NextResponse.redirect(new URL("/app/payment", request.url));
     else return NextResponse.next();
   }
