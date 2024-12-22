@@ -37,6 +37,8 @@ const isSubscriptionPath = (pathname: string): boolean =>
 const isPlansPath = (pathname: string) =>
   pathname.startsWith(`${basepath}/api/plans`);
 
+const isPaymentPath = (pathname:string) => pathname.startsWith(`${basepath}/payment`)
+
 export const middleware = authMiddleware(async (request) => {
   const pathname = isVercel
   ? cleanPathname(request.nextUrl.pathname)
@@ -81,7 +83,7 @@ export const middleware = authMiddleware(async (request) => {
   }
 
   if (!subscriptions.total) {
-    if (!pathname.startsWith("/payment"))
+    if (!isPaymentPath(pathname))
       return NextResponse.redirect(new URL("/app/payment", request.url));
     else return NextResponse.next();
   }
@@ -115,7 +117,7 @@ export const middleware = authMiddleware(async (request) => {
       (sub) => sub.status === "active" || sub.status === "trialing"
     );
     const subscriptionStatus = stripeSubscription.data[index].status;
-    if (pathname.startsWith("/payment")) {
+    if (isPaymentPath(pathname)) {
       return NextResponse.redirect(new URL("/app/dashboard", request.url));
     }
     const headers: { [key: string]: any } = {
@@ -131,7 +133,7 @@ export const middleware = authMiddleware(async (request) => {
       headers,
     });
   } else {
-    if (!pathname.startsWith("/payment"))
+    if (!isPaymentPath(pathname))
       return NextResponse.redirect(new URL("/app/payment", request.url));
     else return NextResponse.next();
   }
