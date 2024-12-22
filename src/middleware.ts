@@ -4,23 +4,25 @@ import { getStripeSubscriptions } from "./server/stripe/middleware";
 import { getSubscriptions } from "./server/appwrite/getSubscription";
 import { Models } from "node-appwrite";
 import Stripe from "stripe";
-import { subScriptionCache } from "./server/cache/subscriptionCache";
+import { subscriptionCache } from "./server/cache/subscriptionCache";
 
 export const middleware = authMiddleware(async (request) => {
   const requestPathname = request.nextUrl.pathname;
-  console.log(request.url)
-  console.log([...request.headers])
+  console.log('URL', request.url)
+  console.log('NextURL', request.nextUrl)
+  console.log('Redirect',request.redirect)
   if (!request.user) {
+    if (
+      requestPathname === "/api/sessions/email" ||
+      requestPathname.startsWith("/api/account/verification") ||
+      requestPathname.startsWith("/api/verify-email")
+    ) {
+      return NextResponse.next();
+    }
+
     if (requestPathname.startsWith("/app/api")) {
       return new NextResponse("unauthorized", { status: 401 });
     } else {
-      if (
-        requestPathname === "/api/sessions/email" ||
-        requestPathname.startsWith("/api/account/verification") ||
-        requestPathname.startsWith("/api/verify-email")
-      ) {
-        return NextResponse.next();
-      }
       return NextResponse.redirect(new URL("/app/auth/signin", request.url));
     }
   }
@@ -45,12 +47,12 @@ export const middleware = authMiddleware(async (request) => {
     } & Models.Document
   >;
 
-  if (subScriptionCache.has(request.user.$id)) {
-    subscriptions = subScriptionCache.get(request.user.$id);
+  if (subscriptionCache.has(request.user.$id)) {
+    subscriptions = subscriptionCache.get(request.user.$id);
   } else {
     subscriptions = await getSubscriptions(request.user.$id);
     if(subscriptions.total){
-      subScriptionCache.set(request.user.$id, subscriptions);
+      subscriptionCache.set(request.user.$id, subscriptions);
     }
   }
 
@@ -65,15 +67,15 @@ export const middleware = authMiddleware(async (request) => {
     "data"
   >;
 
-  if (subScriptionCache.has(subscriptions.documents[0].customer)) {
-    stripeSubscription = subScriptionCache.get(
+  if (subscriptionCache.has(subscriptions.documents[0].customer)) {
+    stripeSubscription = subscriptionCache.get(
       subscriptions.documents[0].customer
     );
   } else {
     stripeSubscription = await getStripeSubscriptions(
       subscriptions.documents[0].customer
     );
-    subScriptionCache.set(
+    subscriptionCache.set(
       subscriptions.documents[0].customer,
       stripeSubscription
     );

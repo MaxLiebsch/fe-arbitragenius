@@ -7,6 +7,7 @@ import { ID, Models, Query } from "node-appwrite";
 import { Logo } from "@/components/Logo";
 import { redirect } from "next/navigation";
 import InvalidPage from "@/components/Invalid-Page";
+import { subscriptionCache } from "@/server/cache/subscriptionCache";
 
 export default async function ResultPage({
   searchParams,
