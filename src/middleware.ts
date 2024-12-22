@@ -54,7 +54,9 @@ export const middleware = authMiddleware(async (request) => {
     subscriptions = subScriptionCache.get(request.user.$id);
   } else {
     subscriptions = await getSubscriptions(request.user.$id);
-    subScriptionCache.set(request.user.$id, subscriptions);
+    if (subscriptions.total) {
+      subScriptionCache.set(request.user.$id, subscriptions);
+    }
   }
 
   if (!subscriptions.total) {
