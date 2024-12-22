@@ -8,9 +8,6 @@ import { subscriptionCache } from "./server/cache/subscriptionCache";
 
 export const middleware = authMiddleware(async (request) => {
   const requestPathname = request.nextUrl.pathname;
-  console.log('URL', request.url)
-  console.log('NextURL', request.nextUrl)
-  console.log('Redirect',request.redirect)
   if (!request.user) {
     if (
       requestPathname === "/api/sessions/email" ||
