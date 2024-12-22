@@ -6,8 +6,26 @@ import { Models } from "node-appwrite";
 import Stripe from "stripe";
 import { subscriptionCache } from "./server/cache/subscriptionCache";
 
+const isVercel = process.env.VERCEL === 'true';
+
+function cleanPathname(pathname: string): string {
+  // Look for the pattern after .app/ or just get everything after the last /app/
+  const match =
+    pathname.match(/\.app(\/.*$)/) || pathname.match(/\/app(\/.*$)/);
+  if (match) {
+    return match[1];
+  }
+
+  // Fallback: remove the hash-like prefix and HTTP method
+  return pathname.replace(/^\/[a-f0-9]+\/[A-Z]+\/https?\/[^/]+/, "");
+}
+
 export const middleware = authMiddleware(async (request) => {
-  const requestPathname = request.nextUrl.pathname;
+  const requestPathname = isVercel
+  ? cleanPathname(request.nextUrl.pathname)
+  : request.nextUrl.pathname;
+  console.log('requestPathname:', requestPathname, isVercel)
+
   if (!request.user) {
     if (
       requestPathname === "/api/sessions/email" ||
@@ -17,7 +35,7 @@ export const middleware = authMiddleware(async (request) => {
       return NextResponse.next();
     }
 
-    if (requestPathname.startsWith("/app/api")) {
+    if (requestPathname.startsWith("/api")) {
       return new NextResponse("unauthorized", { status: 401 });
     } else {
       return NextResponse.redirect(new URL("/app/auth/signin", request.url));
@@ -48,7 +66,7 @@ export const middleware = authMiddleware(async (request) => {
     subscriptions = subscriptionCache.get(request.user.$id);
   } else {
     subscriptions = await getSubscriptions(request.user.$id);
-    if(subscriptions.total){
+    if (subscriptions.total) {
       subscriptionCache.set(request.user.$id, subscriptions);
     }
   }
