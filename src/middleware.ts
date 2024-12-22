@@ -41,7 +41,7 @@ const isPlansPath = (pathname: string) =>
   pathname.startsWith(`${basepath}/api/plans`);
 
 const isPaymentPath = (pathname: string) =>
-  pathname.startsWith(`${basepath}/payment`);
+  pathname.startsWith(`${basepath}/payment`) || pathname.startsWith("/payment");
 
 export const middleware = authMiddleware(async (request) => {
   const pathname = isVercel

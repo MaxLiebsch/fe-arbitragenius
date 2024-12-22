@@ -104,5 +104,5 @@ export async function signupAction(
       fieldErrors: {},
     };
   }
-  redirect("/app/payment");
+  redirect("/payment");
 }
