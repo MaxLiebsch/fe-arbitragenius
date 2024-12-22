@@ -48,7 +48,6 @@ export const middleware = authMiddleware(async (request) => {
     ? cleanPathname(request.nextUrl.pathname)
     : request.nextUrl.pathname;
 
-  console.log("pathname:", pathname);
   if (!request.user) {
     if (allowedPaths(pathname)) {
       return NextResponse.next();
