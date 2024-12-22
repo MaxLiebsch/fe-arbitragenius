@@ -31,20 +31,24 @@ const allowedPaths = (pathname: string): boolean => {
   );
 };
 
+const isVerficationPath = (pathname: string) =>
+  pathname.startsWith(`${basepath}/api/account/verification`);
+
 const isSubscriptionPath = (pathname: string): boolean =>
   pathname.startsWith(`${basepath}/api/user/subscriptions`);
 
 const isPlansPath = (pathname: string) =>
   pathname.startsWith(`${basepath}/api/plans`);
 
-const isPaymentPath = (pathname:string) => pathname.startsWith(`${basepath}/payment`)
+const isPaymentPath = (pathname: string) =>
+  pathname.startsWith(`${basepath}/payment`);
 
 export const middleware = authMiddleware(async (request) => {
   const pathname = isVercel
-  ? cleanPathname(request.nextUrl.pathname)
-  : request.nextUrl.pathname;
-  
-  console.log('pathname:', pathname)
+    ? cleanPathname(request.nextUrl.pathname)
+    : request.nextUrl.pathname;
+
+  console.log("pathname:", pathname);
   if (!request.user) {
     if (allowedPaths(pathname)) {
       return NextResponse.next();
@@ -58,6 +62,10 @@ export const middleware = authMiddleware(async (request) => {
   }
 
   if (isSubscriptionPath(pathname)) {
+    return NextResponse.next();
+  }
+
+  if (isVerficationPath(pathname)) {
     return NextResponse.next();
   }
 
