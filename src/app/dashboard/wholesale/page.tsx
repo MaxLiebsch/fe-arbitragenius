@@ -167,7 +167,7 @@ function getCaseInsensitiveProperty(obj: any, properties: string[]) {
       }
     }
   }
-  return undefined;
+  return "";
 }
 
 const Page = () => {
