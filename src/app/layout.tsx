@@ -25,7 +25,6 @@ export default function RootLayout({
   return (
     <html lang="de" suppressHydrationWarning>
       <body
-      suppressHydrationWarning
         className={`${inter.className} h-screen`}
       >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem >

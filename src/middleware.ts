@@ -7,7 +7,7 @@ import Stripe from "stripe";
 import { subscriptionCache } from "./server/cache/subscriptionCache";
 
 const isVercel = process.env.VERCEL === "true";
-const basepath = "/app";
+const basepath = process.env.NODE_ENV === "development" ? "" : "/app";
 
 function cleanPathname(pathname: string): string {
   // Look for the pattern after .app/ or just get everything after the last /app/

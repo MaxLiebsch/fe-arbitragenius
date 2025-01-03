@@ -6,6 +6,7 @@ import { NavLink } from "@/components/NavLink";
 import { signupAction } from "@/server/actions/signup";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import { Input } from "antd";
+import Link from "next/link";
 import { useRef, useState } from "react";
 import { useFormState } from "react-dom";
 
@@ -169,9 +170,9 @@ const SignUp = () => {
             </div>
 
             <div className="space-y-4">
-              <a className="text-secondary underline" href="/app/auth/signin">
+              <Link className="text-secondary underline" href="/auth/signin">
                 Du hast bereits ein Account?
-              </a>
+              </Link>
               <SubmitButton text="Registrieren" />
               {Boolean(state?.message) && (
                 <div className="text-sm text-red-500 text-right">

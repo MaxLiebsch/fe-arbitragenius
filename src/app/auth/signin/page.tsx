@@ -5,6 +5,7 @@ import { Logo } from "@/components/Logo";
 import { signinAction } from "@/server/actions/signin";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import { Input } from "antd";
+import Link from "next/link";
 import { useRef } from "react";
 import { useFormState } from "react-dom";
 
@@ -14,8 +15,7 @@ const SignIn = () => {
   const formRef = useRef<HTMLFormElement>(null);
 
   return (
-    <>
-      <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
+      <div  className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <h2 className="text-center text-2xl font-bold leading-9 tracking-tight text-secondary flex justify-center space-x-3">
             <span>Anmelden bei </span>
@@ -74,18 +74,18 @@ const SignIn = () => {
 
               <div className="space-y-1">
                 <div className="flex flex-row justify-between mb-3">
-                  <a
+                  <Link
                     className="text-secondary underline text-sm"
-                    href="/app/auth/signup"
+                    href="/auth/signup"
                   >
                     Keinen Account?
-                  </a>
-                  <a
+                  </Link>
+                  <Link
                     className="text-secondary underline text-sm"
-                    href="/app/auth/recovery"
+                    href="/auth/recovery"
                   >
                     Passwort vergessen?
-                  </a>
+                  </Link>
                 </div>
                 <SubmitButton text="Login" />
                 {Boolean(state?.message) && (
@@ -98,7 +98,6 @@ const SignIn = () => {
           </form>
         </div>
       </div>
-    </>
   );
 };
 
