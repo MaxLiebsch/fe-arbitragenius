@@ -27,28 +27,34 @@ const allowedPaths = (pathname: string): boolean => {
   return (
     pathname.startsWith(`${basepath}/api/sessions/email`) ||
     pathname.startsWith(`${basepath}/api/account/verification`) ||
-    pathname.startsWith(`${basepath}/api/verify-email`)
+    pathname.startsWith(`${basepath}/api/verify-email`) ||
+    pathname.startsWith("/api/sessions/email") ||
+    pathname.startsWith("/api/account/verification") ||
+    pathname.startsWith("/api/verify-email")
   );
 };
 
 const isVerficationPath = (pathname: string) =>
-  pathname.startsWith(`${basepath}/api/account/verification`);
+  pathname.startsWith(`${basepath}/api/account/verification`) ||
+  pathname.startsWith("/api/account/verification");
 
 const isSubscriptionPath = (pathname: string): boolean =>
-  pathname.startsWith(`${basepath}/api/user/subscriptions`);
+  pathname.startsWith(`${basepath}/api/user/subscriptions`) ||
+  pathname.startsWith("/api/user/subscriptions");
 
 const isPlansPath = (pathname: string) =>
-  pathname.startsWith(`${basepath}/api/plans`);
+  pathname.startsWith(`${basepath}/api/plans`) ||
+  pathname.startsWith("/api/plans");
 
 const isPaymentPath = (pathname: string) =>
   pathname.startsWith(`${basepath}/payment`) || pathname.startsWith("/payment");
 
 export const middleware = authMiddleware(async (request) => {
-  console.log('request.nextUrl.pathname:', request.nextUrl.pathname)
+  console.log("request.nextUrl.pathname:", request.nextUrl.pathname);
   const pathname = isVercel
-  ? cleanPathname(request.nextUrl.pathname)
-  : request.nextUrl.pathname;
-  console.log('pathname:', pathname)
+    ? cleanPathname(request.nextUrl.pathname)
+    : request.nextUrl.pathname;
+  console.log("pathname:", pathname);
 
   if (!request.user) {
     if (allowedPaths(pathname)) {
