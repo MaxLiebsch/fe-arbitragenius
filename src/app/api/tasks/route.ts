@@ -1,4 +1,4 @@
-import { WHOLESALE_COL } from "@/constant/constant";
+import { PRODUCT_COL, WHOLESALE_COL } from "@/constant/constant";
 import { getLoggedInUser } from "@/server/appwrite";
 import { getProductCol } from "@/server/mongo";
 import clientPool from "@/server/mongoPool";
@@ -71,8 +71,7 @@ export async function POST(request: NextRequest) {
     .db(process.env.NEXT_MONOGO_CRAWLER_DATA)
     .collection(process.env.NEXT_MONGO_TASKS ?? "");
 
-  const productCol = await getProductCol()
-
+  const productCol = await getProductCol();
 
   const res = await taskCollection.countDocuments({
     userId: user.$id,
@@ -106,7 +105,7 @@ export async function POST(request: NextRequest) {
       concurrency: 1,
       recurrent: false,
       startedAt: "",
-      name: '',
+      name: "",
       completedAt: "",
       createdAt: new Date().toISOString(),
       errored: false,
@@ -247,33 +246,36 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  const productsCreated = await productCol.insertMany(
-    parsedBody.data.products.map((item) => {
-      const newItem: WholeSaleProduct = {
-        ean: item.ean,
-        lnk: randomUUID(),
-        eanList: [item.ean],
-        nm: item.name ?? "",
-        s_hash: item.ean,
-        sdmn: WHOLESALE_COL,
-        target: body.target,
-        prc: item.prc,
-        qty: 1,
-        reference: item.reference ?? "",
-        category: item.category ?? "",
-        taskIds: taskIds,
-        clrName: [],
-        shop: "",
-        createdAt: new Date().toISOString(),
-      };
-      body.target.forEach((target) => {
-        newItem[`${target}_locked`] = false;
-        newItem[`${target}_status`] = "";
-        newItem[`${target}_lookup_pending`] = true;
-      });
-      return newItem;
-    })
-  );
+  const productsCreated = await spotter
+    .db()
+    .collection(PRODUCT_COL)
+    .insertMany(
+      parsedBody.data.products.map((item) => {
+        const newItem: WholeSaleProduct = {
+          ean: item.ean,
+          lnk: randomUUID(),
+          eanList: [item.ean],
+          nm: item.name ?? "",
+          s_hash: item.ean,
+          sdmn: WHOLESALE_COL,
+          target: body.target,
+          prc: item.prc,
+          qty: 1,
+          reference: item.reference ?? "",
+          category: item.category ?? "",
+          taskIds: taskIds,
+          clrName: [],
+          shop: "",
+          createdAt: new Date().toISOString(),
+        };
+        body.target.forEach((target) => {
+          newItem[`${target}_locked`] = false;
+          newItem[`${target}_status`] = "";
+          newItem[`${target}_lookup_pending`] = true;
+        });
+        return newItem;
+      })
+    );
 
   if (!productsCreated.acknowledged)
     return new Response("Wholesale Produkte konnten nicht angelegt werden.", {
