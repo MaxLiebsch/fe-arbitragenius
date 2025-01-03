@@ -44,9 +44,11 @@ const isPaymentPath = (pathname: string) =>
   pathname.startsWith(`${basepath}/payment`) || pathname.startsWith("/payment");
 
 export const middleware = authMiddleware(async (request) => {
+  console.log('request.nextUrl.pathname:', request.nextUrl.pathname)
   const pathname = isVercel
-    ? cleanPathname(request.nextUrl.pathname)
-    : request.nextUrl.pathname;
+  ? cleanPathname(request.nextUrl.pathname)
+  : request.nextUrl.pathname;
+  console.log('pathname:', pathname)
 
   if (!request.user) {
     if (allowedPaths(pathname)) {
