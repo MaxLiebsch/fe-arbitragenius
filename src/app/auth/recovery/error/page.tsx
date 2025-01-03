@@ -18,18 +18,18 @@ export default function Page({
         </div>
         <div className="mt-5 sm:mx-auto sm:w-full sm:max-w-sm space-y-2">
           <div className="flex flex-row justify-between">
-            <a
+            <Link
               className="text-secondary underline text-sm"
-              href="/app/auth/signup"
+              href="/auth/signup"
             >
               Du hast keinen Account?
-            </a>
-            <a
+            </Link>
+            <Link
               className="text-secondary underline text-sm"
-              href="/app/auth/signin"
+              href="/auth/signin"
             >
               Zum Login
-            </a>
+            </Link>
           </div>
           <div>
             <Link

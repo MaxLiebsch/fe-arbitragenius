@@ -17,6 +17,13 @@ const { defaultAlgorithm, darkAlgorithm } = theme;
 export default function Providers({ children }: { children: ReactNode }) {
   const accountQuery = useAccount();
   const [settings, setUserSettings] = useUserSettings();
+  const [THEME, setTHEME] = useState({
+    algorithm: defaultAlgorithm,
+    token: {
+      colorPrimary: (tw.theme as any).extend.colors["primary"]["500"],
+      borderRadius: 2,
+    },
+  });
   const { theme, systemTheme } = useUserTheme();
   const darkMode = theme === "dark";
 
@@ -38,9 +45,19 @@ export default function Providers({ children }: { children: ReactNode }) {
         });
       }
     }
+    const colorPrimary = darkMode
+    ? (tw.theme as any).extend.colors["darkText"]
+    : (tw.theme as any).extend.colors["primary"]["500"]
+    setTHEME({
+      algorithm: darkMode ? darkAlgorithm : defaultAlgorithm,
+      token: {
+        colorPrimary,
+        borderRadius: 2,
+      },
+    });
   }, [accountQuery.data, setUserSettings, darkMode]);
 
-  if (!theme) return null;
+  
 
   return (
     <>
@@ -48,15 +65,7 @@ export default function Providers({ children }: { children: ReactNode }) {
       <MuiProvider>
         <MyThemeProvider>
           <ConfigProvider
-            theme={{
-              algorithm: darkMode ? darkAlgorithm : defaultAlgorithm,
-              token: {
-                colorPrimary: darkMode
-                  ? (tw.theme as any).extend.colors["darkText"]
-                  : (tw.theme as any).extend.colors["primary"]["500"],
-                borderRadius: 2,
-              },
-            }}
+            theme={THEME}
           >
             {children}
           </ConfigProvider>

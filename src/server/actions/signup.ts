@@ -86,7 +86,7 @@ export async function signupAction(
       return { message, formErrors: [], fieldErrors: {} };
     }
   } catch (error) {
-    console.log("error:", error);
+    console.error("error:", error);
     if (error instanceof AppwriteException) {
       if ((error as any).type === "user_already_exists")
         return {

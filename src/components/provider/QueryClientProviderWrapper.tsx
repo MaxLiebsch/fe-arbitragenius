@@ -41,7 +41,6 @@ const QueryClientProviderWrapper = ({ children }: { children: ReactNode }) => {
   return (
     <QueryClientProvider client={queryClient}>
       <Providers>{children}</Providers>
-      {/* Chatwoot */}
       <ChatWood/>
     </QueryClientProvider>
   );

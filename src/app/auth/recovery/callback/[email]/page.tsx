@@ -1,8 +1,10 @@
 import { SubmitButton } from "@/components/FormSubmitBn";
 import { Logo } from "@/components/Logo";
+import PasswordInput from "@/components/PasswordInput";
 import { changePasswordAction } from "@/server/actions/change-password";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import { Input } from "antd";
+import Link from "next/link";
 
 export default function Page({
   params,
@@ -82,39 +84,24 @@ export default function Page({
                 </label>
               </div>
               <div className="mt-2">
-                <Input.Password
-                  id="password"
-                  name="password"
-                  placeholder="Passwort"
-                  iconRender={(visible) =>
-                    visible ? (
-                      <span className="h-4 w-4">
-                        <EyeIcon className="h-4 w-4" />
-                      </span>
-                    ) : (
-                      <span className="h-4 w-4">
-                        <EyeSlashIcon className="h-4 w-4" />
-                      </span>
-                    )
-                  }
-                />
+                <PasswordInput />
               </div>
             </div>
 
             <div className="space-y-2">
               <div className="flex flex-row justify-between">
-                <a
+                <Link
                   className="text-secondary underline text-sm"
-                  href="/app/auth/signup"
+                  href="/auth/signup"
                 >
                   Du hast keinen Account?
-                </a>
-                <a
+                </Link>
+                <Link
                   className="text-secondary underline text-sm"
-                  href="/app/auth/signin"
+                  href="/auth/signin"
                 >
                   Zum Login
-                </a>
+                </Link>
               </div>
               <SubmitButton text="Passwort aktualisieren" />
             </div>

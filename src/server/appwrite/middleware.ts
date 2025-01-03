@@ -68,7 +68,7 @@ export function authMiddleware<Preferences extends Models.Preferences>(
       return handler(request);
     } catch (error) {
       console.error(error);
-
+      cache.delete(token);
       return handler(request);
     }
   };
