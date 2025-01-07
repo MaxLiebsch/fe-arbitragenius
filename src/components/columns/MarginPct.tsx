@@ -40,7 +40,7 @@ const MarginPct = ({
     ),
     renderCell: (params) => {
       const { row: product } = params;
-      const { prc, a_prc, tax, a_useCurrPrice, shop, a_qty, e_qty, qty } =
+      const { prc, a_prc, tax, shop, a_qty, e_qty, qty } =
         product;
       const isFlip = shop === "flip";
       const price = isFlip ? a_prc : prc;
@@ -58,15 +58,7 @@ const MarginPct = ({
       //   console.log("mrgn field roi:", roi);
       // }
       return (
-        <div className="flex flex-col">
-          {a_useCurrPrice === false && !isFlip ? (
-            <div className="flex flex-row gap-1 items-center justify-center text-amber-600">
-              <span>
-                <ExclamationTriangleIcon className="h-6 w-6" />
-              </span>
-              <span>Basierend auf Ø-Preis</span>
-            </div>
-          ) : null}
+        <div className="flex flex-col"> 
           <div>{appendPercentage(params.value)}</div>
           {margin && <div>{`(${roi})`}</div>}
         </div>

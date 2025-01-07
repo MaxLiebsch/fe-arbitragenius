@@ -34,6 +34,7 @@ const ContentMarge = ({
     | "asin"
     | "nm"
     | "a_w_mrgn"
+    | "a_avg_price"
     | "a_p_w_mrgn"
     | "a_w_mrgn_pct"
     | "a_p_w_mrgn"
@@ -58,21 +59,16 @@ const ContentMarge = ({
     a_avg_prc,
     qty: buyQty,
     shop,
-    a_useCurrPrice,
+    a_avg_price,
     asin,
   } = product;
 
-  let avgPrice = 0;
-  const useAvgPrice = a_useCurrPrice !== undefined && a_useCurrPrice === false;
-
-  if (useAvgPrice) {
-    avgPrice = getAvgPrice(product as ModifiedProduct);
-  }
+  let avgPrice = a_avg_price
 
   const isFlip = a_avg_prc !== undefined;
   const initBuyPrice = isFlip ? a_prc : prc;
   const flipQty = isFlip ? a_qty : buyQty;
-  const initSellPrice = isFlip || useAvgPrice ? avgPrice : a_prc;
+  const initSellPrice = avgPrice
 
   const [settings, setSettings] = useUserSettings();
   const [transport, setTransportCosts] = useState(

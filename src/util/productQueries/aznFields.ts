@@ -16,6 +16,7 @@ export const aznFields = (
     ...marginField({ target: "a", settings }),
     ...(settings.minPercentageMargin > 0 &&
       marginPctField({ target: "a", settings })),
+    a_avg_fld: { $ne: null },
   };
   const isSommer = new Date().getMonth() < 9;
   if (settings.a_cats.length > 0 && settings.a_cats[0] !== 0) {
@@ -41,52 +42,7 @@ export const aznFields = (
     query.push(
       {
         $addFields: {
-          a_avg_prc: {
-            $cond: {
-              if: { $eq: ["$a_useCurrPrice", true] },
-              then: "$$REMOVE", // Skip field if using current price
-              else: {
-                $divide: [
-                  {
-                    $cond: {
-                      if: { $gt: ["$avg30_ahsprcs", -1] },
-                      then: "$avg30_ahsprcs",
-                      else: {
-                        $cond: {
-                          if: { $gt: ["$avg30_ansprcs", -1] },
-                          then: "$avg30_ansprcs",
-                          else: {
-                            $cond: {
-                              if: { $gt: ["$avg90_ahsprcs", -1] },
-                              then: "$avg90_ahsprcs",
-                              else: "$avg90_ansprcs",
-                            },
-                          },
-                        },
-                      },
-                    },
-                  },
-                  100,
-                ],
-              },
-            },
-          },
-        },
-      },
-      {
-        $addFields: {
-          computedPrice: {
-            $cond: {
-              if: {
-                $and: [
-                  { $ne: ["$a_avg_prc", null] },
-                  { $gt: ["$a_avg_prc", "$a_prc"] },
-                ],
-              },
-              then: "$a_avg_prc",
-              else: "$a_prc",
-            },
-          },
+          computedPrice: "$a_avg_price",
         },
       },
       {
@@ -174,54 +130,43 @@ export const aznFields = (
     // If the user does not use Azn FBA, then the margin is calculated,
     // based on there settings for transport, storage, and preparation center
     query.push(
+      // {
+      //   $addFields: {
+      //     a_avg_prc: {
+      //       $cond: {
+      //         if: { $eq: ["$a_useCurrPrice", true] },
+      //         then: "$$REMOVE", // Skip field if using current price
+      //         else: {
+      //           $divide: [
+      //             {
+      //               $cond: {
+      //                 if: { $gt: ["$avg30_ahsprcs", -1] },
+      //                 then: "$avg30_ahsprcs",
+      //                 else: {
+      //                   $cond: {
+      //                     if: { $gt: ["$avg30_ansprcs", -1] },
+      //                     then: "$avg30_ansprcs",
+      //                     else: {
+      //                       $cond: {
+      //                         if: { $gt: ["$avg90_ahsprcs", -1] },
+      //                         then: "$avg90_ahsprcs",
+      //                         else: "$avg90_ansprcs",
+      //                       },
+      //                     },
+      //                   },
+      //                 },
+      //               },
+      //             },
+      //             100,
+      //           ],
+      //         },
+      //       },
+      //     },
+      //   },
+      // },
       {
         $addFields: {
-          a_avg_prc: {
-            $cond: {
-              if: { $eq: ["$a_useCurrPrice", true] },
-              then: "$$REMOVE", // Skip field if using current price
-              else: {
-                $divide: [
-                  {
-                    $cond: {
-                      if: { $gt: ["$avg30_ahsprcs", -1] },
-                      then: "$avg30_ahsprcs",
-                      else: {
-                        $cond: {
-                          if: { $gt: ["$avg30_ansprcs", -1] },
-                          then: "$avg30_ansprcs",
-                          else: {
-                            $cond: {
-                              if: { $gt: ["$avg90_ahsprcs", -1] },
-                              then: "$avg90_ahsprcs",
-                              else: "$avg90_ansprcs",
-                            },
-                          },
-                        },
-                      },
-                    },
-                  },
-                  100,
-                ],
-              },
-            },
-          },
-        },
-      },
-      {
-        $addFields: {
-          computedPrice: {
-            $cond: {
-              if: {
-                $and: [
-                  { $ne: ["$a_avg_prc", null] },
-                  { $gt: ["$a_avg_prc", "$a_prc"] },
-                ],
-              },
-              then: "$a_avg_prc",
-              else: "$a_prc",
-            },
-          },
+          computedPrice: "$a_avg_price",
         },
       },
       {

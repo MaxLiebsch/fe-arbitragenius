@@ -62,6 +62,14 @@ export type Prange = {
   median: number;
 };
 
+export type AvgPrices =
+  | 'avg30_buyBoxPrice'
+  | 'avg30_ansprcs'
+  | 'avg30_ahsprcs'
+  | 'avg90_buyBoxPrice'
+  | 'avg90_ansprcs'
+  | 'avg90_ahsprcs'
+
 export interface ModifiedProduct extends Product {
   bsr_1: number;
   bsr_cat_1: string;
@@ -84,6 +92,8 @@ export interface ModifiedProduct extends Product {
   a_avg_prc?: number;
   a_uprc: number;
   esin: string;
+  a_avg_price: number;
+  a_avg_fld: AvgPrices;
   a_w_mrgn?: number;
   a_w_mrgn_pct?: number;
   a_p_w_mrgn?: number;

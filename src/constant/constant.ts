@@ -13,6 +13,15 @@ export const amazonTransportFee = 0.25;
 export const TTL_UPCOMING_REQUEST = 1000 * 60 * 45;
 export const MAX_CACHE_SIZE = 1000;
 
+export const AZN_AVG_FLD_MAPPING = {
+  "avg30_buyBoxPrice": "(BuyBox 30 Tage)" ,
+  "avg30_ansprcs": "(Seller 30 Tage)" ,
+  "avg30_ahsprcs": "(Amazon 30 Tage)" ,
+  "avg90_buyBoxPrice": "(BuyBox 90 Tage)",
+  "avg90_ansprcs": "(Seller 90 Tage)" ,
+  "avg90_ahsprcs": "(Amazon 90 Tage)" ,
+}
+
 export const aznCategoryMapping = [
   { label: "Alle Kategorien", value: 0 },
   { label: "Auto & Motorrad", value: 78191031 },
