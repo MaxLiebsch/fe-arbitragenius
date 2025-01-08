@@ -80,7 +80,7 @@ export const ebyFields = (
             {
               $multiply: [
                 {
-                  $divide: [`$${mrgnFieldName("e", false)}`, "$e_prc"],
+                  $divide: [`$${mrgnFieldName("e", false)}`, "$e_pRange.median"],
                 },
                 100,
               ],
