@@ -1,7 +1,7 @@
 "use client";
 import { ModifiedProduct } from "@/types/Product";
 import { appendPercentage, formatter } from "@/util/formatter";
-import { InputNumber, Switch } from "antd";
+import { Checkbox, InputNumber, Switch } from "antd";
 import React, { useEffect, useState } from "react";
 import CopyToClipboard from "./CopyToClipboard";
 import {
@@ -140,7 +140,10 @@ const ContentMarge = ({
     // }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
+    fba,
     prepCenterCosts,
+    transport,
+    storageCosts,
     sellPrice,
     netBuyPrice
   ]);
@@ -149,17 +152,17 @@ const ContentMarge = ({
     <div className="w-96 relative">
       <div className="px-10">
         <div className="-top-8 right-0 absolute">
-          <Switch
-            checkedChildren="Ohne FBA"
-            unCheckedChildren="Mit FBA"
-            onChange={(checked) => {
-              if (checked) {
+          <Checkbox
+            
+            defaultChecked={fba}
+            onChange={(e) => {
+              if (e.target.checked) {
                 setFba(true);
               } else {
                 setFba(false);
               }
             }}
-          />
+          >Mit FBA</Checkbox>
         </div>
         <div className="font-light">
           <span>{product?.mnfctr ? product.mnfctr : ""} </span>
@@ -272,6 +275,7 @@ const ContentMarge = ({
             </h3>
           </>
         )}
+        
         <h3 className="font-semibold leading-6 mt-2 mb-1 text-gray-dark flex flex-row space-x-1 items-center">
           <div className="flex flex-row w-full">
             <p>Sonstige Kosten:</p>

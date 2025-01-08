@@ -49,7 +49,7 @@ const RetrieveEsin = (
             {e_totalOfferCount && (
               <span>
                 <span>
-                  <span className="font-semibold"> Listings:</span>
+                  <span className="font-semibold"> Anzahl der Angebote:</span>
                   {e_totalOfferCount ? (
                     <span className=""> {e_totalOfferCount}</span>
                   ) : (

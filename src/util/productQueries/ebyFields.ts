@@ -14,6 +14,7 @@ export const ebyFields = (
     ...marginField({ target: "e", settings }),
     ...(settings.minPercentageMargin > 0 &&
       marginPctField({ target: "e", settings })),
+    e_pRange: { $exists: true },
   };
 
   if (sdmn) {
@@ -39,7 +40,7 @@ export const ebyFields = (
           $round: [
             {
               $subtract: [
-                "$e_prc",
+                "$e_pRange.median",
                 {
                   $add: [
                     {

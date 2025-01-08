@@ -3,7 +3,7 @@
 import { ModifiedProduct } from "@/types/Product";
 import { appendPercentage, formatter } from "@/util/formatter";
 import { InputNumber, Popover, Switch } from "antd";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import CopyToClipboard from "./CopyToClipboard";
 import { ebayTier } from "@/constant/ebay";
 import { Above, EbyTierCategory, UpTo } from "@/types/EbyTierCategory";
@@ -15,6 +15,10 @@ import { Settings } from "@/types/Settings";
 import { useUserSettings } from "@/hooks/use-settings";
 import { addCosts } from "@/util/addCosts";
 import { calculateNetPrice } from "@/util/calculateNetPrice";
+import {
+  mrgnFieldName,
+  mrgnPctFieldName,
+} from "@/util/productQueries/mrgnProps";
 
 const ContentEbyMarge = ({
   product,
@@ -28,6 +32,7 @@ const ContentEbyMarge = ({
     | "esin"
     | "e_uprc"
     | "e_mrgn"
+    | "e_pRange"
     | "e_mrgn_pct"
     | "e_ns_costs"
     | "e_ns_mrgn"
@@ -78,7 +83,7 @@ const ContentEbyMarge = ({
     [product.ebyCategories]
   ) as EbyTierCategory | null;
 
-  const [sellPrice, setSellPrice] = useState(product["e_prc"]);
+  const [sellPrice, setSellPrice] = useState(product["e_pRange"]?.median || 0);
   const [ebyShop, setEbyshop] = useState<"shop" | "no_shop">("shop");
   const taxCosts = useMemo(
     () =>
@@ -100,6 +105,18 @@ const ContentEbyMarge = ({
   const [transportCosts, setTransportCosts] = useState(
     settings[settings.tptStandard as keyof Settings] as number
   );
+  const earningsFieldName = mrgnFieldName("e", false);
+  const marginFieldName = mrgnPctFieldName("e", false);
+  const [firstLoad, setFirstLoad] = useState(true);
+  const [earnings, setEarnings] = useState<number>(
+    (product as ModifiedProduct)[earningsFieldName as keyof ModifiedProduct]
+  );
+  const [margin, setMargin] = useState<number>(
+    (product as ModifiedProduct)[marginFieldName as keyof ModifiedProduct]
+  );
+  const [roi, setRoi] = useState<number>(
+    roundToFourDecimals(earnings / netBuyPrice) * 100
+  );
   const totalCosts = addCosts([
     costs,
     storageCosts,
@@ -108,9 +125,6 @@ const ContentEbyMarge = ({
     netBuyPrice,
     prepCenterCosts,
   ]);
-  const earning = sellPrice - totalCosts;
-  const margin = roundToFourDecimals(earning / sellPrice) * 100;
-  const roi = roundToFourDecimals(earning / netBuyPrice) * 100;
 
   const createSellprovisionStr = (tier: Above | UpTo) => {
     if ("above" in tier) {
@@ -127,6 +141,26 @@ const ContentEbyMarge = ({
       )}`;
     }
   };
+
+  useEffect(() => {
+    if(firstLoad) {
+      setFirstLoad(false);
+      return;
+    }
+    const earning = sellPrice - totalCosts;
+    const margin = roundToFourDecimals(earning / sellPrice) * 100;
+    const roi = roundToFourDecimals(earning / netBuyPrice) * 100;
+    setRoi(roi);
+    setMargin(margin);
+    setEarnings(earning);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    storageCosts,
+    netBuyPrice,
+    sellPrice,
+    transportCosts,
+    prepCenterCosts,
+  ]);
 
   return (
     <div className="w-96 relative">
@@ -311,9 +345,11 @@ const ContentEbyMarge = ({
             <div className="flex flex-row w-full">
               <p>Nettogewinn:</p>
               <p
-                className={`ml-auto ${earning < 0 ? "text-red" : "text-green"}`}
+                className={`ml-auto ${
+                  earnings < 0 ? "text-red" : "text-green"
+                }`}
               >
-                {formatter.format(earning)}
+                {formatter.format(earnings)}
               </p>
             </div>
           </h3>
@@ -329,7 +365,9 @@ const ContentEbyMarge = ({
             <div className="flex flex-row w-full">
               <p>Nettomarge:</p>
               <p
-                className={`ml-auto ${earning < 0 ? "text-red" : "text-green"}`}
+                className={`ml-auto ${
+                  earnings < 0 ? "text-red" : "text-green"
+                }`}
               >
                 {appendPercentage(margin)}
               </p>

@@ -37,7 +37,7 @@ const VKPrice = ({
             }`}
             placement="topLeft"
           >
-            <div>{target === "a" ? (flip ? "" : "∅ VK") : "VK (M Median)"}</div>
+            <div>{target === "a" ? (flip ? "" : "∅ VK") : "M Median VK"}</div>
           </Tooltip>
           <div className="text-xs">
             <span className="text-green">{netto ? "Netto" : "Brutto"}</span>
@@ -58,18 +58,21 @@ const VKPrice = ({
       return (
         <div className="flex flex-col">
           <div className={`${netto ? "" : "font-semibold text-green"}`}>
-            <span>{formatCurrency(parseFloat(aznAvgPrice))} </span>
+            <span>
+              {target === "a" ? formatCurrency(aznAvgPrice) : `M ${formatCurrency(median)}`}
+            </span>
             {target === "a" ? (
-              <div className={`text-xs ${buyBoxIsAmazon ? "text-amazon" : "text-green"}`}>
+              <div
+                className={`text-xs ${
+                  buyBoxIsAmazon ? "text-amazon" : "text-green"
+                }`}
+              >
                 {
                   AZN_AVG_FLD_MAPPING[
                     product.a_avg_fld as keyof typeof AZN_AVG_FLD_MAPPING
                   ]
                 }
               </div>
-            ) : null}
-            {median && target === "e" ? (
-              <span>{`(M ${formatter.format(median)})`} </span>
             ) : null}
           </div>
           {targetQty > 1 && (
@@ -83,7 +86,7 @@ const VKPrice = ({
           <div className={`${netto ? "font-semibold text-green" : ""}`}>
             {formatCurrency(
               calculationDeduction(
-                parseFloat(target === "a" ? aznAvgPrice : e_prc),
+                parseFloat(target === "a" ? aznAvgPrice : median),
                 true
               )
             )}
