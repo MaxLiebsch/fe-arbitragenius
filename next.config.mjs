@@ -1,12 +1,16 @@
 import { withSentryConfig } from "@sentry/nextjs";
 /** @type {import('next').NextConfig} */
 import webpack from "webpack";
+import packageJson from "./package.json" assert { type: "json" }; 
 
 const isVercel = process.env.VERCEL === "true";
 
 const nextConfig = {
   basePath: "/app",
   reactStrictMode: false,
+  env: {
+    NEXT_PUBLIC_VERSION: packageJson.version,
+  },
   experimental: {
     serverComponentsExternalPackages: ["node-appwrite"],
   },
