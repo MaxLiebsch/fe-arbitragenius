@@ -32,6 +32,7 @@ import { de } from "date-fns/locale";
 import useAppereanceAdd from "@/hooks/use-appereance-add";
 import { Mode } from "@/types/Appearance";
 import { useThemeAtom } from "@/hooks/use-theme";
+import ReleaseModal from "../ReleaseModal";
 
 const navigation = [
   {
@@ -354,6 +355,7 @@ export const DashboardLayout = ({
 
               <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
                 <div className="w-full">
+                  <ReleaseModal/>
                   {subscriptionStatus.status === "trialing" ? (
                     <div className="mt-5">
                       Danke, dass Du dich für Arbispotter entschieden hast. Du

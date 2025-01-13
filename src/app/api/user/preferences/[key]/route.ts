@@ -10,6 +10,15 @@ const serializers: {
     fallback?: string;
   };
 } = {
+  lastAcknowledgedRelease: {
+    serialize(input?: any) {
+      return input.version;
+    },
+    deserialize(input?: any) {
+      return input;
+    },
+    fallback: JSON.stringify(""),
+  },
   appearance: {
     serialize(input?: any) {
       return JSON.stringify(input);
@@ -65,7 +74,7 @@ export async function GET(
 ) {
   const user = await getLoggedInUser();
   if (!user) return new Response("unauthorized", { status: 401 });
-  
+
   const preferences = user.prefs as any;
 
   if (Object.keys(user.prefs).includes(params.key) && serializers[params.key]) {
@@ -73,7 +82,7 @@ export async function GET(
     return new Response(JSON.stringify(value));
   } else {
     return new Response(
-      serializers[params.key]?.fallback ?? preferences[params.key] ?? ""
+      serializers[params.key] ? serializers[params.key].fallback : ""
     );
   }
 }
@@ -89,6 +98,6 @@ export async function POST(
   const value = await request.json();
   preferences[params.key] =
     serializers[params.key]?.serialize(value) ?? JSON.stringify(value);
-  account.updatePrefs(preferences);
+  await account.updatePrefs(preferences);
   return new Response(undefined, { status: 200 });
 }

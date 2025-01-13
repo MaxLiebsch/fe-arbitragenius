@@ -67,7 +67,7 @@ export default function useProductUpdate() {
         const originalProducts = previousQueryData[1] as ModifiedProduct[];
         let product = originalProducts.find((p) => p._id === productId);
         if (!product) return;
-        const { prc, a_prc, e_prc, costs, tax, ebyCategories } = product;
+        const { prc, a_prc,e_pRange, costs, tax, ebyCategories } = product;
         if (!eanCorrect || asin !== originalAsin) {
           const products = originalProducts.filter(
             (p) => p._id !== variables.productId
@@ -120,7 +120,7 @@ export default function useProductUpdate() {
               if (mappedCategories) {
                 const ebyArbitrage = calculateEbyArbitrage(
                   mappedCategories,
-                  e_prc,
+                  e_pRange?.median!,
                   prc * (e_qty / qty)
                 );
                 if (ebyArbitrage) {
@@ -165,7 +165,7 @@ export default function useProductUpdate() {
                 if (mappedCategories) {
                   const ebyArbitrage = calculateEbyArbitrage(
                     mappedCategories,
-                    e_prc,
+                    e_pRange?.median!,
                     prc * (e_qty / qty)
                   );
                   if (ebyArbitrage) {

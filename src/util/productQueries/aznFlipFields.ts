@@ -10,12 +10,7 @@ export const aznFlipFields = (settings: Settings, isWholesale?: boolean) => {
     a_pblsh: true,
     "costs.azn": { $gt: 0 },
     aznUpdatedAt: { $gt: new Date(Date.now() - 96 * 60 * 1000).toISOString() },
-    $or: [
-      { avg30_ahsprcs: { $gt: 0 } },
-      { avg30_ansprcs: { $gt: 0 } },
-      { avg90_ahsprcs: { $gt: 0 } },
-      { avg90_ansprcs: { $gt: 0 } },
-    ],
+    a_avg_fld: { $ne: null },
   };
 
   if (settings.a_cats.length > 0 && settings.a_cats[0] !== 0) {
@@ -39,35 +34,8 @@ export const aznFlipFields = (settings: Settings, isWholesale?: boolean) => {
   query.push(
     {
       $addFields: {
-        a_avg_prc: {
-          $divide: [
-            {
-              $cond: {
-                if: { $gt: ["$avg30_ahsprcs", -1] },
-                then: "$avg30_ahsprcs",
-                else: {
-                  $cond: {
-                    if: { $gt: ["$avg30_ansprcs", -1] },
-                    then: "$avg30_ansprcs",
-                    else: {
-                      $cond: {
-                        if: { $gt: ["$avg90_ahsprcs", -1] },
-                        then: "$avg90_ahsprcs",
-                        else: "$avg90_ansprcs",
-                      },
-                    },
-                  },
-                },
-              },
-            },
-            100,
-          ],
-        },
-      },
-    },
-    {
-      $match: {
-        a_avg_prc: { $gt: 0 },
+        a_avg_prc: "$a_avg_price",
+        computedPrice: "$a_avg_price",
       },
     },
     {
@@ -79,7 +47,7 @@ export const aznFlipFields = (settings: Settings, isWholesale?: boolean) => {
                 {
                   $divide: ["$costs.azn", "$a_prc"],
                 },
-                "$a_avg_prc",
+                "$computedPrice",
               ],
             },
             2,
@@ -97,7 +65,7 @@ export const aznFlipFields = (settings: Settings, isWholesale?: boolean) => {
             $round: [
               {
                 $subtract: [
-                  "$a_avg_prc",
+                  "$computedPrice",
                   {
                     $add: [
                       {
@@ -113,10 +81,10 @@ export const aznFlipFields = (settings: Settings, isWholesale?: boolean) => {
                       },
                       {
                         $subtract: [
-                          "$a_avg_prc",
+                          "$computedPrice",
                           {
                             $divide: [
-                              "$a_avg_prc",
+                              "$computedPrice",
                               {
                                 $add: [
                                   1,
@@ -153,7 +121,7 @@ export const aznFlipFields = (settings: Settings, isWholesale?: boolean) => {
               {
                 $multiply: [
                   {
-                    $divide: [`$${aznMrgn}`, "$a_avg_prc"],
+                    $divide: [`$${aznMrgn}`, "$computedPrice"],
                   },
                   100,
                 ],
@@ -174,7 +142,7 @@ export const aznFlipFields = (settings: Settings, isWholesale?: boolean) => {
             $round: [
               {
                 $subtract: [
-                  "$a_avg_prc", // VK
+                  "$computedPrice", // VK
                   {
                     $add: [
                       // EK * (VK qty/ EK qty)  * divide (1 + MwSt) Steuern EK
@@ -192,10 +160,10 @@ export const aznFlipFields = (settings: Settings, isWholesale?: boolean) => {
                       // Steuern VK
                       {
                         $subtract: [
-                          "$a_avg_prc",
+                          "$computedPrice",
                           {
                             $divide: [
-                              "$a_avg_prc",
+                              "$computedPrice",
                               {
                                 $add: [
                                   1,
@@ -231,7 +199,7 @@ export const aznFlipFields = (settings: Settings, isWholesale?: boolean) => {
               {
                 $multiply: [
                   {
-                    $divide: [`$${aznMrgn}`, "$a_avg_prc"],
+                    $divide: [`$${aznMrgn}`, "$computedPrice"],
                   },
                   100,
                 ],

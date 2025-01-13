@@ -58,6 +58,8 @@ export const aznProjectFields = {
   a_reviewcnt: 1,
   bsr: 1,
   a_img: 1,
+  a_avg_price:1,
+  a_avg_fld: 1,
   dealAznUpdatedAt: 1,
   asin: 1,
   a_prc: 1,

@@ -40,7 +40,8 @@ export async function POST(
   if (product === null) {
     return Response.json("Product not found " + productId, { status: 404 });
   }
-  const { costs, e_prc, a_prc, prc, ebyCategories } = product;
+  const { costs, e_pRange, a_prc, prc, ebyCategories } = product;
+  const medianPrice = e_pRange.median!;
 
   const {
     asin,
@@ -80,7 +81,7 @@ export async function POST(
       ...(eSellQty > 0 &&
         eSellQty !== originalEQty && {
           e_qty: eSellQty,
-          e_uprc: roundToTwoDecimals(e_prc / eSellQty),
+          e_uprc: roundToTwoDecimals(medianPrice / eSellQty),
         }),
     };
   }
@@ -167,7 +168,7 @@ export async function POST(
         if (mappedCategories) {
           const ebyArbitrage = calculateEbyArbitrage(
             mappedCategories,
-            e_prc,
+            medianPrice, // VK
             prc * (eSellQty / buyQty)
           );
           if (ebyArbitrage) {
@@ -179,7 +180,7 @@ export async function POST(
         }
       }
       if (buyQty !== originalQty) {
-        const { prc, a_prc, e_prc, costs, tax, ebyCategories } = product;
+        const { prc, a_prc, costs, tax, ebyCategories } = product;
         if (aTargetCorrect && costs && asin === originalAsin) {
           const result = calculateAznArbitrage(
             prc * (aSellQty / buyQty), // EK
@@ -203,7 +204,7 @@ export async function POST(
           if (mappedCategories) {
             const ebyArbitrage = calculateEbyArbitrage(
               mappedCategories,
-              e_prc,
+              medianPrice,
               prc * (eSellQty / buyQty)
             );
             if (ebyArbitrage) {

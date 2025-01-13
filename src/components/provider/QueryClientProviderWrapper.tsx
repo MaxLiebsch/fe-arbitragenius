@@ -1,9 +1,10 @@
 "use client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import React, { ReactNode,  } from "react";
+import React, { ReactNode } from "react";
 import Providers from "./Providers";
 import { GCTIME, STALETIME } from "@/constant/constant";
 import ChatWood from "../ChatWood";
+import { Provider } from "jotai";
 
 function makeQueryClient() {
   return new QueryClient({
@@ -37,11 +38,12 @@ function getQueryClient() {
 const queryClient = getQueryClient();
 
 const QueryClientProviderWrapper = ({ children }: { children: ReactNode }) => {
- 
   return (
     <QueryClientProvider client={queryClient}>
-      <Providers>{children}</Providers>
-      <ChatWood/>
+      <Provider>
+        <Providers>{children}</Providers>
+      </Provider>
+      <ChatWood />
     </QueryClientProvider>
   );
 };
