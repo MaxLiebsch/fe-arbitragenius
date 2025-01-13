@@ -2,6 +2,8 @@ import { Settings } from "@/types/Settings";
 import { mrgnFieldName, mrgnPctFieldName } from "./mrgnProps";
 import { addAznSettingsFields } from "./addAznSettingsFields";
 import { marginField, marginPctField } from "./marginFields";
+import { marginAddField } from "./marginAddField";
+import { marginPctAddField } from "./marginPctAddField";
 
 export const aznFields = (
   settings: Settings,
@@ -16,8 +18,8 @@ export const aznFields = (
     ...marginField({ target: "a", settings }),
     ...(settings.minPercentageMargin > 0 &&
       marginPctField({ target: "a", settings })),
-    a_avg_fld: { $ne: null },
   };
+
   const isSommer = new Date().getMonth() < 9;
   if (settings.a_cats.length > 0 && settings.a_cats[0] !== 0) {
     match["categoryTree.catId"] = { $in: settings.a_cats };
@@ -32,222 +34,60 @@ export const aznFields = (
   const query: any = [];
 
   if (!isWholesale) {
+    match["a_avg_fld"] = { $ne: null };
     query.push({
       $match: match,
     });
   }
-  if (fba) {
-    // If the user does not use Azn FBA, then the margin is calculated,
-    // based on there settings for transport, storage, and preparation center
-    query.push(
-      {
+  const computedPriceAddField = isWholesale
+    ? {
         $addFields: {
-          computedPrice: "$a_avg_price",
-        },
-      },
-      {
-        $addFields: {
-          [mrgnFieldName("a", euProgram)]: {
-            $round: [
-              {
-                $subtract: [
-                  "$computedPrice",
-                  {
-                    $add: [
-                      {
-                        $divide: [
-                          {
-                            $multiply: [
-                              "$prc",
-                              { $divide: ["$a_qty", "$qty"] },
-                            ],
-                          },
-                          {
-                            $add: [
-                              1,
-                              { $divide: [{ $ifNull: ["$tax", 19] }, 100] },
-                            ],
-                          },
-                        ],
-                      },
-                      {
-                        $subtract: [
-                          "$computedPrice",
-                          {
-                            $divide: [
-                              "$computedPrice",
-                              {
-                                $add: [
-                                  1,
-                                  { $divide: [{ $ifNull: ["$tax", 19] }, 100] },
-                                ],
-                              },
-                            ],
-                          },
-                        ],
-                      },
-                      "$costs.tpt",
-                      "$costs.varc",
-                      isSommer ? "$costs.strg_1_hy" : "$costs.strg_2_hy",
-                      a_prepCenter,
-                      "$costs.azn",
-                    ],
-                  },
-                ],
+          computedPrice: {
+            $cond: {
+              if: { $eq: ["$a_avg_fld", null] },
+              then: {
+                $cond: {
+                  if: { $gt: ["$a_prc", 1] },
+                  then: "$a_prc",
+                  else: null,
+                },
               },
-              2,
-            ],
-          },
-        },
-      },
-      {
-        $match: {
-          ...marginField({ target: "a", settings }),
-        },
-      },
-      {
-        $addFields: {
-          [mrgnPctFieldName("a", euProgram)]: {
-            $round: [
-              {
-                $multiply: [
-                  {
-                    $divide: [
-                      `$${mrgnFieldName("a", euProgram)}`,
-                      "$computedPrice",
-                    ],
-                  },
-                  100,
-                ],
-              },
-              2,
-            ],
+
+              else: "$a_avg_price",
+            },
           },
         },
       }
-    );
+    : {
+        $addFields: {
+          computedPrice: "$a_avg_price",
+        },
+      };
+
+  // If the user does not use Azn FBA, then the margin is calculated,
+  // based on there settings for transport, storage, and preparation center
+  const costs = fba
+    ? [
+        "$costs.tpt",
+        "$costs.varc",
+        isSommer ? "$costs.strg_1_hy" : "$costs.strg_2_hy",
+        a_prepCenter,
+        "$costs.azn",
+      ]
+    : [transport, a_strg, a_prepCenter, "$costs.azn"];
+
+  query.push(computedPriceAddField, marginAddField({ euProgram, costs }));
+
+  if (isWholesale) {
+    query.push(marginPctAddField({ euProgram }));
   } else {
-    // If the user does not use Azn FBA, then the margin is calculated,
-    // based on there settings for transport, storage, and preparation center
     query.push(
-      // {
-      //   $addFields: {
-      //     a_avg_prc: {
-      //       $cond: {
-      //         if: { $eq: ["$a_useCurrPrice", true] },
-      //         then: "$$REMOVE", // Skip field if using current price
-      //         else: {
-      //           $divide: [
-      //             {
-      //               $cond: {
-      //                 if: { $gt: ["$avg30_ahsprcs", -1] },
-      //                 then: "$avg30_ahsprcs",
-      //                 else: {
-      //                   $cond: {
-      //                     if: { $gt: ["$avg30_ansprcs", -1] },
-      //                     then: "$avg30_ansprcs",
-      //                     else: {
-      //                       $cond: {
-      //                         if: { $gt: ["$avg90_ahsprcs", -1] },
-      //                         then: "$avg90_ahsprcs",
-      //                         else: "$avg90_ansprcs",
-      //                       },
-      //                     },
-      //                   },
-      //                 },
-      //               },
-      //             },
-      //             100,
-      //           ],
-      //         },
-      //       },
-      //     },
-      //   },
-      // },
-      {
-        $addFields: {
-          computedPrice: "$a_avg_price",
-        },
-      },
-      {
-        $addFields: {
-          [mrgnFieldName("a", euProgram)]: {
-            $round: [
-              {
-                $subtract: [
-                  "$computedPrice",
-                  {
-                    $add: [
-                      {
-                        $divide: [
-                          {
-                            $multiply: [
-                              "$prc",
-                              { $divide: ["$a_qty", "$qty"] },
-                            ],
-                          },
-                          {
-                            $add: [
-                              1,
-                              { $divide: [{ $ifNull: ["$tax", 19] }, 100] },
-                            ],
-                          },
-                        ],
-                      },
-                      {
-                        $subtract: [
-                          "$computedPrice",
-                          {
-                            $divide: [
-                              "$computedPrice",
-                              {
-                                $add: [
-                                  1,
-                                  { $divide: [{ $ifNull: ["$tax", 19] }, 100] },
-                                ],
-                              },
-                            ],
-                          },
-                        ],
-                      },
-                      transport,
-                      a_strg,
-                      a_prepCenter,
-                      "$costs.azn",
-                    ],
-                  },
-                ],
-              },
-              2,
-            ],
-          },
-        },
-      },
       {
         $match: {
           ...marginField({ target: "a", settings }),
         },
       },
-      {
-        $addFields: {
-          [mrgnPctFieldName("a", euProgram)]: {
-            $round: [
-              {
-                $multiply: [
-                  {
-                    $divide: [
-                      `$${mrgnFieldName("a", euProgram)}`,
-                      "$computedPrice",
-                    ],
-                  },
-                  100,
-                ],
-              },
-              2,
-            ],
-          },
-        },
-      }
+      marginPctAddField({ euProgram })
     );
   }
 

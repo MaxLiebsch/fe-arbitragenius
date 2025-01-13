@@ -48,7 +48,7 @@ export default function useTaskProducts(
       sort?.field,
       sort?.direction,
     ],
-    refetchOnWindowFocus: false,
+    refetchOnWindowFocus: true,
     queryFn: async () => {
       let sortQuery = "";
 

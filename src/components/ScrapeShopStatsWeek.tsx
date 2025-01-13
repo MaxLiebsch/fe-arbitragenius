@@ -62,6 +62,7 @@ const ScrapeShopStatsWeek = ({ tasks }: { tasks: any[] }) => {
       setStats(reorderedStats);
       setOrderedWeekdays(weekdaysOrder);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

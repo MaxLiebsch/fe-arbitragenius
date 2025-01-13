@@ -63,6 +63,7 @@ const TotalDeals = () => {
         });
       }
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [queryUpdate, settings]);
 
   return (

@@ -1,7 +1,6 @@
 import { WHOLESALE_COL } from "@/constant/constant";
 import { getLoggedInUser } from "@/server/appwrite";
 import { getProductCol } from "@/server/mongo";
-import clientPool from "@/server/mongoPool";
 import { Settings } from "@/types/Settings";
 import { aznFields } from "@/util/productQueries/aznFields";
 import { ebyFields } from "@/util/productQueries/ebyFields";
@@ -50,7 +49,6 @@ export async function GET(
     aggregation.push(...ebyFields(customerSettings, WHOLESALE_COL, true));
   }
 
-  const mongo = await clientPool["NEXT_MONGO_ADMIN"];
 
   const productCol = await getProductCol()
 
@@ -61,7 +59,7 @@ export async function GET(
   sort["status"] = 1;
 
   if (query.field === "none") {
-    sort[`${target}_mrgn_pct`] = -1;
+    sort[`${target}_mrgn`] = -1;
   } else if (query.field) {
     sort[query.field] = query.order === "asc" ? 1 : -1;
   }
@@ -84,6 +82,12 @@ export async function GET(
     }
   );
   const res = await productCol.aggregate(aggregation).toArray();
+
+  if (
+    process.env.NODE_ENV === "development"
+  ) {
+    console.log("WHOLESALE", JSON.stringify(aggregation));
+  }
 
   if (res.length) {
     return new Response(JSON.stringify(res), {

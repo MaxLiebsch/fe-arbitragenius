@@ -13,6 +13,7 @@ const Margin = ({
   settings: Settings;
 }): GridColDef<any> => {
   return {
+    disableColumnMenu: true,
     field: mrgnFieldName(target, settings.euProgram),
     renderHeader: (params) => (
       <div className="relative flex flex-col !leading-tight">

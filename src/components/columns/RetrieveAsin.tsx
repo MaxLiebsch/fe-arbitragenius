@@ -4,6 +4,7 @@ import { parseAsinFromUrl } from "@/util/parseAsin";
 import React from "react";
 import AdminAznCorrectionForm from "../forms/AdminAznCorrectionForm";
 import CopyToClipboard from "../CopyToClipboard";
+import Eanlist from "../Eanlist";
 
 const RetrieveAsin = (
   url: string,
@@ -29,18 +30,7 @@ const RetrieveAsin = (
           />
         )}
         <div className="flex flex-row gap-1">
-          {eanList && eanList.length ? (
-            <div className="flex flex-row gap-1">
-              <span className="font-semibold">EAN:</span>
-              <div className="flex flex-row gap-2">
-                {eanList.map((ean: string) => (
-                  <CopyToClipboard key={ean} text={ean} />
-                ))}
-              </div>
-            </div>
-          ) : (
-            <></>
-          )}
+          <Eanlist eanList={eanList} /> 
           <div>
             <span className="font-semibold">ASIN: </span>
             <CopyToClipboard text={asin} />

@@ -66,9 +66,9 @@ export const createColumns: (
     },
     EKPrice({ settings, flip }),
     VKPrice({ target, settings, flip }),
-    PriceAnalysis(),
     MarginPct({ target, settings}),
     Margin({ target, settings }),
+    PriceAnalysis(),
     OptionField({
       addBookmark,
       removeBookmark,

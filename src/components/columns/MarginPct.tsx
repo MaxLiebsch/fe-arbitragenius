@@ -24,6 +24,7 @@ const MarginPct = ({
     field: mrgnPctFieldName(target, settings.euProgram),
     headerAlign: "left",
     width: 140,
+    disableColumnMenu: true,
     headerName: "Marge %",
     renderHeader: (params) => (
       <div className="relative flex flex-col !leading-tight ">

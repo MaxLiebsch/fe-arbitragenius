@@ -68,7 +68,7 @@ const ContentMarge = ({
   const isFlip = a_avg_prc !== undefined;
   const initBuyPrice = isFlip ? a_prc : prc;
   const flipQty = isFlip ? a_qty : buyQty;
-  const initSellPrice = avgPrice
+  const initSellPrice = avgPrice === 0 ? a_prc : avgPrice;
 
   const [settings, setSettings] = useUserSettings();
   const [transport, setTransportCosts] = useState(

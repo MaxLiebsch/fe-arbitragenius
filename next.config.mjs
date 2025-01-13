@@ -17,7 +17,7 @@ const nextConfig = {
   basePath: "/app",
   reactStrictMode: false,
   env: {
-    NEXT_PUBLIC_VERSION: packageJson.version,
+    NEXT_PUBLIC_VERSION: version,
   },
   experimental: {
     serverComponentsExternalPackages: ["node-appwrite"],

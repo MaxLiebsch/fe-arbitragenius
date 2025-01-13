@@ -4,6 +4,7 @@ import { parseEsinFromUrl } from "@/util/parseEsin";
 import React from "react";
 import AdminEbyCorrectionForm from "../forms/AdminEbyCorrectionForm";
 import CopyToClipboard from "../CopyToClipboard";
+import Eanlist from "../Eanlist";
 
 const RetrieveEsin = (
   url: string,
@@ -28,19 +29,7 @@ const RetrieveEsin = (
           />
         )}
         <div className="flex flex-row gap-1">
-          {eanList && eanList.length ? (
-            <div className="flex flex-row gap-1">
-              <span className="font-semibold">EAN:</span>
-              <div className="flex flex-row gap-2">
-                {eanList.map((ean: string) => (
-                  <CopyToClipboard key={ean} text={ean} />
-                ))}
-              </div>
-            </div>
-          ) : (
-            <></>
-          )}
-
+          <Eanlist eanList={eanList} />
           <div>
             <span className="font-semibold">ESIN: </span>
             <CopyToClipboard text={esin} />

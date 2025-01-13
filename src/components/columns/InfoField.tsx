@@ -12,6 +12,8 @@ import { formatDistanceToNow, parseISO } from "date-fns";
 import { de } from "date-fns/locale";
 import { targetLinkBuilder } from "@/util/targetLinkBuilder";
 import { getLatestBsr } from "@/util/getLatestBsr";
+import Eanlist from "../Eanlist";
+import { Tooltip } from "antd";
 
 const InfoField = ({
   product,
@@ -39,6 +41,7 @@ const InfoField = ({
     dealAznUpdatedAt,
     dealEbyUpdatedAt,
     drops30,
+    esin,
     drops90,
     monthlySold,
     shop,
@@ -60,6 +63,9 @@ const InfoField = ({
 
   const { bsr, aznCategory } = getLatestBsr(product);
   const isFlip = shop === "flip" || flip;
+
+  if ((!esin && target === "e") || (!asin && target === "a"))
+    return <Eanlist eanList={product.eanList} />;
 
   return (
     <div className="flex flex-col divide-y p-1 w-full">
@@ -149,7 +155,7 @@ const InfoField = ({
         ) : (
           <></>
         )}
-        {target === "a" && bsr && bsr.length ? (
+        {target === "a" && bsr && bsr.length && bsr[0]?.number !== 0 ? (
           <div>
             <span className="font-semibold">BSR:</span>
             <span>
@@ -161,11 +167,13 @@ const InfoField = ({
                 );
               })}
             </span>
-            <span className="font-semibold">Kategorie:</span>
             {aznCategory && (
-              <span className="mx-1" key={aznCategory.label + asin}>
-                {aznCategory.label}
-              </span>
+              <>
+                <span className="font-semibold">Kategorie:</span>
+                <span className="mx-1" key={aznCategory.label + asin}>
+                  {aznCategory.label}
+                </span>
+              </>
             )}
           </div>
         ) : (
@@ -174,10 +182,18 @@ const InfoField = ({
         {target === "a" && (monthlySold || drops30 || drops90) && (
           <div className="flex flex-row gap-2">
             {monthlySold && (
-              <span>
-                <span className="font-semibold">Monatliche Sales:</span>
-                <span className="text-md"> {monthlySold}</span>
-              </span>
+              <Tooltip
+                title={`${
+                  monthlySold % 50 === 0
+                    ? "Die Metrik 'Gekauft im letzten Monat', welche auf den Amazon-Suchergebnisseiten zu finden ist."
+                    : "Geschätzte Verkäufe basierend auf dem BSR der Hauptkategorie."
+                }`}
+              >
+                <span>
+                  <span className="font-semibold">Monatliche Sales:</span>
+                  <span className="text-md"> {monthlySold}</span>
+                </span>
+              </Tooltip>
             )}
             <span>
               <span className="font-semibold">Keepa Drops (30):</span>
