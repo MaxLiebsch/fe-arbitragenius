@@ -11,6 +11,7 @@ export const SettingsSchema = z.object({
   minPercentageMargin: z.number(),
   fba: z.boolean(),
   a_strg: z.number(),
+  showSeen: z.boolean().optional(),
   a_cats: z.array(z.number()),
   a_tptStandard: z.string(),
   a_tptSmall: z.number(),

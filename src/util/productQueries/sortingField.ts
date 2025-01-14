@@ -1,11 +1,20 @@
-import { mrgnFieldName, mrgnPctFieldName } from "./mrgnProps";
+import { Settings } from "@/types/Settings";
+import { mrgnPctFieldName } from "./mrgnProps";
 
 export function sortingField(
   isAmazon: boolean,
   query: any,
   sort: any,
-  euProgram: boolean
+  settings: Settings
 ) {
+  const { euProgram, showSeen } = settings;
+
+  if (showSeen) {
+    sort["seen"] = -1;
+  }else{
+    sort["seen"] = 1;
+  }
+
   if (isAmazon) {
     if (query.field === "none") {
       sort["bsr.number"] = 1;
@@ -20,4 +29,5 @@ export function sortingField(
       sort[query.field] = query.order === "asc" ? 1 : -1;
     }
   }
+  console.log("sort:", sort);
 }
