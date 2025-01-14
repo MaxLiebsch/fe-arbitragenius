@@ -66,7 +66,8 @@ export async function GET(
     [key: string]: SortDirection;
   } = {};
 
-  sortingField(isAmazon, query, sort, euProgram);
+  sortingField(isAmazon, query, sort, customerSettings);
+
 
   aggregation.push(
     {
