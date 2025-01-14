@@ -2,9 +2,11 @@ import { ProductPagination } from "@/hooks/use-aznflips-products";
 import { BookmarkDeleteSchema, BookmarkSchema } from "@/types/Bookmarks";
 import { GridColDef } from "@mui/x-data-grid-premium";
 import { UseMutateFunction } from "@tanstack/react-query";
-import { Checkbox, Tooltip } from "antd";
+import { Checkbox, Select, Tooltip } from "antd";
 import React from "react";
 import ArbitrageOneExportBtn from "../ArbitrageOneExportBtn";
+import ProductInvalid from "../ProductInvalid";
+import ProductIrrelevant from "../ProductIrrelevant";
 
 interface OptionFieldProps {
   addBookmark: UseMutateFunction<
@@ -51,12 +53,7 @@ const OptionField = ({
     align: "center",
     renderCell: (params) => {
       const product = params.row;
-      const {
-        asin,
-        shop,
-        isBookmarked,
-        _id: productId,
-      } = product;
+      const { asin, shop, isBookmarked, _id: productId } = product;
       return (
         <div className="flex flex-col justify-center gap-2">
           <Checkbox
@@ -87,6 +84,8 @@ const OptionField = ({
           >
             Mein Deal
           </Checkbox>
+          <ProductIrrelevant productId={productId} target={target} domain={shop} />
+          <ProductInvalid productId={productId} target={target} domain={shop} />
           {asin && (
             <ArbitrageOneExportBtn
               product={product}

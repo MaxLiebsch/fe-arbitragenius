@@ -4,6 +4,8 @@ import { Settings } from "@/types/Settings";
 import { aznFields } from "@/util/productQueries/aznFields";
 
 import { ebyFields } from "@/util/productQueries/ebyFields";
+import { lookupProductInvalid } from "@/util/productQueries/lookupProductInvalid";
+import { lookupProductIrrelevant } from "@/util/productQueries/lookupProductIrrelevant";
 import { lookupProductSeen } from "@/util/productQueries/lookupProductSeen";
 import { lookupUserId } from "@/util/productQueries/lookupUserId";
 
@@ -70,6 +72,8 @@ export async function GET(
   aggregation.push(
     projectField(target, "$sdmn"),
     ...lookupProductSeen(user, target),
+    ...lookupProductInvalid(user, target),
+    ...lookupProductIrrelevant(user, target),
     {
       $sort: sort,
     },
@@ -85,16 +89,10 @@ export async function GET(
   const productCol = await getProductCol();
 
   const res = await productCol.aggregate(aggregation).toArray();
-  if (
-    isAmazon &&
-    process.env.NODE_ENV === "development"
-  ) {
+  if (isAmazon && process.env.NODE_ENV === "development") {
     console.log("AZNAGGP", JSON.stringify(aggregation));
   }
-  if (
-    !isAmazon &&
-    process.env.NODE_ENV === "development"
-  ) {
+  if (!isAmazon && process.env.NODE_ENV === "development") {
     console.log("EBYAGGP", JSON.stringify(aggregation));
   }
 
