@@ -71,6 +71,7 @@ export default function WholeSaleProductsTable(props: {
       initialState={{
         columns: {
           columnVisibilityModel: {
+            analytics: target === 'a',
             bsr_1: false,
             bsr_cat_1: false,
             bsr_2: false,
