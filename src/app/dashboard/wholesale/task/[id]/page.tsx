@@ -29,8 +29,9 @@ const Page = async ({ params }: { params: { id: string } }) => {
   const isWholeSaleEbyTask = task.type === "WHOLESALE_EBY_SEARCH";
 
   const inProgress = task.executing;
-  const progress =
-    Number((task.progress.completed / task.progress.total).toFixed(2)) * 100;
+  const progress = (
+    Number((task.progress.completed / task.progress.total).toFixed(2)) * 100
+  ).toFixed(2);
   return (
     <>
       <div>{task?.name || "Task"} </div>

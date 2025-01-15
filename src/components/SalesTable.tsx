@@ -15,7 +15,7 @@ import useSalesCount from "@/hooks/use-sales-count";
 import useSalesProducts from "@/hooks/use-sales-products";
 import { createSalesTableColumns } from "@/util/SalesTableColumns";
 import useAccount from "@/hooks/use-account";
-import { usePaginationAndSort } from "@/hooks/use-pagination";
+import { usePaginationAndSort } from "@/hooks/use-pagination-sort";
 import { useUserSettings } from "@/hooks/use-settings";
 
 export default function SalesTable(props: {

@@ -16,7 +16,7 @@ import { ChevronRightIcon, ChevronLeftIcon } from "@heroicons/react/16/solid";
 import useTaskProducts from "@/hooks/use-task-products";
 import useTaskProductCount from "@/hooks/use-task-product-count";
 import { createWholeSaleColumns } from "../util/wholeSaleTableColumns";
-import { usePaginationAndSort } from "@/hooks/use-pagination";
+import { usePaginationAndSort } from "@/hooks/use-pagination-sort";
 import { useUserSettings } from "@/hooks/use-settings";
 import { WholeSaleTarget } from "@/types/tasks";
 
@@ -71,6 +71,7 @@ export default function WholeSaleProductsTable(props: {
       initialState={{
         columns: {
           columnVisibilityModel: {
+            analytics: target === 'a',
             bsr_1: false,
             bsr_cat_1: false,
             bsr_2: false,

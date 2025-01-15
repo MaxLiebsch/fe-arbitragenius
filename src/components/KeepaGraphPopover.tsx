@@ -1,14 +1,14 @@
 import { Popover, Radio, Tooltip } from "antd";
 import React from "react";
-import { KeepaGraph } from "./KeepaGraph";
 import { ModifiedProduct } from "@/types/Product";
 import Image from "next/image";
 
 const KeepaGraphPopover = ({ product }: { product: ModifiedProduct }) => {
   const [open, setOpen] = React.useState(false);
   const [range, setRange] = React.useState("30");
+  if(!product.asin) return null;
   return (
-    <div className="hover:cursor-pointer hover:font-semibold h-14">
+    <div className="hover:cursor-pointer hover:font-semibold">
       <div className="grid grid-cols-4 items-center">
         <div>
           <Radio.Group block defaultValue="30" optionType="button" onChange={(e) => setRange(e.target.value)}>

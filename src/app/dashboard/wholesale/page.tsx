@@ -83,28 +83,6 @@ const columns: GridColDef<ProductRow>[] = [
           <div>{LinkWrapper("https://arbispotter.com", params.row.nm, "")}</div>
           Zielshop:
           {LinkWrapper(targetLinkBuilder("a", params.row), params.row[`a_nm`])}
-          {/* {target === "a" && params.row["bsr"] && params.row["bsr"].length ? (
-            <div className="">
-              <span className="font-semibold">BSR:</span>
-              <span className="">
-                {params.row["bsr"].map((bsr: any) => {
-                  return (
-                    <span className="mx-1" key={bsr.number + bsr.category}>
-                      Nr.{bsr.number.toLocaleString("de-DE")} in {bsr.category}
-                    </span>
-                  );
-                })}
-              </span>
-            </div>
-          ) : (
-            <></>
-          )} */}
-          {/* {params.row["asin"] && params.row["asin"] !== "" && (
-            <div>
-              <span className="font-semibold">ASIN: </span>
-              {params.row["asin"]}
-            </div>
-          )} */}
         </div>
       );
     },
@@ -116,7 +94,6 @@ const columns: GridColDef<ProductRow>[] = [
     width: 110,
     valueFormatter: (params) =>
       formatCurrency(calculationDeduction(parseFloat(params.value), true)),
-    // editable: true,
   },
   {
     field: `a_prc`,
@@ -214,7 +191,10 @@ const Page = () => {
               ),
             };
             const res = productSchema.safeParse(testRow);
-            if (!res.success) {
+            if (res.success) {
+              res.data.ean = res.data.ean.padStart(13, "0");
+              parsedRows.push(res.data); // Push parsed row into array
+            } else {
               const allValuesEmpty = Object.values(results.data).every(
                 (val: any) => val === ""
               );
@@ -222,8 +202,6 @@ const Page = () => {
                 cntErrors++;
                 console.error(res.error.errors);
               }
-            } else {
-              parsedRows.push(res.data); // Push parsed row into array
             }
           },
           complete: (result) => {

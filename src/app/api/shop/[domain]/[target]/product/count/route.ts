@@ -1,3 +1,4 @@
+import { getLoggedInUser } from "@/server/appwrite";
 import { getProductCol } from "@/server/mongo";
 import { Settings } from "@/types/Settings";
 import { aznFields } from "@/util/productQueries/aznFields";
@@ -9,6 +10,7 @@ export async function GET(
   request: NextRequest,
   { params }: { params: { domain: string; target: string } }
 ) {
+  const user = await getLoggedInUser();
   const { target, domain } = params;
   const searchParams = request.nextUrl.searchParams;
 
@@ -29,9 +31,9 @@ export async function GET(
   } else {
     aggregation.push(...ebyFields(customerSettings, domain));
   } 
-
   aggregation.push({ $count: "productCount" });
   const productCol = await getProductCol();
+
   const res = await productCol.aggregate(aggregation).toArray();
   if (
     isAmazon &&

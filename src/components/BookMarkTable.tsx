@@ -12,7 +12,7 @@ import useBookMarkRemove from "@/hooks/use-bookmark-remove";
 import { BookMarkProduct, ModifiedProduct } from "@/types/Product";
 import { bookMarkColumns } from "@/util/BookmarkColumns";
 import { Settings } from "@/types/Settings";
-import { usePaginationAndSort } from "@/hooks/use-pagination";
+import { usePaginationAndSort } from "@/hooks/use-pagination-sort";
 import useAccount from "@/hooks/use-account";
 import { useUserSettings } from "@/hooks/use-settings";
 

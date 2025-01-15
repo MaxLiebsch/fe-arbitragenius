@@ -24,13 +24,7 @@ const ReleaseModal = () => {
   const lastAcknowledgedRelease = usePreferences("lastAcknowledgedRelease");
   const mutateLastAcknowledgedRelease = useLastAcknowledgedReleaseUpdate();
   const release = useRelease({ enabled: fetchRelease });
-  console.log("release:", release?.data);
-  console.log(
-    "lastAcknowledgedRelease:",
-    lastAcknowledgedRelease?.data,
-    process.env.NEXT_PUBLIC_VERSION
-  );
-
+  
   useEffect(() => {
     if (
       lastAcknowledgedRelease.data !== undefined &&

@@ -5,7 +5,7 @@ import useAznFlipsCount from "@/hooks/use-aznflips-count";
 import useAznFlipsProducts from "@/hooks/use-aznflips-products";
 import useBookMarkAdd from "@/hooks/use-bookmark-add";
 import useBookMarkRemove from "@/hooks/use-bookmark-remove";
-import { usePaginationAndSort } from "@/hooks/use-pagination";
+import { usePaginationAndSort } from "@/hooks/use-pagination-sort";
 import { useUserSettings } from "@/hooks/use-settings";
 import { createColumns } from "@/util/ProductTableColumns";
 import {

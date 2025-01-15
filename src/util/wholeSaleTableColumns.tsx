@@ -1,6 +1,4 @@
 import { Settings } from "@/types/Settings";
-
-import CopyToClipboard from "../components/CopyToClipboard";
 import { GridColDef } from "@mui/x-data-grid-premium";
 import { CheckIcon, EyeSlashIcon } from "@heroicons/react/16/solid";
 import MarginPct from "@/components/columns/MarginPct";
@@ -9,39 +7,13 @@ import InfoField from "@/components/columns/InfoField";
 import EKPrice from "@/components/columns/EKPrice";
 import VKPrice from "@/components/columns/VKPrice";
 import { Tooltip } from "antd";
+import PriceAnalysis from "@/components/columns/PriceAnalysis";
+import WholeSaleStatus from "@/components/columns/WholeSaleStatus";
 
 export const createWholeSaleColumns: (
   target: string,
   settings: Settings
 ) => GridColDef[] = (target, settings) => [
-  {
-    field: "category",
-    headerName: "Kategorie",
-    renderCell: (params) => {
-      if (typeof params.row.ctrgy === "string") {
-        return <>{params.row.ctrgry}</>;
-      } else if (Array.isArray(params.row.ctgry)) {
-        return (
-          <div className="flex flex-col">
-            {params.row.ctgry.map((ctrgy: string, i: number) => (
-              <div key={ctrgy + i}>{ctrgy}</div>
-            ))}
-          </div>
-        );
-      }
-    },
-  },
-  {
-    field: "reference",
-    headerName: "Referenz",
-    width: 150,
-  },
-  {
-    field: `ean`,
-    headerName: "EAN",
-    width: 150,
-    renderCell: (params) => <CopyToClipboard text={params.row.ean} />,
-  },
   {
     field: "name",
     headerName: "Produkte",
@@ -59,6 +31,7 @@ export const createWholeSaleColumns: (
       );
     },
   },
+  PriceAnalysis(),
   EKPrice({ settings }),
   VKPrice({ target, settings }),
   {
@@ -91,21 +64,5 @@ export const createWholeSaleColumns: (
   },
   MarginPct({ target, settings }),
   Margin({ target, settings }),
-  {
-    field: `${target}_status`,
-    headerName: "Status",
-    renderCell: (params) => (
-      <div className="text-green font-semibold h-8 w-8">
-        {params.value === "complete" ? (
-          <Tooltip title="Vollständig">
-            <CheckIcon fontSize={16} />
-          </Tooltip>
-        ) : (
-          <Tooltip title="Unvollständig">
-            <EyeSlashIcon fontSize={16} />
-          </Tooltip>
-        )}
-      </div>
-    ),
-  },
+  WholeSaleStatus({ target }),
 ];

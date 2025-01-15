@@ -17,8 +17,9 @@ const VKPrice = ({
   settings: Settings;
 }): GridColDef<any> => {
   const { netto } = settings;
+  const fieldName = target === "a" ? "a_prc" : "e_pRange.median";
   return {
-    field: `${target}_prc`,
+    field: fieldName,
     width: 170,
     align: "left",
     headerAlign: "left",
@@ -47,9 +48,9 @@ const VKPrice = ({
     },
     renderCell: (params) => {
       const { row: product } = params;
-      const { e_prc, buyBoxIsAmazon } = product;
+      const { a_prc, buyBoxIsAmazon } = product;
       const displayAvgPrice = product["a_avg_price"];
-      let aznAvgPrice = displayAvgPrice;
+      let aznAvgPrice = displayAvgPrice === 0 ? a_prc : displayAvgPrice;
       const median = product["e_pRange"]?.median;
       const min = product["e_pRange"]?.min;
       const max = product["e_pRange"]?.max;

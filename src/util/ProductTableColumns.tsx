@@ -11,6 +11,9 @@ import VKPrice from "@/components/columns/VKPrice";
 import EKPrice from "@/components/columns/EKPrice";
 import OptionField from "@/components/columns/OptionField";
 import PriceAnalysis from "@/components/columns/PriceAnalysis";
+import { Switch } from "antd";
+import { useUserSettings } from "@/hooks/use-settings";
+import SwitchSeenProducts from "@/components/SwitchSeenProducts";
 
 export const createColumns: (
   target: string,
@@ -54,6 +57,14 @@ export const createColumns: (
       headerName: "Produkte",
       flex: 0.65,
       sortable: false,
+      renderHeader(params) {
+        return (
+          <div className="gap-2 flex items-center">
+            <span>Produkte</span>
+            <SwitchSeenProducts/> 
+          </div>
+        );
+      },
       renderCell: (params) => (
         <InfoField
           flip={flip}
@@ -66,9 +77,9 @@ export const createColumns: (
     },
     EKPrice({ settings, flip }),
     VKPrice({ target, settings, flip }),
-    PriceAnalysis(),
-    MarginPct({ target, settings}),
+    MarginPct({ target, settings }),
     Margin({ target, settings }),
+    PriceAnalysis(),
     OptionField({
       addBookmark,
       removeBookmark,

@@ -78,6 +78,7 @@ export interface ModifiedProduct extends Product {
   e_uprc: number;
   e_vrfd?: Verification;
   e_mrgn?: number;
+  seen?: boolean;
   e_mrgn_prc?: number;
   e_mrgn_pct?: number;
   e_ns_costs?: number;

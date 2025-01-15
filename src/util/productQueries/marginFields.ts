@@ -6,6 +6,13 @@ export interface MarrginFields {
   settings: Settings;
 }
 
+export const marginFieldForWholesale = ({ target, settings }: MarrginFields) => {
+  const { euProgram } = settings;
+  return {
+    [mrgnFieldName(target, euProgram)]: { $gte: -1000 },
+  };
+}
+
 export const marginField = ({ target, settings }: MarrginFields) => {
   const { minMargin, euProgram } = settings;
   if (minMargin === 0) {
@@ -17,6 +24,7 @@ export const marginField = ({ target, settings }: MarrginFields) => {
     [mrgnFieldName(target, euProgram)]: { $gte: minMargin },
   };
 };
+
 export const marginPctField = ({ target, settings }: MarrginFields) => {
   const { minPercentageMargin, euProgram } = settings;
   if (minPercentageMargin === 0) {
