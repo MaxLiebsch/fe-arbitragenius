@@ -1,5 +1,6 @@
-import { usePaginationAndSort } from "@/hooks/use-pagination";
+import { usePaginationAndSort } from "@/hooks/use-pagination-sort";
 import { useProductIrrelevant } from "@/hooks/use-productIrrelevant";
+import { ProductPagination } from "@/hooks/use-products";
 import { useGridApiContext } from "@mui/x-data-grid-premium";
 import { Checkbox, Tooltip } from "antd";
 import React from "react";
@@ -8,17 +9,17 @@ const ProductIrrelevant = ({
   target,
   domain,
   productId,
+  pagination,
 }: {
   target: string;
   domain: string;
   productId: string;
+  pagination: ProductPagination;
 }) => {
-  const [paginationModel, setPaginationModel, sortModel, setSortModel] =
-    usePaginationAndSort();
   const productIrrelevant = useProductIrrelevant({
     target,
     domain,
-    pagination: paginationModel,
+    pagination,
   });
   const apiRef = useGridApiContext();
   return (

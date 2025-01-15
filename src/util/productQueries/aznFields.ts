@@ -1,5 +1,4 @@
 import { Settings } from "@/types/Settings";
-import { mrgnFieldName, mrgnPctFieldName } from "./mrgnProps";
 import { addAznSettingsFields } from "./addAznSettingsFields";
 import { marginField, marginPctField } from "./marginFields";
 import { marginAddField } from "./marginAddField";

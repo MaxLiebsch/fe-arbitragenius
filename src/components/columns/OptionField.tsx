@@ -84,8 +84,18 @@ const OptionField = ({
           >
             Mein Deal
           </Checkbox>
-          <ProductIrrelevant productId={productId} target={target} domain={shop} />
-          <ProductInvalid productId={productId} target={target} domain={shop} />
+          <ProductIrrelevant
+            pagination={pagination}
+            productId={productId}
+            target={target}
+            domain={shop}
+          />
+          <ProductInvalid
+            pagination={pagination}
+            productId={productId}
+            target={target}
+            domain={shop}
+          />
           {asin && (
             <ArbitrageOneExportBtn
               product={product}

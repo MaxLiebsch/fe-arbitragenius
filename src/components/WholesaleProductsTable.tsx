@@ -16,7 +16,7 @@ import { ChevronRightIcon, ChevronLeftIcon } from "@heroicons/react/16/solid";
 import useTaskProducts from "@/hooks/use-task-products";
 import useTaskProductCount from "@/hooks/use-task-product-count";
 import { createWholeSaleColumns } from "../util/wholeSaleTableColumns";
-import { usePaginationAndSort } from "@/hooks/use-pagination";
+import { usePaginationAndSort } from "@/hooks/use-pagination-sort";
 import { useUserSettings } from "@/hooks/use-settings";
 import { WholeSaleTarget } from "@/types/tasks";
 

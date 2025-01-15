@@ -17,8 +17,9 @@ const VKPrice = ({
   settings: Settings;
 }): GridColDef<any> => {
   const { netto } = settings;
+  const fieldName = target === "a" ? "a_prc" : "e_pRange.median";
   return {
-    field: `${target}_prc`,
+    field: fieldName,
     width: 170,
     align: "left",
     headerAlign: "left",

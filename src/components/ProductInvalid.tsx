@@ -1,5 +1,6 @@
-import { usePaginationAndSort } from "@/hooks/use-pagination";
+import { usePaginationAndSort } from "@/hooks/use-pagination-sort";
 import { useProductInvalid } from "@/hooks/use-productInvalid";
+import { ProductPagination } from "@/hooks/use-products";
 import { useGridApiContext } from "@mui/x-data-grid-premium";
 import { Checkbox, Tooltip } from "antd";
 import { set } from "date-fns";
@@ -9,17 +10,17 @@ const ProductInvalid = ({
   target,
   domain,
   productId,
+  pagination,
 }: {
   target: string;
   domain: string;
   productId: string;
+  pagination: ProductPagination;
 }) => {
-  const [paginationModel, setPaginationModel, sortModel, setSortModel] =
-    usePaginationAndSort();
   const productInvalid = useProductInvalid({
     target,
     domain,
-    pagination: paginationModel,
+    pagination,
   });
   const apiRef = useGridApiContext();
   return (
