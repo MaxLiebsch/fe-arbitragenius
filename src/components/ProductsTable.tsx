@@ -13,7 +13,7 @@ import useBookMarkAdd from "@/hooks/use-bookmark-add";
 import { createColumns } from "@/util/ProductTableColumns";
 import useBookMarkRemove from "@/hooks/use-bookmark-remove";
 import useAccount from "@/hooks/use-account";
-import { usePaginationAndSort } from "@/hooks/use-pagination";
+import { usePaginationAndSort } from "@/hooks/use-pagination-sort";
 import { useUserSettings } from "@/hooks/use-settings";
 import { useProductSeen } from "@/hooks/use-productSeen";
 import { CONSIDERED_SEEN_DWELL_DURANTION } from "@/constant/constant";
