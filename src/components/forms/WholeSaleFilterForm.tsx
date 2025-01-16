@@ -37,10 +37,11 @@ const WholeSaleFilterForm = ({ target }: { target: string }) => {
       <Form
         ref={formRef}
         form={form}
+        className="!ml-auto"
         initialValues={settings}
         onFinish={onFinish}
       >
-        <div className="grid grid-cols-9 gap-1">
+        <div className="grid grid-cols-8 gap-1">
           {/* Minimale Marge % */}
           <MinMarginPct layout={layout} />
           {/* Minimale Marge € */}

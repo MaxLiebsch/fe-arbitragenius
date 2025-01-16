@@ -181,7 +181,7 @@ const InfoField = ({
         )}
         {target === "a" && (monthlySold || drops30 || drops90) && (
           <div className="flex flex-row gap-2">
-            {monthlySold && (
+            {monthlySold ? (
               <Tooltip
                 title={`${
                   monthlySold % 50 === 0
@@ -194,7 +194,7 @@ const InfoField = ({
                   <span className="text-md"> {monthlySold}</span>
                 </span>
               </Tooltip>
-            )}
+            ): null}
             <span>
               <span className="font-semibold">Keepa Drops (30):</span>
               <span className="text-md"> {drops30 ? drops30 : 0}</span>

@@ -35,7 +35,7 @@ const Page = async ({ params }: { params: { id: string } }) => {
   ).toFixed(2);
   return (
     <>
-      <div className="flex justify-between items-center">
+      <div className="flex w-full items-center">
         <div>
           <div>{task?.name || "Task"} </div>
           <div>
