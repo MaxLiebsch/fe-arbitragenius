@@ -1,11 +1,11 @@
-export function addBuyBoxFields(buyBox: string, findQuery: any[], isAmazon: boolean) {
+export function addBuyBoxFields(buyBox: string, findQuery: object) {
   if (buyBox === "amazon") {
-    findQuery.push({
+    Object.assign(findQuery,{
       buyBoxIsAmazon: true,
     });
   }
   if (buyBox === "seller") {
-    findQuery.push({
+    Object.assign(findQuery,{
       $or: [
         {
           buyBoxIsAmazon: null,
@@ -15,7 +15,7 @@ export function addBuyBoxFields(buyBox: string, findQuery: any[], isAmazon: bool
     });
   }
   if (buyBox === "both") {
-    findQuery.push({
+    Object.assign(findQuery,{
       $or: [
         { buyBoxIsAmazon: true },
         { buyBoxIsAmazon: false },

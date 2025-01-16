@@ -1,8 +1,6 @@
-export function addMonthlySoldField(findQuery: any[], monthlySold: number) {
+export function addMonthlySoldField(findQuery: any, monthlySold: number) {
   if (monthlySold > 0) {
-    findQuery.push({
-      monthlySold: { $gte: monthlySold },
-    });
+    findQuery['monthlySold'] = { $gte: monthlySold };
   }
 }
 

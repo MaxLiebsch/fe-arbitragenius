@@ -39,14 +39,15 @@ export default function useTaskProducts(
   }
   const productQuery = useQuery<ModifiedProduct[]>({
     queryKey: [
-      "tasks",
       target,
+      "tasks",
       taskId,
       "product",
       pagination.page,
       pagination.pageSize,
       sort?.field,
       sort?.direction,
+      ...(settings ? Object.values(settings) : [])
     ],
     refetchOnWindowFocus: true,
     queryFn: async () => {

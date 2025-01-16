@@ -30,13 +30,13 @@ const RetrieveAsin = (
           />
         )}
         <div className="flex flex-row gap-1">
-          <Eanlist eanList={eanList} /> 
+          <Eanlist eanList={eanList} />
           <div>
             <span className="font-semibold">ASIN: </span>
             <CopyToClipboard text={asin} />
           </div>
         </div>
-        {buyBoxIsAmazon !== undefined && (
+        {buyBoxIsAmazon !== undefined ? (
           <span>
             {buyBoxIsAmazon ? (
               <span>
@@ -50,27 +50,21 @@ const RetrieveAsin = (
               </span>
             )}
           </span>
-        )}
-        {totalOfferCount !== undefined && (
+        ) : null}
+        {totalOfferCount !== undefined ? (
           <span>
-            <span>
-              <span className="font-semibold"> Seller:</span>
-              {totalOfferCount ? (
-                <span className=""> {totalOfferCount}</span>
-              ) : (
-                "0"
-              )}
-            </span>
+            <span className="font-semibold"> Seller:</span>
+            <span>{totalOfferCount}</span>
           </span>
-        )}
-        {a_rating && a_reviewcnt && (
-          <span className='ml-1'>
-            <span className="font-semibold">Rating:{" "}</span>
+        ) : null}
+        {a_rating && a_reviewcnt ? (
+          <span className="ml-1">
+            <span className="font-semibold">Rating: </span>
             <span>
               {a_rating} ({a_reviewcnt})
             </span>
           </span>
-        )}
+        ) : null}
       </div>
     );
   } else {

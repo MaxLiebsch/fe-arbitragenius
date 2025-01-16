@@ -1,3 +1,4 @@
+import WholeSaleFilterForm from "@/components/forms/WholeSaleFilterForm";
 import Spinner from "@/components/Spinner";
 import WholeSaleProductsTable from "@/components/WholesaleProductsTable";
 import { getLoggedInUser } from "@/server/appwrite";
@@ -34,28 +35,33 @@ const Page = async ({ params }: { params: { id: string } }) => {
   ).toFixed(2);
   return (
     <>
-      <div>{task?.name || "Task"} </div>
-      <div>
-        Ziel: {task.type === "WHOLESALE_EBY_SEARCH" ? "Ebay" : "Amazon"}
+      <div className="flex justify-between items-center">
+        <div>
+          <div>{task?.name || "Task"} </div>
+          <div>
+            Ziel: {task.type === "WHOLESALE_EBY_SEARCH" ? "Ebay" : "Amazon"}
+          </div>
+          <div>Fortschritt: {progress} %</div>
+          <div key={task._id.toString()}>
+            Status:{" "}
+            {task.progress.completed === task.progress.total ? (
+              "Abgeschlossen"
+            ) : inProgress ? (
+              <span className="flex gap-4 items-center">
+                <span>In Arbeit</span>
+                <Spinner size="!h-4" />{" "}
+              </span>
+            ) : (
+              "In Warteschlange"
+            )}
+          </div>
+          <div className="text-xs text-seconadary-400">
+            Erstellt am: {format(parseISO(task.createdAt), "Pp")}
+          </div>
+        </div>
+        <WholeSaleFilterForm target={isWholeSaleEbyTask ? "e" : "a"}/>
       </div>
-      <div>Fortschritt: {progress} %</div>
-      <div key={task._id.toString()}>
-        Status:{" "}
-        {task.progress.completed === task.progress.total ? (
-          "Abgeschlossen"
-        ) : inProgress ? (
-          <span className="flex gap-4 items-center">
-            <span>In Arbeit</span>
-            <Spinner size="!h-4" />{" "}
-          </span>
-        ) : (
-          "In Warteschlange"
-        )}
-      </div>
-      <div className="text-xs text-seconadary-400">
-        Erstellt am: {format(parseISO(task.createdAt), "Pp")}
-      </div>
-      <div className="w-full h-[89%] min-h-[89%] mt-2">
+      <div className="w-full h-[82%] min-h-[82%] mt-2">
         <WholeSaleProductsTable
           target={isWholeSaleEbyTask ? "e" : "a"}
           taskId={id}

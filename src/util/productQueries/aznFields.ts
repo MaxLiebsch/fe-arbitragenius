@@ -19,6 +19,13 @@ export const aznFields = (
       marginPctField({ target: "a", settings })),
   };
 
+  const wholeSaleMatch: any = {
+    a_pblsh: true,
+    ...(settings.minMargin > 0 && marginField({ target: "a", settings })),
+    ...(settings.minPercentageMargin > 0 &&
+      marginPctField({ target: "a", settings })),
+  };
+
   const isSommer = new Date().getMonth() < 9;
   if (settings.a_cats.length > 0 && settings.a_cats[0] !== 0) {
     match["categoryTree.catId"] = { $in: settings.a_cats };
@@ -28,15 +35,20 @@ export const aznFields = (
     match.sdmn = sdmn;
   }
 
-  addAznSettingsFields(settings, match);
-
   const query: any = [];
 
-  if (!isWholesale) {
+  if (isWholesale) {
+    addAznSettingsFields(settings, wholeSaleMatch);
+    query.push({
+      $match: wholeSaleMatch,
+    });
+  }else{
+    addAznSettingsFields(settings, match);
     match["a_avg_fld"] = { $ne: null };
     query.push({
       $match: match,
     });
+    
   }
   const computedPriceAddField = isWholesale
     ? {
