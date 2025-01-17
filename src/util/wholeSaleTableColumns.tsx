@@ -1,12 +1,10 @@
 import { Settings } from "@/types/Settings";
 import { GridColDef } from "@mui/x-data-grid-premium";
-import { CheckIcon, EyeSlashIcon } from "@heroicons/react/16/solid";
 import MarginPct from "@/components/columns/MarginPct";
 import Margin from "@/components/columns/Margin";
 import InfoField from "@/components/columns/InfoField";
 import EKPrice from "@/components/columns/EKPrice";
 import VKPrice from "@/components/columns/VKPrice";
-import { Tooltip } from "antd";
 import PriceAnalysis from "@/components/columns/PriceAnalysis";
 import WholeSaleStatus from "@/components/columns/WholeSaleStatus";
 

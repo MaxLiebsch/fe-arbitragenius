@@ -1,5 +1,5 @@
 "use client";
-import React, { RefAttributes, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { InboxOutlined } from "@ant-design/icons";
 import type { UploadFile, UploadProps } from "antd";
 import { message, Radio, Space, Upload } from "antd";
@@ -20,6 +20,10 @@ import TaskCard from "@/components/TaskCard";
 import * as XLSX from "xlsx";
 import { WholeSaleTarget } from "@/types/tasks";
 import { targetLinkBuilder } from "@/util/targetLinkBuilder";
+import { safeParsePrice } from "@/util/safeParsePrice";
+import InfoField from "@/components/columns/InfoField";
+import { ModifiedProduct } from "@/types/Product";
+import { formatEan } from "@/util/formatEan";
 
 const { Dragger } = Upload;
 
@@ -54,77 +58,43 @@ const translations = {
 };
 
 const columns: GridColDef<ProductRow>[] = [
-  { field: "id", headerName: "ID", width: 90 },
+  {
+    field: "id",
+    headerName: "ID",
+    flex: 0.1,
+    disableColumnMenu: true,
+    sortable: false,
+  },
   {
     field: "reference",
     headerName: "Referenz",
-    width: 150,
+    disableColumnMenu: true,
   },
   {
     field: "ean",
     headerName: "EAN",
-    width: 150,
-    // editable: true,
+    flex: 0.2,
+    disableColumnMenu: true,
   },
   {
     field: "category",
     headerName: "Kategorie",
-    width: 150,
-    // editable: true,
-  },
-  {
-    field: "nm",
-    headerName: "Produkte",
     flex: 0.3,
-    maxWidth: 600,
-    renderCell: (params) => {
-      return (
-        <div className="flex flex-col divide-y p-1">
-          <div>{LinkWrapper("https://arbispotter.com", params.row.nm, "")}</div>
-          Zielshop:
-          {LinkWrapper(targetLinkBuilder("a", params.row), params.row[`a_nm`])}
-        </div>
-      );
-    },
+    disableColumnMenu: true,
   },
   {
     field: "prc",
     headerName: "Preis",
+    flex: 0.3,
     type: "number",
-    width: 110,
+    disableColumnMenu: true,
     valueFormatter: (params) =>
       formatCurrency(calculationDeduction(parseFloat(params.value), true)),
-  },
-  {
-    field: `a_prc`,
-
-    headerName: "Amazon Preis",
-    renderHeader: (params) => (
-      <div className="relative">
-        <div>Amazon Preis</div>
-      </div>
-    ),
-    valueFormatter: (params) =>
-      formatCurrency(calculationDeduction(parseFloat(params.value), true)),
-  },
-  {
-    field: `a_mrgn_pct`,
-    headerName: "Marge %",
-    valueFormatter: (params) => appendPercentage(params.value),
-  },
-  {
-    field: `a_mrgn`,
-    headerName: "Marge €",
-    renderCell: (params) => (
-      <div className="text-green font-semibold">
-        {formatCurrency(calculationDeduction(parseFloat(params.value), true))}
-      </div>
-    ),
   },
 ];
 
 const productSchema = z.object({
-  ean: z.string(),
+  ean: z.string().length(13),
   nm: z.string().optional().default(""),
   category: z.string().optional().default(""),
   prc: z.number().min(0.01),
@@ -244,19 +214,22 @@ const Page = () => {
             row,
             translations.price
           ).toString();
+          const ean = getCaseInsensitiveProperty(
+            row,
+            translations.ean
+          ).toString();
           const testRow: ProductRow = {
             id: 0,
-            ean: getCaseInsensitiveProperty(row, translations.ean).toString(),
+            ean: ean ? formatEan(ean) : "",
             nm: getCaseInsensitiveProperty(row, translations.name),
             category: getCaseInsensitiveProperty(row, translations.category),
-            prc: parseInt(price)
-              ? parsePrice(getPrice(price ? price.replace(/\s+/g, "") : ""))
-              : "",
+            prc: safeParsePrice(price),
             reference: getCaseInsensitiveProperty(
               row,
               translations.reference
             ).toString(),
           };
+
           const res = productSchema.safeParse(testRow);
           if (!res.success) {
             const allValuesEmpty = Object.values(row!).every(
