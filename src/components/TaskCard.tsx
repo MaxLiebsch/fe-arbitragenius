@@ -56,7 +56,7 @@ const TaskCard = ({ task }: { task: DbTask }) => {
           {`${task?.name || "Task"}`}
         </Typography.Text>
       }
-      style={{ width: 400 }}
+      style={{ minWidth: 300 }}
     >
       <div className="flex flex-col">
         <div>

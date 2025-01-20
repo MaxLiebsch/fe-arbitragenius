@@ -381,16 +381,21 @@ const Page = () => {
                 <Spinner />
               </div>
             ) : (
-              <>
+              <div>
                 <h3 className="text-base font-semibold leading-6 text-gray-dark flex flex-row space-x-1 items-center mb-3">
                   <div>Wholesale Analysen</div>
                 </h3>
-                <Space direction="horizontal" size={16}>
-                  {(tasks.data ?? []).map((task) => (
-                    <TaskCard key={task._id.toString()} task={task} />
-                  ))}
-                </Space>
-              </>
+                <div className="flex flex-row gap-3 flex-wrap">
+                  {(tasks.data ?? [])
+                    .sort((a, b) => {
+                      if (a.createdAt < b.createdAt) return 1;
+                      return -1;
+                    })
+                    .map((task) => (
+                      <TaskCard key={task._id.toString()} task={task} />
+                    ))}
+                </div>
+              </div>
             )}
             {tasks.data && tasks.data.length === 0 && (
               <div>
