@@ -48,13 +48,13 @@ export const createSalesTableColumns: (
   userRoles
 ) => [
   {
-    field: "updatedAt",
+    field: "createdAt",
     headerName: "Gelistet seit",
     width: 140,
     disableColumnMenu: true,
     renderCell: (params) => (
       <div>
-        {new Date(params.row.updatedAt).toLocaleString("de-DE", {
+        {new Date(params.row.createdAt).toLocaleString("de-DE", {
           day: "2-digit",
           month: "2-digit",
           year: "2-digit",

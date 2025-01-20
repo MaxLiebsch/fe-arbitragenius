@@ -6,6 +6,7 @@ import { aznFields } from "@/util/productQueries/aznFields";
 import { ebyFields } from "@/util/productQueries/ebyFields";
 import { lookupUserId } from "@/util/productQueries/lookupUserId";
 import { projectField } from "@/util/productQueries/projectField";
+import { salesSortingField } from "@/util/productQueries/salesSortingField";
 import { settingsFromSearchQuery } from "@/util/productQueries/settingsFromSearchQuery";
 import { sortingField } from "@/util/productQueries/sortingField";
 import { SortDirection } from "mongodb";
@@ -63,7 +64,8 @@ export async function GET(
   const sort: {
     [key: string]: SortDirection;
   } = {};
-  sortingField(isAmazon, query, sort, customerSettings);
+
+  salesSortingField(isAmazon, query, sort, customerSettings);
 
   aggregation.push(
     projectField(target, "sales"),
