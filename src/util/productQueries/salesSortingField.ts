@@ -30,5 +30,4 @@ export function salesSortingField(
       sort[query.field] = query.order === "asc" ? 1 : -1;
     }
   }
-  console.log("sort:", sort);
 }
