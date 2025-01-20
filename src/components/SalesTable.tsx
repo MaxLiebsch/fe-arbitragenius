@@ -5,10 +5,8 @@ import {
   deDE,
   useGridApiRef,
 } from "@mui/x-data-grid-premium";
-import React, { useMemo, useState } from "react";
-import { ProductSort } from "@/hooks/use-products";
+import React, { useMemo} from "react";
 import Spinner from "./Spinner";
-import { Settings } from "@/types/Settings";
 import useBookMarkAdd from "@/hooks/use-bookmark-add";
 import useBookMarkRemove from "@/hooks/use-bookmark-remove";
 import useSalesCount from "@/hooks/use-sales-count";
