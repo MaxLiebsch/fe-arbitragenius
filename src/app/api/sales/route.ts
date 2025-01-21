@@ -69,10 +69,10 @@ export async function GET(
 
   salesSortingField(isAmazon, query, sort, customerSettings);
   aggregation.push(
+    projectField(target, "sales"),
     ...lookupProductInvalid(user, target),
     ...lookupProductIrrelevant(user, target),
     ...lookupProductSeen(user, target),
-    projectField(target, "sales"),
     {
       $sort: sort,
     },

@@ -1,3 +1,5 @@
+import { Settings } from "@/types/Settings";
+
 export const salesQueryKey = (
   target: string,
   page: number,
@@ -19,6 +21,7 @@ export const productQueryKey = (
   return [target, "shop", shop, "product", "get", page, pageSize];
 };
 
-export const countQueryKey = (target: string, shop: string) => {
-  return [target, "shop", shop, "product", "count"];
+export const countQueryKey = (target: string, shop: string, settings?: Settings) => {
+  const settingsKeys = settings ? Object.values(settings) : [];
+  return [target, "shop", shop, "product", "count", ...settingsKeys];
 };
