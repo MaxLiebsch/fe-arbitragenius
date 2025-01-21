@@ -63,12 +63,12 @@ export type Prange = {
 };
 
 export type AvgPrices =
-  | 'avg30_buyBoxPrice'
-  | 'avg30_ansprcs'
-  | 'avg30_ahsprcs'
-  | 'avg90_buyBoxPrice'
-  | 'avg90_ansprcs'
-  | 'avg90_ahsprcs'
+  | "avg30_buyBoxPrice"
+  | "avg30_ansprcs"
+  | "avg30_ahsprcs"
+  | "avg90_buyBoxPrice"
+  | "avg90_ansprcs"
+  | "avg90_ahsprcs";
 
 export interface ModifiedProduct extends Product {
   bsr_1: number;
@@ -79,6 +79,7 @@ export interface ModifiedProduct extends Product {
   e_vrfd?: Verification;
   e_mrgn?: number;
   seen?: boolean;
+  timer?: number;
   e_mrgn_prc?: number;
   e_mrgn_pct?: number;
   e_ns_costs?: number;
@@ -87,8 +88,8 @@ export interface ModifiedProduct extends Product {
   bookmarkedAt?: number;
   a_vrfd?: Verification;
   e_totalOfferCount?: number;
-  drops30?:number,
-  drops90?:number,
+  drops30?: number;
+  drops90?: number;
   isBookmarked: boolean;
   a_avg_prc?: number;
   a_uprc: number;

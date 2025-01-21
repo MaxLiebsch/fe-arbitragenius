@@ -13,6 +13,7 @@ import { useUserTheme } from "@/hooks/useUserTheme";
 import MyThemeProvider from "./MyThemeProvider";
 
 const { defaultAlgorithm, darkAlgorithm } = theme;
+const _colorPrimary = (tw.theme as any).extend.colors["primary"]["600"];
 
 export default function Providers({ children }: { children: ReactNode }) {
   const accountQuery = useAccount();
@@ -20,7 +21,7 @@ export default function Providers({ children }: { children: ReactNode }) {
   const [THEME, setTHEME] = useState({
     algorithm: defaultAlgorithm,
     token: {
-      colorPrimary: (tw.theme as any).extend.colors["primary"]["500"],
+      colorPrimary: _colorPrimary,
       borderRadius: 2,
     },
   });
@@ -46,8 +47,8 @@ export default function Providers({ children }: { children: ReactNode }) {
       }
     }
     const colorPrimary = darkMode
-    ? (tw.theme as any).extend.colors["darkText"]
-    : (tw.theme as any).extend.colors["primary"]["500"]
+      ? (tw.theme as any).extend.colors["darkText"]
+      : _colorPrimary;
     setTHEME({
       algorithm: darkMode ? darkAlgorithm : defaultAlgorithm,
       token: {
@@ -57,18 +58,12 @@ export default function Providers({ children }: { children: ReactNode }) {
     });
   }, [accountQuery.data, setUserSettings, darkMode]);
 
-  
-
   return (
     <>
       <SnackbarProvider />
       <MuiProvider>
         <MyThemeProvider>
-          <ConfigProvider
-            theme={THEME}
-          >
-            {children}
-          </ConfigProvider>
+          <ConfigProvider theme={THEME}>{children}</ConfigProvider>
         </MyThemeProvider>
       </MuiProvider>
       <DevTools />

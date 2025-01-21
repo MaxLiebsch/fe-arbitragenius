@@ -4,11 +4,13 @@ import { getProductCol } from "@/server/mongo";
 import { Settings } from "@/types/Settings";
 import { aznFields } from "@/util/productQueries/aznFields";
 import { ebyFields } from "@/util/productQueries/ebyFields";
+import { lookupProductInvalid } from "@/util/productQueries/lookupProductInvalid";
+import { lookupProductIrrelevant } from "@/util/productQueries/lookupProductIrrelevant";
+import { lookupProductSeen } from "@/util/productQueries/lookupProductSeen";
 import { lookupUserId } from "@/util/productQueries/lookupUserId";
 import { projectField } from "@/util/productQueries/projectField";
 import { salesSortingField } from "@/util/productQueries/salesSortingField";
 import { settingsFromSearchQuery } from "@/util/productQueries/settingsFromSearchQuery";
-import { sortingField } from "@/util/productQueries/sortingField";
 import { SortDirection } from "mongodb";
 import { NextRequest } from "next/server";
 
@@ -66,9 +68,11 @@ export async function GET(
   } = {};
 
   salesSortingField(isAmazon, query, sort, customerSettings);
-
   aggregation.push(
     projectField(target, "sales"),
+    ...lookupProductInvalid(user, target),
+    ...lookupProductIrrelevant(user, target),
+    ...lookupProductSeen(user, target),
     {
       $sort: sort,
     },
@@ -79,14 +83,13 @@ export async function GET(
       $limit: query.size,
     }
   );
-  
+
   if (isAmazon && process.env.NODE_ENV === "development") {
     console.log("AZNAGGSPGET", JSON.stringify(aggregation));
   }
   if (!isAmazon && process.env.NODE_ENV === "development") {
     console.log("EBYAGGSPGET", JSON.stringify(aggregation));
   }
-
 
   lookupUserId(aggregation, user, target);
   const productCol = await getProductCol();

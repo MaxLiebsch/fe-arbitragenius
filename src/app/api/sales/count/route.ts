@@ -1,13 +1,23 @@
 import { SALES_COL } from "@/constant/constant";
+import { getLoggedInUser } from "@/server/appwrite";
 import { getProductCol } from "@/server/mongo";
 import { Settings } from "@/types/Settings";
 import { aznFields } from "@/util/productQueries/aznFields";
 import { ebyFields } from "@/util/productQueries/ebyFields";
+import { lookupProductInvalid } from "@/util/productQueries/lookupProductInvalid";
+import { lookupProductIrrelevant } from "@/util/productQueries/lookupProductIrrelevant";
+import { lookupProductSeen } from "@/util/productQueries/lookupProductSeen";
 import { marginField } from "@/util/productQueries/marginFields";
 import { settingsFromSearchQuery } from "@/util/productQueries/settingsFromSearchQuery";
 import { NextRequest } from "next/server";
 
 export async function GET(request: NextRequest) {
+  const user = await getLoggedInUser();
+  if (!user) {
+    return new Response("Unauthorized", {
+      status: 401,
+    });
+  }
   const searchParams = request.nextUrl.searchParams;
   const target = searchParams.get("target") || "a";
 
@@ -30,7 +40,7 @@ export async function GET(request: NextRequest) {
   aggregation.push(...targetFields);
 
   const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  today.setHours(1, 0, 0, 0);
   const tomorrow = new Date(today);
   tomorrow.setDate(today.getDate() + 1);
 
@@ -57,6 +67,10 @@ export async function GET(request: NextRequest) {
               },
             },
           },
+          ...lookupProductSeen(user, target),
+          ...lookupProductInvalid(user, target),
+          ...lookupProductIrrelevant(user, target),
+          { $match: { seen: false } },
           { $count: "count" },
         ],
       },

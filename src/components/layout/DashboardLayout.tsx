@@ -113,9 +113,19 @@ export const DashboardLayout = ({
   const accountQuery = useAccount();
   const eSalesCount = useSalesCount("e");
   const aSalesCount = useSalesCount("a");
+  const newAznDeals = Boolean(aSalesCount.data?.totalProductsToday);
+  const newEbyDeals = Boolean(eSalesCount.data?.totalProductsToday);
   const newDeals = Boolean(
     eSalesCount.data?.totalProductsToday || aSalesCount.data?.totalProductsToday
   );
+  const text =
+    newAznDeals && newEbyDeals
+      ? `Neu Amazon (${aSalesCount.data?.totalProductsToday}) & Ebay (${eSalesCount.data?.totalProductsToday})`
+      : newAznDeals
+      ? `Neu Amazon (${aSalesCount.data?.totalProductsToday})`
+      : newEbyDeals
+      ? `Neu Ebay (${eSalesCount.data?.totalProductsToday})`
+      : "";
   const pathname = usePathname();
 
   const [state, formAction] = useFormState(logoutAction, {
@@ -290,9 +300,9 @@ export const DashboardLayout = ({
                     {navigation.map((item) => (
                       <li key={item.name}>
                         <Badge.Ribbon
-                          text="Neue Deals"
+                          text={text}
                           placement="end"
-                          className={`!-top-2 ${
+                          className={`!-top-3 ${
                             item.href !== "/dashboard/daily-deals"
                               ? "hidden"
                               : ""
@@ -355,7 +365,7 @@ export const DashboardLayout = ({
 
               <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
                 <div className="w-full">
-                  <ReleaseModal/>
+                  <ReleaseModal />
                   {subscriptionStatus.status === "trialing" ? (
                     <div className="mt-5">
                       Danke, dass Du dich für Arbispotter entschieden hast. Du

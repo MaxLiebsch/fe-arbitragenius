@@ -7,7 +7,7 @@ export const addAznSettingsFields = (settings: Settings, match: object) => {
   }
 
   if (totalOfferCount > 0) {
-    Object.assign(match, { totalOfferCount: { $lt: totalOfferCount } });
+    Object.assign(match, { totalOfferCount: { $lte: totalOfferCount } });
   }
 
   switch (buyBox) {

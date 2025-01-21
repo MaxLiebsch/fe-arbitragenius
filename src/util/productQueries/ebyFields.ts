@@ -1,6 +1,7 @@
 import { Settings } from "@/types/Settings";
 import { mrgnFieldName, mrgnPctFieldName } from "./mrgnProps";
 import { marginField, marginPctField } from "./marginFields";
+import { addTotalOffersCountField } from "./totalOffersCountField";
 
 export const ebyFields = (
   settings: Settings,
@@ -16,6 +17,8 @@ export const ebyFields = (
       marginPctField({ target: "e", settings })),
     e_pRange: { $exists: true },
   };
+
+  addTotalOffersCountField(match, settings.totalOfferCount, "e");
 
   if (sdmn) {
     match.sdmn = sdmn;
@@ -80,7 +83,10 @@ export const ebyFields = (
             {
               $multiply: [
                 {
-                  $divide: [`$${mrgnFieldName("e", false)}`, "$e_pRange.median"],
+                  $divide: [
+                    `$${mrgnFieldName("e", false)}`,
+                    "$e_pRange.median",
+                  ],
                 },
                 100,
               ],

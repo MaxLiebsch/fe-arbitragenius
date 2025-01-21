@@ -5,7 +5,7 @@ import {
   deDE,
   useGridApiRef,
 } from "@mui/x-data-grid-premium";
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useMemo } from "react";
 import useProductCount from "@/hooks/use-product-count";
 import useProducts from "@/hooks/use-products";
 import Spinner from "./Spinner";
@@ -15,48 +15,22 @@ import useBookMarkRemove from "@/hooks/use-bookmark-remove";
 import useAccount from "@/hooks/use-account";
 import { usePaginationAndSort } from "@/hooks/use-pagination-sort";
 import { useUserSettings } from "@/hooks/use-settings";
-import { useProductSeen } from "@/hooks/use-productSeen";
-import { CONSIDERED_SEEN_DWELL_DURANTION } from "@/constant/constant";
+import { useMarkSeen } from "@/hooks/use-markSeen";
 
-export default function ProductsTable(props: {
-  className?: string;
+export type ProductTableProps = {
   domain: string;
   target: string;
-}) {
+  className?: string;
+};
+
+export default function ProductsTable(props: ProductTableProps) {
   const [settings, setUserSettings] = useUserSettings();
-  const productSeen = useProductSeen(props);
   const { className, domain, target } = props;
-
-  const rowVisted = useRef({
-    _id: "",
-    enter: new Date().getTime(),
-  });
-
   const [paginationModel, setPaginationModel, sortModel, setSortModel] =
     usePaginationAndSort();
 
   const apiRef = useGridApiRef();
-  useEffect(() => {
-    if (apiRef.current) {
-      apiRef.current.subscribeEvent("rowMouseEnter", (params) => {
-        rowVisted.current = {
-          _id: params.row._id,
-          enter: new Date().getTime(),
-        };
-      });
-      apiRef.current.subscribeEvent("rowMouseLeave", (params) => {
-        if (
-          new Date().getTime() - rowVisted.current.enter >
-            CONSIDERED_SEEN_DWELL_DURANTION &&
-          !params.row?.seen
-        ) {
-          productSeen.mutate(params.row._id);
-          apiRef.current.updateRows([{ _id: params.row._id, seen: true }]);
-        }
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [apiRef]);
+  useMarkSeen(apiRef, props);
 
   const productCountQuery = useProductCount(domain, target);
   const productQuery = useProducts(domain, paginationModel, sortModel, target);

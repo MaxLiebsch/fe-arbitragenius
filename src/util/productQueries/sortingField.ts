@@ -29,5 +29,4 @@ export function sortingField(
       sort[query.field] = query.order === "asc" ? 1 : -1;
     }
   }
-  console.log("sort:", sort);
 }
