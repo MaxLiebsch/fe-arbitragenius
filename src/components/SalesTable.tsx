@@ -5,7 +5,7 @@ import {
   deDE,
   useGridApiRef,
 } from "@mui/x-data-grid-premium";
-import React, { useMemo} from "react";
+import React, { useMemo } from "react";
 import Spinner from "./Spinner";
 import useBookMarkAdd from "@/hooks/use-bookmark-add";
 import useBookMarkRemove from "@/hooks/use-bookmark-remove";
@@ -15,26 +15,25 @@ import { createSalesTableColumns } from "@/util/SalesTableColumns";
 import useAccount from "@/hooks/use-account";
 import { usePaginationAndSort } from "@/hooks/use-pagination-sort";
 import { useUserSettings } from "@/hooks/use-settings";
+import { useMarkSeen } from "@/hooks/use-markSeen";
 
 export default function SalesTable(props: {
   className?: string;
   target: string;
 }) {
-  const { className, target,  } = props;
-  const [settings, setUserSettings] = useUserSettings()
+  const { className, target } = props;
+  const [settings, setUserSettings] = useUserSettings();
 
-  const [paginationModel, setPaginationModel,sortModel, setSortModel] = usePaginationAndSort();   
+  const [paginationModel, setPaginationModel, sortModel, setSortModel] =
+    usePaginationAndSort();
 
   const apiRef = useGridApiRef();
+  useMarkSeen(apiRef, { ...props, domain: "sales" });
   const user = useAccount();
   const userRoles = useMemo(() => user.data?.labels ?? [], [user.data?.labels]);
 
   const productCountQuery = useSalesCount(target);
-  const productQuery = useSalesProducts(
-    paginationModel,
-    sortModel,
-    target,
-  );
+  const productQuery = useSalesProducts(paginationModel, sortModel, target);
 
   const bookMarkMutation = useBookMarkAdd();
   const bookMarkDeleteMutation = useBookMarkRemove();
@@ -75,6 +74,9 @@ export default function SalesTable(props: {
       apiRef={apiRef}
       className={className}
       sortingOrder={["desc", "asc"]}
+      getRowClassName={(params) => {
+        return params.row.seen ? "opacity-50" : "";
+      }}
       initialState={{
         columns: {
           columnVisibilityModel: {

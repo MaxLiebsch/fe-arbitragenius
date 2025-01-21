@@ -41,8 +41,10 @@ const InfoField = ({
     dealAznUpdatedAt,
     dealEbyUpdatedAt,
     drops30,
+    seen,
     esin,
     drops90,
+    timer,
     monthlySold,
     shop,
     sourceDomain,
@@ -68,144 +70,156 @@ const InfoField = ({
     return <Eanlist eanList={product.eanList} />;
 
   return (
-    <div className="flex flex-col divide-y p-1 w-full">
-      {nm && !isFlip && (
-        <div className={`${nm?.length < 114 && "flex gap-1"}`}>
-          <div className="flex flex-row gap-2 w-full">
-            <div>{ImageRenderer(prefixLink(img, shopDomain))}</div>
-            <div className="flex flex-col w-full">
-              {sourceDomain ? (
-                <span className="font-semibold">
-                  {sourceDomain!.slice(0, 1).toUpperCase() +
-                    sourceDomain!.slice(1)}
-                  :{" "}
-                </span>
-              ) : (
-                <span className="font-semibold">
-                  {shop!.slice(0, 1).toUpperCase() + shop!.slice(1)}:{" "}
-                </span>
-              )}
-              <>{LinkWrapper(lnk, nm, mnfctr)}</>
-              {lastUpdated && (
-                <time className="ml-auto mt-auto text-gray text-xs">
-                  {formatDistanceToNow(parseISO(lastUpdated), {
-                    locale: de,
-                    addSuffix: true,
-                  })}
-                </time>
-              )}
-            </div>
-          </div>
+    <div className="relative">
+      {typeof timer === "number" && !seen ? (
+        <div className="absolute right-2 top-1 text-xs text-gray">
+          {timer > 0
+            ? `Als gesehen markiert in ${timer === 1 ? 'einer': timer} Sekunde${timer > 1 ? "n" : ""}`
+            : "Gesehen"}
         </div>
-      )}
-      <div>
-        <div className={`w-full ${targetName?.length < 114 && "flex gap-1"}`}>
-          <div className="flex flex-row gap-2 w-full">
-            <div>{ImageRenderer(prefixLink(targetImg, s))}</div>
-            <div className="flex flex-col w-full">
-              <div>
-                <span className="font-semibold">
-                  {isFlip ? "Amazon Flip: " : ""}
-                </span>
-                {LinkWrapper(targetLink, targetName)}
+      ) : null}
+      <div className="flex flex-col divide-y p-1 w-full">
+        {nm && !isFlip && (
+          <div className={`${nm?.length < 114 && "flex gap-1"}`}>
+            <div className="flex flex-row gap-2 w-full">
+              <div>{ImageRenderer(prefixLink(img, shopDomain))}</div>
+              <div className="flex flex-col w-full">
+                {sourceDomain ? (
+                  <span className="font-semibold">
+                    {sourceDomain!.slice(0, 1).toUpperCase() +
+                      sourceDomain!.slice(1)}
+                    :{" "}
+                  </span>
+                ) : (
+                  <span className="font-semibold">
+                    {shop!.slice(0, 1).toUpperCase() + shop!.slice(1)}:{" "}
+                  </span>
+                )}
+                <>{LinkWrapper(lnk, nm, mnfctr)}</>
+                {lastUpdated && (
+                  <time className="ml-auto mt-auto text-gray text-xs">
+                    {formatDistanceToNow(parseISO(lastUpdated), {
+                      locale: de,
+                      addSuffix: true,
+                    })}
+                  </time>
+                )}
               </div>
-              {targetUpdatedAt && (
-                <time className="ml-auto mt-auto text-gray text-xs">
-                  {formatDistanceToNow(parseISO(targetUpdatedAt), {
-                    locale: de,
-                    addSuffix: true,
-                  })}
-                </time>
-              )}
+            </div>
+          </div>
+        )}
+        <div>
+          <div className={`w-full ${targetName?.length < 114 && "flex gap-1"}`}>
+            <div className="flex flex-row gap-2 w-full">
+              <div>{ImageRenderer(prefixLink(targetImg, s))}</div>
+              <div className="flex flex-col w-full">
+                <div>
+                  <span className="font-semibold">
+                    {isFlip ? "Amazon Flip: " : ""}
+                  </span>
+                  {LinkWrapper(targetLink, targetName)}
+                </div>
+                {targetUpdatedAt && (
+                  <time className="ml-auto mt-auto text-gray text-xs">
+                    {formatDistanceToNow(parseISO(targetUpdatedAt), {
+                      locale: de,
+                      addSuffix: true,
+                    })}
+                  </time>
+                )}
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {target === "a" &&
-        RetrieveAsin(targetLink, product, userRoles, target, pagination)}
-      {target === "e" &&
-        RetrieveEsin(targetLink, product, userRoles, target, pagination)}
-      <>
-        {target === "e" && ebyCategories && ebyCategories.length ? (
-          <div>
-            <span className="font-semibold">Kategorie:</span>
-            <span>
-              {ebyCategories.map((category: any) => {
-                return (
-                  <span className="mx-1" key={category.id + category.category}>
-                    <Link
-                      target="_blank"
-                      href={
-                        "https://www.ebay.de/b/" +
-                        encodeURIComponent(category.category) +
-                        "/" +
-                        category.id
-                      }
+        {target === "a" &&
+          RetrieveAsin(targetLink, product, userRoles, target, pagination)}
+        {target === "e" &&
+          RetrieveEsin(targetLink, product, userRoles, target, pagination)}
+        <>
+          {target === "e" && ebyCategories && ebyCategories.length ? (
+            <div>
+              <span className="font-semibold">Kategorie:</span>
+              <span>
+                {ebyCategories.map((category: any) => {
+                  return (
+                    <span
+                      className="mx-1"
+                      key={category.id + category.category}
                     >
-                      {category.category}
-                    </Link>
-                    <span className="font-semibold"> ID: </span>
-                    <CopyToClipboard text={category.id} />
+                      <Link
+                        target="_blank"
+                        href={
+                          "https://www.ebay.de/b/" +
+                          encodeURIComponent(category.category) +
+                          "/" +
+                          category.id
+                        }
+                      >
+                        {category.category}
+                      </Link>
+                      <span className="font-semibold"> ID: </span>
+                      <CopyToClipboard text={category.id} />
+                    </span>
+                  );
+                })}
+              </span>
+            </div>
+          ) : (
+            <></>
+          )}
+          {target === "a" && bsr && bsr.length && bsr[0]?.number !== 0 ? (
+            <div>
+              <span className="font-semibold">BSR:</span>
+              <span>
+                {bsr.map((bsr: any) => {
+                  return (
+                    <span className="mx-1" key={bsr.number + bsr.category}>
+                      Nr.{bsr.number.toLocaleString("de-DE")} in {bsr.category}
+                    </span>
+                  );
+                })}
+              </span>
+              {aznCategory && (
+                <>
+                  <span className="font-semibold">Kategorie:</span>
+                  <span className="mx-1" key={aznCategory.label + asin}>
+                    {aznCategory.label}
                   </span>
-                );
-              })}
-            </span>
-          </div>
-        ) : (
-          <></>
-        )}
-        {target === "a" && bsr && bsr.length && bsr[0]?.number !== 0 ? (
-          <div>
-            <span className="font-semibold">BSR:</span>
-            <span>
-              {bsr.map((bsr: any) => {
-                return (
-                  <span className="mx-1" key={bsr.number + bsr.category}>
-                    Nr.{bsr.number.toLocaleString("de-DE")} in {bsr.category}
+                </>
+              )}
+            </div>
+          ) : (
+            <></>
+          )}
+          {target === "a" && (monthlySold || drops30 || drops90) && (
+            <div className="flex flex-row gap-2">
+              {monthlySold ? (
+                <Tooltip
+                  title={`${
+                    monthlySold % 50 === 0
+                      ? "Die Metrik 'Gekauft im letzten Monat', welche auf den Amazon-Suchergebnisseiten zu finden ist."
+                      : "Geschätzte Verkäufe basierend auf dem BSR der Hauptkategorie."
+                  }`}
+                >
+                  <span>
+                    <span className="font-semibold">Monatliche Sales:</span>
+                    <span className="text-md"> {monthlySold}</span>
                   </span>
-                );
-              })}
-            </span>
-            {aznCategory && (
-              <>
-                <span className="font-semibold">Kategorie:</span>
-                <span className="mx-1" key={aznCategory.label + asin}>
-                  {aznCategory.label}
-                </span>
-              </>
-            )}
-          </div>
-        ) : (
-          <></>
-        )}
-        {target === "a" && (monthlySold || drops30 || drops90) && (
-          <div className="flex flex-row gap-2">
-            {monthlySold ? (
-              <Tooltip
-                title={`${
-                  monthlySold % 50 === 0
-                    ? "Die Metrik 'Gekauft im letzten Monat', welche auf den Amazon-Suchergebnisseiten zu finden ist."
-                    : "Geschätzte Verkäufe basierend auf dem BSR der Hauptkategorie."
-                }`}
-              >
-                <span>
-                  <span className="font-semibold">Monatliche Sales:</span>
-                  <span className="text-md"> {monthlySold}</span>
-                </span>
-              </Tooltip>
-            ): null}
-            <span>
-              <span className="font-semibold">Keepa Drops (30):</span>
-              <span className="text-md"> {drops30 ? drops30 : 0}</span>
-            </span>
-            <span>
-              <span className="font-semibold">Keepa Drops (90):</span>
-              <span className="text-md"> {drops90 ? drops90 : 0}</span>
-            </span>
-          </div>
-        )}
-      </>
+                </Tooltip>
+              ) : null}
+              <span>
+                <span className="font-semibold">Keepa Drops (30):</span>
+                <span className="text-md"> {drops30 ? drops30 : 0}</span>
+              </span>
+              <span>
+                <span className="font-semibold">Keepa Drops (90):</span>
+                <span className="text-md"> {drops90 ? drops90 : 0}</span>
+              </span>
+            </div>
+          )}
+        </>
+      </div>
     </div>
   );
 };

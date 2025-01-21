@@ -12,6 +12,7 @@ import VKPrice from "@/components/columns/VKPrice";
 import EKPrice from "@/components/columns/EKPrice";
 import OptionField from "@/components/columns/OptionField";
 import PriceAnalysis from "@/components/columns/PriceAnalysis";
+import SwitchSeenProducts from "@/components/SwitchSeenProducts";
 
 export const createSalesTableColumns: (
   target: string,
@@ -68,6 +69,14 @@ export const createSalesTableColumns: (
     disableColumnMenu: true,
     flex: 1,
     sortable: false,
+    renderHeader(params) {
+      return (
+        <div className="gap-2 flex items-center">
+          <span>Produkte</span>
+          <SwitchSeenProducts/> 
+        </div>
+      );
+    },
     renderCell: (params) => (
       <InfoField
         product={params.row}
