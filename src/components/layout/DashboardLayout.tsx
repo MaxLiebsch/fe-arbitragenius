@@ -120,11 +120,11 @@ export const DashboardLayout = ({
   );
   const text =
     newAznDeals && newEbyDeals
-      ? `Neue Amazon (${aSalesCount.data?.totalProductsToday}) & Ebay Deals(${eSalesCount.data?.totalProductsToday})`
+      ? `Neu Amazon (${aSalesCount.data?.totalProductsToday}) & Ebay (${eSalesCount.data?.totalProductsToday})`
       : newAznDeals
-      ? `Neue Amazon Deals (${aSalesCount.data?.totalProductsToday})`
+      ? `Neu Amazon (${aSalesCount.data?.totalProductsToday})`
       : newEbyDeals
-      ? `Neue Ebay Deals (${eSalesCount.data?.totalProductsToday})`
+      ? `Neu Ebay (${eSalesCount.data?.totalProductsToday})`
       : "";
   const pathname = usePathname();
 
