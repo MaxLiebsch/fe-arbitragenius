@@ -14,7 +14,15 @@ export function useMarkSeen(
   });
   const [timer, setTimer] = useState<number | null>(null);
   const productSeen = useProductSeen(props);
+  const interval = useRef<NodeJS.Timeout | null>(null);
+  const pause = useRef(false);
+
   useEffect(() => {
+    apiRef.current.subscribeEvent("cellMouseOver", (params) => {
+        if (params.field === "isBookmarked") {
+          console.log('params:', params)
+      }
+    });
     if (apiRef.current) {
       apiRef.current.subscribeEvent("rowMouseEnter", (params) => {
         rowVisted.current = {
@@ -39,7 +47,7 @@ export function useMarkSeen(
         setTimer(null); // Clear timer on mouse leave
       });
     }
-    const interval = setInterval(() => {
+    interval.current = setInterval(() => {
       setTimer((prevTimer) => {
         if (prevTimer !== null && prevTimer > 0) {
           return prevTimer - 1;
@@ -48,7 +56,7 @@ export function useMarkSeen(
       });
     }, 1000);
 
-    return () => clearInterval(interval);
+    return () => clearInterval(interval.current || 0);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [apiRef]);
 
@@ -57,5 +65,4 @@ export function useMarkSeen(
       apiRef.current.updateRows([{ _id: rowVisted.current._id, timer }]);
     }
   }, [timer, apiRef]);
-
 }

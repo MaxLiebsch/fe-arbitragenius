@@ -20,6 +20,10 @@ const nextConfig = {
     NEXT_PUBLIC_VERSION: version,
   },
   experimental: {
+    serverActions: {
+      allowedForwardedHosts: ['arbispotter-app-staging.vercel.app'],
+			allowedOrigins: ['https://arbispotter-app-staging.vercel.app']
+    },
     serverComponentsExternalPackages: ["node-appwrite"],
   },
   transpilePackages: ["jotai-devtools"],
