@@ -18,11 +18,6 @@ export function useMarkSeen(
   const pause = useRef(false);
 
   useEffect(() => {
-    apiRef.current.subscribeEvent("cellMouseOver", (params) => {
-        if (params.field === "isBookmarked") {
-          console.log('params:', params)
-      }
-    });
     if (apiRef.current) {
       apiRef.current.subscribeEvent("rowMouseEnter", (params) => {
         rowVisted.current = {
