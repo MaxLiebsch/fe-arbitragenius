@@ -61,7 +61,7 @@ export default function ImageRenderer(imglink: string | undefined) {
   }); 
   
   if (src) {
-    const regexp = /^https?:\/\/[^?#\n]+/;
+    const regexp = /^https?:\/\/[^?#\n(?:,)]+/;
     const match = src.match(regexp);
     return (
       <>
