@@ -22,10 +22,8 @@ const nextConfig = {
   experimental: {
     serverActions: {
       allowedOrigins: [
-        "https://staging.arbispotter.com",
-        "https://www.arbispotter.com",
-        "https://arbispotter-app-staging.vercel.app",
-        "https://arbispotter-app.vercel.app",
+        "*.arbispotter.com",
+        "*.vercel.app"
       ],
     },
     serverComponentsExternalPackages: ["node-appwrite"],
