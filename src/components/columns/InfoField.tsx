@@ -70,7 +70,7 @@ const InfoField = ({
     return <Eanlist eanList={product.eanList} />;
 
   return (
-    <div className="relative">
+    <div className="relative w-full">
       {typeof timer === "number" && !seen ? (
         <div className="absolute right-2 top-1 text-xs text-gray">
           {timer > 0
