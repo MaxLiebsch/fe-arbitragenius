@@ -25,6 +25,10 @@ const nextConfig = {
         "*.arbispotter.com",
         "*.vercel.app"
       ],
+      allowedForwardedHosts: [
+        "*.arbispotter.com",
+        "*.vercel.app"
+      ]
     },
     serverComponentsExternalPackages: ["node-appwrite"],
   },
