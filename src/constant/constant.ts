@@ -10,7 +10,7 @@ export const WHOLESALE_COL = "wholesale";
 export const TASK_COL = "tasks";
 export const SALES_COL = "sales";
 export const amazonTransportFee = 0.25;
-export const TTL_UPCOMING_REQUEST = 1000 * 60 * 45;
+export const TTL_UPCOMING_REQUEST = 1000 * 60 * 5;
 export const MAX_CACHE_SIZE = 1000;
 export const CONSIDERED_SEEN_DWELL_DURANTION = 1000 * 4;
 

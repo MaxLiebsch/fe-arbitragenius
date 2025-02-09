@@ -1,7 +1,6 @@
 "use client";
 import ShopsGrid from "@/components/ShopsGrid";
 import ProductFilterForm from "@/components/forms/ProductFilterForm";
-import TotalDeals from "@/components/TotalDeals";
 import useShopCount from "@/hooks/use-shop-count";
 
 export default function Dashboard() {
@@ -28,7 +27,6 @@ export default function Dashboard() {
                   </h3>
                 )}
               </div>
-              <TotalDeals />
             </>
           )}
           <div className="text-sm text-end text-gray-dark absolute top-0 right-4">
@@ -38,7 +36,7 @@ export default function Dashboard() {
             DipMax Export GmbH übernimmt für die dargestellten Informationen und
             deren Genauigkeit und Vollständigkeit keine Gewährleistung.
           </div>
-          <div className="flex h-[calc(100vh-250px)] overflow-y-auto w-full">
+          <div className="flex h-[calc(100vh-180px)] overflow-y-auto w-full">
             <ShopsGrid />
           </div>
         </div>

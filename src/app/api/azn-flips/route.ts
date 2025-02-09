@@ -5,7 +5,10 @@ import { aznFlipFields } from "@/util/productQueries/aznFlipFields";
 
 import { ebyFields } from "@/util/productQueries/ebyFields";
 import { lookupUserId } from "@/util/productQueries/lookupUserId";
-import { marginField, marginPctField } from "@/util/productQueries/marginFields";
+import {
+  marginField,
+  marginPctField,
+} from "@/util/productQueries/marginFields";
 
 import { projectField } from "@/util/productQueries/projectField";
 import { settingsFromSearchQuery } from "@/util/productQueries/settingsFromSearchQuery";
@@ -42,7 +45,7 @@ export async function GET(
   if (isAmazon) {
     aggregation.push(...aznFlipFields(customerSettings));
   } else {
-    aggregation.push(...ebyFields(customerSettings));
+    aggregation.push(...ebyFields({ settings: customerSettings }));
   }
 
   const query = {
@@ -66,8 +69,7 @@ export async function GET(
     [key: string]: SortDirection;
   } = {};
 
-  sortingField(isAmazon, query, sort, customerSettings);
-
+  sortingField({ isAmazon, query, sort, settings: customerSettings });
 
   aggregation.push(
     {

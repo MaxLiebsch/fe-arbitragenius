@@ -37,6 +37,7 @@ const InfoField = ({
     mnfctr,
     asin,
     availUpdatedAt,
+    createdAt,
     updatedAt,
     dealAznUpdatedAt,
     dealEbyUpdatedAt,
@@ -74,7 +75,9 @@ const InfoField = ({
       {typeof timer === "number" && !seen ? (
         <div className="absolute right-2 top-1 text-xs text-gray">
           {timer > 0
-            ? `Als gesehen markiert in ${timer === 1 ? 'einer': timer} Sekunde${timer > 1 ? "n" : ""}`
+            ? `Als gesehen markiert in ${
+                timer === 1 ? "einer" : timer
+              } Sekunde${timer > 1 ? "n" : ""}`
             : "Gesehen"}
         </div>
       ) : null}
@@ -96,14 +99,26 @@ const InfoField = ({
                   </span>
                 )}
                 <>{LinkWrapper(lnk, nm, mnfctr)}</>
-                {lastUpdated && (
-                  <time className="ml-auto mt-auto text-gray text-xs">
-                    {formatDistanceToNow(parseISO(lastUpdated), {
+                <div  className="flex flex-row w-full justify-between mt-auto">
+                {createdAt && (
+                  <time className="text-gray text-xs">
+                    Erstellt{" "}
+                    {formatDistanceToNow(parseISO(createdAt), {
                       locale: de,
                       addSuffix: true,
                     })}
                   </time>
                 )}
+                  {lastUpdated && (
+                    <time className="text-gray text-xs">
+                      Acktualisiert{" "}
+                      {formatDistanceToNow(parseISO(lastUpdated), {
+                        locale: de,
+                        addSuffix: true,
+                      })}
+                    </time>
+                  )}
+                </div>
               </div>
             </div>
           </div>

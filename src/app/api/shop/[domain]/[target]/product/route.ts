@@ -41,9 +41,13 @@ export async function GET(
   const aggregation: { [key: string]: any }[] = [];
 
   if (isAmazon) {
-    aggregation.push(...aznFields(customerSettings, domain));
+    aggregation.push(
+      ...aznFields({ settings: customerSettings, sdmn: domain })
+    );
   } else {
-    aggregation.push(...ebyFields(customerSettings, domain));
+    aggregation.push(
+      ...ebyFields({ settings: customerSettings, sdmn: domain })
+    );
   }
 
   const query = {
@@ -67,7 +71,7 @@ export async function GET(
     [key: string]: SortDirection;
   } = {};
 
-  sortingField(isAmazon, query, sort, customerSettings);
+  sortingField({ isAmazon, query, sort, settings: customerSettings });
 
   aggregation.push(
     projectField(target, "$sdmn"),

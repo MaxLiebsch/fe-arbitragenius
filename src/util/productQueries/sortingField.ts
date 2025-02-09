@@ -1,19 +1,34 @@
 import { Settings } from "@/types/Settings";
 import { mrgnPctFieldName } from "./mrgnProps";
+import { create } from "domain";
 
-export function sortingField(
-  isAmazon: boolean,
-  query: any,
-  sort: any,
-  settings: Settings
-) {
+type SortingField = {
+  isAmazon: boolean;
+  query: any;
+  sort: any;
+  settings: Settings;
+  createdAt?: boolean;
+};
+
+export function sortingField({
+  isAmazon,
+  query,
+  sort,
+  createdAt,
+  settings,
+}: SortingField) {
   const { euProgram, showSeen } = settings;
 
   if (showSeen) {
     sort["seen"] = -1;
-  }else{
+  } else {
     sort["seen"] = 1;
   }
+
+  if(createdAt){
+    sort["createdAt"] = -1; // sort by createdAt in descending order
+  }
+
 
   if (isAmazon) {
     if (query.field === "none") {

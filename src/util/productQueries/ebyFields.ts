@@ -2,12 +2,17 @@ import { Settings } from "@/types/Settings";
 import { mrgnFieldName, mrgnPctFieldName } from "./mrgnProps";
 import { marginField, marginPctField } from "./marginFields";
 import { addTotalOffersCountField } from "./totalOffersCountField";
+import { ISOStringWeek } from "@/types/Week";
 
-export const ebyFields = (
-  settings: Settings,
-  sdmn?: string,
-  isWholeSale?: boolean
-) => {
+type EbyFields = {
+  settings: Settings;
+  sdmn?: string;
+  isWholeSale?: boolean;
+  week?: ISOStringWeek;
+  excludeShops?: string[];
+};
+
+export const ebyFields = ({ settings, sdmn, isWholeSale, week, excludeShops }: EbyFields) => {
   const { tptStandard, strg, e_prepCenter, e_cats } = settings;
   const transport = settings[tptStandard as "tptSmall"];
   const match: any = {
@@ -22,6 +27,14 @@ export const ebyFields = (
 
   if (sdmn) {
     match.sdmn = sdmn;
+  }
+
+  if (excludeShops && excludeShops.length > 0) {
+    match["sdmn"] = { $nin: excludeShops };
+  }
+
+  if (week) {
+    match["createdAt"] = { $gte: week.start, $lte: week.end };
   }
 
   if (e_cats.length > 0 && e_cats[0] !== 0) {

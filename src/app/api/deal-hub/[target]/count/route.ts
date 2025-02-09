@@ -1,8 +1,12 @@
 import { getLoggedInUser } from "@/server/appwrite";
 import { getProductCol } from "@/server/mongo";
 import { Settings } from "@/types/Settings";
+import { decodeWeek } from "@/util/decodeWeek";
 import { aznFields } from "@/util/productQueries/aznFields";
 import { ebyFields } from "@/util/productQueries/ebyFields";
+import { lookupProductInvalid } from "@/util/productQueries/lookupProductInvalid";
+import { lookupProductIrrelevant } from "@/util/productQueries/lookupProductIrrelevant";
+import { lookupProductSeen } from "@/util/productQueries/lookupProductSeen";
 import { settingsFromSearchQuery } from "@/util/productQueries/settingsFromSearchQuery";
 import { NextRequest } from "next/server";
 
@@ -17,6 +21,14 @@ export async function GET(
   const isAmazon = target === "a";
   const customerSettings: Settings = settingsFromSearchQuery(searchParams);
 
+  const week = decodeWeek(searchParams);
+
+  if (!week) {
+    return new Response("Invalid week", {
+      status: 400,
+    });
+  }
+
   let { minMargin, minPercentageMargin, netto } = customerSettings;
 
   if (netto) {
@@ -27,10 +39,27 @@ export async function GET(
   const aggregation: { [key: string]: any }[] = [];
 
   if (isAmazon) {
-    aggregation.push(...aznFields({settings:customerSettings, sdmn: domain}));
+    aggregation.push(
+      ...aznFields({
+        settings: customerSettings,
+        week,
+        excludeShops: ["sales"],
+      })
+    );
   } else {
-    aggregation.push(...ebyFields({settings:customerSettings, sdmn: domain}));
-  } 
+    aggregation.push(
+      ...ebyFields({
+        settings: customerSettings,
+        week,
+        excludeShops: ["sales"],
+      })
+    );
+  }
+  aggregation.push(
+    ...lookupProductSeen(user, target),
+    ...lookupProductInvalid(user, target),
+    ...lookupProductIrrelevant(user, target)
+  );
   aggregation.push({ $count: "productCount" });
   const productCol = await getProductCol();
 

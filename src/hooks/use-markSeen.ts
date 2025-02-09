@@ -2,7 +2,7 @@ import { CONSIDERED_SEEN_DWELL_DURANTION } from "@/constant/constant";
 import { GridApiPremium } from "@mui/x-data-grid-premium/models/gridApiPremium";
 import { useEffect, useRef, useState } from "react";
 import { useProductSeen } from "./use-productSeen";
-import { ProductTableProps } from "@/components/ProductsTable";
+import { ProductTableProps } from "@/components/ProductsTablePanel";
 
 export function useMarkSeen(
   apiRef: React.MutableRefObject<GridApiPremium>,
