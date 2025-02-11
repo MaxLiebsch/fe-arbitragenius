@@ -43,7 +43,7 @@ export async function GET(
       ...aznFields({
         settings: customerSettings,
         week,
-        excludeShops: ["sales"],
+        excludeShops: ["sales", "wholesale"],
       })
     );
   } else {
@@ -51,7 +51,7 @@ export async function GET(
       ...ebyFields({
         settings: customerSettings,
         week,
-        excludeShops: ["sales"],
+        excludeShops: ["sales", "wholesale"],
       })
     );
   }

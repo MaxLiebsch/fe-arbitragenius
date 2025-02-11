@@ -3,7 +3,6 @@ import useSalesCount from "@/hooks/use-sales-count";
 import { Week } from "@/types/Week";
 import { Divider } from "antd";
 import { endOfWeek, startOfWeek } from "date-fns";
-import { stat } from "fs";
 import Link from "next/link";
 import React from "react";
 
@@ -39,7 +38,7 @@ const Statistics = ({
             >
               <div className="font-semibold flex flex-row hover:font-bold justify-center">
                 <span>{stat.target}:{" "}</span>
-                {stat.total}
+                {stat.total || 0}
               </div>
             </Link>
           );

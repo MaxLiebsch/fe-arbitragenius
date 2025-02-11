@@ -50,9 +50,21 @@ export async function GET(
   const aggregation: { [key: string]: any }[] = [];
 
   if (isAmazon) {
-    aggregation.push(...aznFields({ settings: customerSettings, week, excludeShops: ["sales"] }));
+    aggregation.push(
+      ...aznFields({
+        settings: customerSettings,
+        week,
+        excludeShops: ["sales", "wholesale"],
+      })
+    );
   } else {
-    aggregation.push(...ebyFields({ settings: customerSettings, week ,excludeShops: ["sales"] }));
+    aggregation.push(
+      ...ebyFields({
+        settings: customerSettings,
+        week,
+        excludeShops: ["sales", "wholesale"],
+      })
+    );
   }
 
   const query = {
@@ -76,7 +88,13 @@ export async function GET(
     [key: string]: SortDirection;
   } = {};
 
-  sortingField({isAmazon, query, sort, settings:customerSettings, createdAt: true});
+  sortingField({
+    isAmazon,
+    query,
+    sort,
+    settings: customerSettings,
+    createdAt: true,
+  });
 
   aggregation.push(
     projectField(target, "$sdmn"),

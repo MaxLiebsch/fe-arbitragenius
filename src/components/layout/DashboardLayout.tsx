@@ -15,7 +15,6 @@ import {
   ArrowsUpDownIcon,
   TagIcon,
   Cog6ToothIcon,
-  MagnifyingGlassIcon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
 
@@ -24,11 +23,7 @@ import { Logo } from "../Logo";
 import { usePathname, useRouter } from "next/navigation";
 import { useFormState } from "react-dom";
 import { TotalDealsContext } from "@/context/totalDealsContext";
-import useSalesCount from "@/hooks/use-sales-count";
-import { Badge, Statistic } from "antd";
 import useAccount from "@/hooks/use-account";
-import { formatDistanceToNow } from "date-fns";
-import { de } from "date-fns/locale";
 import useAppereanceAdd from "@/hooks/use-appereance-add";
 import { Mode } from "@/types/Appearance";
 import { useThemeAtom } from "@/hooks/use-theme";
