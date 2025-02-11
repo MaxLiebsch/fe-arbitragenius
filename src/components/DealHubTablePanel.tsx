@@ -15,7 +15,7 @@ export type ProductTableProps = {
 export default function DealHubTablePanel(props: ProductTableProps) {
   const { className,target, week } = props;
   const [paginationModel, setPaginationModel, sortModel, setSortModel] =
-    usePaginationAndSort();
+  usePaginationAndSort();
 
   const productCountQuery = useDealhubProductCount(target, week);
   const productQuery = useDealhubProducts(paginationModel, sortModel, target, week);

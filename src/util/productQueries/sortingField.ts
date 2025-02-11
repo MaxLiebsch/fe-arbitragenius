@@ -1,6 +1,5 @@
 import { Settings } from "@/types/Settings";
 import { mrgnPctFieldName } from "./mrgnProps";
-import { create } from "domain";
 
 type SortingField = {
   isAmazon: boolean;
@@ -25,13 +24,13 @@ export function sortingField({
     sort["seen"] = 1;
   }
 
-  if(createdAt){
-    sort["createdAt"] = -1; // sort by createdAt in descending order
-  }
-
-
+  
+  
   if (isAmazon) {
     if (query.field === "none") {
+      if(createdAt){
+        sort["createdAt"] = -1; // sort by createdAt in descending order
+      }
       sort["bsr.number"] = 1;
       sort[mrgnPctFieldName("a", euProgram)] = -1;
     } else if (query.field) {
@@ -39,6 +38,9 @@ export function sortingField({
     }
   } else {
     if (query.field === "none") {
+      if(createdAt){
+        sort["createdAt"] = -1; // sort by createdAt in descending order
+      }
       sort[mrgnPctFieldName("e", false)] = -1;
     } else if (query.field) {
       sort[query.field] = query.order === "asc" ? 1 : -1;

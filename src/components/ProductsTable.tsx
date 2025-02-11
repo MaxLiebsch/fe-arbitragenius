@@ -16,6 +16,7 @@ import { useUserSettings } from "@/hooks/use-settings";
 import { useMarkSeen } from "@/hooks/use-markSeen";
 import { UseQueryResult } from "@tanstack/react-query";
 import { ModifiedProduct } from "@/types/Product";
+import { DEFAULT_SORT } from "@/constant/constant";
 
 export type ProductTableProps = {
   domain: string;
@@ -33,7 +34,7 @@ export type ProductTableProps = {
 export default function ProductsTable(props: ProductTableProps) {
   const [settings, setUserSettings] = useUserSettings();
   const { className, domain, target, productQuery, productCountQuery } = props;
-  const [paginationModel, setPaginationModel, sortModel, setSortModel] =
+  const [paginationModel, setPaginationModel, sortModel, setSortModel,handleSetSortModel ,handleSetPaginationModel] =
     usePaginationAndSort();
 
   const apiRef = useGridApiRef();
@@ -47,12 +48,15 @@ export default function ProductsTable(props: ProductTableProps) {
 
   const handleSortModelChange = (model: GridSortModel) => {
     if (model.length) {
-      setSortModel({
+      handleSetSortModel({
         field: model[0].field,
-        direction: model[0].sort ?? "asc",
+        sort: model[0].sort || DEFAULT_SORT,
       });
     } else {
-      setSortModel(undefined);
+      handleSetSortModel({
+        field: "none",
+        sort: DEFAULT_SORT,
+      });
     }
   };
 
@@ -98,9 +102,10 @@ export default function ProductsTable(props: ProductTableProps) {
       columns={columns}
       rows={productQuery.data ?? []}
       rowCount={productCountQuery.data?.productCount ?? 0}
-      loading={productQuery.isFetching}
+      loading={productQuery.isLoading}
       pageSizeOptions={[10, 20, 50]}
       paginationModel={paginationModel}
+      sortModel={[sortModel]}
       onPaginationModelChange={setPaginationModel}
       paginationMode="server"
       disableColumnMenu

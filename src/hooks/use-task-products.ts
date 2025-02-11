@@ -1,9 +1,10 @@
-import { ModifiedProduct, Product } from "@/types/Product";
+import { ModifiedProduct } from "@/types/Product";
 import { WholeSaleTarget } from "@/types/tasks";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useUserSettings } from "./use-settings";
 import { Settings } from "@/types/Settings";
+import { GridSortItem } from "@mui/x-data-grid-premium";
 
 export type ProductPagination = {
   page: number;
@@ -25,7 +26,7 @@ type ProductBsr = {
 export default function useTaskProducts(
   taskId: string,
   pagination: ProductPagination,
-  sort: ProductSort,
+  sort: GridSortItem,
   target: WholeSaleTarget,
   refetchOnWindowFocus: boolean = true
 ) {
@@ -46,14 +47,14 @@ export default function useTaskProducts(
       pagination.page,
       pagination.pageSize,
       sort?.field,
-      sort?.direction,
+      sort?.sort,
       ...(settings ? Object.values(settings) : [])
     ],
     refetchOnWindowFocus: true,
     queryFn: async () => {
       let sortQuery = "";
 
-      if (sort) sortQuery = `&sortby=${sort.field}&sortorder=${sort.direction}`;
+      if (sort) sortQuery = `&sortby=${sort.field}&sortorder=${sort.sort}`;
       return fetch(
         `/app/api/tasks/${taskId}/product?page=${pagination.page}&size=${pagination.pageSize}${sortQuery}&target=${target}&${settingsQuery}`
       ).then((resp) => resp.json());
@@ -92,12 +93,12 @@ export default function useTaskProducts(
           pagination.page + 1,
           pagination.pageSize,
           sort?.field,
-          sort?.direction,
+          sort?.sort,
         ],
         queryFn: async () => {
           let sortQuery = "";
           if (sort)
-            sortQuery = `&sortby=${sort.field}&sortorder=${sort.direction}`;
+            sortQuery = `&sortby=${sort.field}&sortorder=${sort.sort}`;
           return fetch(
             `/app/api/tasks/${taskId}/product?page=${pagination.page}&size=${pagination.pageSize}${sortQuery}&target=${target}&${settingsQuery}`
           ).then((resp) => resp.json());
@@ -113,7 +114,7 @@ export default function useTaskProducts(
     sort,
     taskId,
     sort?.field,
-    sort?.direction,
+    sort?.sort,
     queryClient,
   ]);
 

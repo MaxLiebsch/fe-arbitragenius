@@ -205,6 +205,9 @@ export const DashboardLayout = ({
                               <li key={item.name}>
                                 <Link
                                   href={item.href}
+                                  onClick={()=> {
+                                    setSidebarOpen(false)
+                                  }}
                                   className={classNames(
                                     pathname === item.href
                                       ? "bg-gray-light text-secondary"
@@ -255,6 +258,9 @@ export const DashboardLayout = ({
                     {navigation.map((item) => (
                       <li key={item.name}>
                         <Link
+                          onClick={()=> {
+                            setSidebarOpen(false)
+                          }}
                           href={item.href}
                           className={classNames(
                             item.href === pathname
@@ -404,6 +410,9 @@ export const DashboardLayout = ({
                           <Menu.Item key={item.name}>
                             {({ active }) => (
                               <Link
+                                onClick={()=> {
+                                  setSidebarOpen(false)
+                                }}
                                 href={item.href ? item.href : ""}
                                 className={classNames(
                                   active ? "bg-gray-light" : "",

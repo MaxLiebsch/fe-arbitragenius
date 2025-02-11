@@ -4,22 +4,17 @@ import { salesQueryKey } from "@/util/queryKeys";
 import { useQuery } from "@tanstack/react-query";
 
 import { useUserSettings } from "./use-settings";
+import { GridSortItem } from "@mui/x-data-grid-premium";
 
 export type ProductPagination = {
   page: number;
   pageSize: number;
 };
 
-export type ProductSort =
-  | undefined
-  | {
-      field: string;
-      direction: "asc" | "desc";
-    };
 
 export default function useSalesProducts(
   pagination: ProductPagination,
-  sort: ProductSort,
+  sort: GridSortItem,
   target: string,
   refetchOnWindowFocus: boolean = true
 ) {
@@ -30,7 +25,7 @@ export default function useSalesProducts(
     queryKey: [
       ...salesQueryKey(target, pagination.page, pagination.pageSize),
       sort?.field,
-      sort?.direction,
+      sort?.sort,
       ...(settings ? Object.values(settings) : []),
     ],
     enabled: !!target && !!settings,
@@ -40,7 +35,7 @@ export default function useSalesProducts(
       let sortQuery = "";
       let settingsQuery = "";
       let pageQuery = `&page=${page}&size=${pageSize}`;
-      if (sort) sortQuery = `&sortby=${sort.field}&sortorder=${sort.direction}`;
+      if (sort) sortQuery = `&sortby=${sort.field}&sortorder=${sort.sort}`;
       if (settings) {
         settingsQuery = Object.keys(settings)
           .map((key) => `&${key}=${settings[key as keyof Settings]}`)

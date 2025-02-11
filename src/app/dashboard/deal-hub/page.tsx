@@ -10,12 +10,16 @@ import SourceshopTabGroup from "@/components/SourceshopTabGroup";
 import { Week } from "@/types/Week";
 import { Tab } from "@headlessui/react";
 import DealHubTablePanel from "@/components/DealHubTablePanel";
+import { usePaginationAndSort } from "@/hooks/use-pagination-sort";
+import { DEFAULT_SORT } from "@/constant/constant";
 
 const Page = () => {
   const [week, setWeek] = React.useState<Week>({
     start: startOfWeek(new Date(), { weekStartsOn: 1 }).getTime(),
     end: endOfWeek(new Date(), { weekStartsOn: 1 }).getTime(),
   });
+const [paginationModel, setPaginationModel, sortModel, setSortModel, handleSetSortModel,handleSetPaginationModel] =
+  usePaginationAndSort();
   return (
     <div className="h-full flex flex-col overflow-y-hidden">
       {/* Header */}
@@ -33,6 +37,8 @@ const Page = () => {
               if (value === null) {
                 return;
               }
+              handleSetSortModel({field: "none", sort: DEFAULT_SORT});
+              handleSetPaginationModel({page: 0, pageSize: paginationModel.pageSize});
               setWeek({
                 start: startOfWeek(value, { weekStartsOn: 1 }).getTime(),
                 end: endOfWeek(value, { weekStartsOn: 1 }).getTime(),

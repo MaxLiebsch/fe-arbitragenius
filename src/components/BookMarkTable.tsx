@@ -37,10 +37,10 @@ export default function BookmarkTable(props: {
     if (model.length) {
       setSortModel({
         field: model[0].field ?? "bookmarkedAt",
-        direction: model[0].sort ?? "asc",
+        sort: model[0].sort ?? "desc",
       });
     } else {
-      setSortModel(undefined);
+      setSortModel({ field: "none", sort: "desc" });
     }
   };
 
@@ -68,6 +68,7 @@ export default function BookmarkTable(props: {
     <DataGridPremium
       apiRef={apiRef}
       sortingOrder={["desc", "asc"]}
+      sortModel={[sortModel]}
       initialState={{
         columns: {
           columnVisibilityModel: {

@@ -5,22 +5,16 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useUserSettings } from "./use-settings";
 import { Week } from "@/types/Week";
+import { GridSortItem } from "@mui/x-data-grid-premium";
 
 export type ProductPagination = {
   page: number;
   pageSize: number;
 };
 
-export type ProductSort =
-  | undefined
-  | {
-      field: string;
-      direction: "asc" | "desc";
-    };
-
 export default function useDealhubProducts(
   pagination: ProductPagination,
-  sort: ProductSort,
+  sort: GridSortItem,
   target: string,
   week: Week
 ) {
@@ -35,7 +29,7 @@ export default function useDealhubProducts(
       pagination.pageSize
     ),
     sort?.field,
-    sort?.direction,
+    sort?.sort,
     ...(settings ? Object.values(settings) : []),
     week.start,
     week.end,
@@ -50,7 +44,7 @@ export default function useDealhubProducts(
       let settingsQuery = "";
       let pageQuery = `&page=${page}&size=${pageSize}`;
       let weekSettings = `&start=${week.start}&end=${week.end}`;
-      if (sort) sortQuery = `&sortby=${sort.field}&sortorder=${sort.direction}`;
+      if (sort) sortQuery = `&sortby=${sort.field}&sortorder=${sort.sort}`;
       if (settings) {
         settingsQuery = Object.keys(settings)
           .map((key) => `&${key}=${settings[key as keyof Settings]}`)
@@ -73,7 +67,7 @@ export default function useDealhubProducts(
             pagination.pageSize
           ),
           sort?.field,
-          sort?.direction,
+          sort?.sort,
           ...(settings ? Object.values(settings) : []),
           week.start,
           week.end,
@@ -85,7 +79,7 @@ export default function useDealhubProducts(
           let pageQuery = `&page=${page + 1}&size=${pageSize}`;
           const weekSettings = `&start=${week.start}&end=${week.end}`;
           if (sort)
-            sortQuery = `&sortby=${sort.field}&sortorder=${sort.direction}`;
+            sortQuery = `&sortby=${sort.field}&sortorder=${sort.sort}`;
 
           if (settings) {
             settingsQuery = Object.keys(settings)
@@ -109,7 +103,7 @@ export default function useDealhubProducts(
     pagination.pageSize,
     sort,
     sort?.field,
-    sort?.direction,
+    sort?.sort,
     queryClient,
   ]);
 

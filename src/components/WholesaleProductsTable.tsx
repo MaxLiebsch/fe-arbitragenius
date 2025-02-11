@@ -57,10 +57,10 @@ export default function WholeSaleProductsTable(props: {
     if (model.length) {
       setSortModel({
         field: model[0].field,
-        direction: model[0].sort ?? "asc",
+        sort: model[0].sort ?? "asc",
       });
     } else {
-      setSortModel(undefined);
+      setSortModel({ field: "none", sort: "asc" });
     }
   };
 
