@@ -11,13 +11,6 @@ export type ProductPagination = {
   pageSize: number;
 };
 
-export type ProductSort =
-  | undefined
-  | {
-      field: string;
-      direction: "asc" | "desc";
-    };
-
 type ProductBsr = {
   number: number;
   category: string;
