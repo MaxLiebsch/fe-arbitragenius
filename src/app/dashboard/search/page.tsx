@@ -34,7 +34,7 @@ const Page = () => {
           DipMax Export GmbH übernimmt für die dargestellten Informationen und
           deren Genauigkeit und Vollständigkeit keine Gewährleistung.
         </div>
-        <div className="flex h-[calc(100vh-220px)]">
+        <div className="flex h-[calc(100vh-170px)]">
           <ProductsTable
             domain="search"
             target={target?.slice(0, 1) || "a"}
