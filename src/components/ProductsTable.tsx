@@ -34,7 +34,7 @@ export type ProductTableProps = {
 export default function ProductsTable(props: ProductTableProps) {
   const [settings, setUserSettings] = useUserSettings();
   const { className, domain, target, productQuery, productCountQuery } = props;
-  const [paginationModel, setPaginationModel, sortModel, setSortModel,handleSetSortModel ,handleSetPaginationModel] =
+  const { paginationModel, setPaginationModel, sortModel, handleSetSortModel } =
     usePaginationAndSort();
 
   const apiRef = useGridApiRef();

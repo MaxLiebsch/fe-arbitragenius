@@ -17,6 +17,57 @@ import {
 } from "./use-bookmark-add";
 import { productQueryKey, salesQueryKey } from "@/util/queryKeys";
 
+
+
+export default function useBookMarkRemove() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (options: {
+      body: BookmarkDeleteSchema;
+      page: number;
+      pageSize: number;
+    }) => {
+      const { body, page, pageSize } = options;
+      const response = await fetch(`/app/api/user/bookmarks`, {
+        method: "DELETE",
+        body: JSON.stringify(body),
+      });
+
+      if (!response.ok) throw new Error(await response.text());
+    },
+    onMutate: async (variables) => {
+      const { body, page, pageSize } = variables;
+
+      if (body.shop === "sales") {
+        await invalidateSalesQueries(variables, queryClient);
+      } else if (body.shop === "flip") {
+        await invalidateFlipQueries(variables, queryClient);
+      } else {
+        if(variables.body.search){
+          variables.body.shop = "search";
+        }
+        await invalidateProductQueries(variables, queryClient);
+      }
+    },
+    onSettled: (data, error, variables, context) => {
+      queryClient.invalidateQueries({ queryKey: ["bookmarks"], exact: true });
+      if (variables.body.shop === "sales") {
+        invalidateSalesQueriesOnSettled(variables, queryClient);
+      } else if (variables.body.shop === "flip") {
+        invalidateAznFlipsQueriesOnSettled(variables, queryClient);
+      } else {
+        if(variables.body.search){
+          variables.body.shop = "search";
+        }
+        invalidateProductQueriesOnSettled(variables, queryClient);
+      }
+    },
+    onError: (err, domain, context) => {
+      console.log("err:", err);
+    },
+  });
+}
 const invalidateProductQueries = async (
   variables: Variables,
   queryClient: QueryClient
@@ -74,45 +125,3 @@ const invalidateSalesQueries = async (
     queryClient.setQueryData(["bookmarks"], bookmarks);
   }
 };
-
-export default function useBookMarkRemove() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async (options: {
-      body: BookmarkDeleteSchema;
-      page: number;
-      pageSize: number;
-    }) => {
-      const { body, page, pageSize } = options;
-      const response = await fetch(`/app/api/user/bookmarks`, {
-        method: "DELETE",
-        body: JSON.stringify(body),
-      });
-
-      if (!response.ok) throw new Error(await response.text());
-    },
-    onMutate: async (variables) => {
-      if (variables.body.shop === "sales") {
-        await invalidateSalesQueries(variables, queryClient);
-      } else if (variables.body.shop === "flip") {
-        await invalidateFlipQueries(variables, queryClient);
-      } else {
-        await invalidateProductQueries(variables, queryClient);
-      }
-    },
-    onSettled: (data, error, variables, context) => {
-      queryClient.invalidateQueries({ queryKey: ["bookmarks"], exact: true });
-      if (variables.body.shop === "sales") {
-        invalidateSalesQueriesOnSettled(variables, queryClient);
-      } else if (variables.body.shop === "flip") {
-        invalidateAznFlipsQueriesOnSettled(variables, queryClient);
-      } else {
-        invalidateProductQueriesOnSettled(variables, queryClient);
-      }
-    },
-    onError: (err, domain, context) => {
-      console.log("err:", err);
-    },
-  });
-}

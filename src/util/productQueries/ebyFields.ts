@@ -10,9 +10,17 @@ type EbyFields = {
   isWholeSale?: boolean;
   week?: ISOStringWeek;
   excludeShops?: string[];
+  search?: string;
 };
 
-export const ebyFields = ({ settings, sdmn, isWholeSale, week, excludeShops }: EbyFields) => {
+export const ebyFields = ({
+  settings,
+  sdmn,
+  isWholeSale,
+  week,
+  excludeShops,
+  search,
+}: EbyFields) => {
   const { tptStandard, strg, e_prepCenter, e_cats } = settings;
   const transport = settings[tptStandard as "tptSmall"];
   const match: any = {
@@ -39,6 +47,14 @@ export const ebyFields = ({ settings, sdmn, isWholeSale, week, excludeShops }: E
 
   if (e_cats.length > 0 && e_cats[0] !== 0) {
     match["ebyCategories.id"] = { $in: e_cats };
+  }
+
+  if (search) {
+    if (/\b[0-9]{11,13}\b/.test(search)) {
+      match["eanList"] = { $in: [search.padStart(13, "0")] };
+    } else {
+      match["$text"] = { $search: search };
+    }
   }
 
   const query: any = [];

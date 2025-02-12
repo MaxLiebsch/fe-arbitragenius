@@ -11,6 +11,7 @@ type AznFields = {
   isWholesale?: boolean;
   week?: ISOStringWeek;
   excludeShops?: string[];
+  search?: string;
 };
 
 export const aznFields = ({
@@ -18,6 +19,7 @@ export const aznFields = ({
   sdmn,
   week,
   isWholesale,
+  search,
   excludeShops,
 }: AznFields): any[] => {
   const { a_tptStandard, a_strg, a_prepCenter, fba, euProgram } = settings;
@@ -52,6 +54,17 @@ export const aznFields = ({
 
   if (week) {
     match["createdAt"] = { $gte: week.start, $lte: week.end };
+  }
+
+  if (search) {
+    if(/\b[0-9]{11,13}\b/.test(search)){
+      match['eanList'] = { $in: [search] };
+    }else{
+
+      match["$text"] = { $search: search };
+    }
+  }else{
+
   }
 
   const query: any = [];

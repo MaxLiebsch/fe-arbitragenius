@@ -13,7 +13,7 @@ export type ProductTableProps = {
 
 export default function ProductsTablePanel(props: ProductTableProps) {
   const { className, domain, target } = props;
-  const [paginationModel, setPaginationModel, sortModel, setSortModel] =
+  const {paginationModel,  sortModel} =
   usePaginationAndSort();
 
   const productCountQuery = useProductCount(domain, target);

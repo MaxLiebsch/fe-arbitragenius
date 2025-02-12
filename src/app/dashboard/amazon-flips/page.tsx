@@ -26,7 +26,7 @@ const Page = () => {
     settings &&
     settings.targetPlatforms &&
     settings.targetPlatforms.includes(target);
-  const [paginationModel, setPaginationModel, sortModel, setSortModel] =
+  const {paginationModel, setPaginationModel, sortModel, setSortModel}=
     usePaginationAndSort();
   const apiRef = useGridApiRef();
   const user = useAccount();

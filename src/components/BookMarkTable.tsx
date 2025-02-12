@@ -9,9 +9,8 @@ import React, { useMemo } from "react";
 import Spinner from "./Spinner";
 import useBookMarkAdd from "@/hooks/use-bookmark-add";
 import useBookMarkRemove from "@/hooks/use-bookmark-remove";
-import { BookMarkProduct, ModifiedProduct } from "@/types/Product";
+import { BookMarkProduct } from "@/types/Product";
 import { bookMarkColumns } from "@/util/BookmarkColumns";
-import { Settings } from "@/types/Settings";
 import { usePaginationAndSort } from "@/hooks/use-pagination-sort";
 import useAccount from "@/hooks/use-account";
 import { useUserSettings } from "@/hooks/use-settings";
@@ -22,7 +21,7 @@ export default function BookmarkTable(props: {
   loading: boolean;
 }) {
   const { target, loading, products } = props;
-  const [paginationModel, setPaginationModel, sortModel, setSortModel] =
+  const { paginationModel, setPaginationModel, sortModel, setSortModel } =
     usePaginationAndSort();
 
   const apiRef = useGridApiRef();

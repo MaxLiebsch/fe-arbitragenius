@@ -13,16 +13,20 @@ export type ProductTableProps = {
 };
 
 export default function DealHubTablePanel(props: ProductTableProps) {
-  const { className,target, week } = props;
-  const [paginationModel, setPaginationModel, sortModel, setSortModel] =
-  usePaginationAndSort();
+  const { className, target, week } = props;
+  const { paginationModel, sortModel } = usePaginationAndSort();
 
   const productCountQuery = useDealhubProductCount(target, week);
-  const productQuery = useDealhubProducts(paginationModel, sortModel, target, week);
+  const productQuery = useDealhubProducts(
+    paginationModel,
+    sortModel,
+    target,
+    week
+  );
 
   return (
     <ProductsTable
-      domain={'dealhub'}
+      domain={"dealhub"}
       target={target}
       className={className}
       productCountQuery={productCountQuery}

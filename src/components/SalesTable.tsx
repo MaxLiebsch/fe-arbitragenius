@@ -25,7 +25,7 @@ export default function SalesTable(props: {
   const { className, target } = props;
   const [settings, setUserSettings] = useUserSettings();
 
-  const [paginationModel, setPaginationModel, sortModel, setSortModel] =
+  const {paginationModel, setPaginationModel, sortModel, setSortModel} =
     usePaginationAndSort();
 
   const apiRef = useGridApiRef();

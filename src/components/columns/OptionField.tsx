@@ -39,6 +39,8 @@ const OptionField = ({
   pagination,
   target,
 }: OptionFieldProps): GridColDef<any> => {
+  const  pathname = window.location.pathname;
+  const isSearch = pathname === '/app/dashboard/search'
   return {
     field: "isBookmarked",
     renderHeader: (params) => (
@@ -64,6 +66,7 @@ const OptionField = ({
                   body: {
                     target: target,
                     shop,
+                    search: isSearch,
                     productId,
                   },
                   page: pagination.page,
@@ -74,6 +77,7 @@ const OptionField = ({
                   body: {
                     target: target,
                     shop,
+                    search: isSearch,
                     productId,
                   },
                   page: pagination.page,

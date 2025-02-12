@@ -1,4 +1,3 @@
-import { usePaginationAndSort } from "@/hooks/use-pagination-sort";
 import { useProductIrrelevant } from "@/hooks/use-productIrrelevant";
 import { ProductPagination } from "@/hooks/use-products";
 import { useGridApiContext } from "@mui/x-data-grid-premium";

@@ -40,7 +40,7 @@ export default function WholeSaleProductsTable(props: {
   const [settings, setUserSettings] = useUserSettings();
   const { className, taskId, target } = props;
 
-  const [paginationModel, setPaginationModel, sortModel, setSortModel] =
+  const { paginationModel, setPaginationModel, sortModel, setSortModel } =
     usePaginationAndSort();
 
   const apiRef = useGridApiRef();
@@ -71,7 +71,7 @@ export default function WholeSaleProductsTable(props: {
       initialState={{
         columns: {
           columnVisibilityModel: {
-            analytics: target === 'a',
+            analytics: target === "a",
             bsr_1: false,
             bsr_cat_1: false,
             bsr_2: false,

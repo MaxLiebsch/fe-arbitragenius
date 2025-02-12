@@ -108,12 +108,12 @@ export const usePaginationAndSort = () => {
     paginationModel,
     sortModel,
   ]);
-  return [
+  return {
     paginationModel,
     setPaginationModel,
     sortModel,
     setSortModel,
     handleSetSortModel,
     handleSetPaginationModel,
-  ] as const;
+   } as const;
 };

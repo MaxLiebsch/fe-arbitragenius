@@ -11,6 +11,56 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 
+
+
+export default function useBookMarkAdd() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (options: {
+      body: BookmarkSchema;
+      page: number;
+      pageSize: number;
+    }) => {
+      const { body } = options;
+      const response = await fetch(`/app/api/user/bookmarks`, {
+        method: "POST",
+        body: JSON.stringify(body),
+      });
+
+      if (!response.ok) throw new Error(await response.text());
+    },
+    onMutate: async (variables) => {
+      if (variables.body.shop === "sales") {
+        await invalidateSalesQueries(variables, queryClient);
+      } else if (variables.body.shop === "flip") {
+        await invalidateFlipQueries(variables, queryClient);
+      } else {
+        if(variables.body.search){
+          variables.body.shop = "search";
+        }
+        await invalidateProductQueries(variables, queryClient);
+      }
+    },
+    onSettled: (data, error, variables, context) => {
+      queryClient.invalidateQueries({ queryKey: ["bookmarks"], exact: true });
+      if (variables.body.shop === "sales") {
+        invalidateSalesQueriesOnSettled(variables, queryClient);
+      } else if (variables.body.shop === "flip") {
+        invalidateAznFlipsQueriesOnSettled(variables, queryClient);
+      } else {
+        if(variables.body.search){
+          variables.body.shop = "search";
+        }
+        invalidateProductQueriesOnSettled(variables, queryClient);
+      }
+    },
+    onError: (err, domain, context) => {
+      console.log("err:", err);
+    },
+  });
+}
+
 export const invalidateListingsQuery = async (
   queryKey: (number | string)[],
   queryClient: QueryClient,
@@ -25,7 +75,7 @@ export const invalidateListingsQuery = async (
   if (previousQuery.length) {
     previousQuery.forEach((query) => {
       const previousQueryData = query;
-      const products = (previousQueryData[1] as ModifiedProduct[]).map(
+      const products = (previousQueryData[1] as ModifiedProduct[] ||[]).map(
         (product) => {
           if (product._id === variables.body.productId) {
             return {
@@ -117,45 +167,3 @@ export const invalidateSalesQueriesOnSettled = async (
   });
   queryClient.invalidateQueries({ queryKey: ["bookmarks"] });
 };
-
-export default function useBookMarkAdd() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async (options: {
-      body: BookmarkSchema;
-      page: number;
-      pageSize: number;
-    }) => {
-      const { body } = options;
-      const response = await fetch(`/app/api/user/bookmarks`, {
-        method: "POST",
-        body: JSON.stringify(body),
-      });
-
-      if (!response.ok) throw new Error(await response.text());
-    },
-    onMutate: async (variables) => {
-      if (variables.body.shop === "sales") {
-        await invalidateSalesQueries(variables, queryClient);
-      } else if (variables.body.shop === "flip") {
-        await invalidateFlipQueries(variables, queryClient);
-      } else {
-        await invalidateProductQueries(variables, queryClient);
-      }
-    },
-    onSettled: (data, error, variables, context) => {
-      queryClient.invalidateQueries({ queryKey: ["bookmarks"], exact: true });
-      if (variables.body.shop === "sales") {
-        invalidateSalesQueriesOnSettled(variables, queryClient);
-      } else if (variables.body.shop === "flip") {
-        invalidateAznFlipsQueriesOnSettled(variables, queryClient);
-      } else {
-        invalidateProductQueriesOnSettled(variables, queryClient);
-      }
-    },
-    onError: (err, domain, context) => {
-      console.log("err:", err);
-    },
-  });
-}
