@@ -12,7 +12,7 @@ export default function useSearchCount({
 }) {
   const [settings] = useUserSettings();
   return useQuery<{ productCount: number }>({
-    enabled: Boolean(query && query.length > 3 && target),
+    enabled: Boolean(query && query.length >= 3 && target),
     queryKey: [
       target,
       "shop",

@@ -28,7 +28,7 @@ const SearchForm = () => {
 
 
   useEffect(() => {
-    if (query.length > 3) {
+    if (query.length >= 3) {
       router.push("/dashboard/search?q=" + query + "&target=" + target);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

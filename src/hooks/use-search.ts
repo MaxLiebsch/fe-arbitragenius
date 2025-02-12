@@ -18,7 +18,7 @@ export default function useSearch({
   const { page, pageSize } = paginationModel;
   const { sort, field } = sortModel;
   return useQuery({
-    enabled: Boolean(query && query.length > 3 && target),
+    enabled: Boolean(query && query.length >= 3 && target),
     queryKey: [
       ...productQueryKey(target || "a", "search", page, pageSize),
       query,
