@@ -11,8 +11,6 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 
-
-
 export default function useBookMarkAdd() {
   const queryClient = useQueryClient();
 
@@ -36,8 +34,8 @@ export default function useBookMarkAdd() {
       } else if (variables.body.shop === "flip") {
         await invalidateFlipQueries(variables, queryClient);
       } else {
-        if(variables.body.search){
-          variables.body.shop = "search";
+        if (variables.body.newShopVariable) {
+          variables.body.shop = variables.body.newShopVariable;
         }
         await invalidateProductQueries(variables, queryClient);
       }
@@ -49,8 +47,8 @@ export default function useBookMarkAdd() {
       } else if (variables.body.shop === "flip") {
         invalidateAznFlipsQueriesOnSettled(variables, queryClient);
       } else {
-        if(variables.body.search){
-          variables.body.shop = "search";
+        if (variables.body.newShopVariable) {
+          variables.body.shop = variables.body.newShopVariable;
         }
         invalidateProductQueriesOnSettled(variables, queryClient);
       }
@@ -75,7 +73,7 @@ export const invalidateListingsQuery = async (
   if (previousQuery.length) {
     previousQuery.forEach((query) => {
       const previousQueryData = query;
-      const products = (previousQueryData[1] as ModifiedProduct[] ||[]).map(
+      const products = ((previousQueryData[1] as ModifiedProduct[]) || []).map(
         (product) => {
           if (product._id === variables.body.productId) {
             return {

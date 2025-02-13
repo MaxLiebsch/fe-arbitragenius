@@ -17,8 +17,6 @@ import {
 } from "./use-bookmark-add";
 import { productQueryKey, salesQueryKey } from "@/util/queryKeys";
 
-
-
 export default function useBookMarkRemove() {
   const queryClient = useQueryClient();
 
@@ -44,8 +42,8 @@ export default function useBookMarkRemove() {
       } else if (body.shop === "flip") {
         await invalidateFlipQueries(variables, queryClient);
       } else {
-        if(variables.body.search){
-          variables.body.shop = "search";
+        if (variables.body.newShopVariable) {
+          variables.body.shop = variables.body.newShopVariable;
         }
         await invalidateProductQueries(variables, queryClient);
       }
@@ -57,8 +55,8 @@ export default function useBookMarkRemove() {
       } else if (variables.body.shop === "flip") {
         invalidateAznFlipsQueriesOnSettled(variables, queryClient);
       } else {
-        if(variables.body.search){
-          variables.body.shop = "search";
+        if (variables.body.newShopVariable) {
+          variables.body.shop = variables.body.newShopVariable;
         }
         invalidateProductQueriesOnSettled(variables, queryClient);
       }

@@ -167,7 +167,7 @@ const ProductFilterForm = ({ layout = "slim" }: { layout?: Layout }) => {
           {/* Eby Standard Versandkosten */}
           <EbyTransport layout={layout} />
           <div
-            className={`relative ${
+            className={`relative mt-4 ${
               layout === "wide" ? "sm:col-span-6" : "sm:col-span-2"
             }`}
           >
