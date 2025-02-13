@@ -14,6 +14,7 @@ import { targetLinkBuilder } from "@/util/targetLinkBuilder";
 import { getLatestBsr } from "@/util/getLatestBsr";
 import Eanlist from "../Eanlist";
 import { Tooltip } from "antd";
+import DeliveryStatus from "../DeliveryStatus";
 
 const InfoField = ({
   product,
@@ -32,6 +33,7 @@ const InfoField = ({
     img,
     s,
     sdmn,
+    a,
     lnk,
     nm,
     mnfctr,
@@ -99,24 +101,27 @@ const InfoField = ({
                   </span>
                 )}
                 <>{LinkWrapper(lnk, nm, mnfctr)}</>
-                <div  className="flex flex-row w-full justify-between mt-auto">
-                {createdAt && (
-                  <time className="text-gray text-xs">
-                    Erstellt{" "}
-                    {formatDistanceToNow(parseISO(createdAt), {
-                      locale: de,
-                      addSuffix: true,
-                    })}
-                  </time>
-                )}
-                  {lastUpdated && (
+                <div className="flex flex-row w-full justify-between mt-auto">
+                  {createdAt && (
                     <time className="text-gray text-xs">
-                      Acktualisiert{" "}
-                      {formatDistanceToNow(parseISO(lastUpdated), {
+                      Erstellt{" "}
+                      {formatDistanceToNow(parseISO(createdAt), {
                         locale: de,
                         addSuffix: true,
                       })}
                     </time>
+                  )}
+                  {lastUpdated && (
+                    <div className="flex items-center space-x-2">
+                      <time className="text-gray text-xs">
+                        Acktualisiert{" "}
+                        {formatDistanceToNow(parseISO(lastUpdated), {
+                          locale: de,
+                          addSuffix: true,
+                        })}
+                      </time>
+                        {a ? <DeliveryStatus a={a} /> : null}
+                    </div>
                   )}
                 </div>
               </div>
