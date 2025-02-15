@@ -10,6 +10,9 @@ const HiddenProductFilterFields = () => {
       <Form.Item name="fba" valuePropName="checked" hidden>
         <Checkbox />
       </Form.Item>
+      <Form.Item name="productsWithNoBsr" valuePropName="checked" hidden>
+        <Checkbox />
+      </Form.Item>
        {/* Azn Standard Transport  */}
       <Form.Item name="a_tptStandard" hidden></Form.Item>
       {/*Azn Prepcenter */}

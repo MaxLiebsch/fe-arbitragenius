@@ -11,8 +11,6 @@ import VKPrice from "@/components/columns/VKPrice";
 import EKPrice from "@/components/columns/EKPrice";
 import OptionField from "@/components/columns/OptionField";
 import PriceAnalysis from "@/components/columns/PriceAnalysis";
-import { Switch } from "antd";
-import { useUserSettings } from "@/hooks/use-settings";
 import SwitchSeenProducts from "@/components/SwitchSeenProducts";
 
 export const createColumns: (

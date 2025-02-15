@@ -2,7 +2,7 @@ import { ProductPagination } from "@/hooks/use-aznflips-products";
 import { BookmarkDeleteSchema, BookmarkSchema } from "@/types/Bookmarks";
 import { GridColDef } from "@mui/x-data-grid-premium";
 import { UseMutateFunction } from "@tanstack/react-query";
-import { Checkbox, Select, Tooltip } from "antd";
+import { Checkbox, Tooltip } from "antd";
 import React from "react";
 import ArbitrageOneExportBtn from "../ArbitrageOneExportBtn";
 import ProductInvalid from "../ProductInvalid";
@@ -39,6 +39,18 @@ const OptionField = ({
   pagination,
   target,
 }: OptionFieldProps): GridColDef<any> => {
+  const pathname = window.location.pathname;
+  let newShopVariable = "";
+  
+  switch (pathname) {
+    case "/app/dashboard/search": {
+      newShopVariable = "search";
+      break;
+    }
+    case "/app/dashboard/deal-hub": {
+      newShopVariable = "dealhub"
+    }
+  }
   return {
     field: "isBookmarked",
     renderHeader: (params) => (
@@ -64,6 +76,7 @@ const OptionField = ({
                   body: {
                     target: target,
                     shop,
+                    newShopVariable,
                     productId,
                   },
                   page: pagination.page,
@@ -74,6 +87,7 @@ const OptionField = ({
                   body: {
                     target: target,
                     shop,
+                    newShopVariable,
                     productId,
                   },
                   page: pagination.page,

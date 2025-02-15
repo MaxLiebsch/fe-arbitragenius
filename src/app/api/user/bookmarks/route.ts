@@ -89,7 +89,7 @@ export async function GET(request: NextRequest) {
   if (groupedBookmarksByTarget.e) {
     aggregation[1].$facet["e"] = [
       { $match: { _id: { $in: groupedBookmarksByTarget.e } } },
-      ...ebyFields(customerSettings),
+      ...ebyFields({ settings: customerSettings }),
       {
         $project: {
           ...projectField("e", "$sdmn").$project,
@@ -113,7 +113,7 @@ export async function GET(request: NextRequest) {
   if (groupedBookmarksByTarget.a) {
     aggregation[1].$facet["a"] = [
       { $match: { _id: { $in: groupedBookmarksByTarget.a } } },
-      ...aznFields(customerSettings),
+      ...aznFields({ settings: customerSettings }),
       {
         $project: {
           ...projectField("a", "$sdmn").$project,
@@ -154,7 +154,9 @@ export async function GET(request: NextRequest) {
 
   Object.entries(productsReturn).forEach(([key, value]) => {
     productsReturn[key] = value.map((product: ModifiedProduct) => {
-      const bookmark = bookmarks.find(b => b.productId.toString() === product._id.toString());
+      const bookmark = bookmarks.find(
+        (b) => b.productId.toString() === product._id.toString()
+      );
       product.bookmarkedAt = bookmark?.createdAt;
       return product;
     });

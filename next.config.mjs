@@ -1,12 +1,12 @@
 import { withSentryConfig } from "@sentry/nextjs";
 /** @type {import('next').NextConfig} */
 import webpack from "webpack";
-import fs from 'fs';
-import path from 'path';
+import fs from "fs";
+import path from "path";
 
 // Read and parse package.json
 const packageJson = JSON.parse(
-  fs.readFileSync(path.join(process.cwd(), 'package.json'), 'utf8')
+  fs.readFileSync(path.join(process.cwd(), "package.json"), "utf8")
 );
 
 const version = packageJson.version;
@@ -20,6 +20,14 @@ const nextConfig = {
     NEXT_PUBLIC_VERSION: version,
   },
   experimental: {
+    serverActions: {
+      allowedOrigins: [
+        "staging.arbispotter.com",
+        "www.arbispotter.com",
+        "arbispotter-staging-app.vercel.app",
+        "arbispotter-app.vercel.app",
+      ]
+    },
     serverComponentsExternalPackages: ["node-appwrite"],
   },
   transpilePackages: ["jotai-devtools"],

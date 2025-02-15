@@ -27,7 +27,7 @@ export async function GET(
         sdmn: WHOLESALE_COL,
       },
     },
-    ...aznFields(customerSettings, WHOLESALE_COL, true) ,
+    ...aznFields({settings:customerSettings, sdmn: WHOLESALE_COL, isWholesale: true}), ,
     {$count: "count"}
   ]
   if (process.env.NODE_ENV === "development") {

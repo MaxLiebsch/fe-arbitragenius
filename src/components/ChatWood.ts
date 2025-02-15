@@ -22,6 +22,8 @@ const ChatWood = () => {
   }, [pathname, widgetLoaded]);
 
   useEffect(() => {
+    if(pathname.includes("dashboard")) return;
+    
     const BASE_URL = "https://app.chatwoot.com";
 
     // Create the script element
@@ -72,6 +74,7 @@ const ChatWood = () => {
     return () => {
       document.body.removeChild(script);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return null;

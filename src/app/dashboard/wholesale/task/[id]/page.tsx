@@ -12,7 +12,7 @@ const Page = async ({ params }: { params: { id: string } }) => {
   const { id } = params;
   const user = await getLoggedInUser();
   if (!user) {
-    redirect("/login");
+    redirect("/auth/signin");
   }
 
   const mongo = await clientPool["NEXT_MONGO_CRAWLER_DATA_ADMIN"];

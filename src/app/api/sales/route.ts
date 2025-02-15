@@ -41,8 +41,8 @@ export async function GET(
   const aggregation: { [key: string]: any }[] = [];
 
   const targetFields = isAmazon
-    ? aznFields(customerSettings, SALES_COL)
-    : ebyFields(customerSettings, SALES_COL);
+    ? aznFields({settings:customerSettings, sdmn: SALES_COL})
+    : ebyFields({settings:customerSettings, sdmn: SALES_COL});
 
   aggregation.push(...targetFields);
 

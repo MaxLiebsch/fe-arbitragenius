@@ -18,7 +18,6 @@ export function useProductSeen({
       );
     },
     onSettled: () => {
-      console.log('countQueryKey(target, "sales", settings):', countQueryKey(target, "sales", settings))
       queryClient.invalidateQueries({
         queryKey: countQueryKey(target, "sales", settings),
       });

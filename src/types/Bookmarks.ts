@@ -5,6 +5,7 @@ import { BookMarkProduct } from "./Product";
 export const BookmarkSchema = z.object({
   productId: z.string(),
   shop: z.string(),
+  newShopVariable: z.string().optional(),
   target: z.string(),
 });
 
@@ -14,6 +15,7 @@ export const BookmarkDeleteSchema = z.object({
   productId: z.string(),
   target: z.string(),
   shop: z.string(),
+  newShopVariable: z.string().optional(),
 });
 export type BookmarkDeleteSchema = z.infer<typeof BookmarkDeleteSchema>;
 

@@ -2,7 +2,7 @@ import { CONSIDERED_SEEN_DWELL_DURANTION } from "@/constant/constant";
 import { GridApiPremium } from "@mui/x-data-grid-premium/models/gridApiPremium";
 import { useEffect, useRef, useState } from "react";
 import { useProductSeen } from "./use-productSeen";
-import { ProductTableProps } from "@/components/ProductsTable";
+import { ProductTableProps } from "@/components/ProductsTablePanel";
 
 export function useMarkSeen(
   apiRef: React.MutableRefObject<GridApiPremium>,
@@ -14,6 +14,9 @@ export function useMarkSeen(
   });
   const [timer, setTimer] = useState<number | null>(null);
   const productSeen = useProductSeen(props);
+  const interval = useRef<NodeJS.Timeout | null>(null);
+  const pause = useRef(false);
+
   useEffect(() => {
     if (apiRef.current) {
       apiRef.current.subscribeEvent("rowMouseEnter", (params) => {
@@ -39,7 +42,7 @@ export function useMarkSeen(
         setTimer(null); // Clear timer on mouse leave
       });
     }
-    const interval = setInterval(() => {
+    interval.current = setInterval(() => {
       setTimer((prevTimer) => {
         if (prevTimer !== null && prevTimer > 0) {
           return prevTimer - 1;
@@ -48,7 +51,7 @@ export function useMarkSeen(
       });
     }, 1000);
 
-    return () => clearInterval(interval);
+    return () => clearInterval(interval.current || 0);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [apiRef]);
 
@@ -57,5 +60,4 @@ export function useMarkSeen(
       apiRef.current.updateRows([{ _id: rowVisted.current._id, timer }]);
     }
   }, [timer, apiRef]);
-
 }

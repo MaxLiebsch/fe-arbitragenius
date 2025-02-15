@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
   if (isAmazon) {
     aggregation.push(...aznFlipFields(customerSettings));
   } else {
-    aggregation.push(...ebyFields(customerSettings));
+    aggregation.push(...ebyFields({ settings: customerSettings }));
   }
 
   const today = new Date();

@@ -9,7 +9,7 @@ import React from "react";
 const Page = async () => {
   const user = await getLoggedInUser();
   if (!user) {
-    redirect("/login");
+    redirect("/auth/signin");
   }
 
   return (

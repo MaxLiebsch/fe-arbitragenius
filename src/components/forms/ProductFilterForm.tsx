@@ -154,8 +154,7 @@ const ProductFilterForm = ({ layout = "slim" }: { layout?: Layout }) => {
           {/* BuyBox */}
           <BuyBox layout={layout} />
           {/* BSR */}
-          <ShowProductsWithBsr layout={layout} />
-
+          {layout === 'wide' ?<ShowProductsWithBsr layout={layout} />:null}
           <h2
             className={`${
               layout === "wide" ? "sm:col-span-6" : "hidden"
@@ -168,7 +167,7 @@ const ProductFilterForm = ({ layout = "slim" }: { layout?: Layout }) => {
           {/* Eby Standard Versandkosten */}
           <EbyTransport layout={layout} />
           <div
-            className={`relative ${
+            className={`relative mt-4 ${
               layout === "wide" ? "sm:col-span-6" : "sm:col-span-2"
             }`}
           >

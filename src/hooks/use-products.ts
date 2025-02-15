@@ -1,35 +1,30 @@
-import { ModifiedProduct} from "@/types/Product";
+import { ModifiedProduct } from "@/types/Product";
 import { Settings } from "@/types/Settings";
 import { productQueryKey } from "@/util/queryKeys";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useUserSettings } from "./use-settings";
+import { GridSortItem } from "@mui/x-data-grid-premium";
 
 export type ProductPagination = {
   page: number;
   pageSize: number;
 };
 
-export type ProductSort =
-  | undefined
-  | {
-      field: string;
-      direction: "asc" | "desc";
-    };
 
 export default function useProducts(
   domain: string,
   pagination: ProductPagination,
-  sort: ProductSort,
+  sort: GridSortItem,
   target: string,
   refetchOnWindowFocus: boolean = true
 ) {
   const queryClient = useQueryClient();
-  const [settings, setUserSettings] = useUserSettings()
+  const [settings, setUserSettings] = useUserSettings();
   const queryKey = [
     ...productQueryKey(target, domain, pagination.page, pagination.pageSize),
     sort?.field,
-    sort?.direction,
+    sort?.sort,
     ...(settings ? Object.values(settings) : []),
   ];
 
@@ -41,7 +36,7 @@ export default function useProducts(
       let sortQuery = "";
       let settingsQuery = "";
       let pageQuery = `&page=${page}&size=${pageSize}`;
-      if (sort) sortQuery = `&sortby=${sort.field}&sortorder=${sort.direction}`;
+      if (sort) sortQuery = `&sortby=${sort.field}&sortorder=${sort.sort}`;
       if (settings) {
         settingsQuery = Object.keys(settings)
           .map((key) => `&${key}=${settings[key as keyof Settings]}`)
@@ -64,7 +59,7 @@ export default function useProducts(
             pagination.pageSize
           ),
           sort?.field,
-          sort?.direction,
+          sort?.sort,
           ...(settings ? Object.values(settings) : []),
         ],
         queryFn: async () => {
@@ -73,7 +68,7 @@ export default function useProducts(
           let settingsQuery = "";
           let pageQuery = `&page=${page + 1}&size=${pageSize}`;
           if (sort)
-            sortQuery = `&sortby=${sort.field}&sortorder=${sort.direction}`;
+            sortQuery = `&sortby=${sort.field}&sortorder=${sort.sort}`;
 
           if (settings) {
             settingsQuery = Object.keys(settings)
@@ -96,7 +91,7 @@ export default function useProducts(
     pagination.pageSize,
     sort,
     sort?.field,
-    sort?.direction,
+    sort?.sort,
     queryClient,
   ]);
 

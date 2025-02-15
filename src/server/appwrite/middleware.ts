@@ -85,12 +85,11 @@ async function getUser<Preferences extends Models.Preferences>(
       {
         method: "GET",
         credentials: "include",
-        // @ts-ignore
+        // @ts-expect-error - Headers type is not defined in the lib
         headers: {
           Cookie: `a_session_${process.env.NEXT_PUBLIC_APPWRITE_PROJECT}${legacy}=${token}`,
           "x-appwrite-project": process.env.NEXT_PUBLIC_APPWRITE_PROJECT,
         },
-        // cache: "no-store",
       }
     );
 

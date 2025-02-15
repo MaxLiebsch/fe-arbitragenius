@@ -44,9 +44,9 @@ export async function GET(
   const aggregation = [];
 
   if (isAmazon) {
-    aggregation.push(...aznFields(customerSettings, WHOLESALE_COL, true));
+    aggregation.push(...aznFields({settings:customerSettings, sdmn: WHOLESALE_COL, isWholesale: true}));
   } else {
-    aggregation.push(...ebyFields(customerSettings, WHOLESALE_COL, true));
+    aggregation.push(...ebyFields({settings:customerSettings, sdmn: WHOLESALE_COL}));
   }
 
 

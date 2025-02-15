@@ -16,6 +16,7 @@ import useAccount from "@/hooks/use-account";
 import { usePaginationAndSort } from "@/hooks/use-pagination-sort";
 import { useUserSettings } from "@/hooks/use-settings";
 import { useMarkSeen } from "@/hooks/use-markSeen";
+import { DEFAULT_SORT } from "@/constant/constant";
 
 export default function SalesTable(props: {
   className?: string;
@@ -24,7 +25,7 @@ export default function SalesTable(props: {
   const { className, target } = props;
   const [settings, setUserSettings] = useUserSettings();
 
-  const [paginationModel, setPaginationModel, sortModel, setSortModel] =
+  const {paginationModel, setPaginationModel, sortModel, setSortModel} =
     usePaginationAndSort();
 
   const apiRef = useGridApiRef();
@@ -42,10 +43,10 @@ export default function SalesTable(props: {
     if (model.length) {
       setSortModel({
         field: model[0].field,
-        direction: model[0].sort ?? "asc",
+        sort: model[0].sort ?? DEFAULT_SORT,
       });
     } else {
-      setSortModel(undefined);
+      setSortModel({field: "none", sort: DEFAULT_SORT});
     }
   };
 
@@ -74,6 +75,7 @@ export default function SalesTable(props: {
       apiRef={apiRef}
       className={className}
       sortingOrder={["desc", "asc"]}
+      sortModel={[sortModel]} 
       getRowClassName={(params) => {
         return params.row.seen ? "opacity-50" : "";
       }}

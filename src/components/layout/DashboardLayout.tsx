@@ -13,9 +13,9 @@ import {
   XMarkIcon,
   SparklesIcon,
   ArrowsUpDownIcon,
-  SunIcon,
-  MoonIcon,
+  TagIcon,
   Cog6ToothIcon,
+  MagnifyingGlassIcon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
 
@@ -24,15 +24,14 @@ import { Logo } from "../Logo";
 import { usePathname, useRouter } from "next/navigation";
 import { useFormState } from "react-dom";
 import { TotalDealsContext } from "@/context/totalDealsContext";
-import useSalesCount from "@/hooks/use-sales-count";
-import { Badge } from "antd";
 import useAccount from "@/hooks/use-account";
-import { formatDistanceToNow } from "date-fns";
-import { de } from "date-fns/locale";
 import useAppereanceAdd from "@/hooks/use-appereance-add";
 import { Mode } from "@/types/Appearance";
 import { useThemeAtom } from "@/hooks/use-theme";
 import ReleaseModal from "../ReleaseModal";
+import ProductFilterPopover from "../ProductFilterPopover";
+import DealStatistics from "../DealStatistics";
+import SearchForm from "../forms/SearchForm";
 
 const navigation = [
   {
@@ -46,6 +45,12 @@ const navigation = [
     href: "/dashboard/daily-deals",
     current: false,
     icon: SparklesIcon,
+  },
+  {
+    name: "Deal Hub",
+    href: "/dashboard/deal-hub",
+    current: false,
+    icon: TagIcon,
   },
   {
     name: "Meine Deals",
@@ -111,22 +116,10 @@ export const DashboardLayout = ({
 
   const router = useRouter();
   const accountQuery = useAccount();
-  const eSalesCount = useSalesCount("e");
-  const aSalesCount = useSalesCount("a");
-  const newAznDeals = Boolean(aSalesCount.data?.totalProductsToday);
-  const newEbyDeals = Boolean(eSalesCount.data?.totalProductsToday);
-  const newDeals = Boolean(
-    eSalesCount.data?.totalProductsToday || aSalesCount.data?.totalProductsToday
-  );
-  const text =
-    newAznDeals && newEbyDeals
-      ? `Neu Amazon (${aSalesCount.data?.totalProductsToday}) & Ebay (${eSalesCount.data?.totalProductsToday})`
-      : newAznDeals
-      ? `Neu Amazon (${aSalesCount.data?.totalProductsToday})`
-      : newEbyDeals
-      ? `Neu Ebay (${eSalesCount.data?.totalProductsToday})`
-      : "";
   const pathname = usePathname();
+  const productView = ["amazon-flips", "shop", "daily-deals", "deal-hub", 'search'].some(
+    (keywords) => pathname.includes(keywords)
+  );
 
   const [state, formAction] = useFormState(logoutAction, {
     message: "",
@@ -152,7 +145,7 @@ export const DashboardLayout = ({
         <Transition.Root show={sidebarOpen} as={Fragment}>
           <Dialog
             as="div"
-            className="relative z-50 lg:hidden"
+            className="sm:relative z-50 sm:block max-2xl:hidden"
             onClose={setSidebarOpen}
           >
             <Transition.Child
@@ -203,7 +196,7 @@ export const DashboardLayout = ({
                   </Transition.Child>
                   {/* Sidebar component, swap this element with another sidebar if you like */}
                   <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-default px-6 pb-2 pt-5">
-                    <div className="flex h-16 shrink-0 items-center">
+                    <div className="">
                       <Logo />
                     </div>
                     <nav className="flex flex-1 flex-col">
@@ -214,6 +207,9 @@ export const DashboardLayout = ({
                               <li key={item.name}>
                                 <Link
                                   href={item.href}
+                                  onClick={() => {
+                                    setSidebarOpen(false);
+                                  }}
                                   className={classNames(
                                     pathname === item.href
                                       ? "bg-gray-light text-secondary"
@@ -237,43 +233,6 @@ export const DashboardLayout = ({
                             ))}
                           </ul>
                         </li>
-                        {/* <li>
-                          <div className="text-xs font-semibold leading-6 text-gray-400">
-                            Deine Favoriten{" "}
-                            {favoriteShopsQuery.isLoading && (
-                              <div className="w-full flex justify-center">
-                                <Spinner />
-                              </div>
-                            )}
-                          </div>
-                          <ul role="list" className="-mx-2 mt-2 space-y-1">
-                            {favoriteShopsQuery.data?.map((shop) => (
-                              <li key={shop.ne}>
-                                <Link
-                                  href={`/dashboard/shop/${shop.d}`}
-                                  className={classNames(
-                                    pathname.includes(shop.d)
-                                      ? "bg-gray-light text-secondary"
-                                      : "text-gray-dark hover:text-secondary hover:bg-gray-light",
-                                    "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
-                                  )}
-                                >
-                                  <span
-                                    className={classNames(
-                                      // team.current
-                                      //   ? "text-secondary border-secondary-900" :
-                                      "text-gray-400 border-border-gray group-hover:border-secondary-900 group-hover:text-secondary",
-                                      "flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border text-[0.625rem] font-medium bg-white"
-                                    )}
-                                  >
-                                    {shop.d.substring(0, 2).toLocaleUpperCase()}
-                                  </span>
-                                  <span className="truncate">{shop.ne}</span>
-                                </Link>
-                              </li>
-                            ))}
-                          </ul>
-                        </li> */}
                       </ul>
                     </nav>
                     <div className="absolute left-[0.25rem] bottom-0">
@@ -287,10 +246,11 @@ export const DashboardLayout = ({
         </Transition.Root>
 
         {/* Static sidebar for desktop */}
-        <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
+
+        <div className="sm:hidden max-2xl:fixed max-2xl:inset-y-0 max-2xl:z-50 max-2xl:flex max-2xl:w-72 max-2xl:flex-col">
           {/* Sidebar component, swap this element with another sidebar if you like */}
           <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-border-gray bg-default  px-6">
-            <div className="mt-5">
+            <div className="mt-5 w-full">
               <Logo />
             </div>
             <nav className="flex flex-1 flex-col">
@@ -299,40 +259,29 @@ export const DashboardLayout = ({
                   <ul role="list" className="-mx-2 space-y-1">
                     {navigation.map((item) => (
                       <li key={item.name}>
-                        <Badge.Ribbon
-                          text={text}
-                          placement="end"
-                          className={`!-top-3 ${
-                            item.href !== "/dashboard/daily-deals"
-                              ? "hidden"
-                              : ""
-                          } ${
-                            item.href === "/dashboard/daily-deals" && newDeals
-                              ? "visible"
-                              : "hidden"
-                          }`}
+                        <Link
+                          onClick={() => {
+                            setSidebarOpen(false);
+                          }}
+                          href={item.href}
+                          className={classNames(
+                            item.href === pathname
+                              ? "bg-gray-light text-secondary"
+                              : "text-gray-dark hover:text-secondary hover:bg-gray-light",
+                            "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
+                          )}
                         >
-                          <Link
-                            href={item.href}
+                          <item.icon
                             className={classNames(
                               item.href === pathname
-                                ? "bg-gray-light text-secondary"
-                                : "text-gray-dark hover:text-secondary hover:bg-gray-light",
-                              "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
+                                ? "text-secondary"
+                                : "text-gray-400 group-hover:text-secondary",
+                              "h-6 w-6 shrink-0"
                             )}
-                          >
-                            <item.icon
-                              className={classNames(
-                                item.href === pathname
-                                  ? "text-secondary"
-                                  : "text-gray-400 group-hover:text-secondary",
-                                "h-6 w-6 shrink-0"
-                              )}
-                              aria-hidden="true"
-                            />
-                            {item.name}
-                          </Link>
-                        </Badge.Ribbon>
+                            aria-hidden="true"
+                          />
+                          {item.name}
+                        </Link>
                       </li>
                     ))}
                   </ul>
@@ -346,11 +295,11 @@ export const DashboardLayout = ({
         </div>
 
         <main className="h-full" suppressHydrationWarning>
-          <div className="lg:pl-80 fixed top-0 z-40 lg:mx-auto lg:px-8 w-full">
-            <div className="flex h-16 items-center gap-x-4 border-b border-border-gray bg-default px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-0 lg:shadow-none">
+          <div className="sm:pl-4 max-2xl:pl-80 fixed top-0 z-40 max-2xl:mx-auto max-2xl:px-8 w-full">
+            <div className="flex h-16 items-center gap-x-4 border-b border-border-gray bg-default px-4 shadow-sm sm:gap-x-6 sm:px-6 max-2xl:px-0 max-2xl:shadow-none">
               <button
                 type="button"
-                className="-m-2.5 p-2.5 text-gray-dark lg:hidden"
+                className="-m-2.5 p-2.5 text-gray-dark sm:block max-2xl:hidden"
                 onClick={() => setSidebarOpen(true)}
               >
                 <span className="sr-only">Open sidebar</span>
@@ -359,49 +308,18 @@ export const DashboardLayout = ({
 
               {/* Separator */}
               <div
-                className="h-6 w-px bg-gray-200 lg:hidden"
+                className="h-6 w-px bg-gray-200 sm:block max-2xl:hidden"
                 aria-hidden="true"
               />
 
-              <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
-                <div className="w-full">
-                  <ReleaseModal />
-                  {subscriptionStatus.status === "trialing" ? (
-                    <div className="mt-5">
-                      Danke, dass Du dich für Arbispotter entschieden hast. Du
-                      befindest Dich noch{" "}
-                      <span className="font-semibold">
-                        {formatDistanceToNow(
-                          Number(subscriptionStatus.trialEnd as string) * 1000,
-                          { locale: de }
-                        )}{" "}
-                      </span>
-                      in der Testphase.
-                    </div>
-                  ) : (
-                    <></>
-                  )}
-                </div>
-                {/* <form className="relative flex flex-1" action="#" method="GET">
-                  <label htmlFor="search-field" className="sr-only">
-                    Search
-                  </label>
-                  <MagnifyingGlassIcon
-                    className="pointer-events-none absolute inset-y-0 left-0 h-full w-5 text-gray-400"
-                    aria-hidden="true"
-                  />
-                  <input
-                    id="search-field"
-                    className="block h-full w-full border-0 py-0 pl-8 pr-0 text-gray-dark placeholder:text-gray-400 focus:ring-0 sm:text-sm"
-                    placeholder="Search..."
-                    type="search"
-                    name="search"
-                  />
-                </form> */}
-                <div className="flex items-center gap-x-4 lg:gap-x-6">
+              <div className="flex flex-1 gap-x-4 self-stretch items-center max-2xl:gap-x-6">
+                <ReleaseModal />
+                <DealStatistics />
+                <SearchForm/>
+                <div className="flex items-center gap-x-4 max-2xl:gap-x-6 ml-auto">
                   {/* Separator */}
                   <div
-                    className="hidden lg:block lg:h-6 lg:w-px lg:bg-gray-200"
+                    className="sm:hidden max-2xl:block max-2xl:h-6 max-2xl:w-px max-2xl:bg-gray-200"
                     aria-hidden="true"
                   />
 
@@ -448,7 +366,7 @@ export const DashboardLayout = ({
                     <Menu.Button className="-m-1.5 flex items-center p-1.5">
                       <span className="sr-only">Open user menu</span>
                       <UserCircleIcon className="h-8 w-8 text-gray-400" />
-                      <span className="hidden lg:flex lg:items-center">
+                      <span className="sm:hidden max-2xl:flex max-2xl:items-center">
                         <span
                           className="ml-4 text-sm font-semibold leading-6 text-gray-dark"
                           aria-hidden="true"
@@ -479,6 +397,9 @@ export const DashboardLayout = ({
                           <Menu.Item key={item.name}>
                             {({ active }) => (
                               <Link
+                                onClick={() => {
+                                  setSidebarOpen(false);
+                                }}
                                 href={item.href ? item.href : ""}
                                 className={classNames(
                                   active ? "bg-gray-light" : "",
@@ -511,7 +432,8 @@ export const DashboardLayout = ({
               </div>
             </div>
           </div>
-          <div className="lg:pl-80 pt-20 pb-4 px-4 sm:px-6 lg:px-8 h-full relative">
+          <div className="max-2xl:pl-80 pt-20 pb-4 px-4 sm:px-6 max-2xl:px-8 h-full relative">
+            {productView ? <ProductFilterPopover /> : <></>}
             {children}
           </div>
         </main>

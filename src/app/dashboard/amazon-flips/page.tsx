@@ -1,5 +1,6 @@
 "use client";
 import Spinner from "@/components/Spinner";
+import { DEFAULT_SORT } from "@/constant/constant";
 import useAccount from "@/hooks/use-account";
 import useAznFlipsCount from "@/hooks/use-aznflips-count";
 import useAznFlipsProducts from "@/hooks/use-aznflips-products";
@@ -25,7 +26,7 @@ const Page = () => {
     settings &&
     settings.targetPlatforms &&
     settings.targetPlatforms.includes(target);
-  const [paginationModel, setPaginationModel, sortModel, setSortModel] =
+  const {paginationModel, setPaginationModel, sortModel, setSortModel}=
     usePaginationAndSort();
   const apiRef = useGridApiRef();
   const user = useAccount();
@@ -41,10 +42,10 @@ const Page = () => {
     if (model.length) {
       setSortModel({
         field: model[0].field,
-        direction: model[0].sort ?? "asc",
+        sort: model[0].sort ?? DEFAULT_SORT,
       });
     } else {
-      setSortModel(undefined);
+      setSortModel({ field: "none", sort: DEFAULT_SORT });
     }
   };
 
@@ -100,6 +101,7 @@ const Page = () => {
             paginationMode="server"
             disableColumnMenu
             pagination={true}
+            sortModel={[sortModel]}
             localeText={deDE.components.MuiDataGrid.defaultProps.localeText}
             getRowHeight={() => "auto"}
             sortingMode="server"

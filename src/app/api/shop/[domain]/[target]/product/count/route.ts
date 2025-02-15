@@ -27,9 +27,9 @@ export async function GET(
   const aggregation: { [key: string]: any }[] = [];
 
   if (isAmazon) {
-    aggregation.push(...aznFields(customerSettings, domain));
+    aggregation.push(...aznFields({settings:customerSettings, sdmn: domain}));
   } else {
-    aggregation.push(...ebyFields(customerSettings, domain));
+    aggregation.push(...ebyFields({settings:customerSettings, sdmn: domain}));
   } 
   aggregation.push({ $count: "productCount" });
   const productCol = await getProductCol();

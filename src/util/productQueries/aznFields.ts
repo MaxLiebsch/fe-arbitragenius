@@ -3,12 +3,25 @@ import { addAznSettingsFields } from "./addAznSettingsFields";
 import { marginField, marginPctField } from "./marginFields";
 import { marginAddField } from "./marginAddField";
 import { marginPctAddField } from "./marginPctAddField";
+import { ISOStringWeek } from "@/types/Week";
 
-export const aznFields = (
-  settings: Settings,
-  sdmn?: string,
-  isWholesale?: boolean
-): any[] => {
+type AznFields = {
+  settings: Settings;
+  sdmn?: string;
+  isWholesale?: boolean;
+  week?: ISOStringWeek;
+  excludeShops?: string[];
+  search?: string;
+};
+
+export const aznFields = ({
+  settings,
+  sdmn,
+  week,
+  isWholesale,
+  search,
+  excludeShops,
+}: AznFields): any[] => {
   const { a_tptStandard, a_strg, a_prepCenter, fba, euProgram } = settings;
   const transport = settings[a_tptStandard as "a_tptSmall"];
 
@@ -35,6 +48,25 @@ export const aznFields = (
     match.sdmn = sdmn;
   }
 
+  if (excludeShops && excludeShops.length > 0) {
+    match["sdmn"] = { $nin: excludeShops };
+  }
+
+  if (week) {
+    match["createdAt"] = { $gte: week.start, $lte: week.end };
+  }
+
+  if (search) {
+    if(/\b[0-9]{11,13}\b/.test(search)){
+      match['eanList'] = { $in: [search] };
+    }else{
+
+      match["$text"] = { $search: search };
+    }
+  }else{
+
+  }
+
   const query: any = [];
 
   if (isWholesale) {
@@ -42,13 +74,12 @@ export const aznFields = (
     query.push({
       $match: wholeSaleMatch,
     });
-  }else{
+  } else {
     addAznSettingsFields(settings, match);
     match["a_avg_fld"] = { $ne: null };
     query.push({
       $match: match,
     });
-    
   }
   const computedPriceAddField = isWholesale
     ? {

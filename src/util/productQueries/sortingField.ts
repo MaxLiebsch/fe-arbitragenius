@@ -1,22 +1,36 @@
 import { Settings } from "@/types/Settings";
 import { mrgnPctFieldName } from "./mrgnProps";
 
-export function sortingField(
-  isAmazon: boolean,
-  query: any,
-  sort: any,
-  settings: Settings
-) {
+type SortingField = {
+  isAmazon: boolean;
+  query: any;
+  sort: any;
+  settings: Settings;
+  createdAt?: boolean;
+};
+
+export function sortingField({
+  isAmazon,
+  query,
+  sort,
+  createdAt,
+  settings,
+}: SortingField) {
   const { euProgram, showSeen } = settings;
 
   if (showSeen) {
     sort["seen"] = -1;
-  }else{
+  } else {
     sort["seen"] = 1;
   }
 
+  
+  
   if (isAmazon) {
     if (query.field === "none") {
+      if(createdAt){
+        sort["createdAt"] = -1; // sort by createdAt in descending order
+      }
       sort["bsr.number"] = 1;
       sort[mrgnPctFieldName("a", euProgram)] = -1;
     } else if (query.field) {
@@ -24,6 +38,9 @@ export function sortingField(
     }
   } else {
     if (query.field === "none") {
+      if(createdAt){
+        sort["createdAt"] = -1; // sort by createdAt in descending order
+      }
       sort[mrgnPctFieldName("e", false)] = -1;
     } else if (query.field) {
       sort[query.field] = query.order === "asc" ? 1 : -1;

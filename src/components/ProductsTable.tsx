@@ -6,8 +6,6 @@ import {
   useGridApiRef,
 } from "@mui/x-data-grid-premium";
 import React, { useMemo } from "react";
-import useProductCount from "@/hooks/use-product-count";
-import useProducts from "@/hooks/use-products";
 import Spinner from "./Spinner";
 import useBookMarkAdd from "@/hooks/use-bookmark-add";
 import { createColumns } from "@/util/ProductTableColumns";
@@ -16,24 +14,32 @@ import useAccount from "@/hooks/use-account";
 import { usePaginationAndSort } from "@/hooks/use-pagination-sort";
 import { useUserSettings } from "@/hooks/use-settings";
 import { useMarkSeen } from "@/hooks/use-markSeen";
+import { UseQueryResult } from "@tanstack/react-query";
+import { ModifiedProduct } from "@/types/Product";
+import { DEFAULT_SORT } from "@/constant/constant";
 
 export type ProductTableProps = {
   domain: string;
   target: string;
   className?: string;
+  productCountQuery: UseQueryResult<
+    {
+      productCount: number;
+    },
+    Error
+  >;
+  productQuery: UseQueryResult<ModifiedProduct[], Error>;
 };
 
 export default function ProductsTable(props: ProductTableProps) {
   const [settings, setUserSettings] = useUserSettings();
-  const { className, domain, target } = props;
-  const [paginationModel, setPaginationModel, sortModel, setSortModel] =
+  const { className, domain, target, productQuery, productCountQuery } = props;
+  const { paginationModel, setPaginationModel, sortModel, handleSetSortModel } =
     usePaginationAndSort();
 
   const apiRef = useGridApiRef();
   useMarkSeen(apiRef, props);
 
-  const productCountQuery = useProductCount(domain, target);
-  const productQuery = useProducts(domain, paginationModel, sortModel, target);
   const user = useAccount();
   const userRoles = useMemo(() => user.data?.labels ?? [], [user.data?.labels]);
 
@@ -42,12 +48,15 @@ export default function ProductsTable(props: ProductTableProps) {
 
   const handleSortModelChange = (model: GridSortModel) => {
     if (model.length) {
-      setSortModel({
+      handleSetSortModel({
         field: model[0].field,
-        direction: model[0].sort ?? "asc",
+        sort: model[0].sort || DEFAULT_SORT,
       });
     } else {
-      setSortModel(undefined);
+      handleSetSortModel({
+        field: "none",
+        sort: DEFAULT_SORT,
+      });
     }
   };
 
@@ -93,9 +102,10 @@ export default function ProductsTable(props: ProductTableProps) {
       columns={columns}
       rows={productQuery.data ?? []}
       rowCount={productCountQuery.data?.productCount ?? 0}
-      loading={productQuery.isFetching}
+      loading={productQuery.isLoading}
       pageSizeOptions={[10, 20, 50]}
       paginationModel={paginationModel}
+      sortModel={[sortModel]}
       onPaginationModelChange={setPaginationModel}
       paginationMode="server"
       disableColumnMenu
