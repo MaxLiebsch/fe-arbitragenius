@@ -38,7 +38,7 @@ const VKPrice = ({
             }`}
             placement="topLeft"
           >
-            <div>{target === "a" ? (flip ? "" : "∅ VK") : "M Median VK"}</div>
+            <div>{target === "a" ? (flip ? "∅ VK" : "∅ VK") : "M Median VK"}</div>
           </Tooltip>
           <div className="text-xs">
             <span className="text-green">{netto ? "Netto" : "Brutto"}</span>

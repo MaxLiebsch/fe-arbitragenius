@@ -4,6 +4,9 @@ import { Settings } from "@/types/Settings";
 import { aznFlipFields } from "@/util/productQueries/aznFlipFields";
 
 import { ebyFields } from "@/util/productQueries/ebyFields";
+import { lookupProductInvalid } from "@/util/productQueries/lookupProductInvalid";
+import { lookupProductIrrelevant } from "@/util/productQueries/lookupProductIrrelevant";
+import { lookupProductSeen } from "@/util/productQueries/lookupProductSeen";
 import { lookupUserId } from "@/util/productQueries/lookupUserId";
 import {
   marginField,
@@ -16,10 +19,7 @@ import { sortingField } from "@/util/productQueries/sortingField";
 import { SortDirection } from "mongodb";
 import { NextRequest } from "next/server";
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { domain: string; target: string } }
-) {
+export async function GET(request: NextRequest) {
   const user = await getLoggedInUser();
   if (!user) {
     return new Response("Unauthorized", {
@@ -28,8 +28,9 @@ export async function GET(
   }
   const searchParams = request.nextUrl.searchParams;
   const target = searchParams.get("target") || "a";
-
   const isAmazon = target === "a";
+  const lookupTarget = "flips";
+
 
   const customerSettings: Settings = settingsFromSearchQuery(searchParams);
 
@@ -43,7 +44,7 @@ export async function GET(
   const aggregation: { [key: string]: any }[] = [];
 
   if (isAmazon) {
-    aggregation.push(...aznFlipFields(customerSettings));
+    aggregation.push(...aznFlipFields({ settings: customerSettings }));
   } else {
     aggregation.push(...ebyFields({ settings: customerSettings }));
   }
@@ -69,7 +70,7 @@ export async function GET(
     [key: string]: SortDirection;
   } = {};
 
-  sortingField({ isAmazon, query, sort, settings: customerSettings });
+  sortingField({ isAmazon, query, sort, settings: customerSettings, keepaUpdatedAt: true });
 
   aggregation.push(
     {
@@ -79,17 +80,17 @@ export async function GET(
           marginPctField({ target, settings: customerSettings })),
       },
     },
-    { $project: { ...projectField("a", "flip").$project, a_avg_prc: 1 } },
+    ...lookupProductSeen(user, lookupTarget),
+    ...lookupProductInvalid(user, lookupTarget),
+    ...lookupProductIrrelevant(user, lookupTarget),
     {
-      $group: {
-        _id: {
-          field2: "$asin",
-        },
-        document: { $first: "$$ROOT" },
+      $project: {
+        ...projectField("a", "flip").$project,
+        a_avg_prc: 1,
+        curr_prc: 1,
+        keepaUpdatedAt: 1,
+        seen: 1,
       },
-    },
-    {
-      $replaceRoot: { newRoot: "$document" },
     },
     {
       $sort: sort,

@@ -46,6 +46,7 @@ const InfoField = ({
     drops30,
     seen,
     esin,
+    keepaUpdatedAt,
     drops90,
     timer,
     monthlySold,
@@ -60,15 +61,15 @@ const InfoField = ({
 
   const shopDomain = sdmn !== "sales" ? sdmn : shop !== undefined ? s : "";
 
+  const isFlip = shop === "flip" || flip;
   const targetUpdatedAt =
     target === "a"
-      ? dealAznUpdatedAt || updatedAt
+      ? isFlip? keepaUpdatedAt: dealAznUpdatedAt || updatedAt
       : dealEbyUpdatedAt || updatedAt;
-  const lastUpdated = availUpdatedAt || updatedAt;
 
   const { bsr, aznCategory } = getLatestBsr(product);
-  const isFlip = shop === "flip" || flip;
 
+  const lastUpdated =  availUpdatedAt || updatedAt;
   if ((!esin && target === "e") || (!asin && target === "a"))
     return <Eanlist eanList={product.eanList} />;
 
@@ -81,6 +82,11 @@ const InfoField = ({
                 timer === 1 ? "einer" : timer
               } Sekunde${timer > 1 ? "n" : ""}`
             : "Gesehen"}
+        </div>
+      ) : null}
+      {seen ? (
+        <div className="absolute right-2 top-1 text-xs text-gray">
+          Gesehen
         </div>
       ) : null}
       <div className="flex flex-col divide-y p-1 w-full">
@@ -120,7 +126,7 @@ const InfoField = ({
                           addSuffix: true,
                         })}
                       </time>
-                        {a ? <DeliveryStatus a={a} /> : null}
+                      {a ? <DeliveryStatus a={a} /> : null}
                     </div>
                   )}
                 </div>

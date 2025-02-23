@@ -13,8 +13,10 @@ export function projectField(target: string, location?: string) {
     project = {
       ...project,
       ...aznProjectFields,
+      
     };
-  } else {
+  } 
+  else {
     project = {
       ...project,
       ...ebyProjectFields,

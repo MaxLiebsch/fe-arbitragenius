@@ -77,6 +77,7 @@ export interface ModifiedProduct extends Product {
   bsr_cat_1: string;
   e_pRange?: Prange;
   a?: deliveryStatus
+  curr_prc: number;
   sourceDomain?: string;
   e_uprc: number;
   e_vrfd?: Verification;

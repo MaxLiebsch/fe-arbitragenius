@@ -58,9 +58,9 @@ export async function GET(
   aggregation.push(
     ...lookupProductSeen(user, target),
     ...lookupProductInvalid(user, target),
-    ...lookupProductIrrelevant(user, target)
+    ...lookupProductIrrelevant(user, target),
+    {$count: "productCount"}
   );
-  aggregation.push({ $count: "productCount" });
   const productCol = await getProductCol();
 
   const res = await productCol.aggregate(aggregation).toArray();

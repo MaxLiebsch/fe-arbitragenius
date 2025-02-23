@@ -6,6 +6,7 @@ import useAznFlipsCount from "@/hooks/use-aznflips-count";
 import useAznFlipsProducts from "@/hooks/use-aznflips-products";
 import useBookMarkAdd from "@/hooks/use-bookmark-add";
 import useBookMarkRemove from "@/hooks/use-bookmark-remove";
+import { useMarkSeen } from "@/hooks/use-markSeen";
 import { usePaginationAndSort } from "@/hooks/use-pagination-sort";
 import { useUserSettings } from "@/hooks/use-settings";
 import { createColumns } from "@/util/ProductTableColumns";
@@ -26,9 +27,10 @@ const Page = () => {
     settings &&
     settings.targetPlatforms &&
     settings.targetPlatforms.includes(target);
-  const {paginationModel, setPaginationModel, sortModel, setSortModel}=
+  const { paginationModel, setPaginationModel, sortModel, setSortModel } =
     usePaginationAndSort();
   const apiRef = useGridApiRef();
+  useMarkSeen(apiRef, {target: 'flips', domain: 'flip'});
   const user = useAccount();
   const userRoles = useMemo(() => user.data?.labels ?? [], [user.data?.labels]);
 
@@ -72,11 +74,12 @@ const Page = () => {
   );
   return (
     <div className="h-full relative">
-      <Title>Amazon Flips (Beta)</Title>
+      <Title>Amazon Flips</Title>
       <div className="absolute text-gray-dark text-xs right-0 top-[3.15rem]">
-        Amazon Flips befindet sich im Beta-Status. Angebote können sehr schnell varieren. Es können Probleme bei der Margenberechnung auftreten.
+        DipMax Export GmbH übernimmt für die dargestellten Informationen und
+        deren Genauigkeit und Vollständigkeit keine Gewährleistung.
       </div>
-      <div className="flex h-[calc(100vh-198px)]">
+      <div className="flex h-[calc(100vh-170px)]">
         {targetEnabled ? (
           <DataGridPremium
             apiRef={apiRef}

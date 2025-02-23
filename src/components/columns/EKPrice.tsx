@@ -31,19 +31,39 @@ const EKPrice = ({
     ),
     renderCell: (params) => {
       const { row: product, value } = params;
-      const { qty, a_qty, uprc, a_prc, a_uprc, shop } = product;
-      const price = flip || shop === "flip" ? a_prc : value;
-      const uprice = flip || shop === "flip" ? a_uprc : uprc;
-      const currQty = flip || shop === "flip" ? a_qty : qty;
+      const {
+        qty,
+        a_qty,
+        uprc,
+        curr_prc,
+        curr_ahsprcs,
+        a_uprc,
+        shop,
+      } = product;
+      const isFlip = shop === "flip" || flip;
+      const price = isFlip ? curr_prc : value;
+      const uprice = isFlip ? a_uprc : uprc;
+      const currQty = isFlip ? a_qty : qty;
       return (
         <div className="flex flex-col">
           <div className={`${netto ? "" : "font-semibold text-green"}`}>
             {formatCurrency(price)}
           </div>
+          {isFlip ? (
+            <div className="text-xs">
+              {curr_ahsprcs === price ? (
+                <div className="text-amazon">(Amazon)</div>
+              ) : (
+                <div className="text-green">(Seller)</div>
+              )}
+            </div>
+          ) : null}
           {currQty > 1 && (
             <>
-            <span className="text-xs">({formatCurrency(uprice)} / Stück)</span>
-            <span className="text-xs">{currQty} Stück</span>
+              <span className="text-xs">
+                ({formatCurrency(uprice)} / Stück)
+              </span>
+              <span className="text-xs">{currQty} Stück</span>
             </>
           )}
           <div className={`${netto ? "font-semibold text-green" : ""}`}>

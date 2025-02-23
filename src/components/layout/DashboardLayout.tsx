@@ -59,7 +59,7 @@ const navigation = [
     current: false,
   },
   {
-    name: "Amazon Flips (Beta)",
+    name: "Amazon Flips",
     icon: ArrowsUpDownIcon,
     href: "/dashboard/amazon-flips",
     current: false,

@@ -76,9 +76,6 @@ export default function SalesTable(props: {
       className={className}
       sortingOrder={["desc", "asc"]}
       sortModel={[sortModel]} 
-      getRowClassName={(params) => {
-        return params.row.seen ? "opacity-50" : "";
-      }}
       initialState={{
         columns: {
           columnVisibilityModel: {

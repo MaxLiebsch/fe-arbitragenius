@@ -86,9 +86,6 @@ export default function ProductsTable(props: ProductTableProps) {
       apiRef={apiRef}
       className={className}
       sortingOrder={["desc", "asc"]}
-      getRowClassName={(params) => {
-        return params.row.seen ? "opacity-50" : "";
-      }}
       initialState={{
         columns: {
           columnVisibilityModel: {

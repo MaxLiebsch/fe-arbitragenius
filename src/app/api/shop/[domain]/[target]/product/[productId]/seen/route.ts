@@ -18,7 +18,7 @@ export async function GET(
     });
   }
 
-  if (!target || (target !== "a" && target !== "e" && target !== "k")) {
+  if (!target || (target !== "a" && target !== "flips" && target !== "e" && target !== "k")) {
     return new Response("Invalid target", {
       status: 400,
     });

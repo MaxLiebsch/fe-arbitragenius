@@ -101,10 +101,13 @@ export async function GET(request: NextRequest) {
   if (groupedBookmarksByTarget.flip) {
     aggregation[1].$facet["flip"] = [
       { $match: { _id: { $in: groupedBookmarksByTarget.flip } } },
-      ...aznFlipFields(customerSettings),
+      ...aznFlipFields({ settings: customerSettings }),
       {
         $project: {
           ...projectField("a", "flip").$project,
+          a_avg_prc: 1,
+          curr_prc: 1,
+          keepaUpdatedAt: 1,
           isBookmarked: { $literal: true },
         },
       },

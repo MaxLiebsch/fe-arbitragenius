@@ -26,45 +26,50 @@ export const aznFields = ({
   const transport = settings[a_tptStandard as "a_tptSmall"];
 
   const match: any = {
-    a_pblsh: true,
-    ...marginField({ target: "a", settings }),
-    ...(settings.minPercentageMargin > 0 &&
-      marginPctField({ target: "a", settings })),
+    $and: [
+      { a_pblsh: true },
+      { ...marginField({ target: "a", settings }) },
+      {
+        ...(settings.minPercentageMargin > 0 &&
+          marginPctField({ target: "a", settings })),
+      },
+    ],
   };
 
   const wholeSaleMatch: any = {
-    a_pblsh: true,
-    ...(settings.minMargin > 0 && marginField({ target: "a", settings })),
-    ...(settings.minPercentageMargin > 0 &&
-      marginPctField({ target: "a", settings })),
+    $and: [
+      { a_pblsh: true },
+      { ...(settings.minMargin > 0 && marginField({ target: "a", settings })) },
+      {
+        ...(settings.minPercentageMargin > 0 &&
+          marginPctField({ target: "a", settings })),
+      },
+    ],
   };
 
   const isSommer = new Date().getMonth() < 9;
   if (settings.a_cats.length > 0 && settings.a_cats[0] !== 0) {
-    match["categoryTree.catId"] = { $in: settings.a_cats };
+    match.$and.push({ "categoryTree.catId": { $in: settings.a_cats } });
   }
 
   if (sdmn) {
-    match.sdmn = sdmn;
+    match.$and.push({ sdmn });
   }
 
   if (excludeShops && excludeShops.length > 0) {
-    match["sdmn"] = { $nin: excludeShops };
+    match.$and.push({ sdmn: { $nin: excludeShops } });
   }
 
   if (week) {
-    match["createdAt"] = { $gte: week.start, $lte: week.end };
+    match.$and.push({ createdAt: { $gte: week.start, $lte: week.end } });
   }
 
   if (search) {
-    if(/\b[0-9]{11,13}\b/.test(search)){
-      match['eanList'] = { $in: [search] };
-    }else{
-
-      match["$text"] = { $search: search };
+    if (/\b[0-9]{11,13}\b/.test(search)) {
+      match.$and.push({ eanList: { $in: [search] } });
+    } else {
+      match.$and.push({ $text: { $search: search } });
     }
-  }else{
-
   }
 
   const query: any = [];
@@ -76,7 +81,7 @@ export const aznFields = ({
     });
   } else {
     addAznSettingsFields(settings, match);
-    match["a_avg_fld"] = { $ne: null };
+    match.$and.push({ a_avg_fld: { $ne: null } });
     query.push({
       $match: match,
     });

@@ -43,6 +43,7 @@ const ContentMarge = ({
     | "eanList"
     | "a_useCurrPrice"
     | "a_qty"
+    | "curr_prc"
     | "avg90_ahsprcs"
     | "avg90_ansprcs"
     | "avg30_ahsprcs"
@@ -61,12 +62,13 @@ const ContentMarge = ({
     shop,
     a_avg_price,
     asin,
+    curr_prc
   } = product;
 
   let avgPrice = a_avg_price
 
   const isFlip = a_avg_prc !== undefined;
-  const initBuyPrice = isFlip ? a_prc : prc;
+  const initBuyPrice = isFlip ? curr_prc : prc;
   const flipQty = isFlip ? a_qty : buyQty;
   const initSellPrice = avgPrice === 0 ? a_prc : avgPrice;
 
