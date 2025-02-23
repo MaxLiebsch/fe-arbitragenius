@@ -64,12 +64,14 @@ const InfoField = ({
   const isFlip = shop === "flip" || flip;
   const targetUpdatedAt =
     target === "a"
-      ? isFlip? keepaUpdatedAt: dealAznUpdatedAt || updatedAt
+      ? isFlip
+        ? keepaUpdatedAt
+        : dealAznUpdatedAt || updatedAt
       : dealEbyUpdatedAt || updatedAt;
 
   const { bsr, aznCategory } = getLatestBsr(product);
 
-  const lastUpdated =  availUpdatedAt || updatedAt;
+  const lastUpdated = availUpdatedAt || updatedAt;
   if ((!esin && target === "e") || (!asin && target === "a"))
     return <Eanlist eanList={product.eanList} />;
 
@@ -85,9 +87,7 @@ const InfoField = ({
         </div>
       ) : null}
       {seen ? (
-        <div className="absolute right-2 top-1 text-xs text-gray">
-          Gesehen
-        </div>
+        <div className="absolute right-2 top-1 text-xs text-gray">Gesehen</div>
       ) : null}
       <div className="flex flex-col divide-y p-1 w-full">
         {nm && !isFlip && (
@@ -140,10 +140,20 @@ const InfoField = ({
               <div>{ImageRenderer(prefixLink(targetImg, s))}</div>
               <div className="flex flex-col w-full">
                 <div>
-                  <span className="font-semibold">
-                    {isFlip ? "Amazon Flip: " : ""}
-                  </span>
-                  {LinkWrapper(targetLink, targetName)}
+                  {isFlip ? (
+                    <>
+                      <span className="font-semibold">Amazon Flip: </span>
+                      <Tooltip
+                        color={"#11848d"}
+                        destroyTooltipOnHide
+                        title="Angebotspreis möglicherweise unter 'Andere Verkäufer bei Amazon'"
+                      >
+                        {LinkWrapper(targetLink, targetName)}
+                      </Tooltip>
+                    </>
+                  ) : (
+                    <>{LinkWrapper(targetLink, targetName)}</>
+                  )}
                 </div>
                 {targetUpdatedAt && (
                   <time className="ml-auto mt-auto text-gray text-xs">
