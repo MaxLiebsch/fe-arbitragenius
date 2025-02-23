@@ -41,10 +41,10 @@ const MarginPct = ({
     ),
     renderCell: (params) => {
       const { row: product } = params;
-      const { prc, a_prc, tax, shop, a_qty, e_qty, qty } =
+      const { prc, curr_prc, tax, shop, a_qty, e_qty, qty } =
         product;
       const isFlip = shop === "flip";
-      const price = isFlip ? a_prc : prc;
+      const price = isFlip ? curr_prc : prc;
       const flipQty = isFlip ? a_qty : qty;
       const factor = (target === "a" ? a_qty : e_qty) / flipQty;
       const netPrice = calculateNetPrice(price, tax) * factor;
