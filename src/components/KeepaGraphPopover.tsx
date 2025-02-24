@@ -2,10 +2,12 @@ import { Popover, Radio, Tooltip } from "antd";
 import React from "react";
 import { ModifiedProduct } from "@/types/Product";
 import Image from "next/image";
+import { useMediaQuery } from "@mui/material";
 
 const KeepaGraphPopover = ({ product }: { product: ModifiedProduct }) => {
   const [open, setOpen] = React.useState(false);
   const [range, setRange] = React.useState("30");
+  const mediaQuery = useMediaQuery("(min-width: 870px)");
   if(!product.asin) return null;
   return (
     <div className="hover:cursor-pointer hover:font-semibold">
@@ -37,11 +39,11 @@ const KeepaGraphPopover = ({ product }: { product: ModifiedProduct }) => {
             trigger="click"
             overlayInnerStyle={{ pointerEvents: "auto" }}
             content={
-              <div className="w-[870px] h-[500px]">
+              <div className={`w-[${mediaQuery ? "870px" : "360px"}] h-[${mediaQuery ? "500px" : "206px"}]`}>
                 <Image
                   alt={`Keepa Graph ${product.asin}`}
-                  height={500}
-                  width={870}
+                  height={mediaQuery ? 500 : 206}
+                  width={mediaQuery ? 870 : 360}
                   src={`https://graph.keepa.com/pricehistory.png?asin=${product.asin}&domain=de&salesrank=1&range=${range}&height=500&width=870&bb=1`}
                 />
               </div>

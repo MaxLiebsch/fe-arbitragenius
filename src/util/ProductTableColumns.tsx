@@ -12,6 +12,7 @@ import EKPrice from "@/components/columns/EKPrice";
 import OptionField from "@/components/columns/OptionField";
 import PriceAnalysis from "@/components/columns/PriceAnalysis";
 import SwitchSeenProducts from "@/components/SwitchSeenProducts";
+import { INFOFIELD_WIDTH } from "@/constant/constant";
 
 export const createColumns: (
   target: string,
@@ -54,6 +55,7 @@ export const createColumns: (
       field: "nm",
       headerName: "Produkte",
       flex: 0.65,
+      minWidth: INFOFIELD_WIDTH,
       sortable: false,
       renderHeader(params) {
         return (

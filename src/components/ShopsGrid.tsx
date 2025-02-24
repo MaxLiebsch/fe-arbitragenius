@@ -30,7 +30,7 @@ export default function ShopsGrid() {
     );
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 place-items-center gap-1 lg:gap-2 gap-y-3 w-full">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 place-items-center md:gap-1 lg:gap-2 gap-y-3 w-full">
       {shopQuery.data &&
         [...shopQuery.data].map((shop) => {
           if (shop.d === "sales") {

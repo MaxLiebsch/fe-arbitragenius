@@ -14,6 +14,8 @@ export const TTL_UPCOMING_REQUEST = 1000 * 60 * 5;
 export const MAX_CACHE_SIZE = 1000;
 export const CONSIDERED_SEEN_DWELL_DURANTION = 1000 * 4;
 export const DEFAULT_SORT = "asc";
+export const INFOFIELD_WIDTH = 530;
+export const DISCLAIMER = "DipMax Export GmbH übernimmt für die dargestellten Informationen und deren Genauigkeit und Vollständigkeit keine Gewährleistung.";
 
 export const AZN_AVG_FLD_MAPPING = {
   "avg30_buyBoxPrice": "(BuyBox 30 Tage)" ,

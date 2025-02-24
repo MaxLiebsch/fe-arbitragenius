@@ -1,4 +1,5 @@
 "use client";
+import Disclaimer from "@/components/Disclaimer";
 import Spinner from "@/components/Spinner";
 import { DEFAULT_SORT } from "@/constant/constant";
 import useAccount from "@/hooks/use-account";
@@ -75,10 +76,7 @@ const Page = () => {
   return (
     <div className="h-full relative">
       <Title>Amazon Flips</Title>
-      <div className="absolute text-gray-dark text-xs right-0 top-[3.15rem]">
-        DipMax Export GmbH übernimmt für die dargestellten Informationen und
-        deren Genauigkeit und Vollständigkeit keine Gewährleistung.
-      </div>
+      <Disclaimer />
       <div className="flex h-[calc(100vh-170px)]">
         {targetEnabled ? (
           <DataGridPremium

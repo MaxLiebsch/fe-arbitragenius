@@ -6,6 +6,7 @@ import { Tab } from "@headlessui/react";
 import React from "react";
 import BookmarkTable from "@/components/BookMarkTable";
 import SourceshopTabGroup from "@/components/SourceshopTabGroup";
+import Disclaimer from "@/components/Disclaimer";
 
 const Page = () => {
   const bookMarks = useBookmarks();
@@ -15,10 +16,7 @@ const Page = () => {
       <Title>Meine Deals</Title>
       <SourceshopTabGroup>
         <>
-          <div className="absolute text-gray-dark text-xs right-0 top-[5.2rem]">
-            DipMax Export GmbH übernimmt für die dargestellten Informationen und
-            deren Genauigkeit und Vollständigkeit keine Gewährleistung.
-          </div>
+          <Disclaimer />
           <Tab.Panels className="flex h-[calc(100vh-195px)]">
             <Tab.Panel className="w-full  h-full">
               <BookmarkTable

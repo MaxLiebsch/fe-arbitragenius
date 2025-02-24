@@ -11,7 +11,8 @@ import { Week } from "@/types/Week";
 import { Tab } from "@headlessui/react";
 import DealHubTablePanel from "@/components/DealHubTablePanel";
 import { usePaginationAndSort } from "@/hooks/use-pagination-sort";
-import { DEFAULT_SORT } from "@/constant/constant";
+import { DEFAULT_SORT} from "@/constant/constant";
+import Disclaimer from "@/components/Disclaimer";
 
 const Page = () => {
   const [week, setWeek] = React.useState<Week>({
@@ -21,11 +22,12 @@ const Page = () => {
   const { paginationModel, handleSetSortModel, handleSetPaginationModel } =
     usePaginationAndSort();
   return (
-    <div className="h-full flex flex-col overflow-y-hidden">
+    <div className="h-full flex flex-col overflow-y-hidden relative">
       {/* Header */}
-      <div className="flex justify-between items-center">
+          <Disclaimer />
+      <div className="flex flex-col lg:flex-row justify-start lg:justify-between  lg:items-center">
         <Title>Deal Hub</Title>
-        <div>
+        <div className="mb-4 lg:mb-0 lg:mt-8">
           <MyDatePicker
             style={{ width: 300 }}
             prefix="Ausgewählte Woche: "
@@ -54,10 +56,6 @@ const Page = () => {
       {/* Content */}
       <SourceshopTabGroup>
         <div className="relative">
-          <div className="absolute text-gray-dark text-xs right-0 -top-[0.85rem]">
-            DipMax Export GmbH übernimmt für die dargestellten Informationen und
-            deren Genauigkeit und Vollständigkeit keine Gewährleistung.
-          </div>
           <Tab.Panels className="flex h-[calc(100vh-220px)]">
             <Tab.Panel className="w-full  h-full">
               <DealHubTablePanel week={week} target="a" />

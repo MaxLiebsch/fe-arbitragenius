@@ -8,7 +8,7 @@ import React from "react";
 
 const DealStatistics = () => {
   return (
-    <div className="flex flex-row my-auto gap-2">
+    <div className="flex flex-col lg:flex-row my-auto gap-2">
       <WeekelyStatistics />
       <SalesStatistics />
     </div>
@@ -26,9 +26,9 @@ const Statistics = ({
 }) => {
   return (
     <div>
-      <div className="text-secondary text-nowrap px-4">{title}</div>
+      <div className="text-secondary text-nowrap px-2 lg:px-4">{title}</div>
       <Divider className="!m-0" />
-      <div className="flex flex-row gap-2 justify-evenly px-4">
+      <div className="flex flex-row gap-2 justify-start lg:justify-evenly px-2 lg:px-4">
         {statistics.map((stat, i) => {
           return (
             <Link

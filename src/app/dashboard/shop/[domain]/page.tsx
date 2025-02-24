@@ -1,5 +1,6 @@
 "use client";
 
+import Disclaimer from "@/components/Disclaimer";
 import ProductsTableTabs from "@/components/ProductsTableTabs";
 import Title from "antd/es/typography/Title";
 import React from "react";
@@ -17,7 +18,7 @@ const kiBeta = [
 
 export default function Shop({ params }: { params: { domain: string } }) {
   return (
-    <div className="h-full flex flex-col overflow-y-hidden">
+    <div className="h-full flex flex-col overflow-y-hidden relative">
       <Title className="relative">
         {params.domain.slice(0, 1).toUpperCase() + params.domain.slice(1)}
       {kiBeta.includes(params.domain) && (
@@ -27,6 +28,7 @@ export default function Shop({ params }: { params: { domain: string } }) {
         </div>
       )}
       </Title>
+      <Disclaimer />
       <ProductsTableTabs domain={params.domain} />
     </div>
   );

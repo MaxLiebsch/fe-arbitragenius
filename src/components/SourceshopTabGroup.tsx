@@ -7,7 +7,7 @@ import { useSearchParams } from "next/navigation";
 const targets = [
   { name: "Amazon", domain: "amazon.de" },
   { name: "Ebay", domain: "ebay.de" },
-  { name: "Kaufland (Coming soon)", domain: "kaufland.de" },
+  { name: "Kaufland (soon)", domain: "kaufland.de" },
 ];
 
 const SourceshopTabGroup = ({ children }: { children: ReactNode }) => {

@@ -100,20 +100,18 @@ const ProductFilterForm = ({ layout = "slim" }: { layout?: Layout }) => {
   };
 
   return (
-    <>
       <Form
         ref={formRef}
         form={form}
-        className="md:col-span-2"
         initialValues={settings}
         onFinish={onFinish}
         onValuesChange={onValuesChange}
       >
         <div
-          className={`grid grid-cols-1 h-full ${
+          className={`grid grid-cols-1 h-full max-w-xs md:max-w-md ${
             layout === "wide"
               ? "gap-x-6 gap-y-3 sm:grid-cols-6 sm:max-w-7xl"
-              : "gap-x-2 gap-y-1 sm:grid-cols-1"
+              : "gap-x-2 gap-y-1"
           }`}
         >
           {/* Hiddenfield */}
@@ -188,7 +186,6 @@ const ProductFilterForm = ({ layout = "slim" }: { layout?: Layout }) => {
           </div>
         </div>
       </Form>
-    </>
   );
 };
 

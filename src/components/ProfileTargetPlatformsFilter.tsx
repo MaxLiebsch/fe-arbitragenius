@@ -26,7 +26,7 @@ const ProfileTargetPlatformsFilter = () => {
   const options = [
     { label: "Amazon", value: "a" },
     { label: "Ebay", value: "e" },
-    { label: "Kaufland (Coming soon)", value: "k", disabled: true },
+    { label: "Kaufland (soon)", value: "k", disabled: true },
   ];
 
   const onFinish = async (values: any) => {

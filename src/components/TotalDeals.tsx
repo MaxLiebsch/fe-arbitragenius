@@ -113,7 +113,7 @@ const TotalDeals = () => {
         )}
       </div>
       <div className="border-secondary border w-72 group inline-flex items-center justify-center rounded-md py-2 px-4 font-semibold focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 text-secondary">
-        <p className="text-secondary">Kaufland (Coming soon)</p>
+        <p className="text-secondary">Kaufland (soon)</p>
       </div>
     </div>
   );

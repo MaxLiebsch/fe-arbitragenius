@@ -10,10 +10,6 @@ const ProductTableTabs = ({ domain }: { domain: string }) => {
     <div className="relative">
       <SourceshopTabGroup>
         <>
-          <div className="absolute text-gray-dark text-xs right-0 top-[1.25rem]">
-            DipMax Export GmbH übernimmt für die dargestellten Informationen und
-            deren Genauigkeit und Vollständigkeit keine Gewährleistung.
-          </div>
           <Tab.Panels className="flex h-[calc(100vh-220px)]">
             <Tab.Panel className="w-full  h-full">
               <ProductsTablePanel domain={domain} target="a" />
