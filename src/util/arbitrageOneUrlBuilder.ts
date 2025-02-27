@@ -21,8 +21,8 @@ export function arbitrageOneUrlBuilder({
 
   url.searchParams.append("asin", asin);
   url.searchParams.append("via", "arbispotter");
-  url.searchParams.append("sell_price", sell_price.toString());
-  url.searchParams.append("source_price", source_price.toString());
+  url.searchParams.append("sell_price", sell_price?.toString() || "0");
+  url.searchParams.append("source_price", source_price?.toString() || "0");
   url.searchParams.append("source_price_calculated_net", source_price_calculated_net.toString());
   url.searchParams.append("target_marketplace", target_marketplace);
   url.searchParams.append("source_url", source_url);
