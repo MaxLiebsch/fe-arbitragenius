@@ -15,6 +15,7 @@ import { getLatestBsr } from "@/util/getLatestBsr";
 import Eanlist from "../Eanlist";
 import { Tooltip } from "antd";
 import DeliveryStatus from "../DeliveryStatus";
+import { createUnixTimeFromKeepaTime } from "../KeepaGraph";
 
 const InfoField = ({
   product,
@@ -47,15 +48,44 @@ const InfoField = ({
     seen,
     esin,
     keepaUpdatedAt,
+    monthlySoldSource,
+    lastSoldUpdate,
+    monthlySoldHistory,
     drops90,
     timer,
-    monthlySold,
     shop,
     sourceDomain,
     ebyCategories,
     [`${target}_nm` as "a_nm" | "e_nm"]: targetName,
     [`${target}_img` as "a_img" | "e_img"]: targetImg,
   } = product;
+
+  let { monthlySold } = product;
+
+  let lastMonthlySoldUpdatedAt = lastSoldUpdate
+    ? formatDistanceToNow(createUnixTimeFromKeepaTime(lastSoldUpdate) * 1000, {
+        locale: de,
+        addSuffix: true,
+      })
+    : null;
+
+  const lastMonthlySold =
+    monthlySoldHistory?.length && monthlySoldHistory.length > 0
+      ? monthlySoldHistory.reverse().find(([date, sold]) => sold !== -1)
+      : null;
+
+  if (lastMonthlySold && monthlySoldSource !== "keepa") {
+    if (lastMonthlySold[1] !== -1) {
+      monthlySold = lastMonthlySold[1];
+      lastMonthlySoldUpdatedAt = formatDistanceToNow(
+        lastMonthlySold[0] * 1000,
+        {
+          locale: de,
+          addSuffix: true,
+        }
+      );
+    }
+  }
 
   const targetLink = targetLinkBuilder(target, product);
 
@@ -155,14 +185,14 @@ const InfoField = ({
                     <>{LinkWrapper(targetLink, targetName)}</>
                   )}
                 </div>
-                {targetUpdatedAt && (
+                {targetUpdatedAt ? (
                   <time className="ml-auto mt-auto text-gray text-xs">
                     {formatDistanceToNow(parseISO(targetUpdatedAt), {
                       locale: de,
                       addSuffix: true,
                     })}
                   </time>
-                )}
+                ) : null}
               </div>
             </div>
           </div>
@@ -172,89 +202,94 @@ const InfoField = ({
           RetrieveAsin(targetLink, product, userRoles, target, pagination)}
         {target === "e" &&
           RetrieveEsin(targetLink, product, userRoles, target, pagination)}
-        <>
-          {target === "e" && ebyCategories && ebyCategories.length ? (
-            <div>
-              <span className="font-semibold">Kategorie:</span>
-              <span>
-                {ebyCategories.map((category: any) => {
-                  return (
-                    <span
-                      className="mx-1"
-                      key={category.id + category.category}
+        {target === "e" && ebyCategories && ebyCategories.length ? (
+          <div>
+            <span className="font-semibold">Kategorie:</span>
+            <span>
+              {ebyCategories.map((category: any) => {
+                return (
+                  <span className="mx-1" key={category.id + category.category}>
+                    <Link
+                      target="_blank"
+                      href={
+                        "https://www.ebay.de/b/" +
+                        encodeURIComponent(category.category) +
+                        "/" +
+                        category.id
+                      }
                     >
-                      <Link
-                        target="_blank"
-                        href={
-                          "https://www.ebay.de/b/" +
-                          encodeURIComponent(category.category) +
-                          "/" +
-                          category.id
-                        }
-                      >
-                        {category.category}
-                      </Link>
-                      <span className="font-semibold"> ID: </span>
-                      <CopyToClipboard text={category.id} />
-                    </span>
-                  );
-                })}
-              </span>
-            </div>
-          ) : (
-            <></>
-          )}
-          {target === "a" && bsr && bsr.length && bsr[0]?.number !== 0 ? (
-            <div>
-              <span className="font-semibold">BSR:</span>
-              <span>
-                {bsr.map((bsr: any) => {
-                  return (
-                    <span className="mx-1" key={bsr.number + bsr.category}>
-                      Nr.{bsr.number.toLocaleString("de-DE")} in {bsr.category}
-                    </span>
-                  );
-                })}
-              </span>
-              {aznCategory && (
-                <>
-                  <span className="font-semibold">Kategorie:</span>
-                  <span className="mx-1" key={aznCategory.label + asin}>
-                    {aznCategory.label}
+                      {category.category}
+                    </Link>
+                    <span className="font-semibold"> ID: </span>
+                    <CopyToClipboard text={category.id} />
                   </span>
-                </>
-              )}
-            </div>
-          ) : (
-            <></>
-          )}
-          {target === "a" && (monthlySold || drops30 || drops90) && (
-            <div className="flex flex-row gap-2">
-              {monthlySold ? (
-                <Tooltip
-                  title={`${
-                    monthlySold % 50 === 0
-                      ? "Die Metrik 'Gekauft im letzten Monat', welche auf den Amazon-Suchergebnisseiten zu finden ist."
-                      : "Geschätzte Verkäufe basierend auf dem BSR der Hauptkategorie."
-                  }`}
-                >
-                  <span>
-                    <span className="font-semibold">Monatliche Sales:</span>
-                    <span className="text-md"> {monthlySold}</span>
+                );
+              })}
+            </span>
+          </div>
+        ) : null}
+        {target === "a" && bsr && bsr.length && bsr[0]?.number !== 0 ? (
+          <div>
+            <span className="font-semibold">BSR:</span>
+            <span>
+              {bsr.map((bsr: any) => {
+                return (
+                  <span className="mx-1" key={bsr.number + bsr.category}>
+                    Nr.{bsr.number.toLocaleString("de-DE")} in {bsr.category}
                   </span>
-                </Tooltip>
-              ) : null}
-              <span>
-                <span className="font-semibold">Keepa Drops (30):</span>
-                <span className="text-md"> {drops30 ? drops30 : 0}</span>
-              </span>
-              <span>
-                <span className="font-semibold">Keepa Drops (90):</span>
-                <span className="text-md"> {drops90 ? drops90 : 0}</span>
-              </span>
-            </div>
-          )}
-        </>
+                );
+              })}
+            </span>
+            {aznCategory && (
+              <>
+                <span className="font-semibold">Kategorie:</span>
+                <span className="mx-1" key={aznCategory.label + asin}>
+                  {aznCategory.label}
+                </span>
+              </>
+            )}
+          </div>
+        ) : null}
+        {target === "a" ? (
+          <div className="flex flex-row gap-2">
+            {monthlySold ? (
+              <Tooltip
+                title={`${
+                  monthlySoldSource === "keepa" || lastMonthlySold
+                    ? "Die Metrik 'Gekauft im letzten Monat', welche auf den Amazon-Suchergebnisseiten zu finden ist."
+                    : "Geschätzte Verkäufe basierend auf dem BSR der Hauptkategorie."
+                }`}
+              >
+                <span>
+                  <span className="font-semibold">Monatliche Sales:</span>
+                  <span className="text-md">
+                    {" "}
+                    {monthlySold}{" "}
+                    <span className="text-gray text-xs">
+                      {" "}
+                      ({monthlySoldSource === "keepa" || lastMonthlySold
+                        ? "Keepa"
+                        : "Geschätzt"})
+                    </span>{" "}
+                    {lastMonthlySoldUpdatedAt ? (
+                      <span className="text-gray text-xs">
+                        Aktualisiert {lastMonthlySoldUpdatedAt}
+                      </span>
+                    ) : null}
+                  </span>
+                </span>
+              </Tooltip>
+            ) : null}
+            <span>
+              <span className="font-semibold">Keepa Drops (30):</span>
+              <span className="text-md"> {drops30 ? drops30 : 0}</span>
+            </span>
+            <span>
+              <span className="font-semibold">Keepa Drops (90):</span>
+              <span className="text-md"> {drops90 ? drops90 : 0}</span>
+            </span>
+          </div>
+        ) : null}
       </div>
     </div>
   );

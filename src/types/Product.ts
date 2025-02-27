@@ -95,6 +95,9 @@ export interface ModifiedProduct extends Product {
   drops30?: number;
   drops90?: number;
   isBookmarked: boolean;
+  lastSoldUpdate?: number;
+  monthlySoldSource?: 'forecast' | 'keepa';
+  monthlySoldHistory?: [number, number][]
   a_avg_prc?: number;
   a_uprc: number;
   esin: string;
