@@ -15,7 +15,6 @@ export function useMarkSeen(
   const [timer, setTimer] = useState<number | null>(null);
   const productSeen = useProductSeen(props);
   const interval = useRef<NodeJS.Timeout | null>(null);
-  const pause = useRef(false);
 
   useEffect(() => {
     if (apiRef.current) {
@@ -24,7 +23,8 @@ export function useMarkSeen(
           _id: params.row._id,
           enter: new Date().getTime(),
         };
-        setTimer(CONSIDERED_SEEN_DWELL_DURANTION / 1000); // Set timer in seconds
+        setTimer(CONSIDERED_SEEN_DWELL_DURANTION / 1000);
+        // Set timer in seconds
       });
       apiRef.current.subscribeEvent("rowMouseLeave", (params) => {
         if (

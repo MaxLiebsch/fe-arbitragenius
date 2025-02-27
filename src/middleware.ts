@@ -96,6 +96,7 @@ export const middleware = authMiddleware(async (request) => {
   }
 
   if (!subscriptions.total) {
+    console.log("subscriptions.total", pathname);
     if (!isPaymentPath(pathname))
       return NextResponse.redirect(new URL("/app/payment", request.url));
     else return NextResponse.next();
@@ -146,6 +147,7 @@ export const middleware = authMiddleware(async (request) => {
       headers,
     });
   } else {
+    console.log("stripeSubscription.data", pathname);
     if (!isPaymentPath(pathname))
       return NextResponse.redirect(new URL("/app/payment", request.url));
     else return NextResponse.next();
