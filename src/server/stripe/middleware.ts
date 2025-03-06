@@ -19,10 +19,18 @@ export async function getStripeSubscriptions(
   );
 
   if (response.ok) return response.json();
-  else
+  else {
+    try {
+      console.log(customer, "Error:stripe: ", response.status, await response.json());
+      
+    } catch (error) {
+      console.log(customer, 'error fetching response.json()', error)
+      
+    }
     return {
       data: [],
     };
+  }
 }
 
 export async function getStripeInvoices(

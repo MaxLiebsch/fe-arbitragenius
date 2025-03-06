@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
-import { authMiddleware } from "./server/appwrite/middleware";
-import { getStripeSubscriptions } from "./server/stripe/middleware";
-import { getSubscriptions } from "./server/appwrite/getSubscription";
 import { Models } from "node-appwrite";
 import Stripe from "stripe";
+import { getSubscriptions } from "./server/appwrite/getSubscription";
+import { authMiddleware } from "./server/appwrite/middleware";
 import { subscriptionCache } from "./server/cache/subscriptionCache";
+import { getStripeSubscriptions } from "./server/stripe/middleware";
 
 const isVercel = process.env.VERCEL === "true";
 const basepath = process.env.NODE_ENV === "development" ? "" : "/app";
@@ -147,7 +147,7 @@ export const middleware = authMiddleware(async (request) => {
       headers,
     });
   } else {
-    console.log("stripeSubscription.data", pathname);
+    console.log(stripeSubscription?.data,"stripeSubscription.data", pathname);
     if (!isPaymentPath(pathname))
       return NextResponse.redirect(new URL("/app/payment", request.url));
     else return NextResponse.next();
